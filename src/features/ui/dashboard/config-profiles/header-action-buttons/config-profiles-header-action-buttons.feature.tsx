@@ -4,6 +4,7 @@ import {
     Button,
     Group,
     Modal,
+    SegmentedControl,
     Stack,
     Text,
     TextInput,
@@ -11,6 +12,7 @@ import {
 } from '@mantine/core'
 import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
 import { generatePath, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { TbCode, TbPlus, TbRefresh } from 'react-icons/tb'
 import { useDisclosure } from '@mantine/hooks'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +33,9 @@ interface IProps {
     viewMode: CONFIG_PROFILES_VIEW_MODE
 }
 
-const generateDefaultConfig = () => {
+type CoreType = 'XRAY' | 'SING_BOX'
+
+const generateDefaultXrayConfig = () => {
     const randomNumber = Math.floor(Math.random() * 999999) + 1
 
     return {
@@ -70,12 +74,51 @@ const generateDefaultConfig = () => {
     }
 }
 
+const generateDefaultSingBoxConfig = () => {
+    const randomNumber = Math.floor(Math.random() * 999999) + 1
+
+    return {
+        log: {
+            level: 'info'
+        },
+        inbounds: [
+            {
+                type: 'anytls',
+                tag: `AnyTLS_${randomNumber}`,
+                listen: '::',
+                listen_port: 443,
+                users: [],
+                tls: {
+                    enabled: true,
+                    server_name: 'example.com',
+                    certificate_path: '/etc/remnawave/cert.pem',
+                    key_path: '/etc/remnawave/key.pem'
+                }
+            }
+        ],
+        outbounds: [
+            {
+                type: 'direct',
+                tag: 'DIRECT'
+            },
+            {
+                type: 'block',
+                tag: 'BLOCK'
+            }
+        ],
+        route: {
+            rules: []
+        }
+    }
+}
+
 export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
     const { configProfileCount, setViewMode, viewMode } = props
     const { isFetching } = useGetConfigProfiles()
     const { t } = useTranslation()
 
     const [opened, { open, close }] = useDisclosure(false)
+    const [coreType, setCoreType] = useState<CoreType>('XRAY')
     const navigate = useNavigate()
 
     const handleUpdate = async () => {
@@ -99,6 +142,7 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
             onSuccess: (data) => {
                 close()
                 nameField.reset()
+                setCoreType('XRAY')
                 handleUpdate()
                 navigate(
                     generatePath(ROUTES.DASHBOARD.MANAGEMENT.CONFIG_PROFILE_BY_UUID, {
@@ -181,8 +225,12 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
                         createConfigProfile({
                             variables: {
                                 name: nameField.getValue(),
-                                config: generateDefaultConfig()
-                            }
+                                coreType,
+                                config:
+                                    coreType === 'SING_BOX'
+                                        ? generateDefaultSingBoxConfig()
+                                        : generateDefaultXrayConfig()
+                            } as CreateConfigProfileCommand.Request
                         })
                     }}
                 >
@@ -205,6 +253,14 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
                             )}
                             required
                             {...nameField.getInputProps()}
+                        />
+                        <SegmentedControl
+                            data={[
+                                { label: 'Xray', value: 'XRAY' },
+                                { label: 'Sing-box', value: 'SING_BOX' }
+                            ]}
+                            onChange={(value) => setCoreType(value as CoreType)}
+                            value={coreType}
                         />
                         <Group justify="flex-end">
                             <Button color="gray" onClick={close} variant="light">

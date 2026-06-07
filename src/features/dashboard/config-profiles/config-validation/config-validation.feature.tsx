@@ -37,7 +37,8 @@ export const ConfigValidationFeature = {
         snippetsMap: Map<
             string,
             GetSnippetsCommand.Response['response']['snippets'][number]['snippet']
-        >
+        >,
+        coreType: 'XRAY' | 'SING_BOX' = 'XRAY'
     ) => {
         try {
             if (!editorRef.current) return
@@ -64,6 +65,16 @@ export const ConfigValidationFeature = {
 
             if (clonedCurrentValue.routing?.balancers) {
                 replaceSnippetsInArray(clonedCurrentValue.routing.balancers, snippetsMap)
+            }
+
+            if (clonedCurrentValue.route?.rules) {
+                replaceSnippetsInArray(clonedCurrentValue.route.rules, snippetsMap)
+            }
+
+            if (coreType === 'SING_BOX') {
+                setResult(`${dayjs().format('HH:mm:ss')} | Sing-box config JSON is valid.`)
+                setIsConfigValid(true)
+                return
             }
 
             const validationResult = window.XrayParseConfig(JSON.stringify(clonedCurrentValue))

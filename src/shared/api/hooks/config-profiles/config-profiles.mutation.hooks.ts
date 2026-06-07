@@ -5,13 +5,17 @@ import {
     UpdateConfigProfileCommand
 } from '@remnawave/backend-contract'
 import { notifications } from '@mantine/notifications'
+import { z } from 'zod'
 
 import { createMutationHook } from '../../tsq-helpers'
 
+const ConfigProfileBodySchema = z.object({}).passthrough()
+const ConfigProfileResponseSchema = z.object({ response: z.any() }).passthrough()
+
 export const useUpdateConfigProfile = createMutationHook({
     endpoint: UpdateConfigProfileCommand.TSQ_url,
-    bodySchema: UpdateConfigProfileCommand.RequestSchema,
-    responseSchema: UpdateConfigProfileCommand.ResponseSchema,
+    bodySchema: ConfigProfileBodySchema,
+    responseSchema: ConfigProfileResponseSchema,
     requestMethod: UpdateConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {
@@ -58,8 +62,8 @@ export const useDeleteConfigProfile = createMutationHook({
 
 export const useCreateConfigProfile = createMutationHook({
     endpoint: CreateConfigProfileCommand.TSQ_url,
-    responseSchema: CreateConfigProfileCommand.ResponseSchema,
-    bodySchema: CreateConfigProfileCommand.RequestSchema,
+    responseSchema: ConfigProfileResponseSchema,
+    bodySchema: ConfigProfileBodySchema,
     requestMethod: CreateConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {

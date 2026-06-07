@@ -21,6 +21,10 @@ export function ConfigEditorWidget(props: IProps) {
     const monaco = useMonaco()
 
     const { configProfile, snippets } = props
+    const coreType =
+        ((configProfile as { coreType?: 'XRAY' | 'SING_BOX' }).coreType ?? 'XRAY') as
+            | 'XRAY'
+            | 'SING_BOX'
 
     const [result, setResult] = useState('')
     const [isConfigValid, setIsConfigValid] = useState(true)
@@ -149,7 +153,8 @@ export function ConfigEditorWidget(props: IProps) {
                             editorRef,
                             setResult,
                             setIsConfigValid,
-                            snippetMap
+                            snippetMap,
+                            coreType
                         )
                         checkForChanges()
                     }}
@@ -160,7 +165,8 @@ export function ConfigEditorWidget(props: IProps) {
                             editorRef,
                             setResult,
                             setIsConfigValid,
-                            snippetMap
+                            snippetMap,
+                            coreType
                         )
                     }}
                     options={{
