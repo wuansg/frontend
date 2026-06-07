@@ -12,11 +12,11 @@ import {
 } from '@mantine/core'
 import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
 import { generatePath, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 import { TbCode, TbPlus, TbRefresh } from 'react-icons/tb'
 import { useDisclosure } from '@mantine/hooks'
 import { useTranslation } from 'react-i18next'
 import { useField } from '@mantine/form'
+import { useState } from 'react'
 
 import { CONFIG_PROFILES_VIEW_MODE } from '@pages/dashboard/config-profiles/components/interfaces'
 import { QueryKeys, useCreateConfigProfile, useGetConfigProfiles } from '@shared/api/hooks'
@@ -33,7 +33,7 @@ interface IProps {
     viewMode: CONFIG_PROFILES_VIEW_MODE
 }
 
-type CoreType = 'XRAY' | 'SING_BOX'
+type CoreType = 'SING_BOX' | 'XRAY'
 
 const generateDefaultXrayConfig = () => {
     const randomNumber = Math.floor(Math.random() * 999999) + 1

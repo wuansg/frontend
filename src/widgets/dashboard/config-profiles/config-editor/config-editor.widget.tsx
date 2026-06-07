@@ -22,9 +22,9 @@ export function ConfigEditorWidget(props: IProps) {
 
     const { configProfile, snippets } = props
     const coreType =
-        ((configProfile as { coreType?: 'XRAY' | 'SING_BOX' }).coreType ?? 'XRAY') as
-            | 'XRAY'
+        ((configProfile as { coreType?: 'SING_BOX' | 'XRAY' }).coreType ?? 'XRAY') as
             | 'SING_BOX'
+            | 'XRAY'
 
     const [result, setResult] = useState('')
     const [isConfigValid, setIsConfigValid] = useState(true)

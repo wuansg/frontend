@@ -11,7 +11,15 @@ import { sToMs } from '@shared/utils/time-utils'
 
 import { createGetQueryHook, errorHandler } from '../../tsq-helpers'
 
-const ConfigProfileResponseSchema = z.object({ response: z.any() }).passthrough()
+const ConfigProfilesResponseSchema = z
+    .object({ response: z.custom<GetConfigProfilesCommand.Response['response']>() })
+    .passthrough()
+const ConfigProfileResponseSchema = z
+    .object({ response: z.custom<GetConfigProfileByUuidCommand.Response['response']>() })
+    .passthrough()
+const ComputedConfigProfileResponseSchema = z
+    .object({ response: z.custom<GetComputedConfigProfileByUuidCommand.Response['response']>() })
+    .passthrough()
 
 export const configProfilesQueryKeys = createQueryKeys('configProfiles', {
     getConfigProfiles: {
@@ -30,7 +38,7 @@ export const configProfilesQueryKeys = createQueryKeys('configProfiles', {
 
 export const useGetConfigProfiles = createGetQueryHook({
     endpoint: GetConfigProfilesCommand.TSQ_url,
-    responseSchema: ConfigProfileResponseSchema,
+    responseSchema: ConfigProfilesResponseSchema,
     getQueryKey: () => configProfilesQueryKeys.getConfigProfiles.queryKey,
     rQueryParams: {
         refetchOnMount: true,
@@ -65,7 +73,7 @@ export const useGetConfigProfileInbounds = createGetQueryHook({
 
 export const useGetComputedConfigProfile = createGetQueryHook({
     endpoint: GetComputedConfigProfileByUuidCommand.TSQ_url,
-    responseSchema: ConfigProfileResponseSchema,
+    responseSchema: ComputedConfigProfileResponseSchema,
     routeParamsSchema: GetComputedConfigProfileByUuidCommand.RequestSchema,
     getQueryKey: ({ route }) => configProfilesQueryKeys.getComputedConfigProfile(route!).queryKey,
     rQueryParams: {

@@ -38,7 +38,7 @@ export const ConfigValidationFeature = {
             string,
             GetSnippetsCommand.Response['response']['snippets'][number]['snippet']
         >,
-        coreType: 'XRAY' | 'SING_BOX' = 'XRAY'
+        coreType: 'SING_BOX' | 'XRAY' = 'XRAY'
     ) => {
         try {
             if (!editorRef.current) return
