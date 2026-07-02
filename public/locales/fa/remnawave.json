@@ -4,6 +4,7 @@
         "config": "Xray کانفیگ",
         "home": "خانه",
         "hosts": "هاست‌ها",
+        "hosts-statistics": "آمار هاست‌ها",
         "nodes": "نودها",
         "nodes-bandwidth-table": "جدول مصرف نودها",
         "nodes-statistics": "آمار نودها",
@@ -502,6 +503,12 @@
             "node": "نود",
             "traffic": "ترافیک",
             "3-days": "۳ روز"
+        }
+    },
+    "statistic-hosts": {
+        "component": {
+            "host": "هاست",
+            "shared": "مشترک"
         }
     },
     "get-expiration-text": {

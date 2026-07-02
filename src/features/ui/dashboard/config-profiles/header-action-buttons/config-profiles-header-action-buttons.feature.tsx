@@ -86,13 +86,83 @@ const generateDefaultSingBoxConfig = () => {
                 type: 'anytls',
                 tag: `AnyTLS_${randomNumber}`,
                 listen: '::',
-                listen_port: 443,
+                listen_port: 54321,
                 users: [],
                 tls: {
                     enabled: true,
-                    server_name: 'example.com',
-                    certificate_path: '/etc/remnawave/cert.pem',
-                    key_path: '/etc/remnawave/key.pem'
+                    certificate_path: '/root/cert/anytls/cert.pem',
+                    key_path: '/root/cert/anytls/cert.key'
+                }
+            },
+            {
+                type: 'vless',
+                tag: `VLESS_${randomNumber}`,
+                listen: '::',
+                listen_port: 54322,
+                users: []
+            },
+            {
+                type: 'vmess',
+                tag: `VMess_${randomNumber}`,
+                listen: '::',
+                listen_port: 54323,
+                users: []
+            },
+            {
+                type: 'trojan',
+                tag: `Trojan_${randomNumber}`,
+                listen: '::',
+                listen_port: 54324,
+                users: [],
+                tls: {
+                    enabled: true,
+                    certificate_path: '/root/cert/anytls/cert.pem',
+                    key_path: '/root/cert/anytls/cert.key'
+                }
+            },
+            {
+                type: 'shadowsocks',
+                tag: `Shadowsocks_${randomNumber}`,
+                listen: '::',
+                listen_port: 54325,
+                method: 'chacha20-ietf-poly1305',
+                users: []
+            },
+            {
+                type: 'hysteria2',
+                tag: `Hysteria2_${randomNumber}`,
+                listen: '::',
+                listen_port: 54326,
+                users: [],
+                tls: {
+                    enabled: true,
+                    certificate_path: '/root/cert/anytls/cert.pem',
+                    key_path: '/root/cert/anytls/cert.key'
+                }
+            },
+            {
+                type: 'tuic',
+                tag: `TUIC_${randomNumber}`,
+                listen: '::',
+                listen_port: 54327,
+                users: [],
+                congestion_control: 'bbr',
+                tls: {
+                    enabled: true,
+                    certificate_path: '/root/cert/anytls/cert.pem',
+                    key_path: '/root/cert/anytls/cert.key'
+                }
+            },
+            {
+                type: 'shadowtls',
+                tag: `ShadowTLS_${randomNumber}`,
+                listen: '::',
+                listen_port: 54328,
+                users: [],
+                version: 3,
+                handshake: {
+                    server: 'www.cloudflare.com',
+                    server_port: 443
                 }
             }
         ],

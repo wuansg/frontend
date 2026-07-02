@@ -27,6 +27,7 @@ import { ExternalSquadsPageConnector } from '@pages/dashboard/external-squads/co
 import { NodesMetricsPageConnector } from '@pages/dashboard/nodes-metrics/ui/connectors'
 import { SrhInspectorPageConnector } from '@pages/dashboard/srh-inspector/ui/connectors'
 import { StatisticNodesConnector } from '@pages/dashboard/statistic-nodes/connectors'
+import { StatisticHostsConnector } from '@pages/dashboard/statistic-hosts/connectors'
 import { Oauth2CallbackPage } from '@pages/auth/oauth2-callback/oauth2-callback.page'
 import { HostsPageConnector } from '@pages/dashboard/hosts/ui/connectors'
 import { UsersPageConnector } from '@pages/dashboard/users/ui/connectors'
@@ -71,6 +72,10 @@ const router = createBrowserRouter(
                         <Route
                             element={<HostsPageConnector />}
                             path={ROUTES.DASHBOARD.MANAGEMENT.HOSTS}
+                        />
+                        <Route
+                            element={<StatisticHostsConnector />}
+                            path={ROUTES.DASHBOARD.MANAGEMENT.HOSTS_STATS}
                         />
                         <Route
                             element={<NodesPageConnector />}

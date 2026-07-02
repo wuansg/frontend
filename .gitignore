@@ -68,6 +68,7 @@ web_modules/
 
 # Output of 'npm pack'
 *.tgz
+!vendor/remnawave-backend-contract-2.7.2.tgz
 
 # Yarn Integrity file
 .yarn-integrity

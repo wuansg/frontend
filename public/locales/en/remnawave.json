@@ -4,6 +4,7 @@
         "config": "Xray Config",
         "home": "Home",
         "hosts": "Hosts",
+        "hosts-statistics": "Host Statistics",
         "nodes": "Nodes",
         "nodes-bandwidth-table": "Bandwidth",
         "nodes-statistics": "Statistics",
@@ -502,6 +503,12 @@
             "node": "Node",
             "traffic": "Traffic",
             "3-days": "3 days"
+        }
+    },
+    "statistic-hosts": {
+        "component": {
+            "host": "Host",
+            "shared": "Shared"
         }
     },
     "get-expiration-text": {

@@ -1,6 +1,7 @@
 import {
     GetLegacyStatsNodeUserUsageCommand,
     GetLegacyStatsUserUsageCommand,
+    GetStatsHostsUsageCommand,
     GetStatsNodesUsageCommand,
     GetStatsNodeUsersUsageCommand,
     GetStatsUserUsageCommand
@@ -13,6 +14,9 @@ import { createGetQueryHook, errorHandler } from '../../tsq-helpers'
 
 export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
+        queryKey: [filters]
+    }),
+    getStatsHostsUsageCommand: (filters: GetStatsHostsUsageCommand.RequestQuery) => ({
         queryKey: [filters]
     }),
     getStatsUserUsageCommand: (
@@ -47,6 +51,17 @@ export const useGetStatsNodesUsage = createGetQueryHook({
         staleTime: sToMs(60)
     },
     errorHandler: (error) => errorHandler(error, 'Get Nodes Usage By Range')
+})
+
+export const useGetStatsHostsUsage = createGetQueryHook({
+    endpoint: GetStatsHostsUsageCommand.TSQ_url,
+    responseSchema: GetStatsHostsUsageCommand.ResponseSchema,
+    requestQuerySchema: GetStatsHostsUsageCommand.RequestQuerySchema,
+    getQueryKey: ({ query }) => bandwidthStatsQueryKeys.getStatsHostsUsageCommand(query!).queryKey,
+    rQueryParams: {
+        staleTime: sToMs(60)
+    },
+    errorHandler: (error) => errorHandler(error, 'Get Hosts Usage By Range')
 })
 
 export const useGetStatsUserUsage = createGetQueryHook({

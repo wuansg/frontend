@@ -4,6 +4,7 @@
         "config": "Xray 配置",
         "home": "首页",
         "hosts": "主机",
+        "hosts-statistics": "Host 统计",
         "nodes": "节点",
         "nodes-bandwidth-table": "流量使用情况",
         "nodes-statistics": "统计数据",
@@ -502,6 +503,12 @@
             "node": "节点",
             "traffic": "流量",
             "3-days": "3 天"
+        }
+    },
+    "statistic-hosts": {
+        "component": {
+            "host": "Host",
+            "shared": "共享"
         }
     },
     "get-expiration-text": {

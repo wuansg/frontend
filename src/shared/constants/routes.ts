@@ -13,6 +13,7 @@ export const ROUTES = {
             ROOT: '/dashboard/management',
             USERS: '/dashboard/management/users',
             HOSTS: '/dashboard/management/hosts',
+            HOSTS_STATS: '/dashboard/management/stats/hosts',
             NODES: '/dashboard/management/nodes',
             NODES_BANDWIDTH_TABLE: '/dashboard/management/bandwidth-table',
             NODES_STATS: '/dashboard/management/stats/nodes',

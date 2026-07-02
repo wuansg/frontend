@@ -4,6 +4,7 @@
         "config": "Конфиг",
         "home": "Главная",
         "hosts": "Хосты",
+        "hosts-statistics": "Статистика хостов",
         "nodes": "Ноды",
         "nodes-bandwidth-table": "Расход трафика",
         "nodes-statistics": "Статистика",
@@ -502,6 +503,12 @@
             "node": "Нода",
             "traffic": "Трафик",
             "3-days": "3 дня"
+        }
+    },
+    "statistic-hosts": {
+        "component": {
+            "host": "Хост",
+            "shared": "Общий"
         }
     },
     "get-expiration-text": {

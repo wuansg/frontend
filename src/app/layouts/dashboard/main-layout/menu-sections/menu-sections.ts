@@ -83,7 +83,21 @@ export const useMenuSections = (): MenuItem[] => {
                     name: t('constants.hosts'),
                     href: ROUTES.DASHBOARD.MANAGEMENT.HOSTS,
                     icon: PiListChecks,
-                    id: 'hosts'
+                    id: 'hosts',
+                    dropdownItems: [
+                        {
+                            name: t('constants.management'),
+                            href: ROUTES.DASHBOARD.MANAGEMENT.HOSTS,
+                            icon: PiListChecks,
+                            id: 'hosts-management'
+                        },
+                        {
+                            name: t('constants.hosts-statistics'),
+                            href: ROUTES.DASHBOARD.MANAGEMENT.HOSTS_STATS,
+                            icon: HiChartPie,
+                            id: 'hosts-statistics'
+                        }
+                    ]
                 },
                 {
                     name: t('constants.nodes'),
