@@ -7,10 +7,24 @@ import {
     GetStatsUserUsageCommand
 } from '@remnawave/backend-contract'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { z } from 'zod'
 
 import { sToMs } from '@shared/utils/time-utils'
 
 import { createGetQueryHook, errorHandler } from '../../tsq-helpers'
+
+const GetStatsUserHostsUsageRequestSchema = z.object({
+    uuid: z.string().uuid()
+})
+
+const GetStatsUserHostsUsageRequestQuerySchema = z.object({
+    start: z.string().date(),
+    end: z.string().date(),
+    topHostsLimit: z.coerce.number().min(1).default(20)
+})
+
+type GetStatsUserHostsUsageRequest = z.infer<typeof GetStatsUserHostsUsageRequestSchema>
+type GetStatsUserHostsUsageRequestQuery = z.infer<typeof GetStatsUserHostsUsageRequestQuerySchema>
 
 export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
@@ -21,6 +35,11 @@ export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     }),
     getStatsUserUsageCommand: (
         query: GetStatsUserUsageCommand.Request & GetStatsUserUsageCommand.RequestQuery
+    ) => ({
+        queryKey: [query]
+    }),
+    getStatsUserHostsUsageCommand: (
+        query: GetStatsUserHostsUsageRequest & GetStatsUserHostsUsageRequestQuery
     ) => ({
         queryKey: [query]
     }),
@@ -74,6 +93,19 @@ export const useGetStatsUserUsage = createGetQueryHook({
         staleTime: sToMs(30)
     },
     errorHandler: (error) => errorHandler(error, 'Get User Usage By Range')
+})
+
+export const useGetStatsUserHostsUsage = createGetQueryHook({
+    endpoint: '/api/bandwidth-stats/users/:uuid/hosts',
+    responseSchema: GetStatsHostsUsageCommand.ResponseSchema,
+    requestQuerySchema: GetStatsUserHostsUsageRequestQuerySchema,
+    routeParamsSchema: GetStatsUserHostsUsageRequestSchema,
+    getQueryKey: ({ route, query }) =>
+        bandwidthStatsQueryKeys.getStatsUserHostsUsageCommand({ ...route!, ...query! }).queryKey,
+    rQueryParams: {
+        staleTime: sToMs(30)
+    },
+    errorHandler: (error) => errorHandler(error, 'Get User Hosts Usage By Range')
 })
 
 export const useGetStatsNodeUsersUsage = createGetQueryHook({
