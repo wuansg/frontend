@@ -291,7 +291,7 @@ export const UserUsageModalWidget = (props: IProps) => {
                             isLoading={isLoading}
                             items={userHostsUsageStats?.topHosts?.map((host) => ({
                                 color: host.color,
-                                name: `${host.remark} (${host.address}:${host.port})`,
+                                name: host.remark,
                                 total: host.total
                             }))}
                             maxHeight={230}
@@ -310,6 +310,7 @@ export const UserUsageModalWidget = (props: IProps) => {
                         categories={userHostsUsageStats?.categories}
                         isLoading={isLoading}
                         series={userHostsUsageStats?.series}
+                        showAddress={false}
                     />
                 )}
             </Stack>

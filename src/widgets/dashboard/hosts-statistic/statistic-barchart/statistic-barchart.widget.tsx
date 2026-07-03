@@ -27,10 +27,11 @@ interface IProps {
     categories: string[] | undefined
     isLoading: boolean
     series: GetStatsHostsUsageCommand.Response['response']['series'] | undefined
+    showAddress?: boolean
 }
 
 export const HostsStatisticBarchartWidget = (props: IProps) => {
-    const { categories = [], series = [], isLoading } = props
+    const { categories = [], series = [], isLoading, showAddress = true } = props
 
     const { t, i18n } = useTranslation()
 
@@ -57,7 +58,7 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
 
     const getHostName = (
         host: GetStatsHostsUsageCommand.Response['response']['series'][number]
-    ) => `${host.remark} (${host.address}:${host.port})`
+    ) => (showAddress ? `${host.remark} (${host.address}:${host.port})` : host.remark)
 
     const handleBarClick = (category: string, pointIndex: number) => {
         if (!category) return
