@@ -46,6 +46,15 @@ const DEFAULT_DATE_RANGE = {
     end: dayjs().format('YYYY-MM-DD')
 }
 
+const getHostUsageName = (host: {
+    hosts: { remark: string }[]
+    isShared: boolean
+    remark: string
+}) =>
+    host.isShared && host.hosts.length > 1
+        ? host.hosts.map((item) => item.remark.trim()).join(' + ')
+        : host.remark
+
 export const UserUsageModalWidget = (props: IProps) => {
     const { userUuid, opened, onClose } = props
     const { t, i18n } = useTranslation()
@@ -291,8 +300,11 @@ export const UserUsageModalWidget = (props: IProps) => {
                             isLoading={isLoading}
                             items={userHostsUsageStats?.topHosts?.map((host) => ({
                                 color: host.color,
-                                name: host.remark,
-                                total: host.total
+                                name: host.isShared
+                                    ? `${getHostUsageName(host)} (${t('statistic-hosts.component.shared')})`
+                                    : host.remark,
+                                total: host.total,
+                                uuid: host.groupKey
                             }))}
                             maxHeight={230}
                         />

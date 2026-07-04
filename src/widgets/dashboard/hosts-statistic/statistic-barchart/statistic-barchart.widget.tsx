@@ -12,7 +12,6 @@ import {
     Table,
     Text
 } from '@mantine/core'
-import { GetStatsHostsUsageCommand } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
 import { TbChartBar } from 'react-icons/tb'
 import { Chart } from '@highcharts/react'
@@ -20,13 +19,14 @@ import { PiEmpty } from 'react-icons/pi'
 import { modals } from '@mantine/modals'
 
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { GetStatsHostsUsageResponse } from '@shared/api/hooks'
 import { prettyBytesToAnyUtil } from '@shared/utils/bytes'
 import { formatTimeUtil } from '@shared/utils/time-utils'
 
 interface IProps {
     categories: string[] | undefined
     isLoading: boolean
-    series: GetStatsHostsUsageCommand.Response['response']['series'] | undefined
+    series: GetStatsHostsUsageResponse['response']['series'] | undefined
     showAddress?: boolean
 }
 
@@ -56,9 +56,18 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
         )
     }
 
-    const getHostName = (
-        host: GetStatsHostsUsageCommand.Response['response']['series'][number]
-    ) => (showAddress ? `${host.remark} (${host.address}:${host.port})` : host.remark)
+    const getHostName = (host: GetStatsHostsUsageResponse['response']['series'][number]) => {
+        const name =
+            host.isShared && host.hosts.length > 1
+                ? host.hosts.map((item) => item.remark.trim()).join(' + ')
+                : host.remark
+
+        if (!showAddress || host.isShared) {
+            return name
+        }
+
+        return `${name} (${host.address}:${host.port})`
+    }
 
     const handleBarClick = (category: string, pointIndex: number) => {
         if (!category) return
@@ -66,6 +75,7 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
         const allDayData = series
             .map((s) => ({
                 color: s.color,
+                groupKey: s.groupKey,
                 name: getHostName(s),
                 value: s.data[pointIndex] || 0,
                 isShared: s.isShared
@@ -109,7 +119,7 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
                             </Table.Thead>
                             <Table.Tbody>
                                 {allDayData.map((entry) => (
-                                    <Table.Tr key={entry.name}>
+                                    <Table.Tr key={entry.groupKey}>
                                         <Table.Td>
                                             <Group gap={8}>
                                                 <Box

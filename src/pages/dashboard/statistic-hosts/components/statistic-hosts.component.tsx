@@ -33,6 +33,15 @@ const DEFAULT_DATE_RANGE = {
     end: dayjs().format('YYYY-MM-DD')
 }
 
+const getHostUsageName = (host: {
+    hosts: { remark: string }[]
+    isShared: boolean
+    remark: string
+}) =>
+    host.isShared && host.hosts.length > 1
+        ? host.hosts.map((item) => item.remark.trim()).join(' + ')
+        : host.remark
+
 export const StatisticHostsPage = () => {
     const { t, i18n } = useTranslation()
 
@@ -203,10 +212,10 @@ export const StatisticHostsPage = () => {
                         items={hostsStats?.topHosts?.map((host) => ({
                             color: host.color,
                             name: host.isShared
-                                ? `${host.remark} (${t('statistic-hosts.component.shared')})`
+                                ? `${getHostUsageName(host)} (${t('statistic-hosts.component.shared')})`
                                 : host.remark,
                             total: host.total,
-                            uuid: host.uuid
+                            uuid: host.groupKey
                         }))}
                         maxHeight={230}
                     />

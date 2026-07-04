@@ -38,6 +38,43 @@ type GetStatsUserHostsUsageRequestQuery = z.infer<typeof GetStatsUserHostsUsageR
 type GetStatsHostUsersUsageRequest = z.infer<typeof GetStatsHostUsersUsageRequestSchema>
 type GetStatsHostUsersUsageRequestQuery = z.infer<typeof GetStatsHostUsersUsageRequestQuerySchema>
 
+const HostUsageMemberSchema = z.object({
+    uuid: z.string().uuid(),
+    remark: z.string(),
+    address: z.string(),
+    port: z.number()
+})
+
+const HostUsageItemSchema = z.object({
+    uuid: z.string().uuid(),
+    groupKey: z.string(),
+    nodeUuid: z.string().uuid(),
+    inboundTag: z.string(),
+    color: z.string(),
+    remark: z.string(),
+    address: z.string(),
+    port: z.number(),
+    tag: z.string().nullable(),
+    isShared: z.boolean(),
+    hosts: z.array(HostUsageMemberSchema),
+    total: z.number()
+})
+
+export const GetStatsHostsUsageResponseSchema = z.object({
+    response: z.object({
+        categories: z.array(z.string()),
+        sparklineData: z.array(z.number()),
+        topHosts: z.array(HostUsageItemSchema),
+        series: z.array(
+            HostUsageItemSchema.extend({
+                data: z.array(z.number())
+            })
+        )
+    })
+})
+
+export type GetStatsHostsUsageResponse = z.infer<typeof GetStatsHostsUsageResponseSchema>
+
 export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
         queryKey: [filters]
@@ -91,7 +128,7 @@ export const useGetStatsNodesUsage = createGetQueryHook({
 
 export const useGetStatsHostsUsage = createGetQueryHook({
     endpoint: GetStatsHostsUsageCommand.TSQ_url,
-    responseSchema: GetStatsHostsUsageCommand.ResponseSchema,
+    responseSchema: GetStatsHostsUsageResponseSchema,
     requestQuerySchema: GetStatsHostsUsageCommand.RequestQuerySchema,
     getQueryKey: ({ query }) => bandwidthStatsQueryKeys.getStatsHostsUsageCommand(query!).queryKey,
     rQueryParams: {
@@ -114,7 +151,7 @@ export const useGetStatsUserUsage = createGetQueryHook({
 
 export const useGetStatsUserHostsUsage = createGetQueryHook({
     endpoint: '/api/bandwidth-stats/users/:uuid/hosts',
-    responseSchema: GetStatsHostsUsageCommand.ResponseSchema,
+    responseSchema: GetStatsHostsUsageResponseSchema,
     requestQuerySchema: GetStatsUserHostsUsageRequestQuerySchema,
     routeParamsSchema: GetStatsUserHostsUsageRequestSchema,
     getQueryKey: ({ route, query }) =>
