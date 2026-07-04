@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 
 import { MultiSelectHostsFeature } from '@features/dashboard/hosts/multi-select-hosts/multi-select-hosts.feature'
+import { HostUsersUsageDrawer } from '@widgets/dashboard/hosts/host-users-usage-statistic'
 import { CreateHostModalWidget } from '@widgets/dashboard/hosts/create-host-modal'
 import { HostsSpotlightWidget } from '@widgets/dashboard/hosts/hosts-spotlight'
 import { EditHostModalWidget } from '@widgets/dashboard/hosts/edit-host-modal'
@@ -38,6 +39,7 @@ export default function HostsPageComponent(props: IProps) {
 
             <HostsSpotlightWidget configProfiles={configProfiles ?? []} hosts={hosts ?? []} />
 
+            <HostUsersUsageDrawer key="host-users-usage-drawer" />
             <EditHostModalWidget key="edit-host-modal" />
             <CreateHostModalWidget key="create-host-modal" />
             <MultiSelectHostsFeature

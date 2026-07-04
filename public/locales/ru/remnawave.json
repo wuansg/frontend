@@ -2137,5 +2137,12 @@
             "history": "История",
             "providers": "Провайдеры"
         }
+    },
+    "host-users-usage-drawer": {
+        "widget": {
+            "user-traffic-statistics": "Статистика трафика пользователей хоста",
+            "total-traffic": "Всего трафика",
+            "no-data-available": "Нет данных"
+        }
     }
 }

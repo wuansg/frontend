@@ -2137,5 +2137,12 @@
             "history": "历史",
             "providers": "服务商"
         }
+    },
+    "host-users-usage-drawer": {
+        "widget": {
+            "user-traffic-statistics": "Host 用户流量统计",
+            "total-traffic": "总流量",
+            "no-data-available": "暂无数据"
+        }
     }
 }

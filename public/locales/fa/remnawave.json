@@ -2137,5 +2137,12 @@
             "history": "History",
             "providers": "Providers"
         }
+    },
+    "host-users-usage-drawer": {
+        "widget": {
+            "user-traffic-statistics": "آمار ترافیک کاربران هاست",
+            "total-traffic": "کل ترافیک",
+            "no-data-available": "داده‌ای موجود نیست"
+        }
     }
 }

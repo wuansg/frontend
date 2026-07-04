@@ -10,6 +10,7 @@ import { CSS } from '@dnd-kit/utilities'
 import ColorHash from 'color-hash'
 import cx from 'clsx'
 
+import { GetHostUsersUsageFeature } from '@features/ui/dashboard/hosts/get-host-users-usage'
 import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
 import { resolveCountryCode } from '@shared/utils/misc/resolve-country-code'
 import { SEARCH_PARAMS } from '@shared/constants/search-params'
@@ -136,6 +137,8 @@ export function HostCardWidget(props: IProps) {
                                 </Badge>
                             )}
                         </Group>
+
+                        <GetHostUsersUsageFeature hostRemark={item.remark} hostUuid={item.uuid} />
 
                         {!isHostActive && (
                             <ActionIcon
@@ -322,6 +325,11 @@ export function HostCardWidget(props: IProps) {
                         </Group>
 
                         <Group gap="md" style={{ flexShrink: 0 }} wrap="nowrap">
+                            <GetHostUsersUsageFeature
+                                hostRemark={item.remark}
+                                hostUuid={item.uuid}
+                            />
+
                             {item.nodes.length > 0 &&
                                 item.nodes.slice(0, 3).map((nodeId) => {
                                     const node = nodes.find((node) => node.uuid === nodeId)
