@@ -1,10 +1,10 @@
+import { notifications } from '@mantine/notifications'
 import {
     CreateSubscriptionTemplateCommand,
     DeleteSubscriptionTemplateCommand,
     ReorderSubscriptionTemplateCommand,
     UpdateSubscriptionTemplateCommand
 } from '@remnawave/backend-contract'
-import { notifications } from '@mantine/notifications'
 
 import { createMutationHook } from '../../tsq-helpers'
 

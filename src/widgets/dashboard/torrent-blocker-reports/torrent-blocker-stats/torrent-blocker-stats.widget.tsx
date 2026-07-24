@@ -1,16 +1,17 @@
-import { TbClockHour2, TbFileReport, TbServer, TbUsers } from 'react-icons/tb'
-import { useTranslation } from 'react-i18next'
 import { SimpleGrid } from '@mantine/core'
 import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
+import { TbClockHour2, TbFileReport, TbServer, TbUsers } from 'react-icons/tb'
 
-import { IMetricCardProps, MetricCardShared } from '@shared/ui/metrics/metric-card'
-import { useUserModalStoreActions } from '@entities/dashboard/user-modal-store'
-import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { useGetTorrentBlockerStats } from '@shared/api/hooks'
 import { CountryFlag } from '@shared/ui/get-country-flag'
+import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
+import { IMetricCardProps, MetricCardShared } from '@shared/ui/metrics/metric-card'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { formatInt } from '@shared/utils/misc'
+
+import { useUserModalStoreActions } from '@entities/dashboard/user-modal-store'
 
 export function TorrentBlockerStatsWidget() {
     const { t } = useTranslation()

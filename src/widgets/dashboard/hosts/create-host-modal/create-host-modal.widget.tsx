@@ -1,24 +1,26 @@
+import { Drawer } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import { CreateHostCommand, SECURITY_LAYERS } from '@remnawave/backend-contract'
 import { zodResolver } from 'mantine-form-zod-resolver'
-import { notifications } from '@mantine/notifications'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiListChecks } from 'react-icons/pi'
-import { useForm } from '@mantine/form'
-import { Drawer } from '@mantine/core'
-import { useState } from 'react'
 
+import { queryClient } from '@shared/api'
 import {
     QueryKeys,
     useCreateHost,
     useGetConfigProfiles,
+    useGetHostTags,
     useGetInternalSquads,
     useGetNodes,
     useGetSubscriptionTemplates
 } from '@shared/api/hooks'
-import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { BaseHostForm } from '@shared/ui/forms/hosts/base-host-form'
-import { queryClient } from '@shared/api'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+
+import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
 
 export const CreateHostModalWidget = () => {
     const { t } = useTranslation()
@@ -30,6 +32,7 @@ export const CreateHostModalWidget = () => {
     const { data: nodes } = useGetNodes()
     const { data: internalSquads } = useGetInternalSquads()
     const { data: templates } = useGetSubscriptionTemplates()
+    const { data: hostTags } = useGetHostTags()
 
     const [advancedOpened, setAdvancedOpened] = useState(false)
 
@@ -72,6 +75,12 @@ export const CreateHostModalWidget = () => {
                 await queryClient.refetchQueries({
                     queryKey: QueryKeys.hosts.getAllTags.queryKey
                 })
+
+                notifications.show({
+                    title: 'Success',
+                    message: 'Host created successfully',
+                    color: 'teal'
+                })
             }
         }
     })
@@ -87,19 +96,19 @@ export const CreateHostModalWidget = () => {
             return null
         }
 
-        let xHttpExtraParams
+        let xhttpExtraParams
         let muxParams
         let sockoptParams
         let finalMask
 
         try {
-            if (values.xHttpExtraParams === '') {
-                xHttpExtraParams = null
+            if (values.xhttpExtraParams === '') {
+                xhttpExtraParams = null
             } else {
-                xHttpExtraParams = JSON.parse(values.xHttpExtraParams as unknown as string)
+                xhttpExtraParams = JSON.parse(values.xhttpExtraParams as unknown as string)
             }
         } catch {
-            xHttpExtraParams = null
+            xhttpExtraParams = null
             // silence
         }
 
@@ -142,7 +151,7 @@ export const CreateHostModalWidget = () => {
                 isDisabled: !values.isDisabled,
                 sockoptParams,
                 muxParams,
-                xHttpExtraParams,
+                xhttpExtraParams,
                 finalMask,
                 inbound: {
                     configProfileInboundUuid: values.inbound.configProfileInboundUuid,
@@ -194,6 +203,7 @@ export const CreateHostModalWidget = () => {
                 configProfiles={configProfiles?.configProfiles ?? []}
                 form={form}
                 handleSubmit={handleSubmit}
+                hostTags={hostTags?.tags ?? []}
                 internalSquads={internalSquads?.internalSquads ?? []}
                 isSubmitting={isCreateHostPending}
                 nodes={nodes!}

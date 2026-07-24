@@ -10,15 +10,16 @@ import {
     Tooltip,
     Transition
 } from '@mantine/core'
-import { TbFlame, TbRefresh } from 'react-icons/tb'
 import { useTranslation } from 'react-i18next'
+import { TbFlame, TbRefresh } from 'react-icons/tb'
 import { Virtuoso } from 'react-virtuoso'
 
-import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { useGetTorrentBlockerReports } from '@shared/api/hooks'
 import { EmptyPageLayout } from '@shared/ui/layouts/empty-page'
 import { LoaderModalShared } from '@shared/ui/loader-modal'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+
+import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
 
 import { UserTorrentBlockerReportItem } from './user-torrent-blocker-report-item'
 import classes from './user-torrent-blocker-reports.module.css'

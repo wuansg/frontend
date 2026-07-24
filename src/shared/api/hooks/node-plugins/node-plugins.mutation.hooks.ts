@@ -1,3 +1,4 @@
+import { notifications } from '@mantine/notifications'
 import {
     CloneNodePluginCommand,
     CreateNodePluginCommand,
@@ -7,7 +8,6 @@ import {
     TruncateTorrentBlockerReportsCommand,
     UpdateNodePluginCommand
 } from '@remnawave/backend-contract'
-import { notifications } from '@mantine/notifications'
 
 import { createMutationHook } from '../../tsq-helpers'
 

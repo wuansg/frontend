@@ -1,3 +1,4 @@
+import { notifications } from '@mantine/notifications'
 import {
     CreateInfraBillingHistoryRecordCommand,
     CreateInfraBillingNodeCommand,
@@ -8,7 +9,6 @@ import {
     UpdateInfraBillingNodeCommand,
     UpdateInfraProviderCommand
 } from '@remnawave/backend-contract'
-import { notifications } from '@mantine/notifications'
 
 import { createMutationHook } from '../../tsq-helpers'
 

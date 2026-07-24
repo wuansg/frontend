@@ -1,17 +1,17 @@
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
     GetLegacyStatsNodeUserUsageCommand,
     GetLegacyStatsUserUsageCommand,
-    GetStatsHostsUsageCommand,
     GetStatsNodesUsageCommand,
+    GetStatsNodesUsersUsageCommand,
     GetStatsNodeUsersUsageCommand,
     GetStatsUserUsageCommand
 } from '@remnawave/backend-contract'
-import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { z } from 'zod'
 
 import { sToMs } from '@shared/utils/time-utils'
 
-import { createGetQueryHook, errorHandler } from '../../tsq-helpers'
+import { createBodyQueryHook, createGetQueryHook, errorHandler } from '../../tsq-helpers'
 
 const GetStatsUserHostsUsageRequestSchema = z.object({
     uuid: z.string().uuid()
@@ -37,6 +37,7 @@ type GetStatsUserHostsUsageRequest = z.infer<typeof GetStatsUserHostsUsageReques
 type GetStatsUserHostsUsageRequestQuery = z.infer<typeof GetStatsUserHostsUsageRequestQuerySchema>
 type GetStatsHostUsersUsageRequest = z.infer<typeof GetStatsHostUsersUsageRequestSchema>
 type GetStatsHostUsersUsageRequestQuery = z.infer<typeof GetStatsHostUsersUsageRequestQuerySchema>
+type GetStatsHostsUsageRequestQuery = z.infer<typeof GetStatsUserHostsUsageRequestQuerySchema>
 
 const HostUsageMemberSchema = z.object({
     uuid: z.string().uuid(),
@@ -79,7 +80,7 @@ export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
         queryKey: [filters]
     }),
-    getStatsHostsUsageCommand: (filters: GetStatsHostsUsageCommand.RequestQuery) => ({
+    getStatsHostsUsageCommand: (filters: GetStatsHostsUsageRequestQuery) => ({
         queryKey: [filters]
     }),
     getStatsUserUsageCommand: (
@@ -101,6 +102,11 @@ export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
         query: GetStatsNodeUsersUsageCommand.Request & GetStatsNodeUsersUsageCommand.RequestQuery
     ) => ({
         queryKey: [query]
+    }),
+    getStatsNodesUsersUsageCommand: (
+        params: GetStatsNodesUsersUsageCommand.Request & GetStatsNodesUsersUsageCommand.RequestQuery
+    ) => ({
+        queryKey: [params]
     }),
     getLegacyStatsUserUsageCommand: (
         query: GetLegacyStatsUserUsageCommand.Request & GetLegacyStatsUserUsageCommand.RequestQuery
@@ -127,9 +133,9 @@ export const useGetStatsNodesUsage = createGetQueryHook({
 })
 
 export const useGetStatsHostsUsage = createGetQueryHook({
-    endpoint: GetStatsHostsUsageCommand.TSQ_url,
+    endpoint: '/api/bandwidth-stats/hosts',
     responseSchema: GetStatsHostsUsageResponseSchema,
-    requestQuerySchema: GetStatsHostsUsageCommand.RequestQuerySchema,
+    requestQuerySchema: GetStatsUserHostsUsageRequestQuerySchema,
     getQueryKey: ({ query }) => bandwidthStatsQueryKeys.getStatsHostsUsageCommand(query!).queryKey,
     rQueryParams: {
         staleTime: sToMs(60)
@@ -185,6 +191,20 @@ export const useGetStatsNodeUsersUsage = createGetQueryHook({
         staleTime: sToMs(60)
     },
     errorHandler: (error) => errorHandler(error, 'Get Node Users Usage By Range')
+})
+
+export const useGetStatsNodesUsersUsage = createBodyQueryHook({
+    endpoint: GetStatsNodesUsersUsageCommand.TSQ_url,
+    requestMethod: GetStatsNodesUsersUsageCommand.endpointDetails.REQUEST_METHOD,
+    responseSchema: GetStatsNodesUsersUsageCommand.ResponseSchema,
+    requestQuerySchema: GetStatsNodesUsersUsageCommand.RequestQuerySchema,
+    bodySchema: GetStatsNodesUsersUsageCommand.RequestSchema,
+    getQueryKey: ({ query, body }) =>
+        bandwidthStatsQueryKeys.getStatsNodesUsersUsageCommand({ ...query!, ...body! }).queryKey,
+    rQueryParams: {
+        staleTime: sToMs(60)
+    },
+    errorHandler: (error) => errorHandler(error, 'Get Nodes Users Usage By Range')
 })
 
 export const useGetLegacyStatsNodeUserUsage = createGetQueryHook({

@@ -1,7 +1,7 @@
 import { Button, CopyButton, Group, Skeleton } from '@mantine/core'
 import { useTranslation } from 'react-i18next'
-import { SiDocker } from 'react-icons/si'
 import { PiCheck } from 'react-icons/pi'
+import { SiDocker } from 'react-icons/si'
 
 import { useGetPubKey } from '@shared/api/hooks'
 

@@ -1,3 +1,4 @@
+import { notifications } from '@mantine/notifications'
 import {
     BulkNodesActionsCommand,
     BulkNodesProfileModificationCommand,
@@ -12,7 +13,6 @@ import {
     RestartNodeCommand,
     UpdateNodeCommand
 } from '@remnawave/backend-contract'
-import { notifications } from '@mantine/notifications'
 
 import { createMutationHook } from '../../tsq-helpers'
 
@@ -180,6 +180,7 @@ export const useRestartNode = createMutationHook({
     endpoint: RestartNodeCommand.TSQ_url,
     responseSchema: RestartNodeCommand.ResponseSchema,
     routeParamsSchema: RestartNodeCommand.RequestSchema,
+    bodySchema: RestartNodeCommand.RequestBodySchema,
     requestMethod: RestartNodeCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {

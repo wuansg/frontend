@@ -1,10 +1,11 @@
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
     GetAllNodesCommand,
     GetAllNodesTagsCommand,
+    GetNodeMetadataCommand,
     GetOneNodeCommand,
     GetPubKeyCommand
 } from '@remnawave/backend-contract'
-import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { keepPreviousData } from '@tanstack/react-query'
 
 import { sToMs } from '@shared/utils/time-utils'
@@ -23,7 +24,10 @@ export const nodesQueryKeys = createQueryKeys('nodes', {
     },
     getAllTags: {
         queryKey: null
-    }
+    },
+    getNodeMetadata: (route: GetNodeMetadataCommand.RequestParams) => ({
+        queryKey: [route]
+    })
 })
 
 export const useGetNodes = createGetQueryHook({
@@ -71,4 +75,14 @@ export const useGetNodesTags = createGetQueryHook({
         staleTime: 0
     },
     errorHandler: (error) => errorHandler(error, 'Get All Nodes Tags')
+})
+
+export const useGetNodeMetadata = createGetQueryHook({
+    endpoint: GetNodeMetadataCommand.TSQ_url,
+    responseSchema: GetNodeMetadataCommand.ResponseSchema,
+    routeParamsSchema: GetNodeMetadataCommand.RequestParamsSchema,
+    getQueryKey: ({ route }) => nodesQueryKeys.getNodeMetadata(route!).queryKey,
+    rQueryParams: {
+        staleTime: sToMs(60)
+    }
 })

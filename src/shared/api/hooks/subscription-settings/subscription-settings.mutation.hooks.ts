@@ -1,5 +1,5 @@
-import { UpdateSubscriptionSettingsCommand } from '@remnawave/backend-contract'
 import { notifications } from '@mantine/notifications'
+import { UpdateSubscriptionSettingsCommand } from '@remnawave/backend-contract'
 
 import { createMutationHook } from '../../tsq-helpers'
 

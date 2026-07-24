@@ -47,7 +47,7 @@ export interface ExplorerProgress {
 
 export type ExplorerPhase = 'completed' | 'failed' | 'idle' | 'running'
 
-const MAX_CONCURRENT = 5
+const MAX_CONCURRENT = 10
 const POLL_INTERVAL = 1000
 
 function delay(ms: number, signal: AbortSignal): Promise<void> {

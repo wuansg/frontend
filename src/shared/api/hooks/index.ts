@@ -5,11 +5,11 @@ export * from './auth/auth.hooks'
 export * from './auth/auth.query.hooks'
 
 export * from './bandwidth-stats/bandwidth-stats.query.hooks'
+
 export * from './config-profiles/config-profiles.mutation.hooks'
-
 export * from './config-profiles/config-profiles.query.hooks'
-export * from './external-squads/external-squads.mutation.hooks'
 
+export * from './external-squads/external-squads.mutation.hooks'
 export * from './external-squads/external-squads.query.hooks'
 
 export * from './hosts/hosts.mutation.hooks'
@@ -53,7 +53,6 @@ export * from './subscription-settings/subscription-settings.query.hooks'
 export * from './subscription-template/subscription-template.mutation.hooks'
 export * from './subscription-template/subscription-template.query.hooks'
 
-export * from './system/system.mutation.hooks'
 export * from './system/system.query.hooks'
 
 export * from './users/users.mutation.hooks'

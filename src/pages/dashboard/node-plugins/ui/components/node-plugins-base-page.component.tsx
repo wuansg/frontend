@@ -1,14 +1,14 @@
+import { NodePluginsHeaderActionButtonsFeature } from '@features/ui/dashboard/node-plugins/header-action-buttons'
 import { GetAllNodesCommand, GetNodePluginsCommand } from '@remnawave/backend-contract'
-import { useTranslation } from 'react-i18next'
-import { TbPackage } from 'react-icons/tb'
-import { motion } from 'motion/react'
-
 import { NodePluginExecutorDrawer } from '@widgets/dashboard/node-plugins/node-plugin-executor/node-plugin-executor.drawer'
 import { NodePluginsGridWidget } from '@widgets/dashboard/node-plugins/node-plugins-grid/node-plugins-grid.widget'
-import { NodePluginsHeaderActionButtonsFeature } from '@features/ui/dashboard/node-plugins/header-action-buttons'
 import { NodePluginsSpotlightWidget } from '@widgets/dashboard/node-plugins/node-plugins-spotlight'
-import { RenameModalShared } from '@shared/ui/modals/rename-modal.shared'
+import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
+import { TbPackage } from 'react-icons/tb'
+
 import { Page, PageHeaderShared } from '@shared/ui'
+import { RenameModalShared } from '@shared/ui/modals/rename-modal.shared'
 
 interface Props {
     nodes: GetAllNodesCommand.Response['response']

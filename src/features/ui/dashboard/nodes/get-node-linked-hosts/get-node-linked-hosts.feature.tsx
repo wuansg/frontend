@@ -1,7 +1,7 @@
 import { ActionIcon, Tooltip } from '@mantine/core'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbServerCog } from 'react-icons/tb'
-import { memo } from 'react'
 
 import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
 

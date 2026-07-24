@@ -1,10 +1,10 @@
+import { notifications } from '@mantine/notifications'
 import {
     CreateConfigProfileCommand,
     DeleteConfigProfileCommand,
     ReorderConfigProfileCommand,
     UpdateConfigProfileCommand
 } from '@remnawave/backend-contract'
-import { notifications } from '@mantine/notifications'
 import { z } from 'zod'
 
 import { createMutationHook } from '../../tsq-helpers'

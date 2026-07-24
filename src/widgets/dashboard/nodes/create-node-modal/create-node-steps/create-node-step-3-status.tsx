@@ -1,14 +1,15 @@
 import { Alert, Badge, Button, Code, Group, Paper, Stack, Text } from '@mantine/core'
-import { TbAlertCircle, TbCheck, TbLink, TbX } from 'react-icons/tb'
-import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { TbAlertCircle, TbCheck, TbLink, TbX } from 'react-icons/tb'
+
+import { useGetNode } from '@shared/api/hooks'
+import { LottieLinkShared } from '@shared/ui/lotties'
+import { LottieCheckmarkShared } from '@shared/ui/lotties/checkmark'
+import { LottieStopShared } from '@shared/ui/lotties/stop'
 
 import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
-import { LottieCheckmarkShared } from '@shared/ui/lotties/checkmark'
 import { useNodesStoreActions } from '@entities/dashboard/nodes'
-import { LottieStopShared } from '@shared/ui/lotties/stop'
-import { LottieLinkShared } from '@shared/ui/lotties'
-import { useGetNode } from '@shared/api/hooks'
 
 interface IProps {
     nodeUuid?: string

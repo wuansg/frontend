@@ -10,22 +10,23 @@ import {
     TextInput,
     Tooltip
 } from '@mantine/core'
-import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
-import { generatePath, useNavigate } from 'react-router-dom'
-import { TbCode, TbPlus, TbRefresh } from 'react-icons/tb'
-import { useDisclosure } from '@mantine/hooks'
-import { useTranslation } from 'react-i18next'
 import { useField } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks'
+import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { TbCode, TbPlus, TbRefresh } from 'react-icons/tb'
+import { generatePath, useNavigate } from 'react-router'
 
-import { CONFIG_PROFILES_VIEW_MODE } from '@pages/dashboard/config-profiles/components/interfaces'
+import { queryClient } from '@shared/api'
 import { QueryKeys, useCreateConfigProfile, useGetConfigProfiles } from '@shared/api/hooks'
-import { UniversalSpotlightActionIconShared } from '@shared/ui/universal-spotlight'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { ROUTES } from '@shared/constants'
 import { HelpActionIconShared } from '@shared/ui/help-drawer'
 import { XrayLogo } from '@shared/ui/logos'
-import { ROUTES } from '@shared/constants'
-import { queryClient } from '@shared/api'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { UniversalSpotlightActionIconShared } from '@shared/ui/universal-spotlight'
+
+import { CONFIG_PROFILES_VIEW_MODE } from '@entities/dashboard/view-preferences-store'
 
 interface IProps {
     configProfileCount: number

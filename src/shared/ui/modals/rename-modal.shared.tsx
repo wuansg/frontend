@@ -1,3 +1,5 @@
+import { Button, Group, Modal, Stack, TextInput } from '@mantine/core'
+import { useField } from '@mantine/form'
 import {
     UpdateConfigProfileCommand,
     UpdateExternalSquadCommand,
@@ -7,10 +9,8 @@ import {
     UpdateSubscriptionPageConfigCommand,
     UpdateSubscriptionTemplateCommand
 } from '@remnawave/backend-contract'
-import { Button, Group, Modal, Stack, TextInput } from '@mantine/core'
-import { TbDeviceFloppy, TbPencil } from 'react-icons/tb'
 import { useTranslation } from 'react-i18next'
-import { useField } from '@mantine/form'
+import { TbDeviceFloppy, TbPencil } from 'react-icons/tb'
 
 import {
     QueryKeys,
@@ -22,8 +22,9 @@ import {
     useUpdateSubscriptionPageConfig,
     useUpdateSubscriptionTemplate
 } from '@shared/api/hooks'
-import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
 import { queryClient } from '@shared/api/query-client'
+
+import { MODALS, useModalClose, useModalState } from '@entities/dashboard/modal-store'
 
 import { BaseOverlayHeader } from '../overlays/base-overlay-header'
 

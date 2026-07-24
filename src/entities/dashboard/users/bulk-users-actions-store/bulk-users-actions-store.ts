@@ -1,6 +1,4 @@
-/* eslint-disable camelcase */
-
-import { MRT_RowSelectionState } from 'mantine-react-table'
+import { MRT_RowSelectionState } from '@kastov/mantine-react-table-open'
 import { devtools } from 'zustand/middleware'
 
 import { create } from '@shared/hocs/store-wrapper'

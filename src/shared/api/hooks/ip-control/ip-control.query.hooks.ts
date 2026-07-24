@@ -1,5 +1,5 @@
-import { FetchIpsResultCommand, FetchUsersIpsResultCommand } from '@remnawave/backend-contract'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { FetchIpsResultCommand, FetchUsersIpsResultCommand } from '@remnawave/backend-contract'
 
 import { sToMs } from '@shared/utils/time-utils'
 

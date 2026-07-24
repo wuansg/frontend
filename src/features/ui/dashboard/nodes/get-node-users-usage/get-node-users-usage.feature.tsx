@@ -1,7 +1,7 @@
 import { ActionIcon, Tooltip } from '@mantine/core'
-import { PiChartBarDuotone } from 'react-icons/pi'
-import { useTranslation } from 'react-i18next'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { PiChartBarDuotone } from 'react-icons/pi'
 
 import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
 

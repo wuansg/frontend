@@ -1,20 +1,20 @@
-import { em, Group, Modal, Progress, Stack, Transition } from '@mantine/core'
+import { Group, Modal, Progress, Stack, Transition } from '@mantine/core'
+import { useForm } from '@mantine/form'
 import { CreateNodeCommand } from '@remnawave/backend-contract'
 import { zodResolver } from 'mantine-form-zod-resolver'
-import { useTranslation } from 'react-i18next'
-import { useMediaQuery } from '@mantine/hooks'
 import { useEffect, useState } from 'react'
-import { useForm } from '@mantine/form'
+import { useTranslation } from 'react-i18next'
 import { TbCpu } from 'react-icons/tb'
 
-import { useNodesStoreActions, useNodesStoreCreateModalIsOpen } from '@entities/dashboard/nodes'
-import { configProfilesQueryKeys, useCreateNode, useGetPubKey } from '@shared/api/hooks'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { gbToBytesUtil } from '@shared/utils/bytes'
 import { queryClient } from '@shared/api'
+import { configProfilesQueryKeys, useCreateNode, useGetPubKey } from '@shared/api/hooks'
+import { useIsMobile } from '@shared/hooks'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
-import { CreateNodeStep2ConfigProfiles } from './create-node-steps/create-node-step-2-config-profiles'
+import { useNodesStoreActions, useNodesStoreCreateModalIsOpen } from '@entities/dashboard/nodes'
+
 import { CreateNodeStep1Connection } from './create-node-steps/create-node-step-1-connection'
+import { CreateNodeStep2ConfigProfiles } from './create-node-steps/create-node-step-2-config-profiles'
 import { CreateNodeStep3Status } from './create-node-steps/create-node-step-3-status'
 
 export const CreateNodeModalWidget = () => {
@@ -25,7 +25,7 @@ export const CreateNodeModalWidget = () => {
 
     const { data: pubKey } = useGetPubKey()
 
-    const isMobile = useMediaQuery(`(max-width: ${em(768)})`)
+    const isMobile = useIsMobile()
 
     const [activeStep, setActiveStep] = useState(0)
     const [createdNodeUuid, setCreatedNodeUuid] = useState<string>()
@@ -68,8 +68,7 @@ export const CreateNodeModalWidget = () => {
             variables: {
                 ...values,
                 name: values.name.trim(),
-                address: values.address.trim(),
-                trafficLimitBytes: gbToBytesUtil(values.trafficLimitBytes)
+                address: values.address.trim()
             }
         })
     }

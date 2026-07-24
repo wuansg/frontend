@@ -1,3 +1,7 @@
+import { ActionIcon, Badge, Box, Group, Stack, Text, Tooltip } from '@mantine/core'
+import { FetchUsersIpsResultCommand } from '@remnawave/backend-contract'
+import { useTranslation } from 'react-i18next'
+import { PiEmptyDuotone, PiUserCircle } from 'react-icons/pi'
 import {
     TbClockCheck,
     TbClockExclamation,
@@ -5,20 +9,16 @@ import {
     TbExternalLink,
     TbId
 } from 'react-icons/tb'
-import { ActionIcon, Badge, Box, Group, Stack, Text, Tooltip } from '@mantine/core'
-import { FetchUsersIpsResultCommand } from '@remnawave/backend-contract'
-import { createSearchParams, useNavigate } from 'react-router-dom'
-import { PiEmptyDuotone, PiUserCircle } from 'react-icons/pi'
-import { useTranslation } from 'react-i18next'
+import { createSearchParams, useNavigate } from 'react-router'
 
-import { formatRelativeDateUtil, formatTimeUtil } from '@shared/utils/time-utils'
-import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { SEARCH_PARAMS } from '@shared/constants/search-params'
-import { openOrNavigate } from '@shared/utils/open-or-navigate'
-import { SectionCard } from '@shared/ui/section-card'
 import { useResolveUser } from '@shared/api/hooks'
 import { ROUTES } from '@shared/constants'
+import { SEARCH_PARAMS } from '@shared/constants/search-params'
+import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { SectionCard } from '@shared/ui/section-card'
+import { openOrNavigate } from '@shared/utils/open-or-navigate'
+import { formatRelativeDateUtil, formatTimeUtil } from '@shared/utils/time-utils'
 
 interface IProps {
     user: NonNullable<FetchUsersIpsResultCommand.Response['response']['result']>['users'][number]

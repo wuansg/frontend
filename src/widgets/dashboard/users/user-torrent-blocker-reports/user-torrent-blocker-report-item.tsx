@@ -1,14 +1,14 @@
-import { GetTorrentBlockerReportsCommand } from '@remnawave/backend-contract'
 import { ActionIcon, Box, Divider, Group, Stack } from '@mantine/core'
-import { TbExternalLink, TbFlame, TbJson } from 'react-icons/tb'
+import { modals } from '@mantine/modals'
+import { GetTorrentBlockerReportsCommand } from '@remnawave/backend-contract'
 import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { useTranslation } from 'react-i18next'
-import { modals } from '@mantine/modals'
+import { TbExternalLink, TbFlame, TbJson } from 'react-icons/tb'
 
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { formatTimeUtil } from '@shared/utils/time-utils/format-time.util'
 import { SettingsCardShared } from '@shared/ui/settings-card'
+import { formatTimeUtil } from '@shared/utils/time-utils/format-time.util'
 
 interface IProps {
     report: GetTorrentBlockerReportsCommand.Response['response']['records'][number]

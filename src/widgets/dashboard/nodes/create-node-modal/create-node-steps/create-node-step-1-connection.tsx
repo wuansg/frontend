@@ -5,19 +5,34 @@ import {
     Divider,
     Group,
     NumberInput,
+    Popover,
     Select,
     Stack,
+    TagsInput,
     Text,
-    TextInput
+    TextInput,
+    UnstyledButton
 } from '@mantine/core'
-import { TbCertificate, TbId, TbMapPin, TbWorld } from 'react-icons/tb'
-import { CreateNodeCommand } from '@remnawave/backend-contract'
 import { UseFormReturnType } from '@mantine/form'
+import { CreateNodeCommand } from '@remnawave/backend-contract'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PiArrowRight } from 'react-icons/pi'
+import { PiArrowRight, PiTagDuotone } from 'react-icons/pi'
+import {
+    TbCertificate,
+    TbChevronDown,
+    TbId,
+    TbMapPin,
+    TbPackage,
+    TbSettings,
+    TbWorld
+} from 'react-icons/tb'
 
+import { useGetNodePlugins, useGetNodesTags } from '@shared/api/hooks'
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
 import { COUNTRIES } from '@shared/ui/forms/nodes/base-node-form/constants'
+import { SelectInfraProviderShared } from '@shared/ui/infra-billing/select-infra-provider/select-infra-provider.shared'
+import { TagInputPill } from '@shared/ui/tag-input-pill'
 
 import { CopyDockerComposeWidget } from './copy-docker-compose.widget'
 
@@ -31,6 +46,11 @@ interface IProps {
 
 export const CreateNodeStep1Connection = ({ form, onNext, pubKey, port }: IProps) => {
     const { t } = useTranslation()
+
+    const { data: nodePlugins } = useGetNodePlugins()
+    const { data: nodesTags } = useGetNodesTags()
+
+    const [additionalOpened, setAdditionalOpened] = useState(false)
 
     const handleNext = async () => {
         const nameErrors = form.validateField('name')
@@ -146,6 +166,109 @@ export const CreateNodeStep1Connection = ({ form, onNext, pubKey, port }: IProps
                             w="25%"
                         />
                     </Group>
+
+                    <Popover
+                        closeOnClickOutside={false}
+                        onChange={setAdditionalOpened}
+                        opened={additionalOpened}
+                        position="bottom"
+                        shadow="md"
+                        width={340}
+                        withArrow
+                    >
+                        <Divider
+                            label={
+                                <Popover.Target>
+                                    <UnstyledButton
+                                        c="dimmed"
+                                        onClick={() => setAdditionalOpened((opened) => !opened)}
+                                        px={4}
+                                        type="button"
+                                    >
+                                        <Group gap={6}>
+                                            <TbSettings size={16} />
+                                            <Text fw={500} size="sm">
+                                                {t(
+                                                    'create-node-step-1-connection.additional-options'
+                                                )}
+                                            </Text>
+                                            <TbChevronDown
+                                                size={14}
+                                                style={{
+                                                    transform: additionalOpened
+                                                        ? 'rotate(180deg)'
+                                                        : undefined,
+                                                    transition: 'transform 200ms ease'
+                                                }}
+                                            />
+                                        </Group>
+                                    </UnstyledButton>
+                                </Popover.Target>
+                            }
+                            labelPosition="center"
+                        />
+
+                        <Popover.Dropdown>
+                            <Stack gap="sm">
+                                <SelectInfraProviderShared
+                                    selectedInfraProviderUuid={form.getValues().providerUuid}
+                                    setSelectedInfraProviderUuid={(providerUuid) => {
+                                        form.setValues({ providerUuid })
+                                        form.setTouched({ providerUuid: true })
+                                        form.setDirty({ providerUuid: true })
+                                    }}
+                                />
+
+                                <Select
+                                    key={form.key('activePluginUuid')}
+                                    label={t('node-vitals.card.plugin')}
+                                    {...form.getInputProps('activePluginUuid')}
+                                    allowDeselect
+                                    clearable
+                                    data={(nodePlugins?.nodePlugins ?? []).map((nodePlugin) => ({
+                                        label: nodePlugin.name,
+                                        value: nodePlugin.uuid
+                                    }))}
+                                    description={t(
+                                        'node-vitals.card.review-documentation-for-more-information'
+                                    )}
+                                    leftSection={<TbPackage size={16} />}
+                                    nothingFoundMessage={t('node-vitals.card.nothing-found')}
+                                    placeholder={t('node-vitals.card.select-plugin')}
+                                    searchable
+                                    size="sm"
+                                    styles={{
+                                        label: { fontWeight: 500 }
+                                    }}
+                                />
+
+                                <TagsInput
+                                    clearable
+                                    data={nodesTags?.tags || []}
+                                    key={form.key('tags')}
+                                    label={t('use-nodes-table-widget.tags')}
+                                    leftSection={<PiTagDuotone size="16px" />}
+                                    maxTags={10}
+                                    placeholder="Enter tags (comma, space, semicolon)"
+                                    size="sm"
+                                    splitChars={[',', ' ', ';']}
+                                    {...form.getInputProps('tags')}
+                                    error={
+                                        Object.keys(form.errors)
+                                            .filter((key) => key.startsWith('tags.'))
+                                            .map((key) => form.errors[key])
+                                            .join(', ') || form.getInputProps('tags').error
+                                    }
+                                    renderPill={({ value, onRemove }) => (
+                                        <TagInputPill onRemove={onRemove} value={value} />
+                                    )}
+                                    styles={{
+                                        label: { fontWeight: 500 }
+                                    }}
+                                />
+                            </Stack>
+                        </Popover.Dropdown>
+                    </Popover>
                 </Stack>
 
                 <Stack gap="xs" mt="auto">

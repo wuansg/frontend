@@ -1,9 +1,8 @@
 import { ActionIcon, Tooltip } from '@mantine/core'
-import { useTranslation } from 'react-i18next'
 import { useDisclosure } from '@mantine/hooks'
-import { TbRadar } from 'react-icons/tb'
-
 import { UserActiveSessionDrawerWidget } from '@widgets/dashboard/users/user-active-sessions'
+import { useTranslation } from 'react-i18next'
+import { TbRadar } from 'react-icons/tb'
 
 import { IProps } from './interfaces'
 

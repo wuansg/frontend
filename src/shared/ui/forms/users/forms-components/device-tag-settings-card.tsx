@@ -1,13 +1,13 @@
+import { Anchor, Checkbox, Code, Input, NumberInput, Stack, Text, Textarea } from '@mantine/core'
+import { UseFormReturnType } from '@mantine/form'
 import {
     CreateUserCommand,
     GetAllTagsCommand,
     UpdateUserCommand
 } from '@remnawave/backend-contract'
-import { Anchor, Checkbox, Code, Input, NumberInput, Stack, Text, Textarea } from '@mantine/core'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
-import { TbDevices2, TbSettings } from 'react-icons/tb'
 import { Trans, useTranslation } from 'react-i18next'
-import { UseFormReturnType } from '@mantine/form'
+import { TbDevices2, TbSettings } from 'react-icons/tb'
 
 import { CreateableTagInputShared } from '@shared/ui/createable-tag-input/createable-tag-input'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'

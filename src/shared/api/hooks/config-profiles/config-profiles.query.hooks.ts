@@ -1,10 +1,10 @@
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
     GetComputedConfigProfileByUuidCommand,
     GetConfigProfileByUuidCommand,
     GetConfigProfilesCommand,
     GetInboundsByProfileUuidCommand
 } from '@remnawave/backend-contract'
-import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { z } from 'zod'
 
 import { sToMs } from '@shared/utils/time-utils'

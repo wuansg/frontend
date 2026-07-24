@@ -1,9 +1,10 @@
+import { useForm } from '@mantine/form'
 import { UpdateNodeCommand } from '@remnawave/backend-contract'
 import { zodResolver } from 'mantine-form-zod-resolver'
-import { useForm } from '@mantine/form'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
+import { queryClient } from '@shared/api'
 import {
     configProfilesQueryKeys,
     nodesQueryKeys,
@@ -13,9 +14,7 @@ import {
     useUpdateNode
 } from '@shared/api/hooks'
 import { BaseNodeForm } from '@shared/ui/forms/nodes/base-node-form/base-node-form'
-import { bytesToGbUtil, gbToBytesUtil } from '@shared/utils/bytes'
 import { LoaderModalShared } from '@shared/ui/loader-modal'
-import { queryClient } from '@shared/api'
 
 import { NodeDetailsCardWidget } from '../node-details-card/node-details-card.widget'
 import { NodeSystemCardWidget } from '../node-system-card/node-system-card.widget'
@@ -28,9 +27,16 @@ interface IProps {
 export const EditNodeByUuidModalContent = (props: IProps) => {
     const { nodeUuid, onClose } = props
 
+    const isFormInitialized = useRef(false)
+
     const form = useForm<UpdateNodeCommand.Request>({
         name: 'edit-node-form',
         mode: 'uncontrolled',
+        onValuesChange: (values) => {
+            if (typeof values.proxyUrl === 'string' && values.proxyUrl === '') {
+                form.setFieldValue('proxyUrl', null)
+            }
+        },
         validate: zodResolver(UpdateNodeCommand.RequestSchema.omit({ uuid: true }))
     })
 
@@ -55,15 +61,15 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 queryClient.refetchQueries({
                     queryKey: configProfilesQueryKeys.getConfigProfiles.queryKey
                 })
-                queryClient.refetchQueries({
-                    queryKey: nodesQueryKeys.getAllNodes.queryKey
-                })
+
+                form.resetDirty()
             }
         }
     })
 
     useEffect(() => {
-        if (fetchedNode) {
+        if (fetchedNode && !isFormInitialized.current) {
+            isFormInitialized.current = true
             form.initialize({
                 uuid: fetchedNode.uuid,
                 countryCode: fetchedNode.countryCode,
@@ -71,12 +77,13 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 address: fetchedNode.address,
                 port: fetchedNode.port ?? undefined,
                 isTrafficTrackingActive: fetchedNode.isTrafficTrackingActive ?? undefined,
-                trafficLimitBytes: bytesToGbUtil(fetchedNode.trafficLimitBytes ?? undefined),
+                trafficLimitBytes: fetchedNode.trafficLimitBytes ?? undefined,
                 trafficResetDay: fetchedNode.trafficResetDay ?? undefined,
                 notifyPercent: fetchedNode.notifyPercent ?? undefined,
                 consumptionMultiplier: fetchedNode.consumptionMultiplier ?? undefined,
+                nodeConsumptionMultiplier: fetchedNode.nodeConsumptionMultiplier ?? undefined,
                 tags: fetchedNode.tags ?? undefined,
-
+                proxyUrl: fetchedNode.proxyUrl ?? undefined,
                 configProfile: {
                     activeConfigProfileUuid:
                         fetchedNode.configProfile.activeConfigProfileUuid ?? '',
@@ -86,7 +93,8 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 },
 
                 providerUuid: fetchedNode.providerUuid ?? undefined,
-                activePluginUuid: fetchedNode.activePluginUuid ?? undefined
+                activePluginUuid: fetchedNode.activePluginUuid ?? undefined,
+                note: fetchedNode.note ?? undefined
             })
         }
     }, [fetchedNode])
@@ -101,7 +109,7 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 ...values,
                 name: values.name?.trim(),
                 address: values.address?.trim(),
-                trafficLimitBytes: gbToBytesUtil(values.trafficLimitBytes),
+                trafficLimitBytes: values.trafficLimitBytes,
                 configProfile: {
                     activeConfigProfileUuid: values.configProfile?.activeConfigProfileUuid ?? '',
                     activeInbounds: values.configProfile?.activeInbounds ?? []

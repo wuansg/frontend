@@ -1,8 +1,8 @@
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
     GetSubscriptionTemplateCommand,
     GetSubscriptionTemplatesCommand
 } from '@remnawave/backend-contract'
-import { createQueryKeys } from '@lukemorales/query-key-factory'
 
 import { sToMs } from '@shared/utils/time-utils'
 

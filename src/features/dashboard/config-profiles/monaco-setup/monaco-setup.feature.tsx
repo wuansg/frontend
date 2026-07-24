@@ -1,16 +1,16 @@
+import { Monaco } from '@monaco-editor/react'
 import {
     GetSnippetsCommand,
     ResponseRulesConfigSchema,
     TSubscriptionTemplateType
 } from '@remnawave/backend-contract'
-import zodToJsonSchema, { jsonDescription } from 'zod-to-json-schema'
 import { NodePluginSchema } from '@remnawave/node-plugins'
-import { Monaco } from '@monaco-editor/react'
-import consola from 'consola'
 import axios from 'axios'
+import consola from 'consola'
+import { app } from 'src/config'
+import zodToJsonSchema, { jsonDescription } from 'zod-to-json-schema'
 
 import { monacoTheme } from '@shared/constants/monaco-theme'
-import { app } from 'src/config'
 
 export const MonacoSetupFeature = {
     setup: async (
@@ -107,17 +107,17 @@ export const MonacoSetupSnippetsFeature = {
                 items: {
                     oneOf: [
                         {
-                            ...(schema.definitions?.OutboundObject || {}),
+                            ...schema.definitions?.OutboundObject,
                             title: 'Outbound Object',
                             description: 'Outbound configuration (for outbounds[])'
                         },
                         {
-                            ...(schema.definitions?.RuleObject || {}),
+                            ...schema.definitions?.RuleObject,
                             title: 'Rule Object',
                             description: 'Routing rule (for routing.rules[])'
                         },
                         {
-                            ...(schema.definitions?.BalancerObject || {}),
+                            ...schema.definitions?.BalancerObject,
                             title: 'Balancer Object',
                             description: 'Balancer configuration (for routing.balancers[])'
                         }
@@ -189,6 +189,7 @@ export const MonacoSetupResponseRulesFeature = {
                                 },
                                 required: ['responseType']
                             },
+                            // oxlint-disable-next-line
                             then: {
                                 properties: {
                                     responseModifications: {
@@ -213,6 +214,7 @@ export const MonacoSetupResponseRulesFeature = {
                                 },
                                 required: ['responseType']
                             },
+                            // oxlint-disable-next-line
                             then: {
                                 properties: {
                                     responseModifications: {

@@ -1,17 +1,4 @@
-import {
-    TbAlertTriangle,
-    TbBrandDocker,
-    TbClock,
-    TbClockCheck,
-    TbClockExclamation,
-    TbClockPause,
-    TbRadar,
-    TbRefresh,
-    TbSortAscending,
-    TbSortDescending,
-    TbTrash,
-    TbUser
-} from 'react-icons/tb'
+import { CodeHighlight } from '@mantine/code-highlight'
 import {
     ActionIcon,
     Box,
@@ -27,16 +14,29 @@ import {
     Tooltip,
     Transition
 } from '@mantine/core'
+import clsx from 'clsx'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CodeHighlight } from '@mantine/code-highlight'
 import { Trans, useTranslation } from 'react-i18next'
 import { PiEmptyDuotone } from 'react-icons/pi'
+import {
+    TbAlertTriangle,
+    TbBrandDocker,
+    TbClock,
+    TbClockCheck,
+    TbClockExclamation,
+    TbClockPause,
+    TbRadar,
+    TbRefresh,
+    TbSortAscending,
+    TbSortDescending,
+    TbTrash,
+    TbUser
+} from 'react-icons/tb'
 import { Virtuoso } from 'react-virtuoso'
-import clsx from 'clsx'
 
 import { useFetchUsersIps, useFetchUsersIpsResult } from '@shared/api/hooks'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { LottieGlobeShared } from '@shared/ui/lotties/globe'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { formatInt } from '@shared/utils/misc'
 

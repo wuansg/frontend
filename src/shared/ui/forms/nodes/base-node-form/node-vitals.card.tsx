@@ -1,15 +1,15 @@
+import { Group, NumberInput, Select, Stack, TextInput } from '@mantine/core'
+import { UseFormReturnType } from '@mantine/form'
 import {
     CreateNodeCommand,
     GetNodePluginsCommand,
     GetPubKeyCommand,
     UpdateNodeCommand
 } from '@remnawave/backend-contract'
-import { TbCertificate, TbMapPin, TbPackage, TbUserCheck, TbWorld } from 'react-icons/tb'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
-import { Group, NumberInput, Select, Stack, TextInput } from '@mantine/core'
-import { UseFormReturnType } from '@mantine/form'
-import { HiOutlineServer } from 'react-icons/hi'
 import { useTranslation } from 'react-i18next'
+import { HiOutlineServer } from 'react-icons/hi'
+import { TbCertificate, TbMapPin, TbNetwork, TbPackage, TbUserCheck, TbWorld } from 'react-icons/tb'
 
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
@@ -22,6 +22,7 @@ interface IProps<T extends CreateNodeCommand.Request | UpdateNodeCommand.Request
     form: UseFormReturnType<T>
     motionWrapper: ForwardRefComponent<HTMLDivElement, HTMLMotionProps<'div'>>
     nodePlugins: GetNodePluginsCommand.Response['response']['nodePlugins']
+    nodeUuid: string
     pubKey: GetPubKeyCommand.Response['response'] | undefined
 }
 
@@ -29,7 +30,7 @@ export const NodeVitalsCard = <T extends CreateNodeCommand.Request | UpdateNodeC
     props: IProps<T>
 ) => {
     const { t } = useTranslation()
-    const { cardVariants, form, motionWrapper, nodePlugins, pubKey } = props
+    const { cardVariants, form, motionWrapper, nodePlugins, pubKey, nodeUuid } = props
 
     const MotionWrapper = motionWrapper
 
@@ -41,8 +42,10 @@ export const NodeVitalsCard = <T extends CreateNodeCommand.Request | UpdateNodeC
                         iconColor="blue"
                         IconComponent={HiOutlineServer}
                         iconVariant="soft"
+                        subtitle={nodeUuid}
                         title={t('base-node-form.node-vitals')}
                         titleOrder={5}
+                        withCopy
                     />
                 </SectionCard.Section>
                 <SectionCard.Section>
@@ -132,6 +135,15 @@ export const NodeVitalsCard = <T extends CreateNodeCommand.Request | UpdateNodeC
                             styles={{
                                 label: { fontWeight: 500 }
                             }}
+                        />
+
+                        <TextInput
+                            key={form.key('proxyUrl')}
+                            label={t('node-vitals.card.proxy-url')}
+                            {...form.getInputProps('proxyUrl')}
+                            description={t('node-vitals.card.proxy-url-description')}
+                            leftSection={<TbNetwork size={16} />}
+                            placeholder="socks5://user:pass@address:port"
                         />
                     </Stack>
                 </SectionCard.Section>

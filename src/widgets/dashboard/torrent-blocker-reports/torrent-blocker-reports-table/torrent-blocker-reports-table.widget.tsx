@@ -1,21 +1,16 @@
-/* eslint-disable camelcase */
 import {
     MantineReactTable,
     MRT_ColumnFilterFnsState,
-    MRT_ColumnFiltersState,
-    MRT_ColumnPinningState,
-    MRT_PaginationState,
     MRT_SortingState,
-    MRT_VisibilityState,
     useMantineReactTable
-} from 'mantine-react-table'
-import { TbExternalLink, TbFlame, TbJson, TbRefresh, TbRestore, TbTrash } from 'react-icons/tb'
+} from '@kastov/mantine-react-table-open'
 import { ActionIcon, ActionIconGroup, Box, Tooltip } from '@mantine/core'
+import { modals } from '@mantine/modals'
 import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiUserCircle } from 'react-icons/pi'
-import { modals } from '@mantine/modals'
+import { TbExternalLink, TbFlame, TbJson, TbRefresh, TbRestore, TbTrash } from 'react-icons/tb'
 
 import {
     useGetNodes,
@@ -23,11 +18,14 @@ import {
     useGetTorrentBlockerStats,
     useTruncateTorrentBlockerReports
 } from '@shared/api/hooks'
-import { useUserModalStoreActions } from '@entities/dashboard/user-modal-store'
+import { DEFAULT_PAGINATION_STATE, useMrtTableBinding } from '@shared/lib/mrt-table-store'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { preventBackScrollTables } from '@shared/utils/misc'
 import { DataTableShared } from '@shared/ui/table'
+import { preventBackScrollTables } from '@shared/utils/misc'
 import { sToMs } from '@shared/utils/time-utils'
+
+import { useTbReportsTableStore } from '@entities/dashboard/torrent-blocker-reports/tb-reports-table-store'
+import { useUserModalStoreActions } from '@entities/dashboard/user-modal-store'
 
 import { useTbReportsTableColumns } from './use-tb-reports-table-columns'
 
@@ -40,25 +38,19 @@ export function TorrentBlockerReportsTableWidget() {
     const tableColumns = useTbReportsTableColumns(nodes)
     const userModalActions = useUserModalStoreActions()
 
-    const [columnVisibility, setColumnVisibility] = useState<MRT_VisibilityState>({})
-    const [columnPinning, setColumnPinning] = useState<MRT_ColumnPinningState>({})
-    const [showColumnFilters, setShowColumnFilters] = useState(false)
+    const { state: persistedTableState, handlers: persistedTableHandlers } =
+        useMrtTableBinding(useTbReportsTableStore)
+
     const [sorting, setSorting] = useState<MRT_SortingState>([])
 
-    const [pagination, setPagination] = useState<MRT_PaginationState>({
-        pageIndex: 0,
-        pageSize: 25
-    })
-
-    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([])
     const [columnFilterFns, setColumnFilterFns] = useState<MRT_ColumnFilterFnsState>(
         Object.fromEntries(tableColumns.map(({ accessorKey }) => [accessorKey, 'contains']))
     )
 
     const params = {
-        start: pagination.pageIndex * pagination.pageSize,
-        size: pagination.pageSize,
-        filters: columnFilters,
+        start: persistedTableState.pagination.pageIndex * persistedTableState.pagination.pageSize,
+        size: persistedTableState.pagination.pageSize,
+        filters: persistedTableState.columnFilters,
         filterModes: columnFilterFns,
         sorting
     }
@@ -99,24 +91,15 @@ export function TorrentBlockerReportsTableWidget() {
         enableSortingRemoval: true,
         enableGlobalFilter: false,
         enableClickToCopy: true,
+        enableColumnOrdering: true,
         columnFilterModeOptions: ['contains', 'equals'],
         initialState: {
-            pagination: {
-                pageIndex: 0,
-                pageSize: 25
-            },
-            showColumnFilters: false,
-            density: 'xs',
-            columnVisibility: {},
-            columnPinning: {},
-            columnSizing: {}
+            density: 'xxs',
+            pagination: DEFAULT_PAGINATION_STATE
         },
         manualFiltering: true,
         manualPagination: true,
         manualSorting: true,
-        // mantinePaginationProps: {
-        //     rowsPerPageOptions: ['25', '50', '100']
-        // },
 
         enableColumnResizing: true,
 
@@ -126,13 +109,9 @@ export function TorrentBlockerReportsTableWidget() {
             children: t('user-table.widget.error-loading-data')
         } : undefined,
 
+        ...persistedTableHandlers,
         onColumnFilterFnsChange: setColumnFilterFns,
-        onColumnFiltersChange: setColumnFilters,
-        onPaginationChange: setPagination,
         onSortingChange: setSorting,
-        onColumnPinningChange: setColumnPinning,
-        onColumnVisibilityChange: setColumnVisibility,
-        onShowColumnFiltersChange: setShowColumnFilters,
 
         mantinePaperProps: {
             style: { '--paper-radius': 'var(--mantine-radius-xs)' },
@@ -144,16 +123,12 @@ export function TorrentBlockerReportsTableWidget() {
         positionToolbarAlertBanner: 'top',
         selectAllMode: 'page',
         state: {
+            ...persistedTableState,
             columnFilterFns,
-            columnFilters,
             isLoading,
-            pagination,
             showAlertBanner: isError,
             showProgressBars: isFetching,
-            showColumnFilters,
-            sorting,
-            columnVisibility,
-            columnPinning
+            sorting
         },
         enableRowActions: true,
         renderRowActions: ({ row }) => (
@@ -287,6 +262,9 @@ export function TorrentBlockerReportsTableWidget() {
                                     table.resetPagination(false)
                                     table.resetColumnFilters(true)
                                     table.resetGlobalFilter(true)
+                                    table.resetColumnOrder(true)
+                                    table.resetColumnPinning(true)
+                                    table.resetColumnVisibility(true)
                                 }}
                                 size="input-md"
                                 variant="soft"

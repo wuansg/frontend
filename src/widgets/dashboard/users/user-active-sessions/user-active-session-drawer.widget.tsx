@@ -1,19 +1,4 @@
-import {
-    TbAlertTriangle,
-    TbBrandDocker,
-    TbClock,
-    TbClockCheck,
-    TbClockExclamation,
-    TbClockPause,
-    TbExternalLink,
-    TbHourglass,
-    TbRadar,
-    TbRefresh,
-    TbServer,
-    TbTag,
-    TbTrash,
-    TbUnlink
-} from 'react-icons/tb'
+import { CodeHighlight } from '@mantine/code-highlight'
 import {
     ActionIcon,
     Badge,
@@ -30,19 +15,34 @@ import {
     Tooltip,
     Transition
 } from '@mantine/core'
-import { CodeHighlight } from '@mantine/code-highlight'
 import { notifications } from '@mantine/notifications'
-import { Trans, useTranslation } from 'react-i18next'
 import { useEffect, useMemo, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { PiEmptyDuotone } from 'react-icons/pi'
+import {
+    TbAlertTriangle,
+    TbBrandDocker,
+    TbClock,
+    TbClockCheck,
+    TbClockExclamation,
+    TbClockPause,
+    TbExternalLink,
+    TbHourglass,
+    TbRadar,
+    TbRefresh,
+    TbServer,
+    TbTag,
+    TbTrash,
+    TbUnlink
+} from 'react-icons/tb'
 
 import { useDropConnections, useFetchIps, useFetchIpsResult } from '@shared/api/hooks'
-import { formatRelativeDateUtil, formatTimeUtil } from '@shared/utils/time-utils'
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { LottieGlobeShared } from '@shared/ui/lotties/globe'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { formatInt } from '@shared/utils/misc'
+import { formatRelativeDateUtil, formatTimeUtil } from '@shared/utils/time-utils'
 
 interface IProps {
     onClose: () => void
