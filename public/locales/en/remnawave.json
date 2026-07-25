@@ -10,6 +10,7 @@
     "nodes-statistics": "Statistics",
     "nodes-metrics": "Metrics",
     "users": "Users",
+    "users-statistics": "User Statistics",
     "overview": "Overview",
     "management": "Management",
     "subscription-settings": "Settings",
@@ -528,6 +529,12 @@
     "component": {
       "host": "Host",
       "shared": "Shared"
+    }
+  },
+  "statistic-users": {
+    "component": {
+      "no-data-available": "No data available",
+      "user": "User"
     }
   },
   "get-expiration-text": {

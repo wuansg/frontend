@@ -10,6 +10,7 @@
     "nodes-statistics": "统计数据",
     "nodes-metrics": "指标",
     "users": "用户",
+    "users-statistics": "用户统计",
     "overview": "概述",
     "management": "管理",
     "subscription-settings": "订阅设置",
@@ -522,6 +523,12 @@
       "node": "节点",
       "traffic": "流量",
       "3-days": "3 天"
+    }
+  },
+  "statistic-users": {
+    "component": {
+      "no-data-available": "无可用数据",
+      "user": "用户"
     }
   },
   "get-expiration-text": {

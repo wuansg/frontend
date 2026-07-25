@@ -19,6 +19,7 @@ import { SessionsExplorerPageConnector } from '@pages/dashboard/sessions-explore
 import { SrhInspectorPageConnector } from '@pages/dashboard/srh-inspector/ui/connectors'
 import { StatisticHostsConnector } from '@pages/dashboard/statistic-hosts/connectors'
 import { StatisticNodesConnector } from '@pages/dashboard/statistic-nodes/connectors'
+import { StatisticUsersConnector } from '@pages/dashboard/statistic-users/connectors'
 import { SubpageConfigBasePageConnector } from '@pages/dashboard/subpage-config/ui/connectors/subpage-config-base-page.connector'
 import { SubpageConfigEditorPageConnector } from '@pages/dashboard/subpage-config/ui/connectors/subpage-config-editor-page.connector'
 import { SubscriptionSettingsConnector } from '@pages/dashboard/subscription-settings/connectors'
@@ -67,6 +68,10 @@ const router = createBrowserRouter(
                         <Route
                             element={<UsersPageConnector />}
                             path={ROUTES.DASHBOARD.MANAGEMENT.USERS}
+                        />
+                        <Route
+                            element={<StatisticUsersConnector />}
+                            path={ROUTES.DASHBOARD.MANAGEMENT.USERS_STATS}
                         />
                         <Route
                             element={<HostsPageConnector />}

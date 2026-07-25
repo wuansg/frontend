@@ -12,6 +12,7 @@ export const ROUTES = {
         MANAGEMENT: {
             ROOT: '/dashboard/management',
             USERS: '/dashboard/management/users',
+            USERS_STATS: '/dashboard/management/stats/users',
             HOSTS: '/dashboard/management/hosts',
             HOSTS_STATS: '/dashboard/management/stats/hosts',
             NODES: '/dashboard/management/nodes',

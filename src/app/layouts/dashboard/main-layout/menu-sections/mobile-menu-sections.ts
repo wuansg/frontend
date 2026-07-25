@@ -64,6 +64,12 @@ export const useMobileMenuSections = (): MenuItem[] => {
                     id: 'users'
                 },
                 {
+                    name: t('constants.users-statistics'),
+                    href: ROUTES.DASHBOARD.MANAGEMENT.USERS_STATS,
+                    icon: HiChartPie,
+                    id: 'users-statistics'
+                },
+                {
                     name: t('constants.internal-squads'),
                     href: ROUTES.DASHBOARD.MANAGEMENT.INTERNAL_SQUADS,
                     icon: TbCirclesRelation,

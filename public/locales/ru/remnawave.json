@@ -10,6 +10,7 @@
     "nodes-statistics": "Статистика",
     "nodes-metrics": "Метрики",
     "users": "Пользователи",
+    "users-statistics": "Статистика пользователей",
     "overview": "Обзор",
     "management": "Управление",
     "subscription-settings": "Настройки",
@@ -522,6 +523,12 @@
       "node": "Нода",
       "traffic": "Трафик",
       "3-days": "3 дня"
+    }
+  },
+  "statistic-users": {
+    "component": {
+      "no-data-available": "Нет данных",
+      "user": "Пользователь"
     }
   },
   "get-expiration-text": {

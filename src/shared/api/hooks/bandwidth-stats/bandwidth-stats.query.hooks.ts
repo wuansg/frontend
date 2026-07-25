@@ -5,6 +5,7 @@ import {
     GetStatsNodesUsageCommand,
     GetStatsNodesUsersUsageCommand,
     GetStatsNodeUsersUsageCommand,
+    GetStatsUsersUsageCommand,
     GetStatsUserUsageCommand
 } from '@remnawave/backend-contract'
 import { z } from 'zod'
@@ -80,6 +81,9 @@ export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
         queryKey: [filters]
     }),
+    getStatsUsersUsageCommand: (filters: GetStatsUsersUsageCommand.RequestQuery) => ({
+        queryKey: [filters]
+    }),
     getStatsHostsUsageCommand: (filters: GetStatsHostsUsageRequestQuery) => ({
         queryKey: [filters]
     }),
@@ -130,6 +134,17 @@ export const useGetStatsNodesUsage = createGetQueryHook({
         staleTime: sToMs(60)
     },
     errorHandler: (error) => errorHandler(error, 'Get Nodes Usage By Range')
+})
+
+export const useGetStatsUsersUsage = createGetQueryHook({
+    endpoint: GetStatsUsersUsageCommand.TSQ_url,
+    responseSchema: GetStatsUsersUsageCommand.ResponseSchema,
+    requestQuerySchema: GetStatsUsersUsageCommand.RequestQuerySchema,
+    getQueryKey: ({ query }) => bandwidthStatsQueryKeys.getStatsUsersUsageCommand(query!).queryKey,
+    rQueryParams: {
+        staleTime: sToMs(60)
+    },
+    errorHandler: (error) => errorHandler(error, 'Get Users Usage By Range')
 })
 
 export const useGetStatsHostsUsage = createGetQueryHook({

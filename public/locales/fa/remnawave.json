@@ -10,6 +10,7 @@
     "nodes-statistics": "آمار نودها",
     "nodes-metrics": "آمار",
     "users": "کاربرها",
+    "users-statistics": "آمار کاربران",
     "overview": "نمای کلی",
     "management": "مدیریت",
     "subscription-settings": "تنظیمات اشتراک",
@@ -522,6 +523,12 @@
       "node": "نود",
       "traffic": "ترافیک",
       "3-days": "۳ روز"
+    }
+  },
+  "statistic-users": {
+    "component": {
+      "no-data-available": "داده‌ای در دسترس نیست",
+      "user": "کاربر"
     }
   },
   "get-expiration-text": {
