@@ -46,6 +46,10 @@ export function TemplateEditorPageConnector() {
             title = 'Stash'
             editorType = 'yaml'
             break
+        case SUBSCRIPTION_TEMPLATE_TYPE.SURGE:
+            title = 'Surge'
+            editorType = 'yaml'
+            break
         case SUBSCRIPTION_TEMPLATE_TYPE.XRAY_JSON:
             title = 'Xray JSON'
             editorType = 'json'

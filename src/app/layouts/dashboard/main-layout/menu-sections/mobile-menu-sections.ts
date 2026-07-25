@@ -17,6 +17,7 @@ import {
     TbCirclesRelation,
     TbCreditCard,
     TbDeviceAnalytics,
+    TbFile,
     TbFlame,
     TbFolder,
     TbHexagon,
@@ -214,6 +215,15 @@ export const useMobileMenuSections = (): MenuItem[] => {
                             ),
                             icon: MihomoLogo,
                             id: 'clash'
+                        },
+                        {
+                            name: 'Surge',
+                            href: ROUTES.DASHBOARD.TEMPLATES.TEMPLATES_BY_TYPE.replace(
+                                ':type',
+                                SUBSCRIPTION_TEMPLATE_TYPE.SURGE
+                            ),
+                            icon: TbFile,
+                            id: 'surge'
                         }
                     ]
                 },

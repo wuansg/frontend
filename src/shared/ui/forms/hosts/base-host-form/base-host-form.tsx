@@ -101,6 +101,10 @@ const SUBSCRIPTION_TYPES = {
     [SUBSCRIPTION_TEMPLATE_TYPE.CLASH]: {
         label: 'Clash',
         icon: <MihomoLogo size={16} />
+    },
+    [SUBSCRIPTION_TEMPLATE_TYPE.SURGE]: {
+        label: 'Surge',
+        icon: <TbFileDescription size={16} />
     }
 } as const
 
