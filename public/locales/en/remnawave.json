@@ -1354,7 +1354,7 @@
       "enable-node": "Enable Node",
       "disable-node": "Disable Node",
       "config-profile-or-inbounds-is-missing": "Config profile or inbounds is missing",
-      "xray-core-version": "Xray Core Version",
+      "xray-core-version": "Active Core Version",
       "remnawave-node-version": "Node version, @remnawave/node"
     }
   },
@@ -1399,7 +1399,7 @@
     "card": {
       "stats": "Stats",
       "traffic-refill-in-days": "Traffic refill in (days):",
-      "represents-the-uptime-of-the-xray-core": "Represents the uptime of the Xray Core"
+      "represents-the-uptime-of-the-xray-core": "Represents the uptime of the active core"
     }
   },
   "nodes-spotlight-search": {
@@ -1817,7 +1817,7 @@
     "traffic-used": "Traffic Used",
     "config-profile": "Config Profile",
     "inbounds": "Inbounds",
-    "xray-v": "Xray V.",
+    "xray-v": "Core V.",
     "node-v": "Node V.",
     "provider": "Provider",
     "tags": "Tags",

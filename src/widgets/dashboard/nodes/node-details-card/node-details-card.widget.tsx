@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import {
     PiArrowsCounterClockwise,
     PiCloudArrowUpDuotone,
+    PiCpuDuotone,
     PiUsersDuotone,
     PiWarningCircle
 } from 'react-icons/pi'
@@ -31,10 +32,10 @@ import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useDisableNode, useEnableNode, useGetNodeMetadata } from '@shared/api/hooks'
 import { Logo } from '@shared/ui'
-import { XrayLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
+import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
 
 interface IProps {
@@ -164,7 +165,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 <Badge
                                     color="teal"
                                     h={28}
-                                    leftSection={<XrayLogo size={14} />}
+                                    leftSection={<PiCpuDuotone size={14} />}
                                     size="lg"
                                     variant="light"
                                     visibleFrom="sm"
@@ -401,9 +402,12 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                             >
                                 <Tooltip label={t('node-details-card.widget.xray-core-version')}>
                                     <Group gap="xs" justify="center">
-                                        <XrayLogo color="var(--mantine-color-violet-5)" size={16} />
+                                        <PiCpuDuotone
+                                            color="var(--mantine-color-violet-5)"
+                                            size={16}
+                                        />
                                         <Text c="violet.5" fw={600} size="sm">
-                                            {node.versions.xray}
+                                            {getNodeCoreDisplay(node.versions)}
                                         </Text>
                                     </Group>
                                 </Tooltip>
@@ -426,7 +430,10 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                     )}
                                 >
                                     <Group gap="xs" justify="center">
-                                        <XrayLogo color="var(--mantine-color-teal-5)" size={16} />
+                                        <PiCpuDuotone
+                                            color="var(--mantine-color-teal-5)"
+                                            size={16}
+                                        />
                                         <Text
                                             c="teal.5"
                                             fw={600}

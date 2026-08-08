@@ -23,6 +23,7 @@ import {
     prettySiRealtimeBytesUtil
 } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
+import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
 import { formatDurationUtil } from '@shared/utils/time-utils'
 
 import { NodeStatusSimplfiedBadgeWidget } from '../node-status-simplfied-badge'
@@ -268,15 +269,15 @@ export function getNodesTableColumns(
             render: ({ nodeConsumptionMultiplier }) => nodeConsumptionMultiplier.toFixed(1)
         },
         {
-            accessor: 'versions.xray',
+            accessor: 'versions.core',
             sortable: true,
             title: t('use-nodes-table-widget.xray-v'),
-            render: ({ versions }) => (versions ? versions.xray : '-')
+            render: ({ versions }) => (versions ? getNodeCoreDisplay(versions) : '-')
         },
         {
             accessor: 'xrayUptime',
             sortable: true,
-            title: 'Xray Uptime',
+            title: 'Core Uptime',
             render: ({ xrayUptime }) => (xrayUptime !== 0 ? formatDurationUtil(xrayUptime) : '-')
         },
         {

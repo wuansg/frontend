@@ -1348,7 +1348,7 @@
       "enable-node": "فعالسازی نود",
       "disable-node": "غیرفعالسازی نود",
       "config-profile-or-inbounds-is-missing": "پروفایل پیکربندی یا اینباند وجود ندارد",
-      "xray-core-version": "نسخه هسته Xray",
+      "xray-core-version": "نسخه هسته فعال",
       "remnawave-node-version": "نسخه نود، @remnawave/node"
     }
   },
@@ -1393,7 +1393,7 @@
     "card": {
       "stats": "آمار",
       "traffic-refill-in-days": "شارژ ترافیک در (روز):",
-      "represents-the-uptime-of-the-xray-core": "نشان‌دهنده آپتایم هسته Xray"
+      "represents-the-uptime-of-the-xray-core": "نشان‌دهنده آپتایم هسته فعال"
     }
   },
   "nodes-spotlight-search": {
@@ -1811,7 +1811,7 @@
     "traffic-used": "ترافیک استفاده‌شده",
     "config-profile": "پروفایل پیکربندی",
     "inbounds": "اینباندها",
-    "xray-v": "نسخه هسته Xray",
+    "xray-v": "نسخه هسته",
     "node-v": "نسخه نود",
     "provider": "ارائه‌دهنده",
     "tags": "برچسب‌ها",

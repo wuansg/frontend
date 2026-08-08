@@ -20,9 +20,9 @@ import {
 import { TbAlertCircle } from 'react-icons/tb'
 
 import { Logo } from '@shared/ui/logo'
-import { XrayLogo } from '@shared/ui/logos'
 import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
+import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
 
 import { NodeStatusBadgeWidget } from '../node-status-badge'
@@ -345,7 +345,7 @@ export const NodeCardWidget = memo((props: IProps) => {
 
                                 {isOnline && (
                                     <Flex align="center" gap={4}>
-                                        <XrayLogo size={14} />
+                                        <PiCpuDuotone size={14} />
                                         <Text
                                             c={isOnline ? 'teal' : 'red'}
                                             fw={isOnline ? 600 : 500}
@@ -440,9 +440,9 @@ export const NodeCardWidget = memo((props: IProps) => {
                         </Flex>
                         <Flex align="center" gap="md" ml="auto">
                             <Flex align="center" gap={4}>
-                                <XrayLogo color="var(--mantine-color-dimmed)" size={12} />
+                                <PiCpuDuotone color="var(--mantine-color-dimmed)" size={12} />
                                 <Text c="dimmed" ff="monospace" size="xs">
-                                    {node.versions ? node.versions.xray : '—'}
+                                    {node.versions ? getNodeCoreDisplay(node.versions) : '—'}
                                 </Text>
                             </Flex>
                             <Flex align="center" gap={4}>
@@ -592,7 +592,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                         )}
 
                         <Flex align="center" gap={4}>
-                            <XrayLogo size={12} />
+                            <PiCpuDuotone size={12} />
                             <Text
                                 c={isOnline ? 'teal' : 'dimmed'}
                                 fw={isOnline ? 600 : 500}

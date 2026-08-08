@@ -1348,7 +1348,7 @@
       "enable-node": "启用节点",
       "disable-node": "禁用节点",
       "config-profile-or-inbounds-is-missing": "缺少配置文件或者入站配置",
-      "xray-core-version": "Xray 核心版本",
+      "xray-core-version": "当前核心版本",
       "remnawave-node-version": "节点版本，@remnawave/节点"
     }
   },
@@ -1393,7 +1393,7 @@
     "card": {
       "stats": "统计信息",
       "traffic-refill-in-days": "流量重置(天)：",
-      "represents-the-uptime-of-the-xray-core": "表示Xray 核心的运行时间"
+      "represents-the-uptime-of-the-xray-core": "表示当前核心的运行时间"
     }
   },
   "nodes-spotlight-search": {
@@ -1811,7 +1811,7 @@
     "traffic-used": "流量使用",
     "config-profile": "配置文件",
     "inbounds": "入站",
-    "xray-v": "Xray V.",
+    "xray-v": "核心版本",
     "node-v": "节点 V.",
     "provider": "服务商",
     "tags": "标签",
