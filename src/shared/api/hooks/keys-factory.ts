@@ -4,12 +4,12 @@ import { apiTokensQueryKeys } from './api-tokens/api-tokens.query.hooks'
 import { authQueryKeys } from './auth/auth.query.hooks'
 import { bandwidthStatsQueryKeys } from './bandwidth-stats/bandwidth-stats.query.hooks'
 import { configProfilesQueryKeys } from './config-profiles/config-profiles.query.hooks'
+import { connectionsQueryKeys } from './connections/connections.query.hooks'
 import { externalSquadsQueryKeys } from './external-squads/external-squads.query.hooks'
 import { hostsQueryKeys } from './hosts/hosts.query.hooks'
 import { hwidUserDevicesQueryKeys } from './hwid-user-devices/hwid-user-devices.query.hooks'
 import { infraBillingQueryKeys } from './infra-billing/infra-billing.query.hooks'
 import { internalSquadsQueryKeys } from './internal-squads/internal-squads.query.hooks'
-import { ipControlQueryKeys } from './ip-control/ip-control.query.hooks'
 import { nodePluginsQueryKeys } from './node-plugins/node-plugins.query.hooks'
 import { nodesQueryKeys } from './nodes/nodes.query.hooks'
 import { passkeysQueryKeys } from './passkeys/passkeys.query.hooks'
@@ -42,7 +42,7 @@ export const QueryKeys = mergeQueryKeys(
     passkeysQueryKeys,
     subpageConfigsQueryKeys,
     bandwidthStatsQueryKeys,
-    ipControlQueryKeys,
+    connectionsQueryKeys,
     nodePluginsQueryKeys
 )
 

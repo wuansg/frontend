@@ -26,10 +26,9 @@ export function ConfigEditorWidget(props: IProps) {
     const monaco = useMonaco()
 
     const { configProfile, isWasmCrashed, isWasmRestarting, onRestartWasm, snippets } = props
-    const coreType =
-        ((configProfile as { coreType?: 'SING_BOX' | 'XRAY' }).coreType ?? 'XRAY') as
-            | 'SING_BOX'
-            | 'XRAY'
+    const coreType = ((configProfile as { coreType?: 'SING_BOX' | 'XRAY' }).coreType ?? 'XRAY') as
+        | 'SING_BOX'
+        | 'XRAY'
 
     const [result, setResult] = useState('')
     const [isConfigValid, setIsConfigValid] = useState(true)

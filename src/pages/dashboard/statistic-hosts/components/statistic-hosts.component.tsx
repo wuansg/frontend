@@ -1,16 +1,16 @@
 import { ActionIcon, Select, SimpleGrid, Stack } from '@mantine/core'
 import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
-import { TbCalendar, TbRefresh, TbWorld } from 'react-icons/tb'
+import { HostsStatisticBarchartWidget } from '@widgets/dashboard/hosts-statistic/statistic-barchart'
+import { NodesStatisticSparklineCardWidget } from '@widgets/dashboard/nodes-statistic/statistic-sparkline-card'
+import dayjs from 'dayjs'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiChartPie } from 'react-icons/hi'
-import { useState } from 'react'
-import dayjs from 'dayjs'
+import { TbCalendar, TbRefresh, TbWorld } from 'react-icons/tb'
 
-import { NodesStatisticSparklineCardWidget } from '@widgets/dashboard/nodes-statistic/statistic-sparkline-card'
-import { HostsStatisticBarchartWidget } from '@widgets/dashboard/hosts-statistic/statistic-barchart'
-import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { useGetStatsHostsUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
+import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 
 const TOP_HOSTS_LIMIT_OPTIONS = [
     { value: '5', label: 'Top 5' },

@@ -14,8 +14,8 @@ const ConfigProfileResponseSchema = z.object({ response: z.any() }).passthrough(
 
 export const useUpdateConfigProfile = createMutationHook({
     endpoint: UpdateConfigProfileCommand.TSQ_url,
-    bodySchema: ConfigProfileBodySchema,
-    responseSchema: ConfigProfileResponseSchema,
+    bodySchema: UpdateConfigProfileCommand.RequestBodySchema,
+    responseSchema: UpdateConfigProfileCommand.ResponseSchema,
     requestMethod: UpdateConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {
@@ -38,8 +38,7 @@ export const useUpdateConfigProfile = createMutationHook({
 
 export const useDeleteConfigProfile = createMutationHook({
     endpoint: DeleteConfigProfileCommand.TSQ_url,
-    responseSchema: DeleteConfigProfileCommand.ResponseSchema,
-    routeParamsSchema: DeleteConfigProfileCommand.RequestSchema,
+    routeParamsSchema: DeleteConfigProfileCommand.RequestParamSchema,
     requestMethod: DeleteConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {
@@ -62,8 +61,8 @@ export const useDeleteConfigProfile = createMutationHook({
 
 export const useCreateConfigProfile = createMutationHook({
     endpoint: CreateConfigProfileCommand.TSQ_url,
-    responseSchema: ConfigProfileResponseSchema,
-    bodySchema: ConfigProfileBodySchema,
+    responseSchema: CreateConfigProfileCommand.ResponseSchema,
+    bodySchema: CreateConfigProfileCommand.RequestBodySchema,
     requestMethod: CreateConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {
         onSuccess: () => {
@@ -86,7 +85,7 @@ export const useCreateConfigProfile = createMutationHook({
 
 export const useReorderConfigProfiles = createMutationHook({
     endpoint: ReorderConfigProfileCommand.TSQ_url,
-    bodySchema: ReorderConfigProfileCommand.RequestSchema,
+    bodySchema: ReorderConfigProfileCommand.RequestBodySchema,
     responseSchema: ReorderConfigProfileCommand.ResponseSchema,
     requestMethod: ReorderConfigProfileCommand.endpointDetails.REQUEST_METHOD,
     rMutationParams: {

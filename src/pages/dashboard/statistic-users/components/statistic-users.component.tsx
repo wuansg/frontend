@@ -1,20 +1,18 @@
 import { ActionIcon, Select, SimpleGrid, Stack } from '@mantine/core'
 import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
-import { UserUsageSparklineCardWidget } from '@widgets/dashboard/users/user-usage-statistic/usage-sparkline-card'
 import { UsersStatisticBarchartWidget } from '@widgets/dashboard/users-statistic/statistic-barchart'
-import { ViewUserModal } from '@widgets/dashboard/users/view-user-modal'
+import { UserUsageSparklineCardWidget } from '@widgets/dashboard/users/user-usage-statistic/usage-sparkline-card'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiChartPie } from 'react-icons/hi'
 import { TbCalendar, TbRefresh, TbUsers } from 'react-icons/tb'
 
+import { showModal } from '@shared/_modals/show-modal'
 import { useGetStatsUsersUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
-
-import { useUserModalStoreActions } from '@entities/dashboard/user-modal-store'
 
 const TOP_USERS_LIMIT_OPTIONS = [
     { value: '5', label: 'Top 5' },
@@ -32,7 +30,6 @@ const DEFAULT_TOP_USERS_LIMIT = 100
 export const StatisticUsersPage = () => {
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
-    const userModalActions = useUserModalStoreActions()
 
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
         defaultRange.start,
@@ -58,9 +55,8 @@ export const StatisticUsersPage = () => {
         }
     })
 
-    const handleOpenUser = async (userUuid: string) => {
-        await userModalActions.setUserUuid(userUuid)
-        await userModalActions.changeModalState(true)
+    const handleOpenUser = (userId: number) => {
+        showModal('users_viewUserModal', { userId })
     }
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {
@@ -207,12 +203,12 @@ export const StatisticUsersPage = () => {
                             color: user.color,
                             name: user.username,
                             total: user.total,
-                            uuid: user.uuid
+                            uuid: String(user.id)
                         }))}
                         maxHeight={230}
                         onItemClick={(user) => {
                             if (user.uuid) {
-                                handleOpenUser(user.uuid)
+                                handleOpenUser(Number(user.uuid))
                             }
                         }}
                     />
@@ -225,8 +221,6 @@ export const StatisticUsersPage = () => {
                     series={usersStats?.series}
                 />
             </Stack>
-
-            <ViewUserModal key="view-user-modal" />
         </Page>
     )
 }

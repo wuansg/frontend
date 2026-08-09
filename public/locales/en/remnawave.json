@@ -30,7 +30,8 @@
     "remnawave-settings": "Remnawave Settings",
     "node-plugins": "Plugins",
     "tb-reports": "Torrent Blocker Reports",
-    "sessions-explorer": "Sessions Explorer"
+    "sessions-explorer": "Sessions Explorer",
+    "http-stats": "HTTP Stats"
   },
   "common": {
     "delete": "Delete",
@@ -69,7 +70,19 @@
     "clear": "Clear",
     "color": "Color",
     "all": "All",
-    "without-tags": "Without tags"
+    "without-tags": "Without tags",
+    "reset": "Reset",
+    "actions": "Actions",
+    "clear-selection": "Clear selection",
+    "select-all": "Select all",
+    "selected": "Selected: {{count}}",
+    "bulk-actions": "Bulk actions",
+    "bulk-edit": "Bulk edit",
+    "creation": "Creation",
+    "processing": "Processing",
+    "operation-completed": "Operation completed",
+    "usage-stats": "Usage stats",
+    "active-sessions": "Active sessions"
   },
   "bandwidth-metrics": {
     "current-year": "Current year",
@@ -132,16 +145,7 @@
       "new-user": "New user",
       "reset-table": "Reset table",
       "clear-filters": "Clear filters",
-      "bulk-actions": "Bulk Actions",
-      "help": "Help",
-      "table-controls-help": "Table Controls Help",
-      "table-controler-description-line-1": "This table provides several controls to help you view and manage the data effectively. Here's what each control does:",
-      "table-controler-description-line-2": "Control",
-      "table-controler-description-line-3": "Description",
-      "table-controler-description-line-4": "Toggle column filters to search and filter data",
-      "show-or-hide-specific-columns": "Show or hide specific columns",
-      "adjust-row-spacing-density": "Adjust row spacing density",
-      "toggle-fullscreen-table-view": "Toggle fullscreen table view"
+      "help": "Help"
     }
   },
   "use-table-columns": {
@@ -603,36 +607,16 @@
   "subscription-settings": {
     "widget": {
       "validation-error": "Validation error",
+      "main-settings": "Main settings",
       "you-must-add-at-least-one-remark-with-text": "You must add at least one remark with text",
-      "subscription-info": "Subscription info",
-      "this-title-will-be-displayed-as-subscription-name": "This title will be displayed as the subscription name.",
-      "profile-title": "Profile title",
-      "enter-profile-title": "Enter profile title",
-      "auto-update-description": "Some client applications follow this interval to auto-update the subscription.",
-      "auto-update-interval-hours": "Auto-update interval (hours)",
-      "support-link-description": "Some clients will display this link in the subscription information. The link should lead the user to the support page.",
-      "support-link": "Support link",
-      "happ-settings": "Happ settings",
-      "happ-announce-description": "200 characters maximum. Will be displayed under the subscription name in Happ.",
-      "happ-announce": "Happ Announce",
-      "enter-happ-announce-max-200-characters": "Enter Happ Announce, max. 200 characters",
-      "happ-routing-description": "Happ routing is a feature that allows you to configure the routing rules that Xray-Core will use through the subscription link.",
-      "happ-routing-description-line-2": "A routing link for Happ can be obtained through Remnawave's Happ Routing Builder. The button below will redirect you to the aforementioned page.",
-      "configure-happ-routing": "Happ Routing Builder",
-      "happ-routing": "Happ routing",
       "user-status-remarks-description": "The following values will be displayed in the subscription page if the user is expired, limited or disabled.",
       "user-status-remarks-description-line-2": "You can add multiple remarks for each status.",
       "user-status-remarks-description-line-3": "Because expired, limited and disabled users are not able to connect to the server, they will see these remarks in the client instead of receiving an empty subscription.",
       "update-settings": "Update settings",
       "enabled": "Enabled",
       "disabled": "Disabled",
-      "profile-webpage-url": "Profile Webpage URL",
-      "profile-webpage-url-description": "Used by some clients. Enabled by default, domain obtained from SUB_PUBLIC_DOMAIN .env variable.",
       "serve-json-at-base-subscription": "Serve JSON at base subscription",
       "serve-json-description": "Serve JSON configurations at the base subscription path (without having to append /json). If the client supports it, it will be served JSON, otherwise it will be served as usual.",
-      "subscription-info-description": "Subscription links are supported by many client apps such as Happ, v2RayNG, Streisand, etc.",
-      "happ-description-line-1": "Here you can configure settings specific to Happ.",
-      "happ-description-line-2": "These settings will only apply to subscription links that are imported in Happ.",
       "custom-remarks": "Custom remarks"
     },
     "page": {
@@ -648,8 +632,6 @@
       "set-inbound": "Set inbound",
       "set-port": "Set Port",
       "port": "Port",
-      "clear-selection": "Clear selection",
-      "select-all": "Select all",
       "dangling-hosts-skipped": "{{count}} dangling host(s) were skipped and not cloned."
     }
   },
@@ -659,20 +641,9 @@
     "no-changes-title": "Nothing to update",
     "no-changes-description": "You haven't changed any fields."
   },
-  "bulk-user-actions-drawer": {
-    "widget": {
-      "bulk-user-actions": "Bulk User Actions",
-      "users": "users",
-      "actions": "Actions",
-      "danger": "Danger"
-    }
-  },
   "delete-all-users-by-status": {
     "feature": {
-      "processing": "Processing",
-      "deleting-users": "Deleting users...",
-      "success": "Success",
-      "deleted-data-affectedrows-users": "Deleted {{count}} users"
+      "deleting-users": "Deleting users..."
     }
   },
   "bulk-all-user-actions-tabs": {
@@ -708,14 +679,6 @@
           "delete-users-by-status-description": "Permanently deletes all users with the selected status"
         }
       }
-    }
-  },
-  "bulk-all-user-actions-drawer": {
-    "widget": {
-      "bulk-all-user-actions": "Bulk All User Actions",
-      "all-users": "All users",
-      "actions": "Actions",
-      "danger": "Danger"
     }
   },
   "bulk-user-actions": {
@@ -763,14 +726,6 @@
       }
     }
   },
-  "users-table-selection": {
-    "feature": {
-      "row-s-selected": "row(s) selected",
-      "clear-selection": "Clear selection",
-      "select-all": "Select all",
-      "bulk-actions": "Bulk actions"
-    }
-  },
   "get-user-subscription-links": {
     "feature": {
       "subscription-links": "Subscription links",
@@ -783,7 +738,6 @@
     "widget": {
       "no-data-available-for-the-selected-period": "No data available for the selected period",
       "no-data-available": "No data available",
-      "traffic-statistics": "Traffic statistics",
       "click-to-show-all": "Click to show all",
       "click-to-highlight-only-this-node": "Click to highlight only this node",
       "usage-by-period": "Usage by period",
@@ -804,16 +758,8 @@
       "click-to-see-all": "Click to see all"
     }
   },
-  "get-user-usage": {
-    "feature": {
-      "show-usage": "Show usage",
-      "usage": "Usage",
-      "active-sessions": "Active Sessions"
-    }
-  },
   "active-sessions-drawer": {
     "widget": {
-      "title": "Active Sessions",
       "requirements": "Requirements",
       "warning-activity": "An IP address will be shown when <highlight>Xray-Core</highlight> considers the <highlight>connection still open</highlight>. This may result in some displayed IP addresses that are no longer actually connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
       "warning-version": "Remnawave Node version <highlight>{{version}}</highlight> or higher",
@@ -909,7 +855,6 @@
       "click-to-show-all-users": "Click to show all users",
       "click-to-highlight-only-this-user": "Click to highlight only this user",
       "users-accordeon": "Users (showing top {{displayedUserCount}} of {{significantUserCount}} active out of {{userCount}} total)",
-      "user-traffic-statistics": "User Traffic Statistics",
       "usage-by-period": "Usage by period",
       "7-days": "7 days",
       "14-days": "14 days",
@@ -934,6 +879,26 @@
       "traffic": "Traffic",
       "no-users-with-traffic-100-kb": "No users with traffic ≥ 100 KiB",
       "users-hidden-with-less-than-100-kb": "{{usersCount}} users hidden with less than 100 KiB ({{totalTraffic}} total)"
+    }
+  },
+  "internal-squads-usage-drawer": {
+    "info": {
+      "title": "How usage is calculated",
+      "summary": "Returns internal squad members who spent at least the given threshold over the selected period, with the <b>total volume</b> for each of them.",
+      "nodes-title": "Which nodes are counted",
+      "nodes-intro": "A squad isn't tied to nodes directly – the link is derived through inbounds:",
+      "nodes-step-1": "All inbounds that belong to the internal squad are taken.",
+      "nodes-step-2": "For each inbound, the config profiles it belongs to are resolved.",
+      "nodes-step-3": "A node is counted when it has such a profile set as <b>active</b> and that inbound is enabled on the node itself.",
+      "nodes-outro": "So only the nodes a squad member can <hl>actually connect to right now</hl> are counted. If the squad has no inbound available on at least one node, the list is empty.",
+      "traffic-title": "How traffic is counted",
+      "traffic-granularity": "Stats are stored with <b>daily</b> granularity: one record = user + node + day. Node data is flushed to the database roughly <hl>every 2 minutes</hl>, so today's numbers are near real-time, lagging by up to a couple of minutes.",
+      "traffic-sum": "For each member, all of their daily per-node records are summed over the period from the start of <code>start</code> to the end of <code>end</code> (both dates inclusive, UTC).",
+      "traffic-threshold": "Only users whose total is <b>≥ minTotalBytes</b> make it into the response. Volume is returned in <hl>raw bytes</hl>, without rounding.",
+      "caveats-title": "What to keep in mind",
+      "caveats-per-node": "Traffic is counted <b>per whole node</b>, not per inbound. If a node is shared across squads (its active profile also serves other inbounds), the user's total includes all their traffic on that node – including what they poured through other squads' inbounds. It's an <hl>upper bound</hl>, not exact per-squad attribution.",
+      "caveats-membership": "Squad membership and the node set are taken <b>at request time</b>, not historically. A user who left the squad disappears from the response (even though they used traffic); a recently joined one shows all their traffic for the period, including days before joining. The same goes for a change of a node's active profile.",
+      "caveats-sorting": "The list is sorted by <b>user ID</b>, not by volume. Since traffic changes in real time, data may drift between pages – to hunt down abusers set a <code>minTotalBytes</code> threshold instead of reading everyone."
     }
   },
   "get-hwid-user-devices": {
@@ -1041,8 +1006,7 @@
         "favicon-link-description": "A link to the favicon of the provider. It is used to display the favicon of the provider in the UI. You can enter only the domain name.",
         "login-url": "Login URL",
         "enter-login-url": "Enter login URL",
-        "login-url-description": "The URL of the login page of the provider. It will help you to quickly move to the login page of the provider.",
-        "save-changes": "Save Changes"
+        "login-url-description": "The URL of the login page of the provider. It will help you to quickly move to the login page of the provider."
       }
     }
   },
@@ -1053,8 +1017,7 @@
       "new-date": "New Date",
       "today": "Today",
       "tomorrow": "Tomorrow",
-      "next-month": "Next Month",
-      "update-date": "Update Date"
+      "next-month": "Next Month"
     }
   },
   "infra-providers-table": {
@@ -1199,7 +1162,6 @@
     "modal": {
       "widget": {
         "loading-accessible-nodes": "Loading accessible nodes...",
-        "no-accessible-nodes-found-for-this-user": "No accessible nodes found for this user",
         "access-summary": "Access Summary",
         "user-accessible-nodes": "User Accessible Nodes"
       }
@@ -1306,6 +1268,10 @@
     "liability": "The developers and contributors accept <warning>no liability</warning> for any misuse, damage, or data loss.",
     "license-acknowledgement": "By continuing you acknowledge that you have read and agree to the <anchor>license terms</anchor>.",
     "accept-button": "I understand and accept"
+  },
+  "connection-status-overlay": {
+    "connection-lost": "Connection lost",
+    "reconnecting": "Reconnecting..."
   },
   "mobile-warning-overlay": {
     "mobile-device-detected": "Mobile Device Detected",
@@ -1475,7 +1441,9 @@
     "request-ip": "Request IP",
     "user-agent": "User Agent",
     "request-at": "Request At",
-    "user-uuid": "User UUID"
+    "user-uuid": "User UUID",
+    "response-type": "Response Type",
+    "rule-name": "Rule Name"
   },
   "srh-inspector-table": {
     "widget": {
@@ -1678,7 +1646,6 @@
   "passkeys-drawer": {
     "component": {
       "passkeys": "Passkeys",
-      "passkeys-description": "Passkeys allow you to sign in securely without passwords. You can register multiple passkeys across different devices.",
       "active-passkeys": "Active Passkeys",
       "no-passkeys-registered-yet": "No passkeys registered yet",
       "add-passkeys-description": "Add your first passkey to enable secure, passwordless sign-in across your devices",
@@ -1765,7 +1732,13 @@
   },
   "external-squads-response-headers": {
     "widget": {
-      "response-headers": "Headers"
+      "response-headers": "Headers",
+      "headers-inherited-description": "By default, response headers are inherited from the main subscription settings.",
+      "add-headers": "Add headers",
+      "add-headers-description": "Headers listed here are added to the inherited ones. If a header with the same key already exists in the main settings, it will be overridden.",
+      "remove-headers": "Remove headers",
+      "remove-headers-description": "Header keys listed here will be removed from the response, even if they are provided by the main settings.",
+      "enter-header-key": "Enter header key"
     }
   },
   "subscription-hwid-settings": {
@@ -2255,6 +2228,49 @@
   "keypair-generator": {
     "widget": {
       "generate": "Generate"
+    }
+  },
+  "bulk-all-users-actions": {
+    "modal": {
+      "perform-actions-on-all-users": "Perform actions on all users"
+    }
+  },
+  "backend-tools-card": {
+    "widget": {
+      "queue-viewer": "Queue Viewer",
+      "queue-viewer-description": "Monitor and manage background job queues.",
+      "scalar-description": "Modern interactive API reference.",
+      "swagger-description": "Classic OpenAPI documentation explorer.",
+      "backend-tools-description": "Access to Queue Viewer, Scalar or Swagger.",
+      "login": "Login",
+      "backend-tools": "Backend tools"
+    }
+  },
+  "http-stats": {
+    "page": {
+      "component": {
+        "http-stats-description": "Aggregated request counts per API route since the last panel restart."
+      }
+    }
+  },
+  "http-stats-table": {
+    "widget": {
+      "total-requests": "Total Requests",
+      "tracked-routes": "Tracked Routes",
+      "peak-requests": "Peak Requests",
+      "avg-route": "Avg / Route"
+    }
+  },
+  "get-node-inbounds-hosts": {
+    "feature": {
+      "inbounds-and-hosts": "Inbounds & hosts"
+    }
+  },
+  "node-inbounds-hosts-drawer": {
+    "widget": {
+      "inbounds-and-hosts": "Inbounds & hosts",
+      "no-active-config-profile": "This node has no active config profile",
+      "linked": "Linked"
     }
   }
 }

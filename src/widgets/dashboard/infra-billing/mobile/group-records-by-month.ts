@@ -1,11 +1,10 @@
-import { GetInfraBillingHistoryRecordsCommand } from '@remnawave/backend-contract'
+import { GetInfraBillingRecordsCommand } from '@remnawave/backend-contract'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
 
-export type BillingRecord =
-    GetInfraBillingHistoryRecordsCommand.Response['response']['records'][number]
+export type BillingRecord = GetInfraBillingRecordsCommand.Response['response']['records'][number]
 
 export interface MonthGroup {
     label: string

@@ -35,7 +35,7 @@ const RESOURCE_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
     'hwid-user-devices': TbDeviceAnalytics,
     'infra-billing': TbCreditCard,
     'internal-squads': TbCirclesRelation,
-    'ip-control': TbRadar2,
+    connections: TbRadar2,
     keygen: TbKey,
     metadata: TbTags,
     'node-plugins': TbPackage,

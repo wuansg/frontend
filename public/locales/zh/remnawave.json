@@ -30,7 +30,8 @@
     "remnawave-settings": "Remnawave 设置",
     "node-plugins": "插件",
     "tb-reports": "Torrent 屏蔽报告",
-    "sessions-explorer": "会话管理器"
+    "sessions-explorer": "会话管理器",
+    "http-stats": "HTTP 状态"
   },
   "common": {
     "delete": "删除",
@@ -69,7 +70,19 @@
     "clear": "清除",
     "color": "颜色",
     "all": "全部",
-    "without-tags": "无标签"
+    "without-tags": "无标签",
+    "reset": "重置",
+    "actions": "操作",
+    "clear-selection": "清除选择",
+    "select-all": "全选",
+    "selected": "已选 {{count}} 项",
+    "bulk-actions": "批量操作",
+    "bulk-edit": "批量编辑",
+    "creation": "创建",
+    "processing": "处理中",
+    "operation-completed": "操作已完成",
+    "usage-stats": "使用状态",
+    "active-sessions": "活跃会话"
   },
   "bandwidth-metrics": {
     "current-year": "今年",
@@ -132,16 +145,7 @@
       "new-user": "新建用户",
       "reset-table": "重置表格样式",
       "clear-filters": "清除筛选",
-      "bulk-actions": "批量操作",
-      "help": "帮助",
-      "table-controls-help": "表格控件帮助",
-      "table-controler-description-line-1": "此表格提供多个控件，帮助你更高效地查看和管理数据。以下是每个控件的作用说明：",
-      "table-controler-description-line-2": "控件",
-      "table-controler-description-line-3": "说明",
-      "table-controler-description-line-4": "切换列筛选功能以搜索和过滤数据",
-      "show-or-hide-specific-columns": "显示或隐藏指定列",
-      "adjust-row-spacing-density": "调整行间距密度",
-      "toggle-fullscreen-table-view": "切换全屏表格视图"
+      "help": "帮助"
     }
   },
   "use-table-columns": {
@@ -597,36 +601,16 @@
   "subscription-settings": {
     "widget": {
       "validation-error": "验证错误",
+      "main-settings": "主要设置",
       "you-must-add-at-least-one-remark-with-text": "您必须至少添加一个带有文本的备注",
-      "subscription-info": "订阅信息",
-      "this-title-will-be-displayed-as-subscription-name": "此标题将显示为订阅名称。",
-      "profile-title": "配置标题",
-      "enter-profile-title": "输入配置标题",
-      "auto-update-description": "某些客户端应用遵循此间隔自动更新订阅。",
-      "auto-update-interval-hours": "自动更新间隔（小时）",
-      "support-link-description": "某些客户端会在订阅信息中显示此链接。该链接应将用户引导至支持页面。",
-      "support-link": "支持链接",
-      "happ-settings": "Happ 设置",
-      "happ-announce-description": "最多 200 个字符。将在 Happ 中的订阅名称下显示。",
-      "happ-announce": "Happ 公告",
-      "enter-happ-announce-max-200-characters": "输入 Happ 公告，最多 200 个字符",
-      "happ-routing-description": "Happ 路由是一项功能，允许您通过订阅链接配置 Xray-Core 将使用的路由规则。",
-      "happ-routing-description-line-2": "可以通过 Remnawave 的 Happ 路由编辑器获取 Happ 的路由链接。下面的按钮将重定向到上述页面。",
-      "configure-happ-routing": "Happ 路由编辑器",
-      "happ-routing": "Happ 路由",
       "user-status-remarks-description": "如果用户已过期、受限或禁用，以下值将显示在订阅页面中。",
       "user-status-remarks-description-line-2": "您可以为每种状态添加多个备注。",
       "user-status-remarks-description-line-3": "因为过期、受限和禁用的用户无法连接到服务器，他们将在客户端中看到这些备注，而不是收到空的订阅。",
       "update-settings": "更新设置",
       "enabled": "已启用",
       "disabled": "已禁用",
-      "profile-webpage-url": "配置网页 URL",
-      "profile-webpage-url-description": "某些客户端使用。默认启用，域名来自 SUB_PUBLIC_DOMAIN .env 变量。",
       "serve-json-at-base-subscription": "在基础订阅提供 JSON",
       "serve-json-description": "在基础订阅路径（无需附加 /json）提供 JSON 配置。如果客户端支持，将提供 JSON，否则将照常提供。",
-      "subscription-info-description": "订阅链接受许多客户端应用支持，例如 Happ, v2RayNG, Streisand 等。",
-      "happ-description-line-1": "您可以在此处配置仅适用于 Happ 的设置。",
-      "happ-description-line-2": "这些设置仅适用于在 Happ 中导入的订阅链接。",
       "custom-remarks": "自定义备注"
     },
     "page": {
@@ -642,8 +626,6 @@
       "set-inbound": "设置入站",
       "set-port": "设置端口",
       "port": "端口",
-      "clear-selection": "清除选择",
-      "select-all": "全选",
       "dangling-hosts-skipped": "已跳过 {{count}} 个未关联的主机，未执行克隆。"
     }
   },
@@ -653,20 +635,9 @@
     "no-changes-title": "无需更新",
     "no-changes-description": "您尚未修改任何字段。"
   },
-  "bulk-user-actions-drawer": {
-    "widget": {
-      "bulk-user-actions": "批量操作用户",
-      "users": "用户",
-      "actions": "操作",
-      "danger": "危险"
-    }
-  },
   "delete-all-users-by-status": {
     "feature": {
-      "processing": "处理中",
-      "deleting-users": "正在删除用户...",
-      "success": "成功",
-      "deleted-data-affectedrows-users": "已删除 {{count}} 个用户"
+      "deleting-users": "正在删除用户..."
     }
   },
   "bulk-all-user-actions-tabs": {
@@ -702,14 +673,6 @@
           "delete-users-by-status-description": "永久删除所有具有选定状态的用户"
         }
       }
-    }
-  },
-  "bulk-all-user-actions-drawer": {
-    "widget": {
-      "bulk-all-user-actions": "批量所有用户操作",
-      "all-users": "所有用户",
-      "actions": "操作",
-      "danger": "危险区"
     }
   },
   "bulk-user-actions": {
@@ -757,14 +720,6 @@
       }
     }
   },
-  "users-table-selection": {
-    "feature": {
-      "row-s-selected": "选定的行",
-      "clear-selection": "清除选择",
-      "select-all": "全选",
-      "bulk-actions": "批量操作"
-    }
-  },
   "get-user-subscription-links": {
     "feature": {
       "subscription-links": "订阅链接",
@@ -777,7 +732,6 @@
     "widget": {
       "no-data-available-for-the-selected-period": "所选时段无可用数据",
       "no-data-available": "无可用数据",
-      "traffic-statistics": "流量统计",
       "click-to-show-all": "点击显示全部",
       "click-to-highlight-only-this-node": "点击仅高亮此节点",
       "usage-by-period": "时段用量",
@@ -798,16 +752,8 @@
       "click-to-see-all": "点击查看全部"
     }
   },
-  "get-user-usage": {
-    "feature": {
-      "show-usage": "显示用量",
-      "usage": "使用情况",
-      "active-sessions": "活跃会话"
-    }
-  },
   "active-sessions-drawer": {
     "widget": {
-      "title": "活跃会话",
       "requirements": "需求",
       "warning-activity": "当 <highlight>Xray-Core</highlight> 认为 <highlight>连接仍然打开</highlight>时，将显示IP地址。 这可能导致某些显示的IP地址实际未连接。 使用 <highlight>时钟</highlight> 图标跟踪指定IP的最后活动。",
       "warning-version": "Remnawave 节点版本 <highlight>{{version}}</highlight> 或者更高",
@@ -903,7 +849,6 @@
       "click-to-show-all-users": "点击显示所有用户",
       "click-to-highlight-only-this-user": "点击仅高亮此用户",
       "users-accordeon": "用户 (显示 {{displayedUserCount}} 个活跃用户中的前 {{significantUserCount}} 个 / 总用户数 {{userCount}})",
-      "user-traffic-statistics": "用户流量统计",
       "usage-by-period": "时段用量",
       "7-days": "7 天",
       "14-days": "14 天",
@@ -928,6 +873,26 @@
       "traffic": "流量",
       "no-users-with-traffic-100-kb": "流量 ≥ 100 KiB 的用户",
       "users-hidden-with-less-than-100-kb": "{{usersCount}} 个流量小于 100 KiB 的用户已隐藏 (总计 {{totalTraffic}})"
+    }
+  },
+  "internal-squads-usage-drawer": {
+    "info": {
+      "title": "如何计算使用量",
+      "summary": "返回所选时间范围内，总流量达到或超过指定阈值的内部组成员，并列出每位成员的</b>总流量</b>",
+      "nodes-title": "哪些节点被计算",
+      "nodes-intro": "一个分组没有直接绑定到节点 — 链接是通过输入而产生的：",
+      "nodes-step-1": "已包含内部分组中的所有入站配置",
+      "nodes-step-2": "对于每个嵌入符，它所属的配置配置文件已被解析。",
+      "nodes-step-3": "仅当节点使用了该配置文件且其状态为</b>启用</b>，并且该节点上的对应入站（Inbound）也已启用时，该节点才会被计入统计",
+      "nodes-outro": "因此，仅统计小组成员<hl>当前实际能够连接</hl>的节点。如果该小组在任何节点上都没有可用的入站，则返回的列表为空。",
+      "traffic-title": "流量计算方式",
+      "traffic-granularity": "统计数据按<b>天</b>存储：一条记录 = 用户 + 节点 + 日期。节点数据大约每 <hl>2 分钟</hl> 刷新一次到数据库，因此当天的数据接近实时，最多可能延迟几分钟。",
+      "traffic-sum": "对于每位成员，会汇总其从 <code>start</code> 开始到 <code>end</code> 结束（包含这两个日期，UTC）的所有按天、按节点统计的记录。",
+      "traffic-threshold": "仅返回总流量 <b>≥ minTotalBytes</b> 的用户。流量以<hl>原始字节数（Raw Bytes）</hl>返回，不进行任何四舍五入。",
+      "caveats-title": "要牢记的内容",
+      "caveats-per-node": "流量按<b>整个节点</b>统计，而不是按入站 统计。如果某个节点被多个小组共享（即其活动配置文件同时服务于其他入站），则用户的总流量会包含其在该节点上的全部流量——包括通过其他小组 入站 产生的流量。因此，该统计值只是一个<hl>上限估计</hl>，而不是精确的小组流量归属。",
+      "caveats-membership": "小组成员关系和节点集合均以<b>请求发起时</b>的状态为准，而非历史状态。已退出小组的用户不会出现在返回结果中（即使其在统计期间产生过流量）；新加入小组的用户则会显示整个统计期间的全部流量，包括加入小组之前的流量。节点活动配置文件的变更也遵循相同规则。",
+      "caveats-sorting": "返回列表按<b>用户 ID</b> 排序，而不是按流量排序。由于流量数据会实时变化，分页之间的数据可能发生漂移。若需排查流量滥用者，建议设置 <code>minTotalBytes</code> 阈值，而不是遍历所有用户。"
     }
   },
   "get-hwid-user-devices": {
@@ -1035,8 +1000,7 @@
         "favicon-link-description": "Favicon 链接是提供商图标的链接。用于在界面中显示该提供商的图标。你也可以直接输入域名。",
         "login-url": "登录网址",
         "enter-login-url": "输入登录网址",
-        "login-url-description": "登录网址是该提供商登录页面的链接，可帮助你快速跳转到其登录页面。",
-        "save-changes": "保存更改"
+        "login-url-description": "登录网址是该提供商登录页面的链接，可帮助你快速跳转到其登录页面。"
       }
     }
   },
@@ -1047,8 +1011,7 @@
       "new-date": "新日期",
       "today": "今天",
       "tomorrow": "明天",
-      "next-month": "下个月",
-      "update-date": "更新日期"
+      "next-month": "下个月"
     }
   },
   "infra-providers-table": {
@@ -1125,8 +1088,8 @@
         "billing-node": "计费节点",
         "next-billing-at": "下次计费时间",
         "next-billing-at-description": "计费节点将被计费的日期和时间。Remnawave 将会通知你即将到来的账单。",
-        "existing": "Existing",
-        "custom": "Custom",
+        "existing": "已存在",
+        "custom": "自定义",
         "custom-name-description": "当节点不由 Remnawave 管理时使用自定义名称。"
       }
     }
@@ -1193,7 +1156,6 @@
     "modal": {
       "widget": {
         "loading-accessible-nodes": "正在加载可访问节点…",
-        "no-accessible-nodes-found-for-this-user": "未找到该用户可访问的节点",
         "access-summary": "访问摘要",
         "user-accessible-nodes": "用户可访问节点"
       }
@@ -1300,6 +1262,10 @@
     "liability": "开发者和贡献者对任何误用、损害或数据丢失均不承担任何责任。",
     "license-acknowledgement": "继续操作即表示您已阅读并同意<anchor>许可协议条款</anchor>。",
     "accept-button": "我已了解并接受"
+  },
+  "connection-status-overlay": {
+    "connection-lost": "连接中断",
+    "reconnecting": "正在重新连接..."
   },
   "mobile-warning-overlay": {
     "mobile-device-detected": "检测到移动设备",
@@ -1469,7 +1435,9 @@
     "request-ip": "请求IP地址",
     "user-agent": "User Agent",
     "request-at": "请求时间",
-    "user-uuid": "用户 UUID"
+    "user-uuid": "用户 UUID",
+    "response-type": "响应类型",
+    "rule-name": "规则名称"
   },
   "srh-inspector-table": {
     "widget": {
@@ -1672,7 +1640,6 @@
   "passkeys-drawer": {
     "component": {
       "passkeys": "通行密钥",
-      "passkeys-description": "通行密钥允许您在没有密码的情况下安全登录。您可以在不同的设备上注册多个通行密钥。",
       "active-passkeys": "激活的通行密钥",
       "no-passkeys-registered-yet": "尚无通行密钥注册",
       "add-passkeys-description": "添加您的第一个通行密钥以启用无密码登录您的设备",
@@ -1759,7 +1726,13 @@
   },
   "external-squads-response-headers": {
     "widget": {
-      "response-headers": "请求头"
+      "response-headers": "请求头",
+      "headers-inherited-description": "默认情况下，headers 是从主要订阅设置继承的。",
+      "add-headers": "添加 headers",
+      "add-headers-description": "此处列出的 header 被添加到继承的标题中。 如果在主设定中已经存在具有相同键的标题，它将被覆盖。",
+      "remove-headers": "删除 header",
+      "remove-headers-description": "此处列出的header 值 将从响应中删除，即使它们是由主要设置提供的。",
+      "enter-header-key": "输入 header 值"
     }
   },
   "subscription-hwid-settings": {
@@ -2255,6 +2228,49 @@
   "keypair-generator": {
     "widget": {
       "generate": "生成"
+    }
+  },
+  "bulk-all-users-actions": {
+    "modal": {
+      "perform-actions-on-all-users": "对所有用户执行操作"
+    }
+  },
+  "backend-tools-card": {
+    "widget": {
+      "queue-viewer": "队列查看器",
+      "queue-viewer-description": "监视和管理后台作业队列。",
+      "scalar-description": "现代交互式API参考资料。",
+      "swagger-description": "经典的 OpenAPI 文档浏览器。",
+      "backend-tools-description": "访问队列查看器，Scalar 或Swagger。",
+      "login": "登录",
+      "backend-tools": "后端工具"
+    }
+  },
+  "http-stats": {
+    "page": {
+      "component": {
+        "http-stats-description": "自上次面板重新启动以来，每一个 API 路由的综合请求计数。"
+      }
+    }
+  },
+  "http-stats-table": {
+    "widget": {
+      "total-requests": "总请求数",
+      "tracked-routes": "路由追踪",
+      "peak-requests": "峰值请求",
+      "avg-route": "平均／路由"
+    }
+  },
+  "get-node-inbounds-hosts": {
+    "feature": {
+      "inbounds-and-hosts": "入站 & 主机"
+    }
+  },
+  "node-inbounds-hosts-drawer": {
+    "widget": {
+      "inbounds-and-hosts": "入站 & 主机",
+      "no-active-config-profile": "此节点没有激活的配置文件",
+      "linked": "已关联"
     }
   }
 }

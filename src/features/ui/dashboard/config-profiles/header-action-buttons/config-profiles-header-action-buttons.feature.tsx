@@ -1,29 +1,13 @@
-import {
-    ActionIcon,
-    ActionIconGroup,
-    Button,
-    Group,
-    Modal,
-    SegmentedControl,
-    Stack,
-    Text,
-    TextInput,
-    Tooltip
-} from '@mantine/core'
-import { useField } from '@mantine/form'
-import { useDisclosure } from '@mantine/hooks'
-import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
-import { useState } from 'react'
+import { ActionIcon, ActionIconGroup, Group, Tooltip } from '@mantine/core'
 import { useTranslation } from 'react-i18next'
 import { TbCode, TbPlus, TbRefresh } from 'react-icons/tb'
-import { generatePath, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 
+import { showModal } from '@shared/_modals/show-modal'
+import { HelpActionIconShared } from '@shared/_modals/universal'
 import { queryClient } from '@shared/api'
-import { QueryKeys, useCreateConfigProfile, useGetConfigProfiles } from '@shared/api/hooks'
-import { ROUTES } from '@shared/constants'
-import { HelpActionIconShared } from '@shared/ui/help-drawer'
+import { QueryKeys, useGetConfigProfiles } from '@shared/api/hooks'
 import { XrayLogo } from '@shared/ui/logos'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { UniversalSpotlightActionIconShared } from '@shared/ui/universal-spotlight'
 
 import { CONFIG_PROFILES_VIEW_MODE } from '@entities/dashboard/view-preferences-store'
@@ -34,162 +18,10 @@ interface IProps {
     viewMode: CONFIG_PROFILES_VIEW_MODE
 }
 
-type CoreType = 'SING_BOX' | 'XRAY'
-
-const generateDefaultXrayConfig = () => {
-    const randomNumber = Math.floor(Math.random() * 999999) + 1
-
-    return {
-        log: {
-            loglevel: 'info'
-        },
-        inbounds: [
-            {
-                tag: `Shadowsocks_${randomNumber}`,
-                port: 1234,
-                protocol: 'shadowsocks',
-                settings: {
-                    clients: [],
-                    method: 'chacha20-ietf-poly1305',
-                    network: 'tcp,udp'
-                },
-                sniffing: {
-                    enabled: true,
-                    destOverride: ['http', 'tls', 'quic']
-                }
-            }
-        ],
-        outbounds: [
-            {
-                protocol: 'freedom',
-                tag: 'DIRECT'
-            },
-            {
-                protocol: 'blackhole',
-                tag: 'BLOCK'
-            }
-        ],
-        routing: {
-            rules: []
-        }
-    }
-}
-
-const generateDefaultSingBoxConfig = () => {
-    const randomNumber = Math.floor(Math.random() * 999999) + 1
-
-    return {
-        log: {
-            level: 'info'
-        },
-        inbounds: [
-            {
-                type: 'anytls',
-                tag: `AnyTLS_${randomNumber}`,
-                listen: '::',
-                listen_port: 54321,
-                users: [],
-                tls: {
-                    enabled: true,
-                    certificate_path: '/root/cert/anytls/cert.pem',
-                    key_path: '/root/cert/anytls/cert.key'
-                }
-            },
-            {
-                type: 'vless',
-                tag: `VLESS_${randomNumber}`,
-                listen: '::',
-                listen_port: 54322,
-                users: []
-            },
-            {
-                type: 'vmess',
-                tag: `VMess_${randomNumber}`,
-                listen: '::',
-                listen_port: 54323,
-                users: []
-            },
-            {
-                type: 'trojan',
-                tag: `Trojan_${randomNumber}`,
-                listen: '::',
-                listen_port: 54324,
-                users: [],
-                tls: {
-                    enabled: true,
-                    certificate_path: '/root/cert/anytls/cert.pem',
-                    key_path: '/root/cert/anytls/cert.key'
-                }
-            },
-            {
-                type: 'shadowsocks',
-                tag: `Shadowsocks_${randomNumber}`,
-                listen: '::',
-                listen_port: 54325,
-                method: 'chacha20-ietf-poly1305',
-                users: []
-            },
-            {
-                type: 'hysteria2',
-                tag: `Hysteria2_${randomNumber}`,
-                listen: '::',
-                listen_port: 54326,
-                users: [],
-                tls: {
-                    enabled: true,
-                    certificate_path: '/root/cert/anytls/cert.pem',
-                    key_path: '/root/cert/anytls/cert.key'
-                }
-            },
-            {
-                type: 'tuic',
-                tag: `TUIC_${randomNumber}`,
-                listen: '::',
-                listen_port: 54327,
-                users: [],
-                congestion_control: 'bbr',
-                tls: {
-                    enabled: true,
-                    certificate_path: '/root/cert/anytls/cert.pem',
-                    key_path: '/root/cert/anytls/cert.key'
-                }
-            },
-            {
-                type: 'shadowtls',
-                tag: `ShadowTLS_${randomNumber}`,
-                listen: '::',
-                listen_port: 54328,
-                users: [],
-                version: 3,
-                handshake: {
-                    server: 'www.cloudflare.com',
-                    server_port: 443
-                }
-            }
-        ],
-        outbounds: [
-            {
-                type: 'direct',
-                tag: 'DIRECT'
-            },
-            {
-                type: 'block',
-                tag: 'BLOCK'
-            }
-        ],
-        route: {
-            rules: []
-        }
-    }
-}
-
 export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
     const { configProfileCount, setViewMode, viewMode } = props
     const { isFetching } = useGetConfigProfiles()
     const { t } = useTranslation()
-
-    const [opened, { open, close }] = useDisclosure(false)
-    const [coreType, setCoreType] = useState<CoreType>('XRAY')
     const navigate = useNavigate()
 
     const handleUpdate = async () => {
@@ -197,32 +29,6 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
             queryKey: QueryKeys.configProfiles.getConfigProfiles.queryKey
         })
     }
-
-    const nameField = useField<CreateConfigProfileCommand.Request['name']>({
-        initialValue: '',
-        validateOnChange: true,
-        validate: (value) => {
-            const result = CreateConfigProfileCommand.RequestSchema.omit({
-                config: true
-            }).safeParse({ name: value })
-            return result.success ? null : result.error.errors[0]?.message
-        }
-    })
-    const { mutate: createConfigProfile, isPending } = useCreateConfigProfile({
-        mutationFns: {
-            onSuccess: (data) => {
-                close()
-                nameField.reset()
-                setCoreType('XRAY')
-                handleUpdate()
-                navigate(
-                    generatePath(ROUTES.DASHBOARD.MANAGEMENT.CONFIG_PROFILE_BY_UUID, {
-                        uuid: data.uuid
-                    })
-                )
-            }
-        }
-    })
 
     return (
         <Group grow preventGrowOverflow={false} wrap="wrap">
@@ -269,82 +75,21 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
                     label={t('config-profiles-header-action-buttons.feature.create-config-profile')}
                     withArrow
                 >
-                    <ActionIcon color="teal" onClick={open} size="input-md" variant="soft">
+                    <ActionIcon
+                        color="teal"
+                        onClick={() =>
+                            showModal('createModal', {
+                                createFrom: 'configProfile',
+                                contentOptions: { navigate }
+                            })
+                        }
+                        size="input-md"
+                        variant="soft"
+                    >
                         <TbPlus size="24px" />
                     </ActionIcon>
                 </Tooltip>
             </ActionIconGroup>
-
-            <Modal
-                centered
-                onClose={close}
-                opened={opened}
-                size="md"
-                title={
-                    <BaseOverlayHeader
-                        IconComponent={XrayLogo}
-                        iconVariant="soft"
-                        title={t(
-                            'config-profiles-header-action-buttons.feature.create-config-profile'
-                        )}
-                    />
-                }
-            >
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault()
-                        createConfigProfile({
-                            variables: {
-                                name: nameField.getValue(),
-                                coreType,
-                                config:
-                                    coreType === 'SING_BOX'
-                                        ? generateDefaultSingBoxConfig()
-                                        : generateDefaultXrayConfig()
-                            } as CreateConfigProfileCommand.Request
-                        })
-                    }}
-                >
-                    <Stack gap="md">
-                        <Text size="sm">
-                            {t(
-                                'config-profiles-header-action-buttons.feature.create-a-new-config-profile-by-entering-a-name-below'
-                            )}
-                            <br />
-
-                            {t(
-                                'config-profiles-header-action-buttons.feature.you-can-customize-xray-config-after-creation'
-                            )}
-                        </Text>
-                        <TextInput
-                            data-autofocus
-                            label={t('config-profiles-header-action-buttons.feature.profile-name')}
-                            placeholder={t(
-                                'config-profiles-header-action-buttons.feature.enter-profile-name'
-                            )}
-                            required
-                            {...nameField.getInputProps()}
-                        />
-                        <SegmentedControl
-                            data={[
-                                { label: 'Xray', value: 'XRAY' },
-                                { label: 'Sing-box', value: 'SING_BOX' }
-                            ]}
-                            onChange={(value) => setCoreType(value as CoreType)}
-                            value={coreType}
-                        />
-                        <Group justify="flex-end">
-                            <Button color="gray" onClick={close} variant="light">
-                                {t('common.cancel')}
-                            </Button>
-
-                            <Button color="teal" loading={isPending} type="submit">
-                                {t('common.create')}
-                            </Button>
-                        </Group>
-                    </Stack>
-                </form>
-            </Modal>
         </Group>
     )
 }

@@ -30,7 +30,8 @@
     "remnawave-settings": "تنظیمات Remnawave",
     "node-plugins": "Plugins",
     "tb-reports": "Torrent Blocker Reports",
-    "sessions-explorer": "Sessions Explorer"
+    "sessions-explorer": "Sessions Explorer",
+    "http-stats": "HTTP Stats"
   },
   "common": {
     "delete": "حذف",
@@ -69,7 +70,19 @@
     "clear": "Clear",
     "color": "Color",
     "all": "All",
-    "without-tags": "Without tags"
+    "without-tags": "Without tags",
+    "reset": "Reset",
+    "actions": "Actions",
+    "clear-selection": "Clear selection",
+    "select-all": "Select all",
+    "selected": "Selected: {{count}}",
+    "bulk-actions": "Bulk actions",
+    "bulk-edit": "Bulk edit",
+    "creation": "Creation",
+    "processing": "Processing",
+    "operation-completed": "Operation completed",
+    "usage-stats": "Usage stats",
+    "active-sessions": "Active sessions"
   },
   "bandwidth-metrics": {
     "current-year": "امسال",
@@ -132,16 +145,7 @@
       "new-user": "کاربر جدید",
       "reset-table": "بازنشانی جدول",
       "clear-filters": "پاک کردن فیلترها",
-      "bulk-actions": "عملیات جمعی",
-      "help": "کمک",
-      "table-controls-help": "راهنمای فرمان‌های جدول",
-      "table-controler-description-line-1": "این جدول با فرمان‌های مختلف در مدیریت بهینه داده‌ها به شما کمک می‌کند. عملکرد هر فرمان به این صورت است:",
-      "table-controler-description-line-2": "فرمان",
-      "table-controler-description-line-3": "توضیحات",
-      "table-controler-description-line-4": "روشن یا خاموش کردن فیلترهای ستون‌ها برای جست‌وجو و فیلتر داده‌ها",
-      "show-or-hide-specific-columns": "نمایش یا مخفی کردن ستون‌ها",
-      "adjust-row-spacing-density": "تنظیم فاصله سطرها",
-      "toggle-fullscreen-table-view": "تغییر نمایش تمام صفحه جدول"
+      "help": "کمک"
     }
   },
   "use-table-columns": {
@@ -597,36 +601,16 @@
   "subscription-settings": {
     "widget": {
       "validation-error": "خطای اعتبارسنجی",
+      "main-settings": "Main settings",
       "you-must-add-at-least-one-remark-with-text": "باید حداقل یک ریمارک وارد نمایید",
-      "subscription-info": "مشخصات اشتراک",
-      "this-title-will-be-displayed-as-subscription-name": "عنوان لینک اشتراک در نرم‌افزار",
-      "profile-title": "عنوان پروفایل",
-      "enter-profile-title": "عنوان پروفایل را وارد نمایید",
-      "auto-update-description": "بعضی نرم‌افزارها براساس این بازه زمانی لینک را به صورت خودکار به‌روزرسانی خواهند کرد",
-      "auto-update-interval-hours": "بازه آپدیت خودکار لینک اشتراک (ساعت)",
-      "support-link-description": "لینک صفحه پشتیبانی که بعضی از نرم‌افزارها آن را در مشخصات اشتراک نشان می‌دهند",
-      "support-link": "لینک پشتیبانی",
-      "happ-settings": "تنظیمات Happ",
-      "happ-announce-description": "اعلامیه Happ که زیر عنوان اشتراک نشان داده می‌شود. حداکثر 200 کاراکتر.",
-      "happ-announce": "اعلامیه Happ",
-      "enter-happ-announce-max-200-characters": "اعلامیه Happ را وارد نمایید. حداکثر 200 کاراکتر.",
-      "happ-routing-description": "به کمک این ویژگی می‌توانید قوانین مسیریابی هسته را در لینک اشتراک مشخص کنید",
-      "happ-routing-description-line-2": "برای ایجاد لینک مسیریابی می‌توانید از بخش مربوطه در پنل استفاده کنید",
-      "configure-happ-routing": "ساخت لینک مسیریابی Happ",
-      "happ-routing": "مسیریابی Happ",
       "user-status-remarks-description": "درصورتی که کاربر منقضی، محدود یا غیرفعال شده باشد مقادیر زیر در اشتراک او نمایش داده خواهند شد",
       "user-status-remarks-description-line-2": "می‌توانید برای هر وضعیت چند ریمارک ایجاد کنید",
       "user-status-remarks-description-line-3": "چون کاربرهای منقضی، محدود یا غیرفعال توانایی اتصال به سرورها را ندارند، به جای دریافت لینک خالی این مقادیر را در نرم‌افزار خواهند دید",
       "update-settings": "به‌روزرسانی تنظیمات",
       "enabled": "فعال",
       "disabled": "غیرفعال",
-      "profile-webpage-url": "URL صفحه وب مشخصات",
-      "profile-webpage-url-description": "توسط برخی از نرم‌افزارها استفاده می‌شود. \nبه طور پیش فرض فعال شده ، دامنه از متغیر SUB_PUBLIC_DOMAIN .env دریافت می‌شود",
       "serve-json-at-base-subscription": "ارائه JSON در لینک پایه پیشفرض",
       "serve-json-description": "درصورت پشتیبانی نرم‌افزار، بدون نیاز به قرار دادن /json در انتهای لینک، اشتراک JSON برای آن ارسال خواهد شد",
-      "subscription-info-description": "این تنظیمات توسط نرم‌افزارهایی مثل Happ, v2RayNG, Streisand و..و استفاده می‌شود",
-      "happ-description-line-1": "در این قسمت می‌توانید تنظیمات مربوط به نرم‌افزار Happ را برای لینک‌های اشتراک مشخص کنید.",
-      "happ-description-line-2": "این تنظیمات فقط در نرم‌افزار Happ استفاده خواهد شد",
       "custom-remarks": "ریمارک‌های سفارشی"
     },
     "page": {
@@ -642,8 +626,6 @@
       "set-inbound": "تنظیم اینباند",
       "set-port": "تنظیم پورت",
       "port": "پورت",
-      "clear-selection": "پاک کردن انتخاب",
-      "select-all": "انتخاب همه",
       "dangling-hosts-skipped": "{{count}} dangling host(s) were skipped and not cloned."
     }
   },
@@ -653,20 +635,9 @@
     "no-changes-title": "Nothing to update",
     "no-changes-description": "You haven't changed any fields."
   },
-  "bulk-user-actions-drawer": {
-    "widget": {
-      "bulk-user-actions": "اقدامات دسته‌جمعی کاربران",
-      "users": "کاربران",
-      "actions": "اقدامات",
-      "danger": "خطر"
-    }
-  },
   "delete-all-users-by-status": {
     "feature": {
-      "processing": "در حال پردازش",
-      "deleting-users": "در حال حذف کاربران...",
-      "success": "عملیات موفقیت‌آمیز",
-      "deleted-data-affectedrows-users": "{{count}} کاربر حذف شد"
+      "deleting-users": "در حال حذف کاربران..."
     }
   },
   "bulk-all-user-actions-tabs": {
@@ -702,14 +673,6 @@
           "delete-users-by-status-description": "همه کاربران با وضعیت انتخاب‌شده را به‌طور دائم حذف می‌کند"
         }
       }
-    }
-  },
-  "bulk-all-user-actions-drawer": {
-    "widget": {
-      "bulk-all-user-actions": "اقدامات دسته‌جمعی برای همه کاربران",
-      "all-users": "همه کاربران",
-      "actions": "اقدامات",
-      "danger": "خطر"
     }
   },
   "bulk-user-actions": {
@@ -757,14 +720,6 @@
       }
     }
   },
-  "users-table-selection": {
-    "feature": {
-      "row-s-selected": "ردیف انتخاب شده",
-      "clear-selection": "لغو انتخاب",
-      "select-all": "انتخاب همه",
-      "bulk-actions": "اقدامات دسته‌جمعی"
-    }
-  },
   "get-user-subscription-links": {
     "feature": {
       "subscription-links": "لینک‌های اشتراک",
@@ -777,7 +732,6 @@
     "widget": {
       "no-data-available-for-the-selected-period": "داده‌ای برای دوره انتخاب‌شده در دسترس نیست",
       "no-data-available": "داده‌ای در دسترس نیست",
-      "traffic-statistics": "آمار ترافیک",
       "click-to-show-all": "برای نمایش همه کلیک کنید",
       "click-to-highlight-only-this-node": "کلیک کنید تا فقط این نود برجسته شود",
       "usage-by-period": "استفاده بر اساس دوره",
@@ -798,16 +752,8 @@
       "click-to-see-all": "کلیک کنید تا همه را ببینید"
     }
   },
-  "get-user-usage": {
-    "feature": {
-      "show-usage": "نمایش مصرف",
-      "usage": "میزان استفاده",
-      "active-sessions": "نشست‌های فعال"
-    }
-  },
   "active-sessions-drawer": {
     "widget": {
-      "title": "نشست‌های فعال",
       "requirements": "پیش‌نیازها",
       "warning-activity": "An IP address will be shown when <highlight>Xray-Core</highlight> considers the <highlight>connection still open</highlight>. This may result in some displayed IP addresses that are no longer actually connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
       "warning-version": "نود Remnawave نسخه <highlight>{{version}}</highlight> یا بالاتر",
@@ -903,7 +849,6 @@
       "click-to-show-all-users": "برای نمایش همه کاربران کلیک کنید",
       "click-to-highlight-only-this-user": "برای برجسته کردن فقط این کاربر کلیک کنید",
       "users-accordeon": "کاربران (درحال نمایش {{displayedUserCount}} کاربر برتر از {{significantUserCount}} فعال از مجموع {{userCount}})",
-      "user-traffic-statistics": "آمار ترافیک کاربر",
       "usage-by-period": "استفاده بر اساس دوره",
       "7-days": "7 روز",
       "14-days": "14 روز",
@@ -928,6 +873,26 @@
       "traffic": "ترافیک",
       "no-users-with-traffic-100-kb": "No users with traffic ≥ 100 KiB",
       "users-hidden-with-less-than-100-kb": "{{usersCount}} users hidden with less than 100 KiB ({{totalTraffic}} total)"
+    }
+  },
+  "internal-squads-usage-drawer": {
+    "info": {
+      "title": "How usage is calculated",
+      "summary": "Returns internal squad members who spent at least the given threshold over the selected period, with the <b>total volume</b> for each of them.",
+      "nodes-title": "Which nodes are counted",
+      "nodes-intro": "A squad isn't tied to nodes directly – the link is derived through inbounds:",
+      "nodes-step-1": "All inbounds that belong to the internal squad are taken.",
+      "nodes-step-2": "For each inbound, the config profiles it belongs to are resolved.",
+      "nodes-step-3": "A node is counted when it has such a profile set as <b>active</b> and that inbound is enabled on the node itself.",
+      "nodes-outro": "So only the nodes a squad member can <hl>actually connect to right now</hl> are counted. If the squad has no inbound available on at least one node, the list is empty.",
+      "traffic-title": "How traffic is counted",
+      "traffic-granularity": "Stats are stored with <b>daily</b> granularity: one record = user + node + day. Node data is flushed to the database roughly <hl>every 2 minutes</hl>, so today's numbers are near real-time, lagging by up to a couple of minutes.",
+      "traffic-sum": "For each member, all of their daily per-node records are summed over the period from the start of <code>start</code> to the end of <code>end</code> (both dates inclusive, UTC).",
+      "traffic-threshold": "Only users whose total is <b>≥ minTotalBytes</b> make it into the response. Volume is returned in <hl>raw bytes</hl>, without rounding.",
+      "caveats-title": "What to keep in mind",
+      "caveats-per-node": "Traffic is counted <b>per whole node</b>, not per inbound. If a node is shared across squads (its active profile also serves other inbounds), the user's total includes all their traffic on that node – including what they poured through other squads' inbounds. It's an <hl>upper bound</hl>, not exact per-squad attribution.",
+      "caveats-membership": "Squad membership and the node set are taken <b>at request time</b>, not historically. A user who left the squad disappears from the response (even though they used traffic); a recently joined one shows all their traffic for the period, including days before joining. The same goes for a change of a node's active profile.",
+      "caveats-sorting": "The list is sorted by <b>user ID</b>, not by volume. Since traffic changes in real time, data may drift between pages – to hunt down abusers set a <code>minTotalBytes</code> threshold instead of reading everyone."
     }
   },
   "get-hwid-user-devices": {
@@ -1035,8 +1000,7 @@
         "favicon-link-description": "لینک favicon، لینک نماد ارائه‌دهنده است که در رابط کاربری نمایش داده می‌شود. فقط نام دامنه را وارد کنید.",
         "login-url": "آدرس ورود",
         "enter-login-url": "آدرس ورود را وارد کنید",
-        "login-url-description": "آدرس ورود صفحه لاگین ارائه‌دهنده است و برای دسترسی سریع به آن استفاده می‌شود.",
-        "save-changes": "ذخیره تغییرات"
+        "login-url-description": "آدرس ورود صفحه لاگین ارائه‌دهنده است و برای دسترسی سریع به آن استفاده می‌شود."
       }
     }
   },
@@ -1047,8 +1011,7 @@
       "new-date": "تاریخ جدید",
       "today": "امروز",
       "tomorrow": "فردا",
-      "next-month": "ماه بعد",
-      "update-date": "به‌روزرسانی تاریخ"
+      "next-month": "ماه بعد"
     }
   },
   "infra-providers-table": {
@@ -1193,7 +1156,6 @@
     "modal": {
       "widget": {
         "loading-accessible-nodes": "در حال بارگذاری نودهای قابل دسترس...",
-        "no-accessible-nodes-found-for-this-user": "هیچ نود قابل‌دسترسی‌ای برای این کاربر یافت نشد",
         "access-summary": "خلاصه دسترسی",
         "user-accessible-nodes": "نودهای قابل دسترس برای کاربر"
       }
@@ -1300,6 +1262,10 @@
     "liability": "The developers and contributors accept <warning>no liability</warning> for any misuse, damage, or data loss.",
     "license-acknowledgement": "By continuing you acknowledge that you have read and agree to the <anchor>license terms</anchor>.",
     "accept-button": "I understand and accept"
+  },
+  "connection-status-overlay": {
+    "connection-lost": "Connection lost",
+    "reconnecting": "Reconnecting..."
   },
   "mobile-warning-overlay": {
     "mobile-device-detected": "دستگاه موبایل شناسایی شد",
@@ -1469,7 +1435,9 @@
     "request-ip": "IP درخواست کننده",
     "user-agent": "عامل کاربر",
     "request-at": "درخواست شده در",
-    "user-uuid": "UUID کاربر"
+    "user-uuid": "UUID کاربر",
+    "response-type": "Response Type",
+    "rule-name": "Rule Name"
   },
   "srh-inspector-table": {
     "widget": {
@@ -1672,7 +1640,6 @@
   "passkeys-drawer": {
     "component": {
       "passkeys": "کلیدهای عبور",
-      "passkeys-description": "کلیدهای عبور به شما اجازه می‌دهند بدون گذرواژه وارد پنل شوید. می‌توانید چندین کلیدعبور برای دستگاه‎‌های مختلف ثبت کنید.",
       "active-passkeys": "کلیدهای عبور فعال",
       "no-passkeys-registered-yet": "هیچ کلید عبوری ثبت نشده است.",
       "add-passkeys-description": "اولین کلید عبور خود را اضافه کنید تا ورود امن بدون گذرواژه در همه دستگاه‌های شما فعال شود.",
@@ -1759,7 +1726,13 @@
   },
   "external-squads-response-headers": {
     "widget": {
-      "response-headers": "هدرها"
+      "response-headers": "هدرها",
+      "headers-inherited-description": "By default, response headers are inherited from the main subscription settings.",
+      "add-headers": "Add headers",
+      "add-headers-description": "Headers listed here are added to the inherited ones. If a header with the same key already exists in the main settings, it will be overridden.",
+      "remove-headers": "Remove headers",
+      "remove-headers-description": "Header keys listed here will be removed from the response, even if they are provided by the main settings.",
+      "enter-header-key": "Enter header key"
     }
   },
   "subscription-hwid-settings": {
@@ -2255,6 +2228,49 @@
   "keypair-generator": {
     "widget": {
       "generate": "Generate"
+    }
+  },
+  "bulk-all-users-actions": {
+    "modal": {
+      "perform-actions-on-all-users": "Perform actions on all users"
+    }
+  },
+  "backend-tools-card": {
+    "widget": {
+      "queue-viewer": "Queue Viewer",
+      "queue-viewer-description": "Monitor and manage background job queues.",
+      "scalar-description": "Modern interactive API reference.",
+      "swagger-description": "Classic OpenAPI documentation explorer.",
+      "backend-tools-description": "Access to Queue Viewer, Scalar or Swagger.",
+      "login": "Login",
+      "backend-tools": "Backend tools"
+    }
+  },
+  "http-stats": {
+    "page": {
+      "component": {
+        "http-stats-description": "Aggregated request counts per API route since the last panel restart."
+      }
+    }
+  },
+  "http-stats-table": {
+    "widget": {
+      "total-requests": "Total Requests",
+      "tracked-routes": "Tracked Routes",
+      "peak-requests": "Peak Requests",
+      "avg-route": "Avg / Route"
+    }
+  },
+  "get-node-inbounds-hosts": {
+    "feature": {
+      "inbounds-and-hosts": "Inbounds & hosts"
+    }
+  },
+  "node-inbounds-hosts-drawer": {
+    "widget": {
+      "inbounds-and-hosts": "Inbounds & hosts",
+      "no-active-config-profile": "This node has no active config profile",
+      "linked": "Linked"
     }
   }
 }

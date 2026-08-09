@@ -1,22 +1,24 @@
+import { DataTableColumn } from '@kastov/mantine-datatable'
 import { ActionIcon, Group, MultiSelect, Text } from '@mantine/core'
-import { GetAllHostsCommand } from '@remnawave/backend-contract'
+import { GetHostsCommand } from '@remnawave/backend-contract'
 import { TFunction } from 'i18next'
-import { DataTableColumn } from 'mantine-datatable'
 import { PiProhibit, PiPulse } from 'react-icons/pi'
 import { TbEdit, TbEyeOff, TbSearch } from 'react-icons/tb'
 
 import {
+    type BooleanFilterValue,
     BooleanCell,
     BooleanFilterControl,
     EllipsisCell,
     SelectFilter,
     TextSearchFilter
-} from './host-table-cells'
+} from '@shared/ui'
 
-export type HostType = GetAllHostsCommand.Response['response'][number]
+export type { BooleanFilterValue }
+
+export type HostType = GetHostsCommand.Response['response'][number]
 
 export type HostStatusFilter = 'disabled' | 'enabled' | 'hidden'
-export type BooleanFilterValue = 'all' | 'no' | 'yes'
 
 export interface HostTableContext {
     configProfileNameByUuid: Map<string, string>
@@ -295,7 +297,7 @@ function buildTextColumn(
     t: TFunction,
     filters: HostsTableFilters
 ): DataTableColumn<HostType> {
-    const lockProps = cfg.primary ? { draggable: false, resizable: false, toggleable: false } : {}
+    const lockProps = cfg.primary ? { draggable: false, resizable: true, toggleable: false } : {}
 
     return {
         accessor: cfg.accessor,

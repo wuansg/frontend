@@ -1,3 +1,4 @@
+import { Chart } from '@highcharts/react'
 /* eslint-disable @stylistic/indent */
 import {
     alpha,
@@ -12,14 +13,13 @@ import {
     Table,
     Text
 } from '@mantine/core'
-import { useTranslation } from 'react-i18next'
-import { TbChartBar } from 'react-icons/tb'
-import { Chart } from '@highcharts/react'
-import { PiEmpty } from 'react-icons/pi'
 import { modals } from '@mantine/modals'
+import { useTranslation } from 'react-i18next'
+import { PiEmpty } from 'react-icons/pi'
+import { TbChartBar } from 'react-icons/tb'
 
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { GetStatsHostsUsageResponse } from '@shared/api/hooks'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { formatTimeUtil } from '@shared/utils/time-utils'
 
@@ -140,9 +140,7 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
                                             </Group>
                                         </Table.Td>
                                         <Table.Td style={{ textAlign: 'right' }}>
-                                            <Text fw={500}>
-                                                {prettifyBytesUtil(entry.value)}
-                                            </Text>
+                                            <Text fw={500}>{prettifyBytesUtil(entry.value)}</Text>
                                         </Table.Td>
                                     </Table.Tr>
                                 ))}

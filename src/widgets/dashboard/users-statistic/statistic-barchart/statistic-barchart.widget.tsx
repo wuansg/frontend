@@ -1,6 +1,17 @@
 import { Chart } from '@highcharts/react'
 /* eslint-disable @stylistic/indent */
-import { alpha, Box, Card, Center, Group, ScrollArea, Skeleton, Stack, Table, Text } from '@mantine/core'
+import {
+    alpha,
+    Box,
+    Card,
+    Center,
+    Group,
+    ScrollArea,
+    Skeleton,
+    Stack,
+    Table,
+    Text
+} from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { GetStatsUsersUsageCommand } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +25,7 @@ import { formatTimeUtil } from '@shared/utils/time-utils'
 interface IProps {
     categories: string[] | undefined
     isLoading: boolean
-    onUserClick: (userUuid: string) => void
+    onUserClick: (userId: number) => void
     series: GetStatsUsersUsageCommand.Response['response']['series'] | undefined
 }
 
@@ -34,7 +45,9 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
                     <Stack align="center" gap={8}>
                         <PiEmpty size="2rem" />
                         <Text c="dimmed">
-                            {t('statistic-nodes.component.no-data-available-for-the-selected-period')}
+                            {t(
+                                'statistic-nodes.component.no-data-available-for-the-selected-period'
+                            )}
                         </Text>
                     </Stack>
                 </Center>
@@ -49,7 +62,7 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
             .map((item) => ({
                 color: item.color,
                 name: item.username,
-                userUuid: item.uuid,
+                userId: item.id,
                 value: item.data[pointIndex] || 0
             }))
             .filter((item) => item.value > 0)
@@ -92,10 +105,10 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
                             <Table.Tbody>
                                 {allDayData.map((entry) => (
                                     <Table.Tr
-                                        key={entry.userUuid}
+                                        key={entry.userId}
                                         onClick={() => {
                                             modals.closeAll()
-                                            onUserClick(entry.userUuid)
+                                            onUserClick(entry.userId)
                                         }}
                                         style={{ cursor: 'pointer' }}
                                     >
@@ -202,7 +215,10 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
                         point: {
                             events: {
                                 click: (event) => {
-                                    handleBarClick(event.point.category as string, event.point.index)
+                                    handleBarClick(
+                                        event.point.category as string,
+                                        event.point.index
+                                    )
                                 }
                             }
                         }
@@ -230,7 +246,11 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
                                 return sum + (point?.y || 0)
                             }, 0)
 
-                            const nearbyDays: { date: string; isCurrent: boolean; value: number }[] = []
+                            const nearbyDays: {
+                                date: string
+                                isCurrent: boolean
+                                value: number
+                            }[] = []
 
                             for (let i = 5; i >= -5; i--) {
                                 const idx = pointIndex + i

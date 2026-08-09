@@ -1,14 +1,15 @@
-import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 import { ActionIcon, Drawer, Group, Select, Stack } from '@mantine/core'
 import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
-import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
 import dayjs from 'dayjs'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 
-import { MODALS, useModalCloseActions, useModalState } from '@entities/dashboard/modal-store'
+import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
+
+import { MODALS, useModalCloseActions, useModalState } from '@entities/dashboard/modal-store'
 
 import { HostUsersSparklineCardWidget } from './usage-sparkline-card'
 

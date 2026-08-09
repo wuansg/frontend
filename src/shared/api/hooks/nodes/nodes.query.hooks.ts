@@ -1,10 +1,10 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
-    GetAllNodesCommand,
-    GetAllNodesTagsCommand,
     GetNodeMetadataCommand,
-    GetOneNodeCommand,
-    GetPubKeyCommand
+    GetNodeCommand,
+    GetNodeSecretKeyCommand,
+    GetNodesTagsCommand,
+    GetNodesCommand
 } from '@remnawave/backend-contract'
 import { keepPreviousData } from '@tanstack/react-query'
 
@@ -16,10 +16,10 @@ export const nodesQueryKeys = createQueryKeys('nodes', {
     getAllNodes: {
         queryKey: null
     },
-    getNode: (route: GetOneNodeCommand.Request) => ({
+    getNode: (route: GetNodeCommand.RequestParam) => ({
         queryKey: [route]
     }),
-    getPubKey: {
+    getNodeSecretKey: {
         queryKey: null
     },
     getAllTags: {
@@ -31,8 +31,8 @@ export const nodesQueryKeys = createQueryKeys('nodes', {
 })
 
 export const useGetNodes = createGetQueryHook({
-    endpoint: GetAllNodesCommand.TSQ_url,
-    responseSchema: GetAllNodesCommand.ResponseSchema,
+    endpoint: GetNodesCommand.TSQ_url,
+    responseSchema: GetNodesCommand.ResponseSchema,
     getQueryKey: () => nodesQueryKeys.getAllNodes.queryKey,
     rQueryParams: {
         refetchOnMount: true,
@@ -42,9 +42,9 @@ export const useGetNodes = createGetQueryHook({
 })
 
 export const useGetNode = createGetQueryHook({
-    endpoint: GetOneNodeCommand.TSQ_url,
-    responseSchema: GetOneNodeCommand.ResponseSchema,
-    routeParamsSchema: GetOneNodeCommand.RequestSchema,
+    endpoint: GetNodeCommand.TSQ_url,
+    responseSchema: GetNodeCommand.ResponseSchema,
+    routeParamsSchema: GetNodeCommand.RequestParamSchema,
     getQueryKey: ({ route }) => nodesQueryKeys.getNode(route!).queryKey,
     rQueryParams: {
         refetchOnMount: true,
@@ -53,10 +53,10 @@ export const useGetNode = createGetQueryHook({
     },
     errorHandler: (error) => errorHandler(error, 'Get Node')
 })
-export const useGetPubKey = createGetQueryHook({
-    endpoint: GetPubKeyCommand.TSQ_url,
-    responseSchema: GetPubKeyCommand.ResponseSchema,
-    getQueryKey: () => nodesQueryKeys.getPubKey.queryKey,
+export const useGetNodeSecretKey = createGetQueryHook({
+    endpoint: GetNodeSecretKeyCommand.TSQ_url,
+    responseSchema: GetNodeSecretKeyCommand.ResponseSchema,
+    getQueryKey: () => nodesQueryKeys.getNodeSecretKey.queryKey,
     rQueryParams: {
         placeholderData: keepPreviousData,
         refetchOnMount: true,
@@ -68,8 +68,8 @@ export const useGetPubKey = createGetQueryHook({
 })
 
 export const useGetNodesTags = createGetQueryHook({
-    endpoint: GetAllNodesTagsCommand.TSQ_url,
-    responseSchema: GetAllNodesTagsCommand.ResponseSchema,
+    endpoint: GetNodesTagsCommand.TSQ_url,
+    responseSchema: GetNodesTagsCommand.ResponseSchema,
     getQueryKey: () => nodesQueryKeys.getAllTags.queryKey,
     rQueryParams: {
         staleTime: 0

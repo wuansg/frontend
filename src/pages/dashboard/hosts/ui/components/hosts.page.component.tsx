@@ -1,25 +1,23 @@
 import { MultiSelectHostsFeature } from '@features/dashboard/hosts/multi-select-hosts/multi-select-hosts.feature'
 import { HeaderActionButtonsFeature } from '@features/ui/dashboard/hosts/header-action-buttons'
 import { useListState } from '@mantine/hooks'
-import { CreateHostModalWidget } from '@widgets/dashboard/hosts/create-host-modal'
-import { EditHostModalWidget } from '@widgets/dashboard/hosts/edit-host-modal'
-import { EditManyHostsDrawer } from '@widgets/dashboard/hosts/edit-many-hosts-drawer'
 import { HostUsersUsageDrawer } from '@widgets/dashboard/hosts/host-users-usage-statistic'
 import { HostsDataTableWidget } from '@widgets/dashboard/hosts/hosts-datatable/hosts-datatable.widget'
 import { HostsSpotlightWidget } from '@widgets/dashboard/hosts/hosts-spotlight'
 import { HostsTableWidget } from '@widgets/dashboard/hosts/hosts-table'
 import { motion } from 'motion/react'
 /* eslint-disable no-nested-ternary */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbListCheck } from 'react-icons/tb'
 import { useSearchParams } from 'react-router'
 
-import { useReorderHosts } from '@shared/api/hooks'
+import { showModal } from '@shared/_modals/show-modal'
+import { queryClient } from '@shared/api'
+import { hostsQueryKeys, useReorderHosts } from '@shared/api/hooks'
 import { SEARCH_PARAMS } from '@shared/constants/search-params'
 import { LoadingScreen, Page, PageHeaderShared } from '@shared/ui'
 
-import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
 import {
     HOSTS_VIEW_MODE,
     useHostsViewMode,
@@ -33,11 +31,16 @@ export default function HostsPageComponent(props: IProps) {
     const { configProfiles, hosts, hostTags, isLoading } = props
     const [selectedHosts, setSelectedHosts] = useState<string[]>([])
     const [state, handlers] = useListState(hosts || [])
+    const isDraggingRef = useRef(false)
 
     const viewMode = useHostsViewMode()
-    const { mutate: reorderHosts } = useReorderHosts()
-
-    const openModalWithData = useModalsStoreOpenWithData()
+    const { mutate: reorderHosts } = useReorderHosts({
+        mutationFns: {
+            onError: () => {
+                queryClient.invalidateQueries({ queryKey: hostsQueryKeys.getAllHosts.queryKey })
+            }
+        }
+    })
 
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -46,6 +49,10 @@ export default function HostsPageComponent(props: IProps) {
     useEffect(() => {
         ;(async () => {
             if (!hosts || !state) {
+                return
+            }
+
+            if (isDraggingRef.current) {
                 return
             }
 
@@ -62,6 +69,7 @@ export default function HostsPageComponent(props: IProps) {
 
             if (hasOrderChanged) {
                 reorderHosts({ variables: { hosts: updatedHosts } })
+                queryClient.setQueryData(hostsQueryKeys.getAllHosts.queryKey, state)
             }
         })()
     }, [state])
@@ -79,11 +87,19 @@ export default function HostsPageComponent(props: IProps) {
         const host = hosts.find((host) => host.uuid === hostUuid)
         if (!host) return
 
-        openModalWithData(MODALS.EDIT_HOST_MODAL, host)
+        showModal('hosts_editHostDrawer', {
+            host: host
+        })
 
-        searchParams.delete(SEARCH_PARAMS.HOST)
-        setSearchParams(searchParams)
-    }, [searchParams, hosts, isLoading])
+        setSearchParams(
+            (prev) => {
+                const next = new URLSearchParams(prev)
+                next.delete(SEARCH_PARAMS.HOST)
+                return next
+            },
+            { replace: true }
+        )
+    }, [searchParams, hosts, isLoading, setSearchParams])
 
     const moveSelected = useCallback(
         (mode: 'bottom' | 'down' | 'top' | 'up') => {
@@ -139,6 +155,7 @@ export default function HostsPageComponent(props: IProps) {
                         configProfiles={configProfiles}
                         handlers={handlers}
                         hosts={hosts}
+                        isDraggingRef={isDraggingRef}
                         selectedHosts={selectedHosts}
                         setSelectedHosts={setSelectedHosts}
                         state={state}
@@ -158,10 +175,6 @@ export default function HostsPageComponent(props: IProps) {
             <HostsSpotlightWidget configProfiles={configProfiles ?? []} hosts={hosts ?? []} />
 
             <HostUsersUsageDrawer key="host-users-usage-drawer" />
-            <EditHostModalWidget key="edit-host-modal" />
-            <EditManyHostsDrawer key="edit-many-hosts-drawer" />
-            <CreateHostModalWidget key="create-host-modal" />
-
             <MultiSelectHostsFeature
                 configProfiles={configProfiles}
                 hosts={hosts}

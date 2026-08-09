@@ -1,7 +1,7 @@
 import { ActionIcon, Tooltip } from '@mantine/core'
-import { PiChartBarDuotone } from 'react-icons/pi'
-import { useTranslation } from 'react-i18next'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { PiChartBarDuotone } from 'react-icons/pi'
 
 import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
 
@@ -17,7 +17,7 @@ const GetHostUsersUsageFeatureComponent = (props: IProps) => {
     const openModalWithData = useModalsStoreOpenWithData()
 
     return (
-        <Tooltip label={t('get-user-usage.feature.show-usage')}>
+        <Tooltip label={t('common.usage-stats')}>
             <ActionIcon
                 color="indigo"
                 onClick={(event) => {

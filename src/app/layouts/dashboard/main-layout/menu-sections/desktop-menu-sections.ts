@@ -1,19 +1,10 @@
-import { useHotkeys } from '@mantine/hooks'
 import { SUBSCRIPTION_TEMPLATE_TYPE } from '@remnawave/backend-contract'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiChartPie, HiServer } from 'react-icons/hi'
+import { PiArrowsInCardinalFill, PiChartLine, PiListChecks, PiUsers } from 'react-icons/pi'
 import {
-    PiAirTrafficControlDuotone,
-    PiArrowsInCardinalFill,
-    PiChartLine,
-    PiListChecks,
-    PiUsers
-} from 'react-icons/pi'
-import {
-    TbChartArcs,
+    TbApi,
     TbCirclesRelation,
-    TbCode,
     TbCreditCard,
     TbDeviceAnalytics,
     TbFile,
@@ -37,9 +28,6 @@ import { MenuItem } from './interfaces'
 
 export const useDesktopMenuSections = (): MenuItem[] => {
     const { t } = useTranslation()
-    const [showDevMenu, setShowDevMenu] = useState(false)
-
-    useHotkeys([['mod+shift+J', () => setShowDevMenu((prev) => !prev)]])
 
     const menuSections: MenuItem[] = [
         {
@@ -120,13 +108,6 @@ export const useDesktopMenuSections = (): MenuItem[] => {
                     href: ROUTES.DASHBOARD.MANAGEMENT.NODES_METRICS,
                     icon: PiChartLine,
                     id: 'nodes-metrics'
-                },
-
-                {
-                    name: t('constants.nodes-bandwidth-table'),
-                    href: ROUTES.DASHBOARD.MANAGEMENT.NODES_BANDWIDTH_TABLE,
-                    icon: TbChartArcs,
-                    id: 'nodes-bandwidth-table'
                 }
             ]
         },
@@ -270,6 +251,12 @@ export const useDesktopMenuSections = (): MenuItem[] => {
                     href: ROUTES.DASHBOARD.TOOLS.SESSIONS_EXPLORER,
                     icon: TbRadar2,
                     id: 'sessions-explorer'
+                },
+                {
+                    name: t('constants.http-stats'),
+                    href: ROUTES.DASHBOARD.TOOLS.HTTP_STATS,
+                    icon: TbApi,
+                    id: 'http-stats'
                 }
             ]
         },
@@ -287,23 +274,6 @@ export const useDesktopMenuSections = (): MenuItem[] => {
             ]
         }
     ]
-
-    if (showDevMenu) {
-        menuSections.push({
-            header: 'Dev Menu',
-            id: 'dev-menu',
-            icon: TbCode,
-            section: [
-                {
-                    name: 'Queues Viewer',
-                    href: '/api/queues',
-                    icon: PiAirTrafficControlDuotone,
-                    id: 'queues-viewer',
-                    newTab: true
-                }
-            ]
-        })
-    }
 
     return menuSections
 }
