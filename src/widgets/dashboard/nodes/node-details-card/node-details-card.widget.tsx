@@ -45,6 +45,18 @@ interface IProps {
 
 export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { node } = props
+    const usageSnapshot = (
+        node as typeof node & {
+            usageSnapshot?: {
+                receivedThrough: number
+                appliedThrough: number
+                pending: number
+                queueBytes: number
+                lastCapturedAt: Date | null
+                lastError: string | null
+            } | null
+        }
+    ).usageSnapshot
 
     const { t } = useTranslation()
 
@@ -159,6 +171,33 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                     />
 
                     <Group gap="xs">
+                        {usageSnapshot && (
+                            <Tooltip
+                                label={
+                                    usageSnapshot.lastError ??
+                                    `received ${usageSnapshot.receivedThrough}, applied ${usageSnapshot.appliedThrough}, node queue ${prettifyBytesUtil(usageSnapshot.queueBytes)}`
+                                }
+                            >
+                                <Badge
+                                    color={
+                                        usageSnapshot.lastError
+                                            ? 'red'
+                                            : usageSnapshot.pending > 0 ||
+                                                usageSnapshot.receivedThrough >
+                                                    usageSnapshot.appliedThrough
+                                              ? 'yellow'
+                                              : 'teal'
+                                    }
+                                    leftSection={<PiArrowsCounterClockwise size={14} />}
+                                    size="lg"
+                                    variant="light"
+                                    visibleFrom="sm"
+                                >
+                                    stats {usageSnapshot.pending} /{' '}
+                                    {usageSnapshot.receivedThrough - usageSnapshot.appliedThrough}
+                                </Badge>
+                            </Tooltip>
+                        )}
                         {node.isConnected && (
                             <Tooltip
                                 label={t('node-stats.card.represents-the-uptime-of-the-xray-core')}
