@@ -8,6 +8,7 @@ import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { getDefaultDateRange } from '@shared/utils/time-utils'
 
 import { MODALS, useModalCloseActions, useModalState } from '@entities/dashboard/modal-store'
 
@@ -26,11 +27,6 @@ const TOP_USERS_LIMIT_OPTIONS = [
 
 const DEFAULT_TOP_USERS_LIMIT = 100
 
-const DEFAULT_DATE_RANGE = {
-    start: dayjs.utc().subtract(6, 'day').format('YYYY-MM-DD'),
-    end: dayjs.utc().format('YYYY-MM-DD')
-}
-
 export const HostUsersUsageDrawer = () => {
     const { isOpen, internalState: host } = useModalState(MODALS.SHOW_HOST_USERS_USAGE_DRAWER)
     const [handleClose, clearInternalState] = useModalCloseActions(
@@ -38,19 +34,21 @@ export const HostUsersUsageDrawer = () => {
     )
 
     const { t, i18n } = useTranslation()
+    const defaultRange = getDefaultDateRange()
 
     const [topUsersLimit, setTopUsersLimit] = useState<number>(DEFAULT_TOP_USERS_LIMIT)
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
-        DEFAULT_DATE_RANGE.start,
-        DEFAULT_DATE_RANGE.end
+        defaultRange.start,
+        defaultRange.end
     ])
 
-    const [queryRange, setQueryRange] = useState<{ end: string; start: string }>(DEFAULT_DATE_RANGE)
+    const [queryRange, setQueryRange] = useState<{ end: string; start: string }>(defaultRange)
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {
         if (value[0] === null && value[1] === null) {
-            setRawRange([DEFAULT_DATE_RANGE.start, DEFAULT_DATE_RANGE.end])
-            setQueryRange(DEFAULT_DATE_RANGE)
+            const todayRange = getDefaultDateRange()
+            setRawRange([todayRange.start, todayRange.end])
+            setQueryRange(todayRange)
             return
         }
 
@@ -92,8 +90,9 @@ export const HostUsersUsageDrawer = () => {
             keepMounted={false}
             onClose={handleClose}
             onExitTransitionEnd={() => {
-                setRawRange([DEFAULT_DATE_RANGE.start, DEFAULT_DATE_RANGE.end])
-                setQueryRange(DEFAULT_DATE_RANGE)
+                const todayRange = getDefaultDateRange()
+                setRawRange([todayRange.start, todayRange.end])
+                setQueryRange(todayRange)
                 setTopUsersLimit(DEFAULT_TOP_USERS_LIMIT)
                 clearInternalState()
             }}

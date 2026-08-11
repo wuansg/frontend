@@ -61,8 +61,9 @@ export const StatisticUsersPage = () => {
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {
         if (value[0] === null && value[1] === null) {
-            setRawRange([defaultRange.start, defaultRange.end])
-            setQueryRange(defaultRange)
+            const todayRange = getDefaultDateRange()
+            setRawRange([todayRange.start, todayRange.end])
+            setQueryRange(todayRange)
             return
         }
 
