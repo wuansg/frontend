@@ -469,6 +469,30 @@
     "copy-node-uuid": "Скопировать UUID ноды",
     "management": "Менеджмент"
   },
+  "node-forwarding-card": {
+    "title": "Перенаправление портов",
+    "enable": "Включить управляемое перенаправление",
+    "interface": "Интерфейс прослушивания",
+    "interface-description": "Значение auto использует маршрут IPv4 по умолчанию.",
+    "resolved-interface": "Текущий интерфейс: {{interface}}.",
+    "rule": "Правило перенаправления",
+    "name": "Имя",
+    "protocol": "Протокол",
+    "listen-port": "Порт прослушивания",
+    "target-address": "Целевой IPv4-адрес",
+    "target-port": "Целевой порт",
+    "traffic-since-apply": "Трафик после применения",
+    "add-rule": "Добавить правило",
+    "sync": "Синхронизировать",
+    "apply": "Проверить и применить",
+    "status-disabled": "Отключено",
+    "status-pending": "Ожидает",
+    "status-applied": "Применено",
+    "status-degraded": "Ограничено",
+    "status-error": "Ошибка",
+    "status-unsupported": "Требуется обновление",
+    "status-unreachable": "Узел недоступен"
+  },
   "home": {
     "page": {
       "online-stats": "Онлайн",

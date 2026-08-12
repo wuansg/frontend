@@ -469,6 +469,30 @@
     "copy-node-uuid": "Copy Node UUID",
     "management": "Management"
   },
+  "node-forwarding-card": {
+    "title": "Port forwarding",
+    "enable": "Enable managed forwarding",
+    "interface": "Listening interface",
+    "interface-description": "Use auto to follow the default IPv4 route.",
+    "resolved-interface": "Currently resolved to {{interface}}.",
+    "rule": "Forwarding rule",
+    "name": "Name",
+    "protocol": "Protocol",
+    "listen-port": "Listening port",
+    "target-address": "Target IPv4 address",
+    "target-port": "Target port",
+    "traffic-since-apply": "Traffic since last apply",
+    "add-rule": "Add rule",
+    "sync": "Sync again",
+    "apply": "Validate and apply",
+    "status-disabled": "Disabled",
+    "status-pending": "Pending",
+    "status-applied": "Applied",
+    "status-degraded": "Degraded",
+    "status-error": "Error",
+    "status-unsupported": "Upgrade required",
+    "status-unreachable": "Node unreachable"
+  },
   "home": {
     "page": {
       "online-stats": "Online stats",

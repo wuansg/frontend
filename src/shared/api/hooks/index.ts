@@ -34,6 +34,7 @@ export * from './node-plugins/node-plugins.query.hooks'
 export * from './nodes/nodes.mutation.hooks'
 
 export * from './nodes/nodes.query.hooks'
+export * from './nodes/nodes-forwarding.hooks'
 export * from './passkeys/passkeys.hooks'
 
 export * from './passkeys/passkeys.query.hooks'

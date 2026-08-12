@@ -469,6 +469,30 @@
     "copy-node-uuid": "کپی کردن UUID نود",
     "management": "مدیریت"
   },
+  "node-forwarding-card": {
+    "title": "هدایت پورت",
+    "enable": "فعال‌سازی هدایت مدیریت‌شده",
+    "interface": "رابط شنود",
+    "interface-description": "مقدار auto از مسیر پیش‌فرض IPv4 استفاده می‌کند.",
+    "resolved-interface": "رابط فعلی: {{interface}}.",
+    "rule": "قانون هدایت",
+    "name": "نام",
+    "protocol": "پروتکل",
+    "listen-port": "پورت شنود",
+    "target-address": "نشانی IPv4 مقصد",
+    "target-port": "پورت مقصد",
+    "traffic-since-apply": "ترافیک پس از اعمال",
+    "add-rule": "افزودن قانون",
+    "sync": "همگام‌سازی مجدد",
+    "apply": "اعتبارسنجی و اعمال",
+    "status-disabled": "غیرفعال",
+    "status-pending": "در انتظار",
+    "status-applied": "اعمال شده",
+    "status-degraded": "محدود",
+    "status-error": "خطا",
+    "status-unsupported": "نیازمند ارتقا",
+    "status-unreachable": "گره در دسترس نیست"
+  },
   "home": {
     "page": {
       "online-stats": "آمار آنلاین شدن کاربرها",

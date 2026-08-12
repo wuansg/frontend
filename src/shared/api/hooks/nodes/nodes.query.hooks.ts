@@ -19,6 +19,9 @@ export const nodesQueryKeys = createQueryKeys('nodes', {
     getNode: (route: GetNodeCommand.RequestParam) => ({
         queryKey: [route]
     }),
+    getNodeForwarding: (route: { uuid: string }) => ({
+        queryKey: ['forwarding', route]
+    }),
     getNodeSecretKey: {
         queryKey: null
     },

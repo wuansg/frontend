@@ -469,6 +469,30 @@
     "copy-node-uuid": "复制节点 UUID",
     "management": "管理"
   },
+  "node-forwarding-card": {
+    "title": "端口转发",
+    "enable": "启用托管转发",
+    "interface": "监听网卡",
+    "interface-description": "填写 auto 时跟随默认 IPv4 路由。",
+    "resolved-interface": "当前解析为 {{interface}}。",
+    "rule": "转发规则",
+    "name": "名称",
+    "protocol": "协议",
+    "listen-port": "监听端口",
+    "target-address": "目标 IPv4 地址",
+    "target-port": "目标端口",
+    "traffic-since-apply": "本次应用后的流量",
+    "add-rule": "添加规则",
+    "sync": "重新同步",
+    "apply": "校验并应用",
+    "status-disabled": "未启用",
+    "status-pending": "等待同步",
+    "status-applied": "已应用",
+    "status-degraded": "部分生效",
+    "status-error": "错误",
+    "status-unsupported": "需要升级节点",
+    "status-unreachable": "节点不可达"
+  },
   "home": {
     "page": {
       "online-stats": "在线统计",
