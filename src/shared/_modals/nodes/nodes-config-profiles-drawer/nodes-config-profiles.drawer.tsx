@@ -106,9 +106,6 @@ export const NodesConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                 const next = new Set(prev)
                 if (next.has(inbound.uuid)) {
                     next.delete(inbound.uuid)
-                    if (next.size === 0) {
-                        setSelectedProfileUuid(null)
-                    }
                 } else {
                     next.add(inbound.uuid)
                     setSelectedProfileUuid(profileUuid)
@@ -142,9 +139,9 @@ export const NodesConfigProfilesDrawer = NiceModal.create((props: IProps) => {
         [filteredProfiles]
     )
 
-    const handleUnselectAllInbounds = useCallback(() => {
+    const handleUnselectAllInbounds = useCallback((profileUuid: string) => {
         setSelectedInbounds(new Set())
-        setSelectedProfileUuid(null)
+        setSelectedProfileUuid(profileUuid)
     }, [])
 
     if (isConfigProfilesLoading || !configProfiles) return null
@@ -182,7 +179,7 @@ export const NodesConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                 >
                     <Group align="center" justify="space-between" wrap="nowrap">
                         <Box>
-                            {selectedInbounds.size > 0 && selectedProfileUuid ? (
+                            {selectedProfileUuid ? (
                                 <>
                                     <Text fw={700} size="sm">
                                         {filteredProfiles.find(
@@ -211,7 +208,7 @@ export const NodesConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                         <Group gap="xs" wrap="nowrap">
                             <ActionIcon
                                 color="red"
-                                disabled={selectedInbounds.size === 0}
+                                disabled={!selectedProfileUuid}
                                 onClick={clearSelection}
                                 size="lg"
                                 variant="soft"
@@ -222,7 +219,7 @@ export const NodesConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                             <Tooltip label={t('common.save')}>
                                 <ActionIcon
                                     color="teal"
-                                    disabled={selectedInbounds.size === 0}
+                                    disabled={!selectedProfileUuid}
                                     onClick={handleSaveInbounds}
                                     size="lg"
                                     variant="soft"

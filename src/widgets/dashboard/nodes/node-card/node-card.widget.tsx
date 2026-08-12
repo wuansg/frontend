@@ -106,10 +106,8 @@ export const NodeCardWidget = memo((props: IProps) => {
     const percentage = calcPercentage()
     const fallbackProgress = node.isTrafficTrackingActive && node.trafficLimitBytes === 0
 
-    const isOnline = node.isConnected && node.xrayUptime !== 0 && !node.isDisabled
-    const isConfigMissing =
-        node.configProfile.activeConfigProfileUuid === null ||
-        node.configProfile.activeInbounds.length === 0
+    const isOnline = node.isConnected && !node.isDisabled
+    const isConfigMissing = node.configProfile.activeConfigProfileUuid === null
     const { backgroundColor, borderColor, boxShadow } = getNodeColors(node)
     const progressColor = getProgressColor(percentage, fallbackProgress)
 

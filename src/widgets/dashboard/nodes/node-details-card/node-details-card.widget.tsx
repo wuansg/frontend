@@ -81,11 +81,9 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { mutate: enableNode, isPending: isEnableNodePending } = useEnableNode(mutationParams)
 
     const isConfigMissing = useMemo(() => {
-        return (
-            node.configProfile.activeConfigProfileUuid === null ||
-            node.configProfile.activeInbounds.length === 0
-        )
+        return node.configProfile.activeConfigProfileUuid === null
     }, [node.configProfile])
+    const hasCore = node.configProfile.activeInbounds.length > 0
 
     const { IconComponent, themeIconColor } = useMemo(() => {
         let IconComponent: React.ComponentType<{ size: number }>
@@ -198,7 +196,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 </Badge>
                             </Tooltip>
                         )}
-                        {node.isConnected && (
+                        {node.isConnected && hasCore && (
                             <Tooltip
                                 label={t('node-stats.card.represents-the-uptime-of-the-xray-core')}
                             >
