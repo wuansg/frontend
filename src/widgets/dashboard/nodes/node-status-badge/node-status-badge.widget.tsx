@@ -21,10 +21,12 @@ export const NodeStatusBadgeWidget = memo(
             let color = 'red'
             let status = ''
 
-            if (nodeData.isConnected) {
-                icon = <PiPulseDuotone size={18} style={{ color: 'var(--mantine-color-teal-6)' }} />
-                color = 'teal'
-                status = t('node-status-badge.widget.connected')
+            if (nodeData.isDisabled) {
+                icon = (
+                    <PiProhibitDuotone size={18} style={{ color: 'var(--mantine-color-gray-6)' }} />
+                )
+                color = 'gray'
+                status = t('node-status-badge.widget.disabled')
             } else if (nodeData.isConnecting) {
                 icon = (
                     <PiCloudArrowUpDuotone
@@ -34,12 +36,48 @@ export const NodeStatusBadgeWidget = memo(
                 )
                 color = 'var(--mantine-color-yellow-3)'
                 status = t('node-status-badge.widget.connecting')
-            } else if (nodeData.isDisabled) {
-                icon = (
-                    <PiProhibitDuotone size={18} style={{ color: 'var(--mantine-color-gray-6)' }} />
-                )
-                color = 'gray'
-                status = t('node-status-badge.widget.disabled')
+            } else if (nodeData.isConnected) {
+                switch (nodeData.runtimeStatus?.mode) {
+                    case 'FORWARDING_ONLY':
+                        icon = (
+                            <PiCloudArrowUpDuotone
+                                size={18}
+                                style={{ color: 'var(--mantine-color-blue-5)' }}
+                            />
+                        )
+                        color = 'blue'
+                        status = t('node-status-badge.widget.forwarding-only')
+                        break
+                    case 'IDLE':
+                        icon = (
+                            <PiPulseDuotone
+                                size={18}
+                                style={{ color: 'var(--mantine-color-gray-5)' }}
+                            />
+                        )
+                        color = 'gray'
+                        status = t('node-status-badge.widget.idle')
+                        break
+                    case 'DEGRADED':
+                        icon = (
+                            <PiWarningCircle
+                                size={18}
+                                style={{ color: 'var(--mantine-color-orange-5)' }}
+                            />
+                        )
+                        color = 'orange'
+                        status = t('node-status-badge.widget.degraded')
+                        break
+                    default:
+                        icon = (
+                            <PiPulseDuotone
+                                size={18}
+                                style={{ color: 'var(--mantine-color-teal-6)' }}
+                            />
+                        )
+                        color = 'teal'
+                        status = t('node-status-badge.widget.core-active')
+                }
             } else {
                 icon = <PiWarningCircle size={18} style={{ color: 'var(--mantine-color-red-3)' }} />
                 color = 'red'
@@ -47,7 +85,13 @@ export const NodeStatusBadgeWidget = memo(
             }
 
             return { icon, color, status }
-        }, [nodeData.isConnected, nodeData.isConnecting, nodeData.isDisabled, t])
+        }, [
+            nodeData.isConnected,
+            nodeData.isConnecting,
+            nodeData.isDisabled,
+            nodeData.runtimeStatus?.mode,
+            t
+        ])
 
         if (!withText) {
             return (

@@ -23,6 +23,7 @@ import { Logo } from '@shared/ui/logo'
 import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
+import { getNodeRuntimeMode } from '@shared/utils/node-runtime-status'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
 
 import { NodeStatusBadgeWidget } from '../node-status-badge'
@@ -38,6 +39,27 @@ const getNodeColors = (node: IProps['node']) => {
         }
     }
     if (node.isConnected) {
+        if (node.runtimeStatus?.mode === 'DEGRADED') {
+            return {
+                backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                borderColor: 'rgba(249, 115, 22, 0.3)',
+                boxShadow: 'rgba(249, 115, 22, 0.2)'
+            }
+        }
+        if (node.runtimeStatus?.mode === 'FORWARDING_ONLY') {
+            return {
+                backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                borderColor: 'rgba(59, 130, 246, 0.3)',
+                boxShadow: 'rgba(59, 130, 246, 0.2)'
+            }
+        }
+        if (node.runtimeStatus?.mode === 'IDLE') {
+            return {
+                backgroundColor: 'rgba(107, 114, 128, 0.15)',
+                borderColor: 'rgba(107, 114, 128, 0.3)',
+                boxShadow: 'rgba(107, 114, 128, 0.2)'
+            }
+        }
         return {
             backgroundColor: 'rgba(45, 212, 191, 0.15)',
             borderColor: 'rgba(45, 212, 191, 0.3)',
@@ -106,7 +128,9 @@ export const NodeCardWidget = memo((props: IProps) => {
     const percentage = calcPercentage()
     const fallbackProgress = node.isTrafficTrackingActive && node.trafficLimitBytes === 0
 
+    const runtimeMode = getNodeRuntimeMode(node)
     const isOnline = node.isConnected && !node.isDisabled
+    const isCoreActive = isOnline && (runtimeMode === null || runtimeMode === 'CORE_ACTIVE')
     const isConfigMissing = node.configProfile.activeConfigProfileUuid === null
     const { backgroundColor, borderColor, boxShadow } = getNodeColors(node)
     const progressColor = getProgressColor(percentage, fallbackProgress)
@@ -345,15 +369,10 @@ export const NodeCardWidget = memo((props: IProps) => {
                                     <Box />
                                 )}
 
-                                {isOnline && (
+                                {isCoreActive && (
                                     <Flex align="center" gap={4}>
                                         <PiCpuDuotone size={14} />
-                                        <Text
-                                            c={isOnline ? 'teal' : 'red'}
-                                            fw={isOnline ? 600 : 500}
-                                            size="sm"
-                                            truncate
-                                        >
+                                        <Text c="teal" fw={600} size="sm" truncate>
                                             {getXrayUptimeUtil(node.xrayUptime)}
                                         </Text>
                                     </Flex>
@@ -596,11 +615,11 @@ export const NodeCardWidget = memo((props: IProps) => {
                         <Flex align="center" gap={4}>
                             <PiCpuDuotone size={12} />
                             <Text
-                                c={isOnline ? 'teal' : 'dimmed'}
-                                fw={isOnline ? 600 : 500}
+                                c={isCoreActive ? 'teal' : 'dimmed'}
+                                fw={isCoreActive ? 600 : 500}
                                 size="xs"
                             >
-                                {isOnline ? getXrayUptimeUtil(node.xrayUptime) : 'offline'}
+                                {isCoreActive ? getXrayUptimeUtil(node.xrayUptime) : '—'}
                             </Text>
                         </Flex>
                     </Flex>

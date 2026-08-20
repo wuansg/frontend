@@ -283,6 +283,10 @@
   "node-status-badge": {
     "widget": {
       "connected": "متصل",
+      "core-active": "هسته فعال",
+      "forwarding-only": "فقط انتقال",
+      "idle": "آماده‌به‌کار",
+      "degraded": "اختلال در عملکرد",
       "connecting": "در حال اتصال",
       "disabled": "غیرفعال",
       "disconnected": "قطع شده"

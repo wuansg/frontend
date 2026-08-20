@@ -283,6 +283,10 @@
   "node-status-badge": {
     "widget": {
       "connected": "подключено",
+      "core-active": "ядро активно",
+      "forwarding-only": "только перенаправление",
+      "idle": "ожидание",
+      "degraded": "ограниченная работа",
       "connecting": "подключается",
       "disabled": "выключена",
       "disconnected": "отключено"

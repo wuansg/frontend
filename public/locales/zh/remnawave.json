@@ -283,6 +283,10 @@
   "node-status-badge": {
     "widget": {
       "connected": "已连接",
+      "core-active": "核心运行中",
+      "forwarding-only": "仅转发",
+      "idle": "空闲",
+      "degraded": "运行异常",
       "connecting": "连接中",
       "disabled": "已禁用",
       "disconnected": "已断开"

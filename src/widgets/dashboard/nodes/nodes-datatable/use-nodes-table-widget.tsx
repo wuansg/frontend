@@ -24,6 +24,7 @@ import {
 } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
+import { WithNodeRuntimeStatus } from '@shared/utils/node-runtime-status'
 import { formatDurationUtil } from '@shared/utils/time-utils'
 
 import { NodeStatusSimplfiedBadgeWidget } from '../node-status-simplfied-badge'
@@ -174,12 +175,15 @@ export function getNodesTableColumns(
                 />
             ),
             filtering: filters.selectedStatuses.length > 0,
-            render: ({ isConnected, isConnecting, isDisabled, uuid }) => (
+            render: (node) => (
                 <NodeStatusSimplfiedBadgeWidget
-                    isConnected={isConnected}
-                    isConnecting={isConnecting}
-                    isDisabled={isDisabled}
-                    nodeUuid={uuid}
+                    isConnected={node.isConnected}
+                    isConnecting={node.isConnecting}
+                    isDisabled={node.isDisabled}
+                    nodeUuid={node.uuid}
+                    runtimeMode={
+                        (node as WithNodeRuntimeStatus<typeof node>).runtimeStatus?.mode ?? null
+                    }
                 />
             )
         },

@@ -37,6 +37,7 @@ import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
+import { WithNodeRuntimeStatus } from '@shared/utils/node-runtime-status'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
 
 interface IProps {
@@ -45,6 +46,7 @@ interface IProps {
 
 export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { node } = props
+    const runtimeStatus = (node as WithNodeRuntimeStatus<typeof node>).runtimeStatus
     const usageSnapshot = (
         node as typeof node & {
             usageSnapshot?: {
@@ -97,6 +99,30 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                 return 'red'
         }
     }, [node.configApply?.status])
+    const runtimePresentation = useMemo(() => {
+        switch (runtimeStatus?.mode) {
+            case 'FORWARDING_ONLY':
+                return {
+                    color: 'blue',
+                    translationKey: 'node-status-badge.widget.forwarding-only'
+                } as const
+            case 'IDLE':
+                return {
+                    color: 'gray',
+                    translationKey: 'node-status-badge.widget.idle'
+                } as const
+            case 'DEGRADED':
+                return {
+                    color: 'orange',
+                    translationKey: 'node-status-badge.widget.degraded'
+                } as const
+            default:
+                return {
+                    color: 'teal',
+                    translationKey: 'node-status-badge.widget.core-active'
+                } as const
+        }
+    }, [runtimeStatus?.mode])
 
     const { IconComponent, themeIconColor } = useMemo(() => {
         let IconComponent: React.ComponentType<{ size: number }>
@@ -114,7 +140,16 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
             return { IconComponent, themeIconColor }
         }
 
-        if (node.isConnected) {
+        if (node.isConnected && runtimeStatus?.mode === 'DEGRADED') {
+            IconComponent = PiWarningCircle
+            themeIconColor = 'orange'
+        } else if (node.isConnected && runtimeStatus?.mode === 'FORWARDING_ONLY') {
+            IconComponent = PiCloudArrowUpDuotone
+            themeIconColor = 'blue'
+        } else if (node.isConnected && runtimeStatus?.mode === 'IDLE') {
+            IconComponent = TbWifi
+            themeIconColor = 'gray'
+        } else if (node.isConnected) {
             IconComponent = TbWifi
             themeIconColor = 'teal'
         } else if (node.isConnecting) {
@@ -126,7 +161,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
         }
 
         return { IconComponent, themeIconColor }
-    }, [node.isConnected, node.isConnecting, node.isDisabled, isConfigMissing])
+    }, [node.isConnected, node.isConnecting, node.isDisabled, isConfigMissing, runtimeStatus?.mode])
 
     const trafficData = useMemo(() => {
         let maxData = '∞'
@@ -182,6 +217,74 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                     />
 
                     <Group gap="xs">
+                        {runtimeStatus && (
+                            <Tooltip
+                                label={
+                                    <Box>
+                                        <Text fw={600} size="xs">
+                                            {t(runtimePresentation.translationKey)}
+                                        </Text>
+                                        <Text size="xs">
+                                            core: {runtimeStatus.runningCore ?? 'not required'}
+                                        </Text>
+                                        <Text size="xs">
+                                            forwarding:{' '}
+                                            {runtimeStatus.forwarding?.state ?? 'unsupported'}
+                                        </Text>
+                                        {runtimeStatus.forwarding && (
+                                            <>
+                                                <Text size="xs">
+                                                    rules: {runtimeStatus.forwarding.enabledRules} /{' '}
+                                                    {runtimeStatus.forwarding.configuredRules}
+                                                </Text>
+                                                <Text ff="monospace" size="xs">
+                                                    config:{' '}
+                                                    {runtimeStatus.forwarding.configHash ?? '—'}
+                                                </Text>
+                                                <Text size="xs">
+                                                    synced:{' '}
+                                                    {runtimeStatus.forwarding.lastSyncedAt
+                                                        ? new Date(
+                                                              runtimeStatus.forwarding.lastSyncedAt
+                                                          ).toLocaleString()
+                                                        : '—'}
+                                                </Text>
+                                                {Object.keys(runtimeStatus.forwarding.dnsResults)
+                                                    .length > 0 && (
+                                                    <Text ff="monospace" size="xs">
+                                                        dns:{' '}
+                                                        {Object.entries(
+                                                            runtimeStatus.forwarding.dnsResults
+                                                        )
+                                                            .map(
+                                                                ([rule, address]) =>
+                                                                    `${rule}=${address}`
+                                                            )
+                                                            .join(', ')}
+                                                    </Text>
+                                                )}
+                                                {runtimeStatus.forwarding.lastError && (
+                                                    <Text c="red" size="xs">
+                                                        {runtimeStatus.forwarding.lastError}
+                                                    </Text>
+                                                )}
+                                            </>
+                                        )}
+                                    </Box>
+                                }
+                                multiline
+                                maw={560}
+                            >
+                                <Badge
+                                    color={runtimePresentation.color}
+                                    leftSection={<PiCpuDuotone size={14} />}
+                                    size="lg"
+                                    variant="light"
+                                >
+                                    {t(runtimePresentation.translationKey)}
+                                </Badge>
+                            </Tooltip>
+                        )}
                         {node.configApply && (
                             <Tooltip
                                 label={
@@ -247,22 +350,26 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 </Badge>
                             </Tooltip>
                         )}
-                        {node.isConnected && hasCore && (
-                            <Tooltip
-                                label={t('node-stats.card.represents-the-uptime-of-the-xray-core')}
-                            >
-                                <Badge
-                                    color="teal"
-                                    h={28}
-                                    leftSection={<PiCpuDuotone size={14} />}
-                                    size="lg"
-                                    variant="light"
-                                    visibleFrom="sm"
+                        {node.isConnected &&
+                            hasCore &&
+                            (!runtimeStatus || runtimeStatus.mode === 'CORE_ACTIVE') && (
+                                <Tooltip
+                                    label={t(
+                                        'node-stats.card.represents-the-uptime-of-the-xray-core'
+                                    )}
                                 >
-                                    {getXrayUptimeUtil(node.xrayUptime)}
-                                </Badge>
-                            </Tooltip>
-                        )}
+                                    <Badge
+                                        color="teal"
+                                        h={28}
+                                        leftSection={<PiCpuDuotone size={14} />}
+                                        size="lg"
+                                        variant="light"
+                                        visibleFrom="sm"
+                                    >
+                                        {getXrayUptimeUtil(node.xrayUptime)}
+                                    </Badge>
+                                </Tooltip>
+                            )}
                         {!isConfigMissing && (
                             <Tooltip
                                 label={

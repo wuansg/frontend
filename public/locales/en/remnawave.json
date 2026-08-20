@@ -283,6 +283,10 @@
   "node-status-badge": {
     "widget": {
       "connected": "connected",
+      "core-active": "core active",
+      "forwarding-only": "forwarding only",
+      "idle": "idle",
+      "degraded": "degraded",
       "connecting": "connecting",
       "disabled": "disabled",
       "disconnected": "disconnected"
