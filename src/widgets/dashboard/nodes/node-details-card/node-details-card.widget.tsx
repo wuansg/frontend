@@ -84,6 +84,19 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
         return node.configProfile.activeConfigProfileUuid === null
     }, [node.configProfile])
     const hasCore = node.configProfile.activeInbounds.length > 0
+    const configApplyColor = useMemo(() => {
+        switch (node.configApply?.status) {
+            case 'APPLIED':
+            case 'UNCHANGED':
+                return 'teal'
+            case 'PENDING':
+                return 'blue'
+            case 'ROLLED_BACK':
+                return 'yellow'
+            default:
+                return 'red'
+        }
+    }, [node.configApply?.status])
 
     const { IconComponent, themeIconColor } = useMemo(() => {
         let IconComponent: React.ComponentType<{ size: number }>
@@ -169,6 +182,44 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                     />
 
                     <Group gap="xs">
+                        {node.configApply && (
+                            <Tooltip
+                                label={
+                                    <Box>
+                                        <Text fw={600} size="xs">
+                                            Sing-box config {node.configApply.status.toLowerCase()}
+                                        </Text>
+                                        <Text ff="monospace" size="xs">
+                                            active: {node.configApply.activeHash ?? '—'}
+                                        </Text>
+                                        <Text ff="monospace" size="xs">
+                                            requested: {node.configApply.requestedHash}
+                                        </Text>
+                                        <Text size="xs">
+                                            time:{' '}
+                                            {new Date(
+                                                node.configApply.appliedAt ??
+                                                    node.configApply.attemptedAt
+                                            ).toLocaleString()}
+                                        </Text>
+                                        <Text size="xs">
+                                            rollback: {node.configApply.rollback.toLowerCase()}
+                                        </Text>
+                                    </Box>
+                                }
+                                multiline
+                                maw={520}
+                            >
+                                <Badge
+                                    color={configApplyColor}
+                                    leftSection={<TbJson size={14} />}
+                                    size="lg"
+                                    variant="light"
+                                >
+                                    config {node.configApply.status.toLowerCase()}
+                                </Badge>
+                            </Tooltip>
+                        )}
                         {usageSnapshot && (
                             <Tooltip
                                 label={
