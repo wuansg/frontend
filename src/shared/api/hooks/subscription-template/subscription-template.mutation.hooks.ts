@@ -2,6 +2,7 @@ import { notifications } from '@mantine/notifications'
 import {
     CreateSubscriptionTemplateCommand,
     DeleteSubscriptionTemplateCommand,
+    PreviewHostSubscriptionCommand,
     ReorderSubscriptionTemplateCommand,
     UpdateSubscriptionTemplateCommand
 } from '@remnawave/backend-contract'
@@ -94,4 +95,11 @@ export const useReorderSubscriptionTemplates = createMutationHook({
             })
         }
     }
+})
+
+export const usePreviewHostSubscription = createMutationHook({
+    endpoint: PreviewHostSubscriptionCommand.TSQ_url,
+    bodySchema: PreviewHostSubscriptionCommand.RequestBodySchema,
+    responseSchema: PreviewHostSubscriptionCommand.ResponseSchema,
+    requestMethod: PreviewHostSubscriptionCommand.endpointDetails.REQUEST_METHOD
 })

@@ -147,3 +147,5 @@ scripts
 scripts/**
 
 public/assets/**
+!public/assets/
+!public/assets/singbox.schema.json

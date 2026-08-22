@@ -16,7 +16,7 @@ import { fullscreenClasses, FullscreenToggleButton } from '@shared/ui'
 import { preventBackScroll } from '@shared/utils/misc'
 
 import styles from './SubscriptionTemplateEditor.module.css'
-import { configureMonaco } from './utils/setup-template-monaco'
+import { configureMonaco, getTemplateModelPath } from './utils/setup-template-monaco'
 
 interface Props {
     editorType: 'json' | 'yaml'
@@ -47,7 +47,7 @@ export function SubscriptionTemplateEditorWidget(props: Props) {
             ...monacoTheme,
             base: 'vs-dark'
         })
-        configureMonaco(monaco, editorType, hosts)
+        void configureMonaco(monaco, editorType, hosts, template.templateType)
     }
 
     const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
@@ -144,6 +144,7 @@ export function SubscriptionTemplateEditorWidget(props: Props) {
                             bottom: 10
                         }
                     }}
+                    path={getTemplateModelPath(template.templateType)}
                     theme="GithubDark"
                     value={getConfig() || ''}
                 />

@@ -1,0 +1,35 @@
+.header {
+    z-index: auto;
+    position: static;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.editorWrapper {
+    height: 64vh;
+    min-height: 420px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.monacoEditor {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+}
+
+.previewPane {
+    height: 64vh;
+    min-height: 420px;
+    overflow: auto;
+}
+
+.previewCode {
+    max-height: 360px;
+    overflow: auto;
+}

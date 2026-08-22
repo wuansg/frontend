@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://remnawave.local/schemas/sing-box-1.13.json",
+  "title": "sing-box 1.13 configuration",
+  "description": "Remnawave-compatible sing-box 1.13 schema with custom protocol coverage.",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "log": { "type": "object" },
+    "dns": { "type": "object" },
+    "ntp": { "type": "object" },
+    "certificate": { "type": "object" },
+    "certificate_providers": { "type": "array", "items": { "type": "object" } },
+    "endpoints": { "type": "array", "items": { "type": "object" } },
+    "inbounds": { "type": "array", "items": { "type": "object" } },
+    "outbounds": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/outbound" }
+    },
+    "route": { "type": "object" },
+    "services": { "type": "array", "items": { "type": "object" } },
+    "experimental": { "type": "object" }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "duration": {
+      "type": "string",
+      "pattern": "^([+-])?(\\d+(\\.\\d+)?(ns|us|µs|ms|s|m|h))+$"
+    },
+    "tls": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "disable_sni": { "type": "boolean" },
+        "server_name": { "type": "string" },
+        "insecure": { "type": "boolean" },
+        "alpn": { "type": "array", "items": { "type": "string" } },
+        "min_version": { "type": "string" },
+        "max_version": { "type": "string" },
+        "cipher_suites": { "type": "array", "items": { "type": "string" } },
+        "certificate": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        },
+        "certificate_path": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        },
+        "utls": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "fingerprint": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "reality": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "public_key": { "type": "string" },
+            "short_id": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "ech": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "transport": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["http", "ws", "quic", "grpc", "httpupgrade"]
+        },
+        "host": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        },
+        "path": { "type": "string" },
+        "method": { "type": "string" },
+        "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+        "service_name": { "type": "string" },
+        "idle_timeout": { "$ref": "#/$defs/duration" },
+        "ping_timeout": { "$ref": "#/$defs/duration" }
+      },
+      "required": ["type"],
+      "additionalProperties": true
+    },
+    "multiplex": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "protocol": { "type": "string", "enum": ["smux", "yamux", "h2mux"] },
+        "max_connections": { "type": "integer", "minimum": 1 },
+        "min_streams": { "type": "integer", "minimum": 1 },
+        "max_streams": { "type": "integer", "minimum": 1 },
+        "padding": { "type": "boolean" },
+        "brutal": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "up_mbps": { "type": "integer", "minimum": 1 },
+            "down_mbps": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "udpOverTcp": {
+      "oneOf": [
+        { "type": "boolean" },
+        {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "version": { "type": "integer", "enum": [1, 2] }
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
+    "proxyBase": {
+      "type": "object",
+      "properties": {
+        "tag": { "type": "string" },
+        "server": { "type": "string", "minLength": 1 },
+        "server_port": { "$ref": "#/$defs/port" },
+        "network": { "type": "string", "enum": ["tcp", "udp", "tcp,udp"] },
+        "tls": { "$ref": "#/$defs/tls" },
+        "transport": { "$ref": "#/$defs/transport" },
+        "multiplex": { "$ref": "#/$defs/multiplex" },
+        "udp_over_tcp": { "$ref": "#/$defs/udpOverTcp" },
+        "detour": { "type": "string" },
+        "bind_interface": { "type": "string" },
+        "inet4_bind_address": { "type": "string" },
+        "inet6_bind_address": { "type": "string" },
+        "routing_mark": { "type": "integer", "minimum": 0 },
+        "reuse_addr": { "type": "boolean" },
+        "connect_timeout": { "$ref": "#/$defs/duration" },
+        "tcp_fast_open": { "type": "boolean" },
+        "tcp_multi_path": { "type": "boolean" },
+        "udp_fragment": { "type": "boolean" },
+        "domain_resolver": { "oneOf": [{ "type": "string" }, { "type": "object" }] },
+        "network_strategy": { "type": "string" },
+        "fallback_delay": { "$ref": "#/$defs/duration" }
+      },
+      "additionalProperties": true
+    },
+    "outbound": {
+      "oneOf": [
+        {
+          "title": "AnyTLS outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "anytls" },
+                "password": { "type": "string", "minLength": 1 },
+                "idle_session_check_interval": { "$ref": "#/$defs/duration" },
+                "idle_session_timeout": { "$ref": "#/$defs/duration" },
+                "min_idle_session": { "type": "integer", "minimum": 0 }
+              },
+              "required": ["type", "server", "server_port", "password"]
+            }
+          ]
+        },
+        {
+          "title": "TUIC outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "tuic" },
+                "uuid": { "type": "string", "format": "uuid" },
+                "password": { "type": "string" },
+                "congestion_control": { "type": "string", "enum": ["cubic", "new_reno", "bbr"] },
+                "udp_relay_mode": { "type": "string", "enum": ["native", "quic"] },
+                "udp_over_stream": { "type": "boolean" },
+                "zero_rtt_handshake": { "type": "boolean" },
+                "heartbeat": { "$ref": "#/$defs/duration" }
+              },
+              "required": ["type", "server", "server_port", "uuid", "password"]
+            }
+          ]
+        },
+        {
+          "title": "Hysteria2 outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "hysteria2" },
+                "password": { "type": "string" },
+                "up_mbps": { "type": "integer", "minimum": 0 },
+                "down_mbps": { "type": "integer", "minimum": 0 },
+                "obfs": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "const": "salamander" },
+                    "password": { "type": "string" }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "required": ["type", "server", "server_port", "password"]
+            }
+          ]
+        },
+        {
+          "title": "ShadowTLS outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "shadowtls" },
+                "version": { "type": "integer", "enum": [1, 2, 3] },
+                "password": { "type": "string" }
+              },
+              "required": ["type", "server", "server_port", "version"]
+            }
+          ]
+        },
+        {
+          "title": "VMess outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "vmess" },
+                "uuid": { "type": "string", "format": "uuid" },
+                "security": { "type": "string" },
+                "alter_id": { "type": "integer", "minimum": 0 },
+                "global_padding": { "type": "boolean" },
+                "authenticated_length": { "type": "boolean" },
+                "packet_encoding": { "type": "string", "enum": ["xudp", "packetaddr"] }
+              },
+              "required": ["type", "server", "server_port", "uuid"]
+            }
+          ]
+        },
+        {
+          "title": "VLESS outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "vless" },
+                "uuid": { "type": "string", "format": "uuid" },
+                "flow": { "type": "string" },
+                "packet_encoding": { "type": "string", "enum": ["xudp", "packetaddr"] }
+              },
+              "required": ["type", "server", "server_port", "uuid"]
+            }
+          ]
+        },
+        {
+          "title": "Trojan outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "trojan" },
+                "password": { "type": "string" }
+              },
+              "required": ["type", "server", "server_port", "password"]
+            }
+          ]
+        },
+        {
+          "title": "Shadowsocks outbound",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "shadowsocks" },
+                "method": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "required": ["type", "server", "server_port", "method", "password"]
+            }
+          ]
+        },
+        {
+          "title": "Selector or URLTest outbound",
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["selector", "urltest"] },
+            "tag": { "type": "string" },
+            "outbounds": { "type": "array", "items": { "type": "string" } },
+            "default": { "type": "string" },
+            "url": { "type": "string" },
+            "interval": { "$ref": "#/$defs/duration" },
+            "tolerance": { "type": "integer", "minimum": 0 },
+            "idle_timeout": { "$ref": "#/$defs/duration" },
+            "interrupt_exist_connections": { "type": "boolean" },
+            "remnawave": {
+              "type": "object",
+              "properties": { "includeProxies": { "type": "boolean" } },
+              "additionalProperties": true
+            }
+          },
+          "required": ["type"],
+          "additionalProperties": true
+        },
+        {
+          "title": "Built-in outbound",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["direct", "block", "dns", "socks", "http", "tor", "ssh", "wireguard"]
+            },
+            "tag": { "type": "string" }
+          },
+          "required": ["type"],
+          "additionalProperties": true
+        }
+      ]
+    }
+  }
+}

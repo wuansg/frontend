@@ -5,6 +5,7 @@ import { useClipboard, useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { GetSubscriptionTemplateCommand } from '@remnawave/backend-contract'
 import { encode } from '@stablelib/base64'
+import * as monaco from 'monaco-editor'
 import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiCheckSquareOffset, PiFloppyDisk } from 'react-icons/pi'
@@ -63,6 +64,30 @@ export function TemplateEditorActionsFeature(props: Props) {
         if (typeof editorRef.current.getValue !== 'function') return
 
         const currentValue = editorRef.current.getValue()
+        const model = editorRef.current.getModel()
+        const marker = model
+            ? monaco.editor
+                  .getModelMarkers({ resource: model.uri })
+                  .find((item) => item.severity === monaco.MarkerSeverity.Error)
+            : undefined
+
+        if (marker) {
+            const position = {
+                lineNumber: marker.startLineNumber,
+                column: marker.startColumn
+            }
+
+            editorRef.current.setPosition(position)
+            editorRef.current.revealPositionInCenter(position)
+            editorRef.current.focus()
+
+            notifications.show({
+                color: 'red',
+                message: `${marker.message} (${marker.startLineNumber}:${marker.startColumn})`,
+                title: t('config-editor-actions.feature.error')
+            })
+            return
+        }
 
         if (currentValue && currentValue.trim()) {
             if (editorType === 'yaml') {
