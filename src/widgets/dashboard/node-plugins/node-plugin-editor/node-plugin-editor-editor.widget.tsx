@@ -6,11 +6,12 @@ import { Box, Card, Code, Paper } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import Editor, { Monaco } from '@monaco-editor/react'
 import { GetNodePluginCommand } from '@remnawave/backend-contract'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbAlertTriangle } from 'react-icons/tb'
 import { useBlocker } from 'react-router'
 
+import { useGetSharedLists } from '@shared/api/hooks'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { preventBackScroll } from '@shared/utils/misc'
 
@@ -35,6 +36,11 @@ export function NodePluginEditorWidget(props: IProps) {
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
     const monacoRef = useRef<Monaco | null>(null)
+    const { data: sharedLists } = useGetSharedLists()
+    const sharedListsData = useMemo(
+        () => sharedLists?.sharedLists ?? [],
+        [sharedLists?.sharedLists]
+    )
 
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
@@ -81,8 +87,13 @@ export function NodePluginEditorWidget(props: IProps) {
         }
     }, [blocker])
 
+    useEffect(() => {
+        if (!monacoRef.current) return
+        MonacoSetupNodePluginEditorFeature.setup(monacoRef.current, sharedListsData)
+    }, [sharedListsData])
+
     const handleEditorDidMount = (monaco: Monaco) => {
-        MonacoSetupNodePluginEditorFeature.setup(monaco)
+        MonacoSetupNodePluginEditorFeature.setup(monaco, sharedListsData)
     }
 
     const checkForChanges = () => {

@@ -1053,23 +1053,39 @@ export const BaseHostForm = <
                                             </Button>
                                         </Group>
                                     </SectionCard.Section>
+                                </SectionCard.Root>
 
+                                <SectionCard.Root>
                                     <SectionCard.Section>
-                                        <Button
-                                            color="gray"
-                                            fullWidth
-                                            leftSection={<TbArrowsExchange />}
-                                            onClick={() => {
-                                                showModal('hosts_hostMapperModal', {
-                                                    form,
-                                                    hostUuid,
-                                                    rawInbound: resolveSelectedRawInbound()
-                                                })
-                                            }}
-                                            variant="soft"
-                                        >
-                                            {t('base-host-form.mapper')}
-                                        </Button>
+                                        <BaseOverlayHeader
+                                            iconColor="indigo"
+                                            IconComponent={TbArrowsExchange}
+                                            iconVariant="soft"
+                                            title={t('base-host-form.mapper')}
+                                            titleOrder={5}
+                                        />
+                                    </SectionCard.Section>
+                                    <SectionCard.Section>
+                                        <Stack gap="sm">
+                                            <Text c="dimmed" size="sm">
+                                                {t('base-host-form.mapper-description')}
+                                            </Text>
+                                            <Button
+                                                color="indigo"
+                                                fullWidth
+                                                leftSection={<TbArrowsExchange />}
+                                                onClick={() => {
+                                                    showModal('hosts_hostMapperModal', {
+                                                        form,
+                                                        hostUuid,
+                                                        rawInbound: resolveSelectedRawInbound()
+                                                    })
+                                                }}
+                                                variant="soft"
+                                            >
+                                                {t('base-host-form.open-mapper')}
+                                            </Button>
+                                        </Stack>
                                     </SectionCard.Section>
                                 </SectionCard.Root>
 

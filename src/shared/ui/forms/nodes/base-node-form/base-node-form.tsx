@@ -23,6 +23,7 @@ import { ModalFooter } from '@shared/ui/modal-footer'
 import { NodeConfigProfilesCard } from './node-config-profiles.card'
 import { NodeConsumptionCard } from './node-consumption.card'
 import { NodeForwardingCard } from './node-forwarding.card'
+import { NodeIpsCard } from './node-ips.card'
 import { NodeTrackingAndBillingCard } from './node-tracking-and-billing.card'
 import { NodeVitalsCard } from './node-vitals.card'
 
@@ -120,6 +121,12 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         motionWrapper={MotionWrapper}
                     />
 
+                    <NodeIpsCard
+                        cardVariants={cardVariants}
+                        form={form}
+                        motionWrapper={MotionWrapper}
+                    />
+
                     <NodeForwardingCard
                         cardVariants={cardVariants}
                         motionWrapper={MotionWrapper}
@@ -152,6 +159,12 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         />
 
                         <NodeConsumptionCard
+                            cardVariants={cardVariants}
+                            form={form}
+                            motionWrapper={MotionWrapper}
+                        />
+
+                        <NodeIpsCard
                             cardVariants={cardVariants}
                             form={form}
                             motionWrapper={MotionWrapper}

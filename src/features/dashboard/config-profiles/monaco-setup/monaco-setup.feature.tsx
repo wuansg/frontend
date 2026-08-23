@@ -1,16 +1,17 @@
 import { Monaco } from '@monaco-editor/react'
 import {
+    GetSharedListsCommand,
     GetSnippetsCommand,
     HostMapperSchema,
     ResponseRulesConfigSchema,
     TSubscriptionTemplateType
 } from '@remnawave/backend-contract'
-import { NodePluginSchema } from '@remnawave/node-plugins'
 import axios from 'axios'
 import consola from 'consola'
 import { app } from 'src/config'
 
 import { monacoTheme } from '@shared/constants/monaco-theme'
+import { NodePluginEditorSchema, SharedListConfigSchema } from '@shared/schemas/node-plugin.schema'
 import { registerJsonSchema } from '@shared/utils/monaco/json-schema-registry'
 
 interface ISchemaNode {
@@ -331,10 +332,32 @@ export const MonacoSetupHostMapperEditorFeature = {
     }
 }
 
+type TSharedLists = GetSharedListsCommand.Response['response']['sharedLists']
+
+const injectSharedListNames = (node: unknown, sharedLists: TSharedLists): void => {
+    if (!node || typeof node !== 'object') return
+    if (Array.isArray(node)) {
+        node.forEach((item) => injectSharedListNames(item, sharedLists))
+        return
+    }
+    const schemaNode = node as Record<string, unknown>
+    if (schemaNode.type === 'string' && String(schemaNode.pattern ?? '').startsWith('^ext:')) {
+        delete schemaNode.pattern
+        schemaNode.enum = sharedLists.map((item) => `ext:${item.name}`)
+        schemaNode.markdownEnumDescriptions = sharedLists.map(
+            (item) => `**${item.type}** · ${item.itemsCount} items`
+        )
+        schemaNode.title = 'Shared List'
+        return
+    }
+    Object.values(schemaNode).forEach((value) => injectSharedListNames(value, sharedLists))
+}
+
 export const MonacoSetupNodePluginEditorFeature = {
-    setup: async (monaco: Monaco) => {
+    setup: async (monaco: Monaco, sharedLists: TSharedLists = []) => {
         try {
-            const schema = NodePluginSchema.toJSONSchema()
+            const schema = NodePluginEditorSchema.toJSONSchema()
+            injectSharedListNames(schema, sharedLists)
 
             registerJsonSchema({
                 fileMatch: ['node-plugin://*'],
@@ -361,6 +384,27 @@ export const MonacoSetupNodePluginEditorFeature = {
             })
         } catch (error) {
             consola.error('Failed to load JSON schema:', error)
+        }
+    }
+}
+
+export const MonacoSetupSharedListEditorFeature = {
+    setup: () => {
+        try {
+            registerJsonSchema(
+                {
+                    fileMatch: ['shared-list://*'],
+                    schema: SharedListConfigSchema.toJSONSchema(),
+                    uri: 'https://shared-list-schema.json'
+                },
+                {
+                    comments: 'error',
+                    schemaValidation: 'error',
+                    trailingCommas: 'error'
+                }
+            )
+        } catch (error) {
+            consola.error('Failed to load Shared List JSON schema:', error)
         }
     }
 }

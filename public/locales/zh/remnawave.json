@@ -82,7 +82,11 @@
     "processing": "处理中",
     "operation-completed": "操作已完成",
     "usage-stats": "使用状态",
-    "active-sessions": "活跃会话"
+    "active-sessions": "活跃会话",
+    "shared-lists": "共享列表",
+    "try-again": "重试",
+    "interface": "接口",
+    "ip-address": "IP 地址"
   },
   "bandwidth-metrics": {
     "current-year": "今年",
@@ -390,7 +394,9 @@
     "xhttp-extra-params": "XHTTP 额外参数",
     "extra-xhttp-description": "此设置仅适用于 XHTTP 协议。 一个 \"extra\" JSON 将被传递给客户端. 输入的 JSON 不会被验证可用性，请确保输入有效的配置。您可以使用下面的按钮复制基本 \"extra\" 设置并粘贴到 JSON 中。",
     "invalid-json": "无效的 JSON",
-    "mapper": "Host Mapper",
+    "mapper": "Host 映射器",
+    "mapper-description": "将所选入站字段映射到各类客户端的订阅输出中。",
+    "open-mapper": "打开 Host 映射器",
     "mapper-editor": "映射编辑器",
     "mapper-preview": "预览",
     "mapper-generate-preview": "生成预览",
@@ -492,7 +498,8 @@
     "name": "名称",
     "protocol": "协议",
     "listen-port": "监听端口",
-    "target-address": "目标 IPv4 地址",
+    "target-address": "目标 IPv4 地址或域名",
+    "resolved-target-address": "当前解析为 {{address}}",
     "target-port": "目标端口",
     "traffic-since-apply": "本次应用后的流量",
     "add-rule": "添加规则",
@@ -1818,6 +1825,7 @@
     "online": "在线",
     "name": "名称",
     "address": "地址",
+    "ip-addresses": "IP 地址",
     "traffic-used": "流量使用",
     "config-profile": "配置文件",
     "inbounds": "入站",
@@ -2309,5 +2317,51 @@
       "no-active-config-profile": "此节点没有激活的配置文件",
       "linked": "已关联"
     }
+  },
+  "node-ips": {
+    "title": "IP 地址",
+    "add-ip": "添加 IP",
+    "status": "状态",
+    "remove-ip": "删除 IP",
+    "invalid-ip": "不是有效的 IPv4 或 IPv6 地址",
+    "ip-is-required": "IP 地址为必填项",
+    "max-ips-reached": "最多允许 {{max}} 个 IP 地址",
+    "no-ips-yet": "尚未填写 IP 地址"
+  },
+  "node-ip-statuses": {
+    "inbound": "入站",
+    "outbound": "出站",
+    "management": "管理",
+    "transit": "中转",
+    "monitoring": "监控",
+    "reserve": "备用",
+    "blocked": "已屏蔽",
+    "flagged": "已标记",
+    "deprecated": "已弃用",
+    "unknown": "未知"
+  },
+  "shared-lists": {
+    "modal": {
+      "subtitle": "可复用的 IP、CIDR、域名、ASN 与端口列表，插件中使用 ext:name 引用",
+      "delete-description": "仅当没有插件引用此列表时才会删除。"
+    },
+    "editor": {
+      "name-description": "插件中使用 ext:name 引用；名称创建后不能修改。"
+    }
+  },
+  "node-geocheck": {
+    "title": "网络地理检测",
+    "source-default": "默认出口",
+    "default-placeholder": "自动选择",
+    "default-description": "节点将使用默认出站路由。",
+    "ip-description": "选择节点 IP，或输入已分配给节点的地址",
+    "interface-description": "选择节点网卡，或输入网卡名称",
+    "run": "开始检测",
+    "running": "正在执行地理检测",
+    "running-description": "节点正在探测网络连通性，通常需要一分钟以内。",
+    "failed-description": "节点未能完成地理检测。",
+    "view-image": "查看报告",
+    "no-image": "报告中没有图像，请打开 JSON",
+    "requires-node-version": "需要 Remnawave Node {{version}} 或更高版本"
   }
 }

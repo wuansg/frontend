@@ -82,7 +82,11 @@
     "processing": "Обработка",
     "operation-completed": "Операция завершена",
     "usage-stats": "Статистика использования",
-    "active-sessions": "Активные сессии"
+    "active-sessions": "Активные сессии",
+    "shared-lists": "Общие списки",
+    "try-again": "Попробовать снова",
+    "interface": "Интерфейс",
+    "ip-address": "IP-адрес"
   },
   "bandwidth-metrics": {
     "current-year": "Текущий год",
@@ -391,6 +395,8 @@
     "extra-xhttp-description": "Этот параметр будет работать только с протоколом XHTTP. Клиенту будет передан объект \"extra\". Ввод JSON не проверяется, убедитесь в правильности написания конфигурации. Вы можете использовать кнопку ниже, чтобы скопировать дополнительные настройки и вставить их в JSON вход.",
     "invalid-json": "Неверный JSON",
     "mapper": "Host Mapper",
+    "mapper-description": "Сопоставляет поля выбранного инбаунда с данными подписки для поддерживаемых клиентов.",
+    "open-mapper": "Открыть Host Mapper",
     "mapper-editor": "Редактор Mapper",
     "mapper-preview": "Предпросмотр",
     "mapper-generate-preview": "Создать предпросмотр",
@@ -492,7 +498,8 @@
     "name": "Имя",
     "protocol": "Протокол",
     "listen-port": "Порт прослушивания",
-    "target-address": "Целевой IPv4-адрес",
+    "target-address": "Целевой IPv4-адрес или домен",
+    "resolved-target-address": "Сейчас разрешается в {{address}}",
     "target-port": "Целевой порт",
     "traffic-since-apply": "Трафик после применения",
     "add-rule": "Добавить правило",
@@ -1818,6 +1825,7 @@
     "online": "Онлайн",
     "name": "Имя",
     "address": "Адрес",
+    "ip-addresses": "IP-адреса",
     "traffic-used": "Польз. трафик",
     "config-profile": "Профиль",
     "inbounds": "Инбаунды",
@@ -2309,5 +2317,51 @@
       "no-active-config-profile": "Эта нода не имеет активного профиля конфигурации",
       "linked": "Связанный"
     }
+  },
+  "node-ips": {
+    "title": "IP-адреса",
+    "add-ip": "Добавить IP",
+    "status": "Статус",
+    "remove-ip": "Удалить IP",
+    "invalid-ip": "Недопустимый IPv4 или IPv6 адрес",
+    "ip-is-required": "IP-адрес обязателен",
+    "max-ips-reached": "Максимум {{max}} IP-адресов",
+    "no-ips-yet": "Нет IP-адресов"
+  },
+  "node-ip-statuses": {
+    "inbound": "Входящий",
+    "outbound": "Исходящий",
+    "management": "Управление",
+    "transit": "Транзит",
+    "monitoring": "Мониторинг",
+    "reserve": "Резерв",
+    "blocked": "Заблокирован",
+    "flagged": "Помечен",
+    "deprecated": "Устарел",
+    "unknown": "Неизвестно"
+  },
+  "shared-lists": {
+    "modal": {
+      "subtitle": "Общие списки IP, CIDR, доменов, ASN и портов, используемые плагинами как ext:name",
+      "delete-description": "Список будет удалён, только если ни один плагин на него не ссылается."
+    },
+    "editor": {
+      "name-description": "Ссылка в плагинах имеет вид ext:name. Имя нельзя изменить позже."
+    }
+  },
+  "node-geocheck": {
+    "title": "GeoCheck",
+    "source-default": "По умолчанию",
+    "default-placeholder": "Автоматически",
+    "default-description": "Нода будет использовать исходящий маршрут по умолчанию.",
+    "ip-description": "Выберите IP ноды или введите назначенный ей адрес",
+    "interface-description": "Выберите интерфейс ноды или введите его имя",
+    "run": "Запустить проверку",
+    "running": "Выполняется GeoCheck",
+    "running-description": "Нода проверяет соединение; обычно это занимает до минуты.",
+    "failed-description": "Нода не смогла завершить GeoCheck.",
+    "view-image": "Отчёт",
+    "no-image": "В отчёте нет изображения; откройте JSON",
+    "requires-node-version": "Требуется Remnawave Node {{version}} или новее"
   }
 }

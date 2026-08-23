@@ -82,7 +82,11 @@
     "processing": "Processing",
     "operation-completed": "Operation completed",
     "usage-stats": "Usage stats",
-    "active-sessions": "Active sessions"
+    "active-sessions": "Active sessions",
+    "shared-lists": "Shared lists",
+    "try-again": "Try again",
+    "interface": "Interface",
+    "ip-address": "IP address"
   },
   "bandwidth-metrics": {
     "current-year": "امسال",
@@ -391,6 +395,8 @@
     "extra-xhttp-description": "این تنظیمات فقط برای کانفیگ‌های XHTTP استفاده می‌شود. یک شی JSON به اسم extra به نرم‌افزار کلاینت ارسال خواهد شد. به کمک دکمه زیر می‌توانید تنظیمات نمونه را کپی کرده و استفاده کنید.",
     "invalid-json": "JSON نامعتبر",
     "mapper": "Host Mapper",
+    "mapper-description": "Map inbound fields into the subscription output for supported clients.",
+    "open-mapper": "Open Host Mapper",
     "mapper-editor": "ویرایشگر Mapper",
     "mapper-preview": "پیش‌نمایش",
     "mapper-generate-preview": "ایجاد پیش‌نمایش",
@@ -492,7 +498,8 @@
     "name": "نام",
     "protocol": "پروتکل",
     "listen-port": "پورت شنود",
-    "target-address": "نشانی IPv4 مقصد",
+    "target-address": "نشانی IPv4 یا دامنه مقصد",
+    "resolved-target-address": "در حال حاضر به {{address}} تبدیل می‌شود",
     "target-port": "پورت مقصد",
     "traffic-since-apply": "ترافیک پس از اعمال",
     "add-rule": "افزودن قانون",
@@ -1818,6 +1825,7 @@
     "online": "آنلاین",
     "name": "اسم",
     "address": "آدرس",
+    "ip-addresses": "آدرس‌های IP",
     "traffic-used": "ترافیک استفاده‌شده",
     "config-profile": "پروفایل پیکربندی",
     "inbounds": "اینباندها",
@@ -2309,5 +2317,51 @@
       "no-active-config-profile": "This node has no active config profile",
       "linked": "Linked"
     }
+  },
+  "node-ips": {
+    "title": "IP addresses",
+    "add-ip": "Add IP",
+    "status": "Status",
+    "remove-ip": "Remove IP",
+    "invalid-ip": "Not a valid IPv4 or IPv6 address",
+    "ip-is-required": "IP address is required",
+    "max-ips-reached": "Maximum {{max}} IP addresses",
+    "no-ips-yet": "No IP addresses yet"
+  },
+  "node-ip-statuses": {
+    "inbound": "Inbound",
+    "outbound": "Outbound",
+    "management": "Management",
+    "transit": "Transit",
+    "monitoring": "Monitoring",
+    "reserve": "Reserve",
+    "blocked": "Blocked",
+    "flagged": "Flagged",
+    "deprecated": "Deprecated",
+    "unknown": "Unknown"
+  },
+  "shared-lists": {
+    "modal": {
+      "subtitle": "Reusable IP, CIDR, domain, ASN and port lists referenced by plugins as ext:name",
+      "delete-description": "The list will be deleted only when no plugin references it."
+    },
+    "editor": {
+      "name-description": "Referenced in plugins as ext:name. The name cannot be changed later."
+    }
+  },
+  "node-geocheck": {
+    "title": "GeoCheck",
+    "source-default": "Default",
+    "default-placeholder": "Automatic",
+    "default-description": "The node will use its default outbound route.",
+    "ip-description": "Pick one of the node IPs or type an assigned address",
+    "interface-description": "Pick one of the node interfaces or type its name",
+    "run": "Run check",
+    "running": "Running GeoCheck",
+    "running-description": "The node is probing its connectivity; this usually takes up to a minute.",
+    "failed-description": "The node could not complete the GeoCheck.",
+    "view-image": "Report",
+    "no-image": "No image in the report; open JSON",
+    "requires-node-version": "نیازمند Remnawave Node نسخه {{version}} یا بالاتر"
   }
 }

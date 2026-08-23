@@ -2,11 +2,16 @@ import { notifications } from '@mantine/notifications'
 import {
     CloneNodePluginCommand,
     CreateNodePluginCommand,
+    CreateSharedListCommand,
     DeleteNodePluginCommand,
+    DeleteSharedListCommand,
     PluginExecutorCommand,
     ReorderNodePluginCommand,
+    SyncNodePluginCommand,
+    SyncSharedListCommand,
     TruncateTorrentBlockerReportsCommand,
-    UpdateNodePluginCommand
+    UpdateNodePluginCommand,
+    UpdateSharedListCommand
 } from '@remnawave/backend-contract'
 
 import { createMutationHook } from '../../tsq-helpers'
@@ -166,4 +171,36 @@ export const useTruncateTorrentBlockerReports = createMutationHook({
             })
         }
     }
+})
+
+export const useSyncNodePlugin = createMutationHook({
+    endpoint: SyncNodePluginCommand.TSQ_url,
+    bodySchema: SyncNodePluginCommand.RequestBodySchema,
+    requestMethod: SyncNodePluginCommand.endpointDetails.REQUEST_METHOD
+})
+
+export const useCreateSharedList = createMutationHook({
+    endpoint: CreateSharedListCommand.TSQ_url,
+    bodySchema: CreateSharedListCommand.RequestBodySchema,
+    responseSchema: CreateSharedListCommand.ResponseSchema,
+    requestMethod: CreateSharedListCommand.endpointDetails.REQUEST_METHOD
+})
+
+export const useUpdateSharedList = createMutationHook({
+    endpoint: UpdateSharedListCommand.TSQ_url,
+    bodySchema: UpdateSharedListCommand.RequestBodySchema,
+    responseSchema: UpdateSharedListCommand.ResponseSchema,
+    requestMethod: UpdateSharedListCommand.endpointDetails.REQUEST_METHOD
+})
+
+export const useDeleteSharedList = createMutationHook({
+    endpoint: DeleteSharedListCommand.TSQ_url,
+    routeParamsSchema: DeleteSharedListCommand.RequestParamSchema,
+    requestMethod: DeleteSharedListCommand.endpointDetails.REQUEST_METHOD
+})
+
+export const useSyncSharedList = createMutationHook({
+    endpoint: SyncSharedListCommand.TSQ_url,
+    bodySchema: SyncSharedListCommand.RequestBodySchema,
+    requestMethod: SyncSharedListCommand.endpointDetails.REQUEST_METHOD
 })
