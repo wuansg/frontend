@@ -55,7 +55,13 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                 appliedThrough: number
                 pending: number
                 queueBytes: number
+                capturing: boolean
+                ingestSuccesses: number
+                ingestFailures: number
+                databaseRetries: number
                 lastCapturedAt: Date | null
+                lastSuccessAt: Date | null
+                lastDurationMs: number | null
                 lastError: string | null
             } | null
         }
@@ -328,25 +334,28 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                             <Tooltip
                                 label={
                                     usageSnapshot.lastError ??
-                                    `received ${usageSnapshot.receivedThrough}, applied ${usageSnapshot.appliedThrough}, node queue ${prettifyBytesUtil(usageSnapshot.queueBytes)}`
+                                    `received ${usageSnapshot.receivedThrough}, applied ${usageSnapshot.appliedThrough}, node queue ${prettifyBytesUtil(usageSnapshot.queueBytes)}, retries ${usageSnapshot.databaseRetries}, failures ${usageSnapshot.ingestFailures}`
                                 }
                             >
                                 <Badge
                                     color={
                                         usageSnapshot.lastError
                                             ? 'red'
-                                            : usageSnapshot.pending > 0 ||
-                                                usageSnapshot.receivedThrough >
-                                                    usageSnapshot.appliedThrough
-                                              ? 'yellow'
-                                              : 'teal'
+                                            : !usageSnapshot.capturing
+                                              ? 'gray'
+                                              : usageSnapshot.pending > 0 ||
+                                                  usageSnapshot.receivedThrough >
+                                                      usageSnapshot.appliedThrough
+                                                ? 'yellow'
+                                                : 'teal'
                                     }
                                     leftSection={<PiArrowsCounterClockwise size={14} />}
                                     size="lg"
                                     variant="light"
                                     visibleFrom="sm"
                                 >
-                                    stats {usageSnapshot.pending} /{' '}
+                                    {usageSnapshot.capturing ? 'stats' : 'stats paused'}{' '}
+                                    {usageSnapshot.pending} /{' '}
                                     {usageSnapshot.receivedThrough - usageSnapshot.appliedThrough}
                                 </Badge>
                             </Tooltip>

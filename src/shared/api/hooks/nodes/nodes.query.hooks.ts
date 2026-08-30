@@ -7,10 +7,42 @@ import {
     GetNodesCommand
 } from '@remnawave/backend-contract'
 import { keepPreviousData } from '@tanstack/react-query'
+import { z } from 'zod'
 
 import { sToMs } from '@shared/utils/time-utils'
 
 import { createGetQueryHook, errorHandler } from '../../tsq-helpers'
+
+const GetNodeResponseSchema = GetNodeCommand.ResponseSchema.extend({
+    response: GetNodeCommand.ResponseSchema.shape.response.extend({
+        usageSnapshot: z
+            .object({
+                receivedThrough: z.number().int().nonnegative(),
+                appliedThrough: z.number().int().nonnegative(),
+                pending: z.number().int().nonnegative(),
+                queueBytes: z.number().int().nonnegative(),
+                capturing: z.boolean().default(true),
+                ingestSuccesses: z.number().int().nonnegative().default(0),
+                ingestFailures: z.number().int().nonnegative().default(0),
+                databaseRetries: z.number().int().nonnegative().default(0),
+                lastCapturedAt: z
+                    .string()
+                    .datetime()
+                    .transform((value) => new Date(value))
+                    .nullable(),
+                lastSuccessAt: z
+                    .string()
+                    .datetime()
+                    .transform((value) => new Date(value))
+                    .nullable()
+                    .default(null),
+                lastDurationMs: z.number().int().nonnegative().nullable().default(null),
+                lastError: z.string().nullable()
+            })
+            .nullable()
+            .optional()
+    })
+})
 
 export const nodesQueryKeys = createQueryKeys('nodes', {
     getAllNodes: {
@@ -46,7 +78,7 @@ export const useGetNodes = createGetQueryHook({
 
 export const useGetNode = createGetQueryHook({
     endpoint: GetNodeCommand.TSQ_url,
-    responseSchema: GetNodeCommand.ResponseSchema,
+    responseSchema: GetNodeResponseSchema,
     routeParamsSchema: GetNodeCommand.RequestParamSchema,
     getQueryKey: ({ route }) => nodesQueryKeys.getNode(route!).queryKey,
     rQueryParams: {
