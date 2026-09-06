@@ -4,7 +4,7 @@ import { PiCpu, PiTag } from 'react-icons/pi'
 import { generatePath, useNavigate } from 'react-router'
 
 import { ROUTES } from '@shared/constants'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { UniversalSpotlightContentShared } from '@shared/ui/universal-spotlight'
 import { formatInt } from '@shared/utils/misc'
 
@@ -30,7 +30,7 @@ export const ConfigProfilesSpotlightWidget = (props: IProps) => {
             actions={configProfiles.map((configProfile) => ({
                 label: configProfile.name,
                 id: configProfile.uuid,
-                leftSection: <XrayLogo color="var(--mantine-color-gray-5)" size={16} />,
+                leftSection: <SingboxLogo color="var(--mantine-color-gray-5)" size={16} />,
                 rightSection: (
                     <Group gap="xs" wrap="nowrap">
                         <Badge

@@ -14,7 +14,7 @@ import { TemplateDownloadModal } from './template-selector.modal'
 
 interface IProps {
     editorRef?: RefObject<editor.IStandaloneCodeEditor | null>
-    editorType: 'NODE_PLUGIN' | 'SRR' | 'SUBPAGE_CONFIG' | 'SUBSCRIPTION' | 'XRAY_CORE'
+    editorType: 'NODE_PLUGIN' | 'SRR' | 'SUBPAGE_CONFIG' | 'SUBSCRIPTION'
     onLoadTemplate?: (content: string) => Promise<void>
     templateType: 'NODE_PLUGIN' | 'SRR' | 'SUBPAGE_CONFIG' | TSubscriptionTemplateType
 }

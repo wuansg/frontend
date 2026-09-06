@@ -12,7 +12,7 @@ import { GetConfigProfilesCommand } from '@remnawave/backend-contract'
 import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { PiCheckBold, PiXBold } from 'react-icons/pi'
 
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 interface IProps extends AccordionControlProps {
@@ -47,7 +47,7 @@ export const AccordionControlShared = (props: IProps) => {
             title: (
                 <BaseOverlayHeader
                     iconColor="teal"
-                    IconComponent={XrayLogo}
+                    IconComponent={SingboxLogo}
                     iconVariant="soft"
                     title={profile.name}
                 />
@@ -104,7 +104,7 @@ export const AccordionControlShared = (props: IProps) => {
                         size="lg"
                         variant="subtle"
                     >
-                        <XrayLogo size={16} />
+                        <SingboxLogo size={16} />
                     </ActionIcon>
                 </ActionIconGroup>
             </Group>

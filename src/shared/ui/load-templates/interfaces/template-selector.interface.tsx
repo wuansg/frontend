@@ -6,7 +6,7 @@ import {
 } from '@shared/constants/templates'
 
 export interface TemplateSelectorProps {
-    editorType: 'NODE_PLUGIN' | 'SRR' | 'SUBPAGE_CONFIG' | 'SUBSCRIPTION' | 'XRAY_CORE'
+    editorType: 'NODE_PLUGIN' | 'SRR' | 'SUBPAGE_CONFIG' | 'SUBSCRIPTION'
     onSelect: (template: IDownloadableSubscriptionTemplate) => void
     selectedTemplate?: IDownloadableSubscriptionTemplate
     templates: IDownloadableSubscriptionTemplateList['templates']

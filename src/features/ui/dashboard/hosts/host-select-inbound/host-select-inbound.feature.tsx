@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { TbFile, TbSettings } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 
 import classes from './host-select-inbound.module.css'
 import { IProps } from './interfaces'
@@ -52,7 +52,7 @@ export function HostSelectInboundFeature(props: IProps) {
                             <Group gap="xs" miw={0} style={{ flex: 1 }}>
                                 <Box className={classes.iconWrapper}>
                                     <ActionIcon color="teal" size="lg" variant="light">
-                                        <XrayLogo size={24} />
+                                        <SingboxLogo size={24} />
                                     </ActionIcon>
                                 </Box>
 

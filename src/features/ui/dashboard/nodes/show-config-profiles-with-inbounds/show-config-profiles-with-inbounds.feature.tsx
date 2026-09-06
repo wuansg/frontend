@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { TbEdit, TbFilePlus, TbTag } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { SectionCard } from '@shared/ui/section-card'
 
 import { IProps } from './interfaces'
@@ -46,7 +46,7 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
                         <Group gap="sm" justify="space-between" wrap="nowrap">
                             <Group gap="sm" style={{ flex: 1, minWidth: 0 }} wrap="nowrap">
                                 <ThemeIcon color="cyan" size="lg" variant="soft">
-                                    <XrayLogo size={20} />
+                                    <SingboxLogo size={20} />
                                 </ThemeIcon>
                                 <Text ff="monospace" fw={600} size="sm" truncate>
                                     {activeProfile.name}
@@ -104,7 +104,7 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
                     <SectionCard.Section>
                         <Group gap="sm" wrap="nowrap">
                             <ThemeIcon color="gray" size="lg" variant="default">
-                                <XrayLogo size={20} />
+                                <SingboxLogo size={20} />
                             </ThemeIcon>
                             <Stack gap={2}>
                                 <Text fw={500} size="sm">

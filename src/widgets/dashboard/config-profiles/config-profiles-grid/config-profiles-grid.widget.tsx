@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { QueryKeys, useDeleteConfigProfile, useReorderConfigProfiles } from '@shared/api/hooks'
 import { queryClient } from '@shared/api/query-client'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { VirtualizedDndGrid } from '@shared/ui/virtualized-dnd-grid'
 
 import { ConfigProfileCardWidget } from '../config-profile-card/config-profile-card.widget'
@@ -70,7 +70,7 @@ export function ConfigProfilesGridWidget(props: IProps) {
         return (
             <Card p="xl" withBorder>
                 <Stack align="center" gap="md">
-                    <XrayLogo size={48} style={{ opacity: 0.5 }} />
+                    <SingboxLogo size={48} style={{ opacity: 0.5 }} />
                     <div>
                         <Title c="dimmed" order={4} ta="center">
                             {t('config-profiles-grid.widget.no-config-profiles')}

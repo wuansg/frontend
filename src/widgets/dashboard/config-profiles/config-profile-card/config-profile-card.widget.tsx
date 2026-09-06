@@ -13,7 +13,7 @@ import { useGetComputedConfigProfile } from '@shared/api/hooks/config-profiles/c
 import { ROUTES } from '@shared/constants'
 import { WithDndSortable } from '@shared/hocs/with-dnd-sortable'
 import { EntityCardShared } from '@shared/ui/entity-card'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { formatInt } from '@shared/utils/misc'
 
@@ -139,7 +139,7 @@ export function ConfigProfileCardWidget(props: IProps) {
             <EntityCardShared.Root withTopAccent={isActive}>
                 <EntityCardShared.Header>
                     <EntityCardShared.Icon highlight={isActive} onClick={handleEditConfigProfile}>
-                        <XrayLogo size={28} />
+                        <SingboxLogo size={28} />
                     </EntityCardShared.Icon>
                     <EntityCardShared.Content title={configProfile.name}>
                         <Group gap="xs" wrap="nowrap">

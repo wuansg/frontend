@@ -1,17 +1,15 @@
 interface NodeVersions {
+    // Keep XRAY in the input until the published backend contract catches up.
     core: 'SING_BOX' | 'XRAY' | null
     singBox: string | null
-    xray: string
 }
 
 export function getNodeCoreVersion(versions: NodeVersions): string {
     if (versions.core === null) return '—'
-    return versions.core === 'SING_BOX' ? (versions.singBox ?? '—') : versions.xray
+    return versions.singBox ?? '—'
 }
 
 export function getNodeCoreDisplay(versions: NodeVersions): string {
     if (versions.core === null) return '—'
-    const coreName = versions.core === 'SING_BOX' ? 'sing-box' : 'Xray'
-
-    return `${coreName} ${getNodeCoreVersion(versions)}`
+    return `sing-box ${getNodeCoreVersion(versions)}`
 }

@@ -4,7 +4,7 @@ import { ConfigProfilesSpotlightWidget } from '@widgets/dashboard/config-profile
 import { SnippetsWidget } from '@widgets/dashboard/config-profiles/snippets-drawer/snippets.widget'
 import { useTranslation } from 'react-i18next'
 
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { Page } from '@shared/ui/page'
 import { PageHeaderShared } from '@shared/ui/page-header/page-header.shared'
 
@@ -35,7 +35,7 @@ export const ConfigPageComponent = (props: Props) => {
                         viewMode={viewMode}
                     />
                 }
-                icon={<XrayLogo size={24} />}
+                icon={<SingboxLogo size={24} />}
                 title={t('constants.config-profiles')}
             />
 

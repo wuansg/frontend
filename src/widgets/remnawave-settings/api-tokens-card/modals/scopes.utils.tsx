@@ -20,7 +20,7 @@ import {
     TbWebhook
 } from 'react-icons/tb'
 
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 
 export type ScopeResource = GetApiTokenScopesCommand.Response['response']['resources'][number]
 export type ScopeEndpoint = ScopeResource['endpoints'][number]
@@ -28,7 +28,7 @@ export type KindState = 'none' | 'off' | 'on' | 'partial'
 
 const RESOURCE_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
     'bandwidth-stats': TbChartArcs,
-    'config-profiles': XrayLogo,
+    'config-profiles': SingboxLogo,
     'external-squads': TbWebhook,
     hosts: PiListChecks,
     'hosts-bulk-actions': PiListChecks,

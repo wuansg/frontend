@@ -17,14 +17,11 @@ import { MODALS, useModalClose, useModalIsOpen } from '@entities/dashboard/modal
 
 interface Props {
     configProfile: GetConfigProfileByUuidCommand.Response['response']
-    isWasmCrashed: boolean
-    isWasmRestarting: boolean
-    onRestartWasm: () => void
     snippets: GetSnippetsCommand.Response['response']
 }
 
 export const ConfigProfileByUuidPageComponent = (props: Props) => {
-    const { configProfile, isWasmCrashed, isWasmRestarting, onRestartWasm, snippets } = props
+    const { configProfile, snippets } = props
 
     const { t } = useTranslation()
     const isMobile = useMediaQuery('(max-width: 1200px)')
@@ -60,13 +57,7 @@ export const ConfigProfileByUuidPageComponent = (props: Props) => {
 
                 {isMobile ? (
                     <>
-                        <ConfigEditorWidget
-                            configProfile={configProfile}
-                            isWasmCrashed={isWasmCrashed}
-                            isWasmRestarting={isWasmRestarting}
-                            onRestartWasm={onRestartWasm}
-                            snippets={snippets}
-                        />
+                        <ConfigEditorWidget configProfile={configProfile} snippets={snippets} />
 
                         <Drawer
                             keepMounted={false}
@@ -90,13 +81,7 @@ export const ConfigProfileByUuidPageComponent = (props: Props) => {
                 ) : (
                     <Flex gap="md">
                         <Box style={{ flex: 1, minWidth: 0 }}>
-                            <ConfigEditorWidget
-                                configProfile={configProfile}
-                                isWasmCrashed={isWasmCrashed}
-                                isWasmRestarting={isWasmRestarting}
-                                onRestartWasm={onRestartWasm}
-                                snippets={snippets}
-                            />
+                            <ConfigEditorWidget configProfile={configProfile} snippets={snippets} />
                         </Box>
 
                         <Box

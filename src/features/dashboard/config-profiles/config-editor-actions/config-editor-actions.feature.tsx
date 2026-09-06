@@ -12,7 +12,6 @@ import {
     TbClipboardCopy,
     TbClipboardText,
     TbCut,
-    TbDownload,
     TbMenuDeep,
     TbSelectAll,
     TbTools
@@ -21,7 +20,6 @@ import {
 import { queryClient } from '@shared/api'
 import { QueryKeys, useUpdateConfigProfile } from '@shared/api/hooks'
 import { useIsMobile } from '@shared/hooks'
-import { useDownloadTemplate } from '@shared/ui/load-templates/use-download-template'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import {
@@ -90,12 +88,6 @@ export function ConfigEditorActionsFeature(props: Props) {
                 setResult(error.message)
             }
         }
-    })
-
-    const { openDownloadModal } = useDownloadTemplate({
-        editorType: 'XRAY_CORE',
-        templateType: 'XRAY_JSON',
-        editorRef
     })
 
     const handleSave = () => {
@@ -309,13 +301,6 @@ export function ConfigEditorActionsFeature(props: Props) {
                             }}
                         >
                             {t('config-editor-actions.feature.generate-keypair')}
-                        </Menu.Item>
-
-                        <Menu.Item
-                            leftSection={<TbDownload size={14} />}
-                            onClick={openDownloadModal}
-                        >
-                            {t('config-editor-actions.feature.load-from-github')}
                         </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>

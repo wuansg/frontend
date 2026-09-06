@@ -26,7 +26,7 @@ import {
 import { showModal } from '@shared/_modals/show-modal'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useBulkNodesProfileModification } from '@shared/api/hooks'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { BulkUpdateNodesModalContent } from './bulk-update-nodes.modal.content'
@@ -201,7 +201,7 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                                 <Button
                                     color="cyan"
                                     fullWidth
-                                    leftSection={<XrayLogo size={18} />}
+                                    leftSection={<SingboxLogo size={18} />}
                                     onClick={() =>
                                         showModal('nodes_nodesConfigProfilesDrawer', {
                                             activeConfigProfileInbounds: [],

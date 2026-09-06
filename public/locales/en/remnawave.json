@@ -1,7 +1,7 @@
 {
   "constants": {
     "dashboard": "Dashboard",
-    "config": "Xray Config",
+    "config": "sing-box Config",
     "home": "Home",
     "hosts": "Hosts",
     "hosts-statistics": "Host Statistics",
@@ -128,7 +128,7 @@
       "failed-to-save-invalid-json": "Failed to save, invalid JSON.",
       "error": "Error",
       "save-anyway": "Save anyway",
-      "save-anyway-description": "Are you sure you want to save invalid Xray config? This action\n                                    can lead to unexpected behavior. Continue only if you know what\n                                    you are doing.",
+      "save-anyway-description": "Are you sure you want to save an invalid sing-box config? This action\n                                    can lead to unexpected behavior. Continue only if you know what\n                                    you are doing.",
       "load-from-github": "Load from GitHub",
       "tools": "Tools",
       "copy-all-content": "Copy all content",
@@ -193,9 +193,9 @@
       "restart-all-nodes": "Restart all nodes",
       "search-nodes": "Search nodes",
       "force-restart": "Force restart",
-      "force-restart-description": "will guarantee that all nodes will fully restart Xray Core.",
+      "force-restart-description": "will guarantee that all nodes fully restart the sing-box core.",
       "graceful-restart": "Graceful restart",
-      "graceful-restart-description-1": "will send a request to all nodes to restart Xray, but request can be unfulfilled if the node hash is the same as the current one. This is the default option.",
+      "graceful-restart-description-1": "will send a request to all nodes to restart sing-box, but the request can be skipped if the node hash is unchanged. This is the default option.",
       "force": "Force",
       "graceful": "Graceful"
     }
@@ -242,13 +242,13 @@
       "remark-description-line-2": "The remark will be displayed in the list of available servers in the end client.",
       "inbound": "Inbound",
       "inbound-line-1": "It is necessary to select an inbound to which a host will be bound.",
-      "inbound-line-2": "The list of inbounds is derived from the \"Xray Config\".",
+      "inbound-line-2": "The list of inbounds is derived from the sing-box config.",
       "address-and-port": "Address and port",
       "address-and-port-line-1": "In most cases the IP/domain name should point to one of the connected nodes.",
       "address-and-port-line-2": "The port must be open and accessible for incoming connections.",
-      "address-and-port-line-3": "Usually the port should match the inbound port from the Xray configuration.",
+      "address-and-port-line-3": "Usually the port should match the inbound port from the sing-box configuration.",
       "advanced-settings": "\"Advanced Settings\" are additional parameters that can be used to further customize the host.",
-      "advanced-settings-2": "Anything specified in \"Advanced Settings\" will take a higher priority than what is specified in the Xray configuration."
+      "advanced-settings-2": "Anything specified in \"Advanced Settings\" takes priority over the sing-box configuration."
     }
   },
   "remark-info": {
@@ -805,11 +805,11 @@
   "active-sessions-drawer": {
     "widget": {
       "requirements": "Requirements",
-      "warning-activity": "An IP address will be shown when <highlight>Xray-Core</highlight> considers the <highlight>connection still open</highlight>. This may result in some displayed IP addresses that are no longer actually connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
+      "warning-activity": "An IP address is shown while <highlight>sing-box</highlight> considers the <highlight>connection still open</highlight>. Some displayed addresses may no longer be connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
       "warning-version": "Remnawave Node version <highlight>{{version}}</highlight> or higher",
       "warning-docker": "Add the following to <highlight>docker-compose.yml</highlight> of Remnawave Node (/opt/remnanode)",
       "warning-patience": "Fetching data may take some time, do not close this window!",
-      "warning-n-plus-one": "<highlight>Please note</highlight>: this request performs <highlight>N+1</highlight> operations to gRPC API of <highlight>Xray-Core</highlight> due to the lack of bulk data retrieval methods. <highlight>N</highlight> is the number of users currently online on the given node.",
+      "warning-n-plus-one": "<highlight>Please note</highlight>: this request reads connection data from the <highlight>sing-box</highlight> stats API. <highlight>N</highlight> is the number of users currently online on the node.",
       "get-data": "Get Data",
       "fetching": "Fetching active sessions...",
       "progress": "Completed {{completed}} of {{total}} nodes",
@@ -1029,8 +1029,8 @@
       "nodes": "Nodes",
       "download": "Download",
       "quick-view": "Quick view",
-      "edit-xray-config": "Edit Xray Config",
-      "xray-config": "Xray Config"
+      "edit-xray-config": "Edit sing-box Config",
+      "xray-config": "sing-box Config"
     }
   },
   "config-profiles-header": {
@@ -1342,7 +1342,7 @@
     "feature": {
       "create-config-profile": "Create Config Profile",
       "create-a-new-config-profile-by-entering-a-name-below": "Create a new config profile by entering a name below.",
-      "you-can-customize-xray-config-after-creation": "You can customize XRay config after creation.",
+      "you-can-customize-xray-config-after-creation": "You can customize the sing-box config after creation.",
       "profile-name": "Profile Name",
       "enter-profile-name": "Enter profile name"
     }
@@ -1350,8 +1350,8 @@
   "restart-node-button": {
     "feature": {
       "restart": "Restart",
-      "restart-description-line-1": "ensures that the node completely restarts the Xray core. It is recommended option.",
-      "restart-description-line-2": "will send a request to this node to restart Xray, but request can be unfulfilled if the node hash is the same as the current one."
+      "restart-description-line-1": "ensures that the node completely restarts the sing-box core. It is the recommended option.",
+      "restart-description-line-2": "will send a request to this node to restart sing-box, but the request can be skipped if the node hash is unchanged."
     }
   },
   "node-details-card": {
@@ -1561,7 +1561,7 @@
   },
   "create-node-step-3-status": {
     "establishing-mtls-connection": "Establishing mTLS connection...",
-    "xray-core-is-up-and-running": "Xray Core is up and running!",
+    "xray-core-is-up-and-running": "sing-box is up and running!",
     "remnawave-will-try-to-reconnect-shortly": "Remnawave will try to reconnect shortly...",
     "no-errros-so-far": "No errros so far",
     "last-error-message": "Last error message"

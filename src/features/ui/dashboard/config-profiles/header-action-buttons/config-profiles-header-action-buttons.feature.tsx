@@ -7,7 +7,7 @@ import { showModal } from '@shared/_modals/show-modal'
 import { HelpActionIconShared } from '@shared/_modals/universal'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useGetConfigProfiles } from '@shared/api/hooks'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { UniversalSpotlightActionIconShared } from '@shared/ui/universal-spotlight'
 
 import { CONFIG_PROFILES_VIEW_MODE } from '@entities/dashboard/view-preferences-store'
@@ -52,7 +52,7 @@ export const ConfigProfilesHeaderActionButtonsFeature = (props: IProps) => {
                     {viewMode === CONFIG_PROFILES_VIEW_MODE.PROFILES ? (
                         <TbCode size="24px" />
                     ) : (
-                        <XrayLogo size="24px" />
+                        <SingboxLogo size="24px" />
                     )}
                 </ActionIcon>
             </ActionIconGroup>

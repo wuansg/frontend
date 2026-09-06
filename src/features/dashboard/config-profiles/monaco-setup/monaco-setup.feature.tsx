@@ -124,22 +124,26 @@ export const MonacoSetupFeature = {
                     'Snippet name can only contain: letters, numbers, spaces, _ and -'
             }
 
-            if (schema.definitions?.OutboundObject?.properties) {
-                schema.definitions.OutboundObject.properties.snippet = snippetSchema
-            }
-
-            if (schema.definitions?.RuleObject?.properties) {
-                schema.definitions.RuleObject.properties.snippet = snippetSchema
-            }
-
-            if (schema.definitions?.BalancerObject?.properties) {
-                schema.definitions.BalancerObject.properties.snippet = snippetSchema
+            const outboundItems = schema.properties?.outbounds?.items
+            if (outboundItems) {
+                schema.properties.outbounds.items = {
+                    oneOf: [
+                        outboundItems,
+                        {
+                            title: 'Remnawave snippet',
+                            type: 'object',
+                            properties: { snippet: snippetSchema },
+                            required: ['snippet'],
+                            additionalProperties: false
+                        }
+                    ]
+                }
             }
 
             registerJsonSchema({
-                fileMatch: ['xray-config://*'],
+                fileMatch: ['singbox-config://*'],
                 schema,
-                uri: 'https://xray-config-schema.json'
+                uri: 'https://singbox-config-schema.json'
             })
         } catch (error) {
             consola.error('Failed to load JSON schema:', error)
@@ -164,35 +168,30 @@ export const MonacoSetupSnippetsFeature = {
             const snippetArraySchema = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'Snippet Array',
-                description: 'Array of Outbound, Rule or Balancer objects for snippets',
+                description: 'Array of sing-box outbound or route rule objects for snippets',
                 type: 'array',
                 items: {
                     oneOf: [
                         {
-                            ...schema.definitions?.OutboundObject,
-                            title: 'Outbound Object',
-                            description: 'Outbound configuration (for outbounds[])'
+                            $ref: 'https://singbox-snippet-schema.json#/$defs/outbound'
                         },
                         {
-                            ...schema.definitions?.RuleObject,
-                            title: 'Rule Object',
-                            description: 'Routing rule (for routing.rules[])'
-                        },
-                        {
-                            ...schema.definitions?.BalancerObject,
-                            title: 'Balancer Object',
-                            description: 'Balancer configuration (for routing.balancers[])'
+                            title: 'Route rule',
+                            description: 'sing-box route rule',
+                            type: 'object',
+                            minProperties: 1,
+                            additionalProperties: true
                         }
                     ]
                 },
                 minItems: 1,
-                definitions: schema.definitions || {}
+                $defs: schema.$defs || {}
             }
 
             registerJsonSchema({
                 fileMatch: ['snippet://*'],
                 schema: snippetArraySchema,
-                uri: 'https://snippet-schema.json'
+                uri: 'https://singbox-snippet-schema.json'
             })
 
             return snippetArraySchema

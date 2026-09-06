@@ -1336,7 +1336,7 @@
     "feature": {
       "create-config-profile": "ساخت پروفایل پیکربندی",
       "create-a-new-config-profile-by-entering-a-name-below": "برای ایجاد پروفایل پیکربندی جدید اسم آن را وارد کنید",
-      "you-can-customize-xray-config-after-creation": "کانفیگ Xray را می‌توانید بعد از ایجاد شخصی‌سازی کنید",
+      "you-can-customize-xray-config-after-creation": "پس از ایجاد می‌توانید پیکربندی sing-box را شخصی‌سازی کنید",
       "profile-name": "نام پروفایل",
       "enter-profile-name": "نام پروفایل را وارد کنید"
     }

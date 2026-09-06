@@ -37,8 +37,7 @@ export const ConfigValidationFeature = {
         snippetsMap: Map<
             string,
             GetSnippetsCommand.Response['response']['snippets'][number]['snippet']
-        >,
-        coreType: 'SING_BOX' | 'XRAY' = 'XRAY'
+        >
     ) => {
         try {
             if (!editorRef.current) return
@@ -71,25 +70,11 @@ export const ConfigValidationFeature = {
                 replaceSnippetsInArray(clonedCurrentValue.route.rules, snippetsMap)
             }
 
-            if (coreType === 'SING_BOX') {
-                setResult(`${dayjs().format('HH:mm:ss')} | Sing-box config JSON is valid.`)
-                setIsConfigValid(true)
-                return
-            }
-
-            const validationResult = window.XrayParseConfig(JSON.stringify(clonedCurrentValue))
-
-            setResult(
-                `${dayjs().format('HH:mm:ss')} | ${validationResult || 'Xray config is valid.'}`
-            )
-            setIsConfigValid(!validationResult)
+            setResult(`${dayjs().format('HH:mm:ss')} | Sing-box config JSON is valid.`)
+            setIsConfigValid(true)
         } catch (err: unknown) {
             const message = (err as Error).message
-            if (message?.includes('Go program has already exited')) {
-                setResult(`${dayjs().format('HH:mm:ss')} | WASM module crashed, restarting...`)
-            } else {
-                setResult(`${dayjs().format('HH:mm:ss')} | Validation error: ${message}`)
-            }
+            setResult(`${dayjs().format('HH:mm:ss')} | Validation error: ${message}`)
             setIsConfigValid(false)
         }
     }

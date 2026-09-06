@@ -3,7 +3,7 @@ import type { editor } from 'monaco-editor'
 import { ConfigEditorActionsFeature } from '@features/dashboard/config-profiles/config-editor-actions'
 import { ConfigValidationFeature } from '@features/dashboard/config-profiles/config-validation'
 import { MonacoSetupFeature } from '@features/dashboard/config-profiles/monaco-setup'
-import { Box, Button, Card, Code, Group, Loader, Paper, Stack } from '@mantine/core'
+import { Box, Card, Code, Paper, Stack } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import Editor, { Monaco, useMonaco } from '@monaco-editor/react'
 import clsx from 'clsx'
@@ -25,10 +25,7 @@ export function ConfigEditorWidget(props: IProps) {
     const { t, i18n } = useTranslation()
     const monaco = useMonaco()
 
-    const { configProfile, isWasmCrashed, isWasmRestarting, onRestartWasm, snippets } = props
-    const coreType = ((configProfile as { coreType?: 'SING_BOX' | 'XRAY' }).coreType ?? 'XRAY') as
-        | 'SING_BOX'
-        | 'XRAY'
+    const { configProfile, snippets } = props
 
     const [result, setResult] = useState('')
     const [isConfigValid, setIsConfigValid] = useState(true)
@@ -38,8 +35,6 @@ export function ConfigEditorWidget(props: IProps) {
     )
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-    const wasWasmRestarting = useRef(false)
-
     const { isFullscreen, toggle: toggleFullscreen } = usePseudoFullscreen()
 
     useEffect(() => {
@@ -54,19 +49,6 @@ export function ConfigEditorWidget(props: IProps) {
     )
 
     const snippetMap = new Map(snippets.snippets.map((s) => [s.name, s.snippet]))
-
-    useEffect(() => {
-        if (wasWasmRestarting.current && !isWasmRestarting && !isWasmCrashed && editorRef.current) {
-            ConfigValidationFeature.validate(
-                editorRef,
-                setResult,
-                setIsConfigValid,
-                snippetMap,
-                coreType
-            )
-        }
-        wasWasmRestarting.current = isWasmRestarting
-    }, [isWasmRestarting, isWasmCrashed, coreType])
 
     const handleEditorDidMount = (monaco: Monaco) => {
         monaco.editor.defineTheme('GithubDark', {
@@ -151,15 +133,12 @@ export function ConfigEditorWidget(props: IProps) {
                     defaultLanguage="json"
                     loading={t('config-editor.widget.loading-editor')}
                     onChange={() => {
-                        if (!isWasmCrashed && !isWasmRestarting) {
-                            ConfigValidationFeature.validate(
-                                editorRef,
-                                setResult,
-                                setIsConfigValid,
-                                snippetMap,
-                                coreType
-                            )
-                        }
+                        ConfigValidationFeature.validate(
+                            editorRef,
+                            setResult,
+                            setIsConfigValid,
+                            snippetMap
+                        )
                         checkForChanges()
                     }}
                     onMount={(editor) => {
@@ -169,8 +148,7 @@ export function ConfigEditorWidget(props: IProps) {
                             editorRef,
                             setResult,
                             setIsConfigValid,
-                            snippetMap,
-                            coreType
+                            snippetMap
                         )
                     }}
                     options={{
@@ -214,6 +192,7 @@ export function ConfigEditorWidget(props: IProps) {
                             bottom: 10
                         }
                     }}
+                    path="singbox-config://profile.json"
                     theme="GithubDark"
                     value={JSON.stringify(configProfile.config, null, 2)}
                 />
@@ -221,72 +200,30 @@ export function ConfigEditorWidget(props: IProps) {
 
             <Card className={styles.footer} h="auto" m="0" pos="sticky">
                 <Stack gap="md">
-                    {(result || isWasmRestarting || isWasmCrashed) && (
+                    {result && (
                         <Paper
                             className={styles.validationMessage}
                             p="md"
                             radius="sm"
                             style={{
-                                backgroundColor:
-                                    isWasmCrashed || isWasmRestarting || !isConfigValid
-                                        ? 'rgba(241, 65, 65, 0.1)'
-                                        : 'rgba(51, 171, 132, 0.1)',
+                                backgroundColor: !isConfigValid
+                                    ? 'rgba(241, 65, 65, 0.1)'
+                                    : 'rgba(51, 171, 132, 0.1)',
                                 border: `1px solid ${
-                                    isWasmCrashed || isWasmRestarting || !isConfigValid
-                                        ? 'rgb(241, 65, 65)'
-                                        : 'rgb(51, 171, 132)'
+                                    !isConfigValid ? 'rgb(241, 65, 65)' : 'rgb(51, 171, 132)'
                                 }`
                             }}
                         >
-                            {isWasmRestarting && (
-                                <Group gap="xs">
-                                    <Loader color="orange" size="xs" />
-                                    <Code
-                                        color="orange"
-                                        style={{
-                                            backgroundColor: 'transparent',
-                                            fontSize: '0.9rem',
-                                            padding: 0
-                                        }}
-                                    >
-                                        Xray Core (WASM) is restarting...
-                                    </Code>
-                                </Group>
-                            )}
-                            {!isWasmRestarting && isWasmCrashed && (
-                                <Group gap="sm">
-                                    <Code
-                                        color="red"
-                                        style={{
-                                            backgroundColor: 'transparent',
-                                            fontSize: '0.9rem',
-                                            padding: 0
-                                        }}
-                                    >
-                                        Xray Core (WASM) crashed. Validation is unavailable.
-                                    </Code>
-                                    <Button
-                                        color="red"
-                                        onClick={onRestartWasm}
-                                        size="compact-xs"
-                                        variant="light"
-                                    >
-                                        {t('restart-node-button.feature.restart')}
-                                    </Button>
-                                </Group>
-                            )}
-                            {!isWasmRestarting && !isWasmCrashed && (
-                                <Code
-                                    color={isConfigValid ? 'teal' : 'red'}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        fontSize: '0.9rem',
-                                        padding: 0
-                                    }}
-                                >
-                                    {result}
-                                </Code>
-                            )}
+                            <Code
+                                color={isConfigValid ? 'teal' : 'red'}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    fontSize: '0.9rem',
+                                    padding: 0
+                                }}
+                            >
+                                {result}
+                            </Code>
                         </Paper>
                     )}
 

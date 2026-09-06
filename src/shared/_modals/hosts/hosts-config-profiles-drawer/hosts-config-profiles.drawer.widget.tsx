@@ -20,7 +20,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { useGetConfigProfiles } from '@shared/api/hooks'
 import { ConfigProfileCardShared } from '@shared/ui/config-profiles/config-profile-card/config-profile-card.shared'
-import { XrayLogo } from '@shared/ui/logos'
+import { SingboxLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import classes from './hosts-config-profiles.module.css'
@@ -144,7 +144,7 @@ export const HostsConfigProfilesDrawer = NiceModal.create((props: IProps) => {
             title={
                 <BaseOverlayHeader
                     iconColor="teal"
-                    IconComponent={XrayLogo}
+                    IconComponent={SingboxLogo}
                     iconVariant="soft"
                     title={t('constants.config-profiles')}
                 />
