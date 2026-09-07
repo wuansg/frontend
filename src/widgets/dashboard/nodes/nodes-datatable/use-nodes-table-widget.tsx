@@ -279,14 +279,14 @@ export function getNodesTableColumns(
         {
             accessor: 'versions.core',
             sortable: true,
-            title: t('use-nodes-table-widget.xray-v'),
+            title: t('use-nodes-table-widget.core-v'),
             render: ({ versions }) => (versions ? getNodeCoreDisplay(versions) : '-')
         },
         {
-            accessor: 'xrayUptime',
+            accessor: 'coreUptime',
             sortable: true,
             title: 'Core Uptime',
-            render: ({ xrayUptime }) => (xrayUptime !== 0 ? formatDurationUtil(xrayUptime) : '-')
+            render: ({ coreUptime }) => (coreUptime !== 0 ? formatDurationUtil(coreUptime) : '-')
         },
         {
             accessor: 'versions.node',

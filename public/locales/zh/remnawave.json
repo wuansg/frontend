@@ -1023,8 +1023,8 @@
       "nodes": "节点",
       "download": "下载",
       "quick-view": "快速查看",
-      "edit-xray-config": "编辑 sing-box 配置",
-      "xray-config": "sing-box 配置"
+      "edit-core-config": "编辑 sing-box 配置",
+      "core-config": "sing-box 配置"
     }
   },
   "config-profiles-header": {
@@ -1336,7 +1336,7 @@
     "feature": {
       "create-config-profile": "创建配置文件",
       "create-a-new-config-profile-by-entering-a-name-below": "在下方输入名称以创建新的配置文件。",
-      "you-can-customize-xray-config-after-creation": "创建后可以自定义 sing-box 配置。",
+      "you-can-customize-core-config-after-creation": "创建后可以自定义 sing-box 配置。",
       "profile-name": "配置文件名称",
       "enter-profile-name": "输入配置文件名称"
     }
@@ -1358,7 +1358,7 @@
       "enable-node": "启用节点",
       "disable-node": "禁用节点",
       "config-profile-or-inbounds-is-missing": "缺少配置文件或者入站配置",
-      "xray-core-version": "当前核心版本",
+      "core-version": "当前核心版本",
       "remnawave-node-version": "节点版本，@remnawave/节点"
     }
   },
@@ -1403,7 +1403,7 @@
     "card": {
       "stats": "统计信息",
       "traffic-refill-in-days": "流量重置(天)：",
-      "represents-the-uptime-of-the-xray-core": "表示当前核心的运行时间"
+      "represents-the-uptime-of-the-core": "表示当前核心的运行时间"
     }
   },
   "nodes-spotlight-search": {
@@ -1555,7 +1555,7 @@
   },
   "create-node-step-3-status": {
     "establishing-mtls-connection": "正在建立mTLS连接...",
-    "xray-core-is-up-and-running": "sing-box 正在运行！",
+    "core-is-up-and-running": "sing-box 正在运行！",
     "remnawave-will-try-to-reconnect-shortly": "Remnawave 将很快尝试重新连接...",
     "no-errros-so-far": "到目前为止没有错误",
     "last-error-message": "最后一个错误消息"
@@ -1829,7 +1829,7 @@
     "traffic-used": "流量使用",
     "config-profile": "配置文件",
     "inbounds": "入站",
-    "xray-v": "核心版本",
+    "core-v": "核心版本",
     "node-v": "节点 V.",
     "provider": "服务商",
     "tags": "标签",

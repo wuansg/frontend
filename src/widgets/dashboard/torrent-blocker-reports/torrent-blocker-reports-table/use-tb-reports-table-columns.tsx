@@ -107,15 +107,15 @@ export const useTbReportsTableColumns = (nodes?: GetNodesCommand.Response['respo
                 }
             },
             {
-                accessorKey: 'report.xrayReport.inboundTag',
+                accessorKey: 'report.coreReport.inboundTag',
                 header: 'Inbound Tag',
                 accessorFn: (originalRow) => {
                     if (
                         originalRow.report &&
-                        originalRow.report.xrayReport &&
-                        originalRow.report.xrayReport.inboundTag
+                        originalRow.report.coreReport &&
+                        originalRow.report.coreReport.inboundTag
                     ) {
-                        return originalRow.report.xrayReport.inboundTag
+                        return originalRow.report.coreReport.inboundTag
                     }
                     return '–'
                 },
@@ -148,15 +148,15 @@ export const useTbReportsTableColumns = (nodes?: GetNodesCommand.Response['respo
             },
 
             {
-                accessorKey: 'report.xrayReport.outboundTag',
+                accessorKey: 'report.coreReport.outboundTag',
                 header: 'Outbound Tag',
                 accessorFn: (originalRow) => {
                     if (
                         originalRow.report &&
-                        originalRow.report.xrayReport &&
-                        originalRow.report.xrayReport.outboundTag
+                        originalRow.report.coreReport &&
+                        originalRow.report.coreReport.outboundTag
                     ) {
-                        return originalRow.report.xrayReport.outboundTag
+                        return originalRow.report.coreReport.outboundTag
                     }
                     return '–'
                 },
@@ -171,15 +171,15 @@ export const useTbReportsTableColumns = (nodes?: GetNodesCommand.Response['respo
             },
 
             {
-                accessorKey: 'report.xrayReport.protocol',
+                accessorKey: 'report.coreReport.protocol',
                 header: 'Protocol',
                 accessorFn: (originalRow) => {
                     if (
                         originalRow.report &&
-                        originalRow.report.xrayReport &&
-                        originalRow.report.xrayReport.protocol
+                        originalRow.report.coreReport &&
+                        originalRow.report.coreReport.protocol
                     ) {
-                        return originalRow.report.xrayReport.protocol
+                        return originalRow.report.coreReport.protocol
                     }
                     return '–'
                 },

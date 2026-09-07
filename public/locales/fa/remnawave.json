@@ -1,7 +1,7 @@
 {
   "constants": {
     "dashboard": "داشبورد",
-    "config": "Xray کانفیگ",
+    "config": "پیکربندی sing-box",
     "home": "خانه",
     "hosts": "هاست‌ها",
     "hosts-statistics": "Host Statistics",
@@ -193,7 +193,7 @@
       "restart-all-nodes": "ریستارت کردن تمامی نودها",
       "search-nodes": "جست‌وجوی نودها",
       "force-restart": "ری‌استارت اجباری",
-      "force-restart-description": "با این روش همه نودها هسته Xray را به صورت اجباری ری‌استارت خواهند کرد",
+      "force-restart-description": "با این روش همه نودها هسته sing-box را به صورت اجباری ری‌استارت خواهند کرد",
       "graceful-restart": "راه‌اندازی مجدد آرام",
       "graceful-restart-description-1": "با این روش درخواست ری‌استارت هسته به همه نودها ارسال خواهد شد اما درصورت یکسان بودن هش نود با هش فعلی ممکن است درخواست اجرا نشود. این، حالت پیشفرض ری‌استارت است",
       "force": "اجباری",
@@ -242,13 +242,13 @@
       "remark-description-line-2": "ریمارک در فهرست سرورهای موجود در کلاینت نمایش داده خواهد شد.",
       "inbound": "اینباند",
       "inbound-line-1": "لازم است یکی از اینباندها انتخاب شود که هاست خاصی به آن متصل خواهد شد.",
-      "inbound-line-2": "فهرست اینباندها در بخش «کانفیگ Xray» تشکیل می‌شود.",
+      "inbound-line-2": "فهرست اینباندها از پیکربندی sing-box تشکیل می‌شود.",
       "address-and-port": "آدرس و پورت",
       "address-and-port-line-1": "در بیشتر موارد، IP/دامنه باید به یکی از نودهای متصل اشاره کند.",
       "address-and-port-line-2": "پورت باید باز و برای اتصالات ورودی قابل دسترسی باشد.",
-      "address-and-port-line-3": "معمولاً پورت باید با پورت اینباند از تنظیمات Xray مطابقت داشته باشد.",
+      "address-and-port-line-3": "معمولاً پورت باید با پورت اینباند از تنظیمات sing-box مطابقت داشته باشد.",
       "advanced-settings": "«تنظیمات پیشرفته» تنظیمات اضافی هستند که می‌توانند برای سفارشی‌سازی بیشتر هاست استفاده شوند.",
-      "advanced-settings-2": "هر چیزی که در «تنظیمات پیشرفته» مشخص شود، اولویت بالاتری نسبت به تنظیمات مشخص‌شده در کانفیگ Xray دارد."
+      "advanced-settings-2": "هر چیزی که در «تنظیمات پیشرفته» مشخص شود، اولویت بالاتری نسبت به تنظیمات sing-box دارد."
     }
   },
   "remark-info": {
@@ -799,11 +799,11 @@
   "active-sessions-drawer": {
     "widget": {
       "requirements": "پیش‌نیازها",
-      "warning-activity": "An IP address will be shown when <highlight>Xray-Core</highlight> considers the <highlight>connection still open</highlight>. This may result in some displayed IP addresses that are no longer actually connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
+      "warning-activity": "An IP address will be shown when <highlight>sing-box</highlight> considers the <highlight>connection still open</highlight>. Some displayed addresses may no longer be connected. Use the <highlight>clock</highlight> icon to track the last activity of a given IP.",
       "warning-version": "نود Remnawave نسخه <highlight>{{version}}</highlight> یا بالاتر",
       "warning-docker": "مقادیر زیر را به <highlight>docker-compose.yml</highlight> نود (در /opt/remnanode) اضافه کنید",
       "warning-patience": "دریافت اطلاعات ممکن است زمانبر باشد، این پنجره را نبندید!",
-      "warning-n-plus-one": "<highlight>Please note</highlight>: this request performs <highlight>N+1</highlight> operations to gRPC API of <highlight>Xray-Core</highlight> due to the lack of bulk data retrieval methods. <highlight>N</highlight> is the number of users currently online on the given node.",
+      "warning-n-plus-one": "<highlight>Please note</highlight>: this request reads connection data from the <highlight>sing-box</highlight> stats API. <highlight>N</highlight> is the number of users currently online on the node.",
       "get-data": "دریافت اطلاعات",
       "fetching": "درحال دریافت نشست‌های فعال ...",
       "progress": "{{completed}} تا از {{total}} نود تکمیل شده",
@@ -1023,8 +1023,8 @@
       "nodes": "نودها",
       "download": "دانلود",
       "quick-view": "نمای سریع",
-      "edit-xray-config": "ویرایش پیکربندی Xray",
-      "xray-config": "Xray کانفیگ"
+      "edit-core-config": "ویرایش پیکربندی sing-box",
+      "core-config": "پیکربندی sing-box"
     }
   },
   "config-profiles-header": {
@@ -1336,7 +1336,7 @@
     "feature": {
       "create-config-profile": "ساخت پروفایل پیکربندی",
       "create-a-new-config-profile-by-entering-a-name-below": "برای ایجاد پروفایل پیکربندی جدید اسم آن را وارد کنید",
-      "you-can-customize-xray-config-after-creation": "پس از ایجاد می‌توانید پیکربندی sing-box را شخصی‌سازی کنید",
+      "you-can-customize-core-config-after-creation": "پس از ایجاد می‌توانید پیکربندی sing-box را شخصی‌سازی کنید",
       "profile-name": "نام پروفایل",
       "enter-profile-name": "نام پروفایل را وارد کنید"
     }
@@ -1344,8 +1344,8 @@
   "restart-node-button": {
     "feature": {
       "restart": "راه‌اندازی مجدد",
-      "restart-description-line-1": "ensures that the node completely restarts the Xray core. It is recommended option.",
-      "restart-description-line-2": "will send a request to this node to restart Xray, but request can be unfulfilled if the node hash is the same as the current one."
+      "restart-description-line-1": "ensures that the node completely restarts the sing-box core. It is the recommended option.",
+      "restart-description-line-2": "will send a request to this node to restart sing-box, but the request can be skipped if the node hash is unchanged."
     }
   },
   "node-details-card": {
@@ -1358,7 +1358,7 @@
       "enable-node": "فعالسازی نود",
       "disable-node": "غیرفعالسازی نود",
       "config-profile-or-inbounds-is-missing": "پروفایل پیکربندی یا اینباند وجود ندارد",
-      "xray-core-version": "نسخه هسته فعال",
+      "core-version": "نسخه هسته فعال",
       "remnawave-node-version": "نسخه نود، @remnawave/node"
     }
   },
@@ -1403,7 +1403,7 @@
     "card": {
       "stats": "آمار",
       "traffic-refill-in-days": "شارژ ترافیک در (روز):",
-      "represents-the-uptime-of-the-xray-core": "نشان‌دهنده آپتایم هسته فعال"
+      "represents-the-uptime-of-the-core": "نشان‌دهنده آپتایم هسته فعال"
     }
   },
   "nodes-spotlight-search": {
@@ -1555,7 +1555,7 @@
   },
   "create-node-step-3-status": {
     "establishing-mtls-connection": "درحال برقراری اتصال mTLS",
-    "xray-core-is-up-and-running": "هسته Xray درحال اجرا می‌باشد!",
+    "core-is-up-and-running": "هسته sing-box درحال اجرا می‌باشد!",
     "remnawave-will-try-to-reconnect-shortly": "به زودی Remnawave برای اتصال مجدد تلاش خواهد کرد",
     "no-errros-so-far": "تا کنون خطایی وجود نداشته است",
     "last-error-message": "آخرین پیام خطا"
@@ -1829,7 +1829,7 @@
     "traffic-used": "ترافیک استفاده‌شده",
     "config-profile": "پروفایل پیکربندی",
     "inbounds": "اینباندها",
-    "xray-v": "نسخه هسته",
+    "core-v": "نسخه هسته",
     "node-v": "نسخه نود",
     "provider": "ارائه‌دهنده",
     "tags": "برچسب‌ها",

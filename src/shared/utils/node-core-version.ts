@@ -1,6 +1,5 @@
 interface NodeVersions {
-    // Keep XRAY in the input until the published backend contract catches up.
-    core: 'SING_BOX' | 'XRAY' | null
+    core: 'SING_BOX' | null
     singBox: string | null
 }
 

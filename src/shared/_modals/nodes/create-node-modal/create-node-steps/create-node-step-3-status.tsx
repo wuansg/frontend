@@ -99,7 +99,7 @@ export const CreateNodeStep3Status = ({ nodeUuid, onClose }: IProps) => {
                                     {t('create-node-modal.widget.connection-successful')}
                                 </Badge>
                                 <Text c="dimmed" fw={600} size="sm" ta="center">
-                                    {t('create-node-step-3-status.xray-core-is-up-and-running')}
+                                    {t('create-node-step-3-status.core-is-up-and-running')}
                                 </Text>
                             </>
                         )}

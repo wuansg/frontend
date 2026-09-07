@@ -39,7 +39,7 @@ import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
 import { WithNodeRuntimeStatus } from '@shared/utils/node-runtime-status'
-import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
+import { getCoreUptimeUtil, getNodeResetDaysUtil } from '@shared/utils/time-utils'
 
 interface IProps {
     node: GetNodeCommand.Response['response']
@@ -364,9 +364,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                             hasCore &&
                             (!runtimeStatus || runtimeStatus.mode === 'CORE_ACTIVE') && (
                                 <Tooltip
-                                    label={t(
-                                        'node-stats.card.represents-the-uptime-of-the-xray-core'
-                                    )}
+                                    label={t('node-stats.card.represents-the-uptime-of-the-core')}
                                 >
                                     <Badge
                                         color="teal"
@@ -376,7 +374,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                         variant="light"
                                         visibleFrom="sm"
                                     >
-                                        {getXrayUptimeUtil(node.xrayUptime)}
+                                        {getCoreUptimeUtil(node.coreUptime)}
                                     </Badge>
                                 </Tooltip>
                             )}
@@ -608,7 +606,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                     border: '1px solid rgba(139, 92, 246, 0.2)'
                                 }}
                             >
-                                <Tooltip label={t('node-details-card.widget.xray-core-version')}>
+                                <Tooltip label={t('node-details-card.widget.core-version')}>
                                     <Group gap="xs" justify="center">
                                         <PiCpuDuotone
                                             color="var(--mantine-color-violet-5)"
@@ -622,7 +620,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                             </Paper>
                         )}
 
-                        {node.xrayUptime !== 0 && (
+                        {node.coreUptime !== 0 && (
                             <Paper
                                 hiddenFrom="sm"
                                 p="xs"
@@ -633,9 +631,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 }}
                             >
                                 <Tooltip
-                                    label={t(
-                                        'node-stats.card.represents-the-uptime-of-the-xray-core'
-                                    )}
+                                    label={t('node-stats.card.represents-the-uptime-of-the-core')}
                                 >
                                     <Group gap="xs" justify="center">
                                         <PiCpuDuotone
@@ -648,7 +644,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                             size="sm"
                                             style={{ textTransform: 'uppercase' }}
                                         >
-                                            {getXrayUptimeUtil(node.xrayUptime)}
+                                            {getCoreUptimeUtil(node.coreUptime)}
                                         </Text>
                                     </Group>
                                 </Tooltip>

@@ -128,7 +128,7 @@
       "failed-to-save-invalid-json": "Не удалось сохранить, невалидный JSON.",
       "error": "Ошибка",
       "save-anyway": "Все равно сохранить",
-      "save-anyway-description": "Вы уверены, что хотите сохранить невалидную конфигурацию xRay? Это действие\n                                    может привести к неожиданному поведению. Продолжите только если вы знаете, что\n                                    делаете.",
+      "save-anyway-description": "Вы уверены, что хотите сохранить невалидную конфигурацию sing-box? Это действие\n                                    может привести к неожиданному поведению. Продолжите только если вы знаете, что\n                                    делаете.",
       "load-from-github": "Скачать с Github",
       "tools": "Инструменты",
       "copy-all-content": "Скопировать все содержимое",
@@ -193,9 +193,9 @@
       "restart-all-nodes": "Перезапустить все ноды",
       "search-nodes": "Поиск нод...",
       "force-restart": "Принудительный перезапуск",
-      "force-restart-description": "гарантирует, что все ноды полностью перезапустит Xray Core.",
+      "force-restart-description": "гарантирует, что все ноды полностью перезапустят ядро sing-box.",
       "graceful-restart": "Плавный перезапуск",
-      "graceful-restart-description-1": "отправит запрос на все ноды для перезапуска Xray, но запрос может быть невыполнен, если хэш на ноде совпадает с текущим. Это опция по умолчанию.",
+      "graceful-restart-description-1": "отправит запрос на все ноды для перезапуска sing-box, но запрос может быть невыполнен, если хэш на ноде совпадает с текущим. Это опция по умолчанию.",
       "force": "Принудительный",
       "graceful": "Плавный"
     }
@@ -246,9 +246,9 @@
       "address-and-port": "Адрес и порт",
       "address-and-port-line-1": "В большинстве случаев, IP/домен должен указывать на одну из подключенных нод.",
       "address-and-port-line-2": "Порт должен быть открытым и доступным для входящих соединений.",
-      "address-and-port-line-3": "Обычно порт должен соотвествовать порту инбаунда из конфигурации Xray.",
+      "address-and-port-line-3": "Обычно порт должен соответствовать порту инбаунда из конфигурации sing-box.",
       "advanced-settings": "\"Расширенные настройки\" – это дополнительные параметры, которые могут быть использованы для более тонкой настройки хоста.",
-      "advanced-settings-2": "Все, что указано в \"Расширенных настройках\" имеет более высокий приоритет чем настройки, указанные в конфигурации Xray."
+      "advanced-settings-2": "Все, что указано в \"Расширенных настройках\" имеет более высокий приоритет чем настройки, указанные в конфигурации sing-box."
     }
   },
   "remark-info": {
@@ -799,11 +799,11 @@
   "active-sessions-drawer": {
     "widget": {
       "requirements": "Условия",
-      "warning-activity": "IP адрес будет показан, когда <highlight>Xray-Core</highlight> считает подключение <highlight>еще действительным</highlight>. Это может привести к отображению IP адресов, которые в настоящий момент не подключены. Используйте значок <highlight>часов</highlight> для отслеживания последней активности данного IP.",
+      "warning-activity": "IP адрес будет показан, когда <highlight>sing-box</highlight> считает подключение <highlight>еще действительным</highlight>. Это может привести к отображению IP адресов, которые в настоящий момент не подключены. Используйте значок <highlight>часов</highlight> для отслеживания последней активности данного IP.",
       "warning-version": "Версия Remnawave Node <highlight>{{version}}</highlight> или выше",
       "warning-docker": "</highlight>Добавьте эти строки к <highlight>docker-compose.yml</highlight> Remnawave Node (/opt/remnanode)",
       "warning-patience": "Получение данных может занять некоторое время, не закрывайте это окно!",
-      "warning-n-plus-one": "<highlight>Пожалуйста, обратите внимание</highlight>: данный запрос выполняет <highlight>N+1</highlight> операциий к gRPC API <highlight>Xray-Core</highlight> так как API не предоставляет методов для массового получения данных. <highlight>N</highlight> — количество пользователей онлайн на данной ноде.",
+      "warning-n-plus-one": "<highlight>Обратите внимание</highlight>: этот запрос читает данные подключений из API статистики <highlight>sing-box</highlight>. <highlight>N</highlight> — количество пользователей онлайн на данной ноде.",
       "get-data": "Получить данные",
       "fetching": "Получение активных сессий...",
       "progress": "Опрошено {{completed}} из {{total}} нод",
@@ -1023,8 +1023,8 @@
       "nodes": "Ноды",
       "download": "Скачать",
       "quick-view": "Быстрый просмотр",
-      "edit-xray-config": "Изменить конфиг Xray",
-      "xray-config": "Конфиг. Xray"
+      "edit-core-config": "Изменить конфигурацию sing-box",
+      "core-config": "Конфигурация sing-box"
     }
   },
   "config-profiles-header": {
@@ -1336,7 +1336,7 @@
     "feature": {
       "create-config-profile": "Создать профиль",
       "create-a-new-config-profile-by-entering-a-name-below": "Создайте новый профиль, введя имя ниже.",
-      "you-can-customize-xray-config-after-creation": "После создания можно настроить конфигурацию sing-box.",
+      "you-can-customize-core-config-after-creation": "После создания можно настроить конфигурацию sing-box.",
       "profile-name": "Имя профиля",
       "enter-profile-name": "Введите имя профиля"
     }
@@ -1344,8 +1344,8 @@
   "restart-node-button": {
     "feature": {
       "restart": "Перезапустить",
-      "restart-description-line-1": "гарантирует перезапуск ядра Xray на ноде. Рекомендуется использовать данный вариант.",
-      "restart-description-line-2": "будет отправлен запрос этой ноде для перезапуска Xray, но запрос может быть невыполнен, если хэш узла совпадает с текущим."
+      "restart-description-line-1": "гарантирует перезапуск ядра sing-box на ноде. Рекомендуется использовать данный вариант.",
+      "restart-description-line-2": "будет отправлен запрос этой ноде для перезапуска sing-box, но запрос может быть невыполнен, если хэш узла совпадает с текущим."
     }
   },
   "node-details-card": {
@@ -1358,7 +1358,7 @@
       "enable-node": "Включить ноды",
       "disable-node": "Выключить ноду",
       "config-profile-or-inbounds-is-missing": "Профиль или инбаунд не выбран",
-      "xray-core-version": "Версия активного ядра",
+      "core-version": "Версия активного ядра",
       "remnawave-node-version": "Версия модуля @remnawave/node"
     }
   },
@@ -1403,7 +1403,7 @@
     "card": {
       "stats": "Статистика",
       "traffic-refill-in-days": "Сброс трафика (дней):",
-      "represents-the-uptime-of-the-xray-core": "Отражает время работы активного ядра"
+      "represents-the-uptime-of-the-core": "Отражает время работы активного ядра"
     }
   },
   "nodes-spotlight-search": {
@@ -1555,7 +1555,7 @@
   },
   "create-node-step-3-status": {
     "establishing-mtls-connection": "Установка mTLS соединения...",
-    "xray-core-is-up-and-running": "Ядро Xray запущено и работает!",
+    "core-is-up-and-running": "sing-box запущен и работает!",
     "remnawave-will-try-to-reconnect-shortly": "Remnawave скоро попробует переподключиться...",
     "no-errros-so-far": "Пока никаких ошибок нет",
     "last-error-message": "Последнее сообщение об ошибке"
@@ -1829,7 +1829,7 @@
     "traffic-used": "Польз. трафик",
     "config-profile": "Профиль",
     "inbounds": "Инбаунды",
-    "xray-v": "Версия ядра",
+    "core-v": "Версия ядра",
     "node-v": "вер. Ноды",
     "provider": "Провайдер",
     "tags": "Теги",

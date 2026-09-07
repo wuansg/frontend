@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
-export function getXrayUptimeUtil(uptimeInSeconds: number): string {
+export function getCoreUptimeUtil(uptimeInSeconds: number): string {
     const duration = dayjs.duration(uptimeInSeconds, 'seconds')
 
     if (duration.asDays() >= 1) {

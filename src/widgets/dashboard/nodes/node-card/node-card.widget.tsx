@@ -24,7 +24,7 @@ import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/byte
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
 import { getNodeRuntimeMode } from '@shared/utils/node-runtime-status'
-import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
+import { getCoreUptimeUtil, getNodeResetDaysUtil } from '@shared/utils/time-utils'
 
 import { NodeStatusBadgeWidget } from '../node-status-badge'
 import { IProps } from './interfaces'
@@ -373,7 +373,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                                     <Flex align="center" gap={4}>
                                         <PiCpuDuotone size={14} />
                                         <Text c="teal" fw={600} size="sm" truncate>
-                                            {getXrayUptimeUtil(node.xrayUptime)}
+                                            {getCoreUptimeUtil(node.coreUptime)}
                                         </Text>
                                     </Flex>
                                 )}
@@ -619,7 +619,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                                 fw={isCoreActive ? 600 : 500}
                                 size="xs"
                             >
-                                {isCoreActive ? getXrayUptimeUtil(node.xrayUptime) : '—'}
+                                {isCoreActive ? getCoreUptimeUtil(node.coreUptime) : '—'}
                             </Text>
                         </Flex>
                     </Flex>

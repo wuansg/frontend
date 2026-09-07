@@ -71,7 +71,7 @@ export const UserTorrentBlockerReportItem = (props: IProps) => {
                     <CopyableFieldShared
                         label="Inbound Tag"
                         size="sm"
-                        value={report.report.xrayReport.inboundTag || '–'}
+                        value={report.report.coreReport.inboundTag || '–'}
                     />
 
                     <Group align="flex-end" gap="xs" wrap="nowrap">

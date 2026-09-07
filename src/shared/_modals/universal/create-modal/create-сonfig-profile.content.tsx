@@ -96,7 +96,7 @@ export const CreateConfigProfileContent = (props: IProps) => {
                     <br />
 
                     {t(
-                        'config-profiles-header-action-buttons.feature.you-can-customize-xray-config-after-creation'
+                        'config-profiles-header-action-buttons.feature.you-can-customize-core-config-after-creation'
                     )}
                 </Text>
                 <TextInput
