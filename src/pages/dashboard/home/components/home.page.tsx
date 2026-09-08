@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, SimpleGrid, Stack, Title } from '@mantine/core'
+import { ActionIcon, Badge, Box, Group, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { notifications } from '@mantine/notifications'
 import { useRef, useState } from 'react'
@@ -44,7 +44,7 @@ export const HomePage = (props: IProps) => {
     const runtimeRef = useRef<HTMLDivElement>(null)
     const [copying, setCopying] = useState(false)
 
-    const { systemInfo, bandwidthStats, remnawaveHealth } = props
+    const { systemInfo, bandwidthStats, remnawaveHealth, configuration } = props
 
     const copyRuntimeScreenshot = async () => {
         if (!runtimeRef.current || copying) return
@@ -78,6 +78,20 @@ export const HomePage = (props: IProps) => {
     const onlineMetrics = getOnlineMetrics(systemInfo.onlineStats, t)
     const runtimeSummaryMetrics = getRuntimeSummaryMetrics(remnawaveHealth.runtimeMetrics, t)
     const runtimeProcessMetrics = getRuntimeProcessMetrics(remnawaveHealth.runtimeMetrics)
+    const telegram = configuration.notifications.telegram
+
+    const telegramStatus = (target: (typeof telegram.targets)[number]) => {
+        if (!target.configured) {
+            return { color: 'gray', label: t('home.telegram-status.not-configured') }
+        }
+        if (target.circuitOpen) {
+            return { color: 'red', label: t('home.telegram-status.unavailable') }
+        }
+        if (target.available) {
+            return { color: 'green', label: t('home.telegram-status.available') }
+        }
+        return { color: 'yellow', label: t('home.telegram-status.pending') }
+    }
 
     return (
         <Page title={t('constants.home')}>
@@ -109,6 +123,43 @@ export const HomePage = (props: IProps) => {
                                     <MetricCardShared {...metric} />
                                 </AnimatedCard>
                             ))}
+                        </SimpleGrid>
+                    </div>
+                )}
+
+                {(telegram.enabled || telegram.targets.some((target) => target.configured)) && (
+                    <div className={classes.section}>
+                        <Group align="center" gap="xs" m="xs" ml={0}>
+                            <Title className={classes.title} order={4}>
+                                {t('home.telegram-status.title')}
+                            </Title>
+                            <Badge color={telegram.enabled ? 'blue' : 'gray'} variant="light">
+                                {telegram.enabled
+                                    ? t('home.telegram-status.enabled')
+                                    : t('home.telegram-status.disabled')}
+                            </Badge>
+                        </Group>
+                        <SimpleGrid cols={{ base: 1, sm: 2, xl: 5 }} spacing="xs">
+                            {telegram.targets.map((target) => {
+                                const status = telegramStatus(target)
+                                return (
+                                    <Paper key={target.target} p="md" radius="md" withBorder>
+                                        <Group justify="space-between" wrap="nowrap">
+                                            <Text fw={600} tt="capitalize">
+                                                {target.target}
+                                            </Text>
+                                            <Badge color={status.color} variant="light">
+                                                {status.label}
+                                            </Badge>
+                                        </Group>
+                                        <Text c="dimmed" mt="xs" size="xs">
+                                            {target.lastCheckedAt
+                                                ? `${t('home.telegram-status.last-check')}: ${new Date(target.lastCheckedAt).toLocaleString()}`
+                                                : t('home.telegram-status.not-checked')}
+                                        </Text>
+                                    </Paper>
+                                )
+                            })}
                         </SimpleGrid>
                     </div>
                 )}

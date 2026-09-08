@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
     GetBandwidthStatsCommand,
+    GetConfigurationCommand,
     GetHttpStatsCommand,
     GetMetadataCommand,
     GetNodesMetricsCommand,
@@ -20,6 +21,9 @@ const REFETCH_INTERVAL = 5_100
 
 export const systemQueryKeys = createQueryKeys('system', {
     getSystemStats: {
+        queryKey: null
+    },
+    getConfiguration: {
         queryKey: null
     },
     getBandwidthStats: {
@@ -43,6 +47,18 @@ export const systemQueryKeys = createQueryKeys('system', {
     getHttpStats: {
         queryKey: null
     }
+})
+
+export const useGetConfiguration = createGetQueryHook({
+    endpoint: GetConfigurationCommand.TSQ_url,
+    responseSchema: GetConfigurationCommand.ResponseSchema,
+    getQueryKey: () => systemQueryKeys.getConfiguration.queryKey,
+    rQueryParams: {
+        placeholderData: keepPreviousData,
+        staleTime: sToMs(30),
+        refetchInterval: sToMs(30)
+    },
+    errorHandler: (error) => errorHandler(error, 'Get Configuration')
 })
 
 export const useGetSystemStats = createGetQueryHook({

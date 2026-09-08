@@ -514,6 +514,17 @@
     "status-unreachable": "Node unreachable"
   },
   "home": {
+    "telegram-status": {
+      "title": "Telegram notification targets",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "pending": "Waiting for check",
+      "not-configured": "Not configured",
+      "last-check": "Last check",
+      "not-checked": "Not checked yet"
+    },
     "page": {
       "online-stats": "Online stats",
       "system": "System",
