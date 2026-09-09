@@ -1,6 +1,6 @@
 {
   "name": "@remnawave/frontend",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "private": false,
   "homepage": "https://github.com/remnawave",
   "bugs": {
@@ -60,7 +60,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@noble/post-quantum": "^0.6.1",
     "@paralleldrive/cuid2": "3.3.0",
-    "@remnawave/backend-contract": "https://github.com/wuansg/backend/releases/download/backend-contract-v3.8.0-anytls.0/remnawave-backend-contract-3.8.0-anytls.0.tgz",
+    "@remnawave/backend-contract": "https://github.com/wuansg/backend/releases/download/backend-contract-v3.9.0-anytls.0/remnawave-backend-contract-3.9.0-anytls.0.tgz",
     "@remnawave/node-plugins": "0.7.3",
     "@remnawave/subscription-page-types": "0.5.0",
     "@simplewebauthn/browser": "^13.3.0",

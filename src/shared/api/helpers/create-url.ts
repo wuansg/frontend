@@ -26,7 +26,7 @@ export function createUrl(
     routeParams?: Record<string, unknown>
 ) {
     const url = Object.entries(routeParams ?? {}).reduce(
-        (acc, [key, value]) => acc.replaceAll(`:${key}`, String(value)),
+        (acc, [key, value]) => acc.replaceAll(`:${key}`, encodeURIComponent(String(value))),
         base
     )
 
