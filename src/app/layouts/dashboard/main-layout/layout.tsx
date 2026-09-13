@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mantine/hooks'
+import { QuickOpenWidget } from '@widgets/dashboard/quick-open'
 
 import { useIsMobile } from '@shared/hooks'
 import { HeaderControls } from '@shared/ui/header-buttons'
@@ -38,8 +39,9 @@ export function MainLayout() {
         />
     )
 
+    let layout
     if (isMobile) {
-        return (
+        layout = (
             <MobileLayout
                 headerControls={headerControls}
                 isSocialButtons={isMobile}
@@ -47,11 +49,16 @@ export function MainLayout() {
                 remnawaveInfo={remnawaveInfo}
             />
         )
+    } else if (layoutStyle === LAYOUT_STYLE.SIDEBAR) {
+        layout = <SidebarLayout headerControls={headerControls} />
+    } else {
+        layout = <CompactLayout headerControls={headerControls} isHiResDesktop={isHiResDesktop} />
     }
 
-    if (layoutStyle === LAYOUT_STYLE.SIDEBAR) {
-        return <SidebarLayout headerControls={headerControls} />
-    }
-
-    return <CompactLayout headerControls={headerControls} isHiResDesktop={isHiResDesktop} />
+    return (
+        <>
+            <QuickOpenWidget />
+            {layout}
+        </>
+    )
 }

@@ -2,9 +2,12 @@ import { ExternalSquadsHeaderActionButtonsFeature } from '@features/ui/dashboard
 import { ExternalSquadsGridWidget } from '@widgets/dashboard/external-squads/external-squads-grid/external-squads-grid.widget'
 import { ExternalSquadsSpotlightWidget } from '@widgets/dashboard/external-squads/external-squads-spotlight/external-squads-spotlight'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbWebhook } from 'react-icons/tb'
+import { useSearchParams } from 'react-router'
 
+import { showModal } from '@shared/_modals/show-modal'
 import { Page } from '@shared/ui/page'
 import { PageHeaderShared } from '@shared/ui/page-header/page-header.shared'
 
@@ -13,6 +16,14 @@ import { Props } from './interfaces'
 export const ExternalSquadsPageComponent = (props: Props) => {
     const { t } = useTranslation()
     const { externalSquads } = props
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    useEffect(() => {
+        const uuid = searchParams.get('uuid')
+        if (!uuid || !externalSquads.some((squad) => squad.uuid === uuid)) return
+        showModal('externalSquads_externalSquadsDrawer', { uuid })
+        setSearchParams({}, { replace: true })
+    }, [externalSquads, searchParams, setSearchParams])
 
     return (
         <Page title={t('constants.external-squads')}>

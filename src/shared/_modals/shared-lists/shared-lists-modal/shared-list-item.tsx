@@ -1,11 +1,11 @@
-import { ActionIcon, Badge, Box, Group, Text, Tooltip } from '@mantine/core'
+import { ActionIcon, Badge, Box, Code, Group, Stack, Text, Tooltip } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { GetSharedListsCommand } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
-import { TbListNumbers, TbTrash } from 'react-icons/tb'
+import { TbListNumbers, TbSitemap, TbTrash } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
-import { queryClient } from '@shared/api'
+import { instance, queryClient } from '@shared/api'
 import { QueryKeys, useDeleteSharedList } from '@shared/api/hooks'
 
 import classes from './shared-lists.module.css'
@@ -55,6 +55,48 @@ export const SharedListItem = (props: IProps) => {
     const openEditor = () =>
         showModal('sharedLists_sharedListEditorModal', { name: sharedList.name })
 
+    const openReferences = async () => {
+        const response = await instance.get<{ response: SharedListReferences }>(
+            `/api/node-plugins/shared-lists/${encodeURIComponent(sharedList.name)}/references`
+        )
+        const graph = response.data.response
+        modals.open({
+            title: `References — ext:${sharedList.name}`,
+            children: (
+                <Stack gap="sm">
+                    <Group gap="xs">
+                        <Badge variant="light">{graph.list.type}</Badge>
+                        <Badge color="teal" variant="light">
+                            {graph.affectedNodeCount} affected nodes
+                        </Badge>
+                    </Group>
+                    {graph.plugins.length === 0 && (
+                        <Text c="dimmed" size="sm">
+                            This Shared List is not referenced by a Node Plugin.
+                        </Text>
+                    )}
+                    {graph.plugins.map((plugin) => (
+                        <Box
+                            key={plugin.uuid}
+                            p="sm"
+                            style={{
+                                border: '1px solid var(--mantine-color-dark-4)',
+                                borderRadius: 8
+                            }}
+                        >
+                            <Text fw={600} size="sm">
+                                {plugin.name}
+                            </Text>
+                            <Code>
+                                {plugin.nodes.length ? plugin.nodes.join(', ') : 'No nodes'}
+                            </Code>
+                        </Box>
+                    ))}
+                </Stack>
+            )
+        })
+    }
+
     return (
         <Box
             className={classes.sharedListRow}
@@ -97,6 +139,20 @@ export const SharedListItem = (props: IProps) => {
                 </Badge>
             </Group>
 
+            <Tooltip label="Show references">
+                <ActionIcon
+                    color="indigo"
+                    onClick={(event) => {
+                        event.stopPropagation()
+                        void openReferences()
+                    }}
+                    size="md"
+                    variant="subtle"
+                >
+                    <TbSitemap size={18} />
+                </ActionIcon>
+            </Tooltip>
+
             <Tooltip label={t('common.delete')}>
                 <ActionIcon
                     color="red"
@@ -113,4 +169,10 @@ export const SharedListItem = (props: IProps) => {
             </Tooltip>
         </Box>
     )
+}
+
+interface SharedListReferences {
+    list: { name: string; type: string }
+    plugins: Array<{ uuid: string; name: string; nodes: string[] }>
+    affectedNodeCount: number
 }

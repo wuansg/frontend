@@ -50,6 +50,23 @@ export const CreateNodeStep3Status = ({ nodeUuid, onClose }: IProps) => {
         return { status: STATUS.CONNECTING, errorMessage: lastStatusMessage }
     }, [node, isLoading])
 
+    const runtimeStatus = node?.runtimeStatus
+    const successMessage = useMemo(() => {
+        if (!runtimeStatus) return t('create-node-step-3-status.core-is-up-and-running')
+        if (runtimeStatus.mode === 'CORE_ACTIVE') {
+            return runtimeStatus.runningCore
+                ? `${runtimeStatus.runningCore.replace('_', '-')} core is running.`
+                : 'Core is running.'
+        }
+        if (runtimeStatus.mode === 'FORWARDING_ONLY') {
+            return 'Node is online in forwarding-only mode; no proxy core is required.'
+        }
+        if (runtimeStatus.mode === 'IDLE') {
+            return 'Node is online and idle; no proxy core or forwarding rules are configured.'
+        }
+        return 'Node is online, but one or more runtime components need attention.'
+    }, [runtimeStatus, t])
+
     const handleOpenNode = () => {
         if (!node) {
             return
@@ -99,7 +116,7 @@ export const CreateNodeStep3Status = ({ nodeUuid, onClose }: IProps) => {
                                     {t('create-node-modal.widget.connection-successful')}
                                 </Badge>
                                 <Text c="dimmed" fw={600} size="sm" ta="center">
-                                    {t('create-node-step-3-status.core-is-up-and-running')}
+                                    {successMessage}
                                 </Text>
                             </>
                         )}

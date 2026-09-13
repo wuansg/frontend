@@ -32,6 +32,7 @@ import { useGetNodePlugins, useGetNodesTags } from '@shared/api/hooks'
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
 import { COUNTRIES } from '@shared/ui/forms/nodes/base-node-form/constants'
 import { SelectInfraProviderShared } from '@shared/ui/infra-billing/select-infra-provider/select-infra-provider.shared'
+import { NodeIpsEditor } from '@shared/ui/node-ips'
 import { TagInputPill } from '@shared/ui/tag-input-pill'
 
 import { CopyDockerComposeWidget } from './copy-docker-compose.widget'
@@ -173,7 +174,7 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
                         opened={additionalOpened}
                         position="bottom"
                         shadow="md"
-                        width={340}
+                        width={420}
                         withArrow
                     >
                         <Divider
@@ -266,6 +267,8 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
                                         label: { fontWeight: 500 }
                                     }}
                                 />
+
+                                <NodeIpsEditor form={form} size="xs" />
                             </Stack>
                         </Popover.Dropdown>
                     </Popover>

@@ -7,12 +7,15 @@ import { NodesDataTableWidget } from '@widgets/dashboard/nodes/nodes-datatable/n
 import { NodesRealtimeUsageMetrics } from '@widgets/dashboard/nodes/nodes-realtime-metrics'
 import { NodesTableWidget } from '@widgets/dashboard/nodes/nodes-table'
 import { motion } from 'motion/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiServer } from 'react-icons/hi'
+import { useSearchParams } from 'react-router'
 
+import { showModal } from '@shared/_modals/show-modal'
 import { queryClient } from '@shared/api'
 import { nodesQueryKeys, useReorderNodes } from '@shared/api/hooks'
+import { SEARCH_PARAMS } from '@shared/constants/search-params'
 import { LoadingScreen, Page, PageHeaderShared } from '@shared/ui'
 
 import {
@@ -33,6 +36,23 @@ export default function NodesPageComponent(props: IProps) {
     const [selectedRecords, setSelectedRecords] = useState<
         GetNodesCommand.Response['response'][number][]
     >([])
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    useEffect(() => {
+        if (!nodes || isLoading) return
+        const nodeUuid = searchParams.get(SEARCH_PARAMS.NODE)
+        if (!nodeUuid || !nodes.some((node) => node.uuid === nodeUuid)) return
+
+        showModal('nodes_editNodeModal', { nodeUuid })
+        setSearchParams(
+            (previous) => {
+                const next = new URLSearchParams(previous)
+                next.delete(SEARCH_PARAMS.NODE)
+                return next
+            },
+            { replace: true }
+        )
+    }, [isLoading, nodes, searchParams, setSearchParams])
 
     const { mutate: reorderNodes } = useReorderNodes({
         mutationFns: {

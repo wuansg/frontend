@@ -1,5 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
-import { Modal } from '@mantine/core'
+import { Modal, Stack } from '@mantine/core'
 import { GetNodeCommand } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
 import { TbMapSearch } from 'react-icons/tb'
@@ -9,6 +9,7 @@ import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { GeocheckFailedWidget } from './geocheck-failed.widget'
 import { GeocheckFormWidget } from './geocheck-form.widget'
+import { GeocheckObservabilityWidget } from './geocheck-observability.widget'
 import { GeocheckProgressWidget } from './geocheck-progress.widget'
 import { GeocheckResultWidget } from './geocheck-result.widget'
 import { useNodeGeocheck } from './use-node-geocheck'
@@ -48,7 +49,7 @@ export const NodeGeocheckModal = NiceModal.create((props: IProps) => {
         <Modal
             {...modalProps}
             removeScrollProps={{ allowPinchZoom: true }}
-            size={hasReport ? 'min(1000px, 95vw)' : 'min(520px, 95vw)'}
+            size={hasReport ? 'min(1000px, 95vw)' : 'min(720px, 95vw)'}
             title={
                 <BaseOverlayHeader
                     iconColor="teal"
@@ -60,7 +61,10 @@ export const NodeGeocheckModal = NiceModal.create((props: IProps) => {
             }
             transitionProps={{ transition: 'fade', duration: 200 }}
         >
-            {renderContent()}
+            <Stack gap="md">
+                {renderContent()}
+                <GeocheckObservabilityWidget nodeUuid={node.uuid} />
+            </Stack>
         </Modal>
     )
 })

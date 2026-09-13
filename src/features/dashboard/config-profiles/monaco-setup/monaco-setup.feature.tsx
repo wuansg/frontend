@@ -333,23 +333,41 @@ export const MonacoSetupHostMapperEditorFeature = {
 
 type TSharedLists = GetSharedListsCommand.Response['response']['sharedLists']
 
-const injectSharedListNames = (node: unknown, sharedLists: TSharedLists): void => {
+const injectSharedListNames = (
+    node: unknown,
+    sharedLists: TSharedLists,
+    inheritedType?: TSharedLists[number]['type']
+): void => {
     if (!node || typeof node !== 'object') return
     if (Array.isArray(node)) {
-        node.forEach((item) => injectSharedListNames(item, sharedLists))
+        node.forEach((item) => injectSharedListNames(item, sharedLists, inheritedType))
         return
     }
     const schemaNode = node as Record<string, unknown>
+    const schemaText =
+        `${schemaNode.title ?? ''} ${schemaNode.markdownDescription ?? ''}`.toLowerCase()
+    const expectedType = schemaText.includes('port')
+        ? 'portList'
+        : schemaText.includes('domain')
+          ? 'domainList'
+          : schemaText.includes('ip') || schemaText.includes('cidr')
+            ? 'ipList'
+            : inheritedType
     if (schemaNode.type === 'string' && String(schemaNode.pattern ?? '').startsWith('^ext:')) {
+        const compatibleLists = expectedType
+            ? sharedLists.filter((item) => item.type === expectedType)
+            : sharedLists
         delete schemaNode.pattern
-        schemaNode.enum = sharedLists.map((item) => `ext:${item.name}`)
-        schemaNode.markdownEnumDescriptions = sharedLists.map(
+        schemaNode.enum = compatibleLists.map((item) => `ext:${item.name}`)
+        schemaNode.markdownEnumDescriptions = compatibleLists.map(
             (item) => `**${item.type}** · ${item.itemsCount} items`
         )
         schemaNode.title = 'Shared List'
         return
     }
-    Object.values(schemaNode).forEach((value) => injectSharedListNames(value, sharedLists))
+    Object.values(schemaNode).forEach((value) =>
+        injectSharedListNames(value, sharedLists, expectedType)
+    )
 }
 
 export const MonacoSetupNodePluginEditorFeature = {

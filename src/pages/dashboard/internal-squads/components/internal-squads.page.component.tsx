@@ -1,9 +1,12 @@
 import { InternalSquadsHeaderActionButtonsFeature } from '@features/ui/dashboard/internal-squads/header-action-buttons'
 import { InternalSquadsGridWidget } from '@widgets/dashboard/internal-squads/internal-squads-grid/internal-squads-grid.widget'
 import { InternalSquadsSpotlightWidget } from '@widgets/dashboard/internal-squads/internal-squads-spotlight/internal-squads-spotlight'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbCirclesRelation } from 'react-icons/tb'
+import { useSearchParams } from 'react-router'
 
+import { showModal } from '@shared/_modals/show-modal'
 import { Page } from '@shared/ui/page'
 import { PageHeaderShared } from '@shared/ui/page-header/page-header.shared'
 
@@ -12,6 +15,14 @@ import { Props } from './interfaces'
 export const InternalSquadsPageComponent = (props: Props) => {
     const { t } = useTranslation()
     const { internalSquads } = props
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    useEffect(() => {
+        const uuid = searchParams.get('uuid')
+        if (!uuid || !internalSquads.some((squad) => squad.uuid === uuid)) return
+        showModal('internalSquads_internalSquadsInboundsDrawer', { squadUuid: uuid })
+        setSearchParams({}, { replace: true })
+    }, [internalSquads, searchParams, setSearchParams])
 
     return (
         <Page title={t('constants.internal-squads')}>
