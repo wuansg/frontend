@@ -7,14 +7,22 @@ import { prettifyBytesUtil } from '@shared/utils/bytes'
 interface IProps {
     isLoading: boolean
     sparklineData: number[] | undefined
+    uploadSparklineData?: number[]
+    downloadSparklineData?: number[]
 }
 
 export const UserUsageSparklineCardWidget = (props: IProps) => {
-    const { sparklineData = [], isLoading } = props
+    const { sparklineData = [], uploadSparklineData, downloadSparklineData, isLoading } = props
 
     const { t } = useTranslation()
 
     const totalUsage = sparklineData.reduce((sum, val) => sum + val, 0)
+    const uploadUsage = uploadSparklineData?.reduce((sum, val) => sum + val, 0) ?? 0
+    const downloadUsage = downloadSparklineData?.reduce((sum, val) => sum + val, 0) ?? 0
+    const hasDirectionalUsage =
+        uploadSparklineData !== undefined && downloadSparklineData !== undefined
+    const hasHistoricalUndirectedUsage =
+        hasDirectionalUsage && uploadUsage + downloadUsage !== totalUsage
 
     let dailyAverage = 0
     let peakDay = 0
@@ -43,6 +51,34 @@ export const UserUsageSparklineCardWidget = (props: IProps) => {
                 </Box>
 
                 <SimpleGrid cols={2} spacing="sm">
+                    {hasDirectionalUsage && (
+                        <>
+                            <Box>
+                                <Text c="dimmed" size="xs">
+                                    ↑ {t('user-usage-modal.widget.upload-traffic')}
+                                </Text>
+                                {isLoading ? (
+                                    <Skeleton height={20} mt={4} width={80} />
+                                ) : (
+                                    <Text fw={600} size="sm">
+                                        {prettifyBytesUtil(uploadUsage) || '0 B'}
+                                    </Text>
+                                )}
+                            </Box>
+                            <Box>
+                                <Text c="dimmed" size="xs">
+                                    ↓ {t('user-usage-modal.widget.download-traffic')}
+                                </Text>
+                                {isLoading ? (
+                                    <Skeleton height={20} mt={4} width={80} />
+                                ) : (
+                                    <Text fw={600} size="sm">
+                                        {prettifyBytesUtil(downloadUsage) || '0 B'}
+                                    </Text>
+                                )}
+                            </Box>
+                        </>
+                    )}
                     <Box>
                         <Text c="dimmed" size="xs">
                             Ø / day
@@ -68,6 +104,12 @@ export const UserUsageSparklineCardWidget = (props: IProps) => {
                         )}
                     </Box>
                 </SimpleGrid>
+
+                {hasHistoricalUndirectedUsage && !isLoading && (
+                    <Text c="yellow.6" size="xs">
+                        {t('user-usage-modal.widget.directional-data-after-upgrade')}
+                    </Text>
+                )}
 
                 <Box style={{ flex: 1 }}>
                     {isLoading ? (

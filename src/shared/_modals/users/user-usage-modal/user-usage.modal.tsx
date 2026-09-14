@@ -167,8 +167,10 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
 
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                     <UserUsageSparklineCardWidget
+                        downloadSparklineData={activeStats?.downloadSparklineData}
                         isLoading={activeQuery.isLoading}
                         sparklineData={activeStats?.sparklineData}
+                        uploadSparklineData={activeStats?.uploadSparklineData}
                     />
 
                     {usageView === 'nodes' ? (

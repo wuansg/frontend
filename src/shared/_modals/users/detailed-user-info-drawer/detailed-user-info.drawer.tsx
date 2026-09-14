@@ -137,11 +137,39 @@ export const DetailedUserInfoDrawer = NiceModal.create((props: IProps) => {
                                     value={prettifyBytesUtil(user.userTraffic.usedTrafficBytes)}
                                 />
                                 <CopyableDataListItem
+                                    label={t('detailed-user-info-drawer.widget.upload-traffic')}
+                                    value={prettifyBytesUtil(
+                                        user.userTraffic.usedUploadTrafficBytes
+                                    )}
+                                />
+                                <CopyableDataListItem
+                                    label={t('detailed-user-info-drawer.widget.download-traffic')}
+                                    value={prettifyBytesUtil(
+                                        user.userTraffic.usedDownloadTrafficBytes
+                                    )}
+                                />
+                                <CopyableDataListItem
                                     label={t(
                                         'detailed-user-info-drawer.widget.lifetime-used-traffic'
                                     )}
                                     value={prettifyBytesUtil(
                                         user.userTraffic.lifetimeUsedTrafficBytes
+                                    )}
+                                />
+                                <CopyableDataListItem
+                                    label={t(
+                                        'detailed-user-info-drawer.widget.lifetime-upload-traffic'
+                                    )}
+                                    value={prettifyBytesUtil(
+                                        user.userTraffic.lifetimeUploadTrafficBytes
+                                    )}
+                                />
+                                <CopyableDataListItem
+                                    label={t(
+                                        'detailed-user-info-drawer.widget.lifetime-download-traffic'
+                                    )}
+                                    value={prettifyBytesUtil(
+                                        user.userTraffic.lifetimeDownloadTrafficBytes
                                     )}
                                 />
                                 <CopyableDataListItem

@@ -193,8 +193,10 @@ export const StatisticUsersPage = () => {
             <Stack gap="md">
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                     <UserUsageSparklineCardWidget
+                        downloadSparklineData={usersStats?.downloadSparklineData}
                         isLoading={isLoading}
                         sparklineData={usersStats?.sparklineData}
+                        uploadSparklineData={usersStats?.uploadSparklineData}
                     />
 
                     <TopLeaderboardCardShared
