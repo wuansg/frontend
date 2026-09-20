@@ -93,6 +93,10 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 tags: fetchedNode.tags ?? undefined,
                 ips: fetchedNode.ips ?? [],
                 proxyUrl: fetchedNode.proxyUrl ?? undefined,
+                expectedAgentVersion: fetchedNode.expectedAgentVersion ?? undefined,
+                expectedAgentImageTag: fetchedNode.expectedAgentImageTag ?? undefined,
+                rolloutBatch: fetchedNode.rolloutBatch ?? undefined,
+                nodeApiSniEnabled: fetchedNode.nodeApiSniEnabled,
                 configProfile: {
                     activeConfigProfileUuid:
                         fetchedNode.configProfile.activeConfigProfileUuid ?? '',

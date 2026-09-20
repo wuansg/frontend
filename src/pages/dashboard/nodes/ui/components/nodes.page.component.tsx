@@ -3,11 +3,15 @@ import { NodesHeaderActionButtonsFeature } from '@features/ui/dashboard/nodes/no
 import { Grid, Stack } from '@mantine/core'
 /* eslint-disable no-nested-ternary */
 import { GetNodesCommand } from '@remnawave/backend-contract'
+import {
+    NodeRolloutFilter,
+    NodeRolloutOverview
+} from '@widgets/dashboard/nodes/node-rollout-overview'
 import { NodesDataTableWidget } from '@widgets/dashboard/nodes/nodes-datatable/nodes-datatable.widget'
 import { NodesRealtimeUsageMetrics } from '@widgets/dashboard/nodes/nodes-realtime-metrics'
 import { NodesTableWidget } from '@widgets/dashboard/nodes/nodes-table'
 import { motion } from 'motion/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiServer } from 'react-icons/hi'
 import { useSearchParams } from 'react-router'
@@ -37,6 +41,20 @@ export default function NodesPageComponent(props: IProps) {
         GetNodesCommand.Response['response'][number][]
     >([])
     const [searchParams, setSearchParams] = useSearchParams()
+    const [rolloutFilter, setRolloutFilter] = useState<NodeRolloutFilter>('all')
+    const allNodes = useMemo(() => nodes ?? [], [nodes])
+
+    const visibleNodes = useMemo(() => {
+        if (rolloutFilter === 'drift') {
+            return allNodes.filter((node) => node.versionDrift === true)
+        }
+        if (rolloutFilter === 'missing-sni') {
+            return allNodes.filter(
+                (node) => !node.runtimeInventory?.capabilities.includes('node_api_sni_v1')
+            )
+        }
+        return allNodes
+    }, [allNodes, rolloutFilter])
 
     useEffect(() => {
         if (!nodes || isLoading) return
@@ -120,6 +138,15 @@ export default function NodesPageComponent(props: IProps) {
                             icon={<HiServer size={24} />}
                             title={t('constants.nodes')}
                         />
+
+                        <NodeRolloutOverview
+                            filter={rolloutFilter}
+                            nodes={allNodes}
+                            onFilterChange={(value) => {
+                                setSelectedRecords([])
+                                setRolloutFilter(value)
+                            }}
+                        />
                     </Stack>
 
                     {isLoading ? (
@@ -133,13 +160,13 @@ export default function NodesPageComponent(props: IProps) {
                             }}
                         >
                             <NodesDataTableWidget
-                                nodes={nodes}
+                                nodes={visibleNodes}
                                 selectedRecords={selectedRecords}
                                 setSelectedRecords={setSelectedRecords}
                             />
                         </motion.div>
                     ) : (
-                        <NodesTableWidget nodes={nodes} />
+                        <NodesTableWidget nodes={visibleNodes} />
                     )}
                 </Grid.Col>
             </Grid>
