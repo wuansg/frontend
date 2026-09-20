@@ -13,11 +13,13 @@ import {
     Text,
     TextInput
 } from '@mantine/core'
+import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
 import { schemaResolver, useForm } from '@mantine/form'
+import dayjs from 'dayjs'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbArrowsExchange, TbPlus, TbRefresh, TbTrash } from 'react-icons/tb'
+import { TbArrowsExchange, TbCalendar, TbPlus, TbRefresh, TbTrash } from 'react-icons/tb'
 
 import { queryClient } from '@shared/api'
 import {
@@ -25,12 +27,14 @@ import {
     NodeForwardingConfigSchema,
     nodesQueryKeys,
     useGetNodeForwarding,
+    useGetNodeForwardingUsage,
     useSyncNodeForwarding,
     useUpdateNodeForwarding
 } from '@shared/api/hooks'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
+import { getDefaultDateRange } from '@shared/utils/time-utils'
 
 interface IProps {
     cardVariants: Variants
@@ -55,10 +59,15 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IProps) => {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const initialized = useRef(false)
     const MotionWrapper = motionWrapper
     const queryKey = nodesQueryKeys.getNodeForwarding({ uuid: nodeUuid }).queryKey
+    const [rawUsageRange, setRawUsageRange] = useState<[null | string, null | string]>(() => {
+        const range = getDefaultDateRange()
+        return [range.start, range.end]
+    })
+    const [usageRange, setUsageRange] = useState(() => getDefaultDateRange())
 
     const form = useForm<NodeForwardingConfig>({
         initialValues: DEFAULT_CONFIG,
@@ -67,6 +76,10 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
     })
 
     const { data, isLoading } = useGetNodeForwarding({ route: { uuid: nodeUuid } })
+    const { data: persistedUsage } = useGetNodeForwardingUsage({
+        route: { uuid: nodeUuid },
+        query: usageRange
+    })
     const { mutate: updateForwarding, isPending: isUpdating } = useUpdateNodeForwarding({
         route: { uuid: nodeUuid },
         mutationFns: {
@@ -105,6 +118,24 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
     }
 
     const status = data?.status
+
+    const handleUsageRangeChange = (value: DatesRangeValue<string>) => {
+        if (value[0] === null && value[1] === null) {
+            const today = getDefaultDateRange()
+            setRawUsageRange([today.start, today.end])
+            setUsageRange(today)
+            return
+        }
+        setRawUsageRange(value)
+        if (!value[0] || !value[1]) return
+        const start = dayjs(value[0])
+        const end = dayjs(value[1])
+        if (!start.isValid() || !end.isValid()) return
+        setUsageRange({
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD')
+        })
+    }
 
     return (
         <MotionWrapper variants={cardVariants}>
@@ -155,8 +186,34 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
                             {...form.getInputProps('listenInterface')}
                         />
 
+                        <Group align="end" justify="space-between">
+                            <DatePickerInput
+                                allowSingleDateInRange
+                                dropdownType="modal"
+                                label={t('node-forwarding-card.persisted-traffic-range')}
+                                leftSection={<TbCalendar size={16} />}
+                                locale={i18n.language}
+                                maxDate={new Date()}
+                                onChange={handleUsageRangeChange}
+                                type="range"
+                                value={rawUsageRange}
+                            />
+                            <Stack align="flex-end" gap={2}>
+                                <Text c="dimmed" size="xs">
+                                    {t('node-forwarding-card.persisted-traffic-total')}
+                                </Text>
+                                <Text size="sm">
+                                    ↑ {prettifyBytesUtil(persistedUsage?.uploadBytes ?? 0)} · ↓{' '}
+                                    {prettifyBytesUtil(persistedUsage?.downloadBytes ?? 0)}
+                                </Text>
+                            </Stack>
+                        </Group>
+
                         {form.values.rules.map((rule, index) => {
                             const counters = status?.rules.find((item) => item.id === rule.id)
+                            const persisted = persistedUsage?.rules.find(
+                                (item) => item.id === rule.id
+                            )
                             const upload =
                                 (counters?.tcp?.upload.bytes ?? 0) +
                                 (counters?.udp?.upload.bytes ?? 0)
@@ -210,8 +267,21 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
                                                 {...form.getInputProps(`rules.${index}.listenPort`)}
                                             />
                                             <TextInput
+                                                description={
+                                                    counters?.resolvedTargetAddress &&
+                                                    counters.resolvedTargetAddress !==
+                                                        rule.targetAddress
+                                                        ? t(
+                                                              'node-forwarding-card.resolved-target-address',
+                                                              {
+                                                                  address:
+                                                                      counters.resolvedTargetAddress
+                                                              }
+                                                          )
+                                                        : undefined
+                                                }
                                                 label={t('node-forwarding-card.target-address')}
-                                                placeholder="78.105.182.150"
+                                                placeholder="edge.example.com"
                                                 {...form.getInputProps(
                                                     `rules.${index}.targetAddress`
                                                 )}
@@ -232,6 +302,17 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
                                                 <Text size="sm">
                                                     ↑ {prettifyBytesUtil(upload)} · ↓{' '}
                                                     {prettifyBytesUtil(download)}
+                                                </Text>
+                                                <Text c="dimmed" mt="xs" size="xs">
+                                                    {t('node-forwarding-card.persisted-traffic')}
+                                                </Text>
+                                                <Text size="sm">
+                                                    ↑{' '}
+                                                    {prettifyBytesUtil(persisted?.uploadBytes ?? 0)}{' '}
+                                                    · ↓{' '}
+                                                    {prettifyBytesUtil(
+                                                        persisted?.downloadBytes ?? 0
+                                                    )}
                                                 </Text>
                                             </Stack>
                                         </SimpleGrid>

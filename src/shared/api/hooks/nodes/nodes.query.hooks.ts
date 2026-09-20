@@ -54,6 +54,9 @@ export const nodesQueryKeys = createQueryKeys('nodes', {
     getNodeForwarding: (route: { uuid: string }) => ({
         queryKey: ['forwarding', route]
     }),
+    getNodeForwardingUsage: (params: { uuid: string; start: string; end: string }) => ({
+        queryKey: ['forwarding-usage', params]
+    }),
     getNodeSecretKey: {
         queryKey: null
     },
