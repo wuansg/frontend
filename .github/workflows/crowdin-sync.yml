@@ -10,12 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check Crowdin credentials
+        id: crowdin-credentials
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_API_TOKEN: ${{ secrets.CROWDIN_API_TOKEN }}
+        run: |
+          if [[ -n "$CROWDIN_PROJECT_ID" && -n "$CROWDIN_API_TOKEN" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Crowdin sync skipped because repository credentials are not configured."
+          fi
+
       - name: Checkout
+        if: steps.crowdin-credentials.outputs.configured == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: dev
 
       - name: crowdin action
+        if: steps.crowdin-credentials.outputs.configured == 'true'
         uses: crowdin/github-action@9af557de76d70c480f88065d336f445a362f402b # v3.1.0
         with:
           upload_sources: false
