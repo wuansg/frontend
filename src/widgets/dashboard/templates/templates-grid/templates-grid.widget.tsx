@@ -11,7 +11,6 @@ import { queryClient } from '@shared/api/query-client'
 import { MihomoLogo } from '@shared/ui/logos/mihomo-logo'
 import { SingboxLogo } from '@shared/ui/logos/singbox-logo'
 import { StashLogo } from '@shared/ui/logos/stash-logo'
-import { XrayLogo } from '@shared/ui/logos/xray-logo'
 import { VirtualizedDndGrid } from '@shared/ui/virtualized-dnd-grid'
 
 import { TemplatesCardWidget } from '../template-card/templates-card.widget'
@@ -81,8 +80,6 @@ export function TemplatesGridWidget(props: IProps) {
                 return <SingboxLogo size={28} />
             case 'STASH':
                 return <StashLogo size={28} />
-            case 'XRAY_JSON':
-                return <XrayLogo size={28} />
             default:
                 return <PiBracketsAngle size={28} />
         }

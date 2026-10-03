@@ -27,7 +27,7 @@ import {
 
 import { ROUTES } from '@shared/constants'
 import { Logo } from '@shared/ui'
-import { MihomoLogo, SingboxLogo, StashLogo, XrayLogo } from '@shared/ui/logos'
+import { Base64Logo, MihomoLogo, SingboxLogo, StashLogo } from '@shared/ui/logos'
 
 import { MenuItem } from './interfaces'
 
@@ -78,7 +78,7 @@ export const useMobileMenuSections = (): MenuItem[] => {
                 {
                     name: t('constants.config-profiles'),
                     href: ROUTES.DASHBOARD.MANAGEMENT.CONFIG_PROFILES,
-                    icon: XrayLogo,
+                    icon: Base64Logo,
                     id: 'config-profiles'
                 },
                 {
@@ -166,15 +166,6 @@ export const useMobileMenuSections = (): MenuItem[] => {
                     id: 'templates',
                     dropdownItems: [
                         {
-                            name: 'Xray JSON',
-                            href: ROUTES.DASHBOARD.TEMPLATES.TEMPLATES_BY_TYPE.replace(
-                                ':type',
-                                SUBSCRIPTION_TEMPLATE_TYPE.XRAY_JSON
-                            ),
-                            icon: XrayLogo,
-                            id: 'xray-json'
-                        },
-                        {
                             name: 'Mihomo',
                             href: ROUTES.DASHBOARD.TEMPLATES.TEMPLATES_BY_TYPE.replace(
                                 ':type',
@@ -250,12 +241,6 @@ export const useMobileMenuSections = (): MenuItem[] => {
                     href: ROUTES.DASHBOARD.TOOLS.SRH_INSPECTOR,
                     icon: TbReportAnalytics,
                     id: 'srh-inspector'
-                },
-                {
-                    name: t('constants.tb-reports'),
-                    href: ROUTES.DASHBOARD.TOOLS.TORRENT_BLOCKER_REPORTS,
-                    icon: TbFlame,
-                    id: 'torrent-blocker-reports'
                 },
                 {
                     name: t('constants.sessions-explorer'),

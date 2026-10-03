@@ -159,14 +159,6 @@ export function NodePluginsGridWidget(props: IProps) {
 
                             <Group gap="sm" justify="center">
                                 <Badge
-                                    leftSection={<TbFlame size={16} />}
-                                    radius="md"
-                                    size="lg"
-                                    variant="light"
-                                >
-                                    Torrent Blocker
-                                </Badge>
-                                <Badge
                                     color="teal"
                                     leftSection={<TbLogin size={16} />}
                                     radius="md"
@@ -183,15 +175,6 @@ export function NodePluginsGridWidget(props: IProps) {
                                     variant="light"
                                 >
                                     Egress Filter
-                                </Badge>
-                                <Badge
-                                    color="grape"
-                                    leftSection={<TbPlugConnectedX size={16} />}
-                                    radius="md"
-                                    size="lg"
-                                    variant="light"
-                                >
-                                    Connection Drop
                                 </Badge>
                             </Group>
                         </Stack>

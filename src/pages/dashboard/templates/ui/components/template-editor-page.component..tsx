@@ -4,7 +4,6 @@ import { SubscriptionTemplateEditorWidget } from '@widgets/dashboard/templates/s
 import { TbArrowBackUp } from 'react-icons/tb'
 import { useNavigate } from 'react-router'
 
-import { HelpActionIconShared } from '@shared/_modals/universal'
 import { ROUTES } from '@shared/constants'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { getCoreLogoFromType } from '@shared/ui/get-core-logo-from-type'
@@ -20,22 +19,11 @@ export const TemplateEditorPageComponent = (props: Props) => {
     const { editorType, hosts, template, title } = props
     const navigate = useNavigate()
 
-    let isHelpDrawerVisible = false
-
-    if (template.templateType === 'XRAY_JSON') {
-        isHelpDrawerVisible = true
-    }
-
     return (
         <Page title={title}>
             <PageHeaderShared
                 actions={
                     <Group>
-                        <HelpActionIconShared
-                            hidden={!isHelpDrawerVisible}
-                            screen="EDITOR_TEMPLATES_XRAY_JSON"
-                        />
-
                         <ActionIcon
                             color="gray"
                             onClick={() =>

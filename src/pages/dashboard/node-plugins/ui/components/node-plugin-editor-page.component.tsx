@@ -21,11 +21,6 @@ export const NodePluginEditorPageComponent = (props: Props) => {
             <PageHeaderShared
                 actions={
                     <Group>
-                        {/* <HelpActionIconShared
-                            hidden={!isHelpDrawerVisible}
-                            screen="EDITOR_TEMPLATES_XRAY_JSON"
-                        /> */}
-
                         <ActionIcon
                             color="lime"
                             component="a"

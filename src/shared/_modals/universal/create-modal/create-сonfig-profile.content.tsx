@@ -1,7 +1,8 @@
-import { Stack, TextInput, Group, Button, Text } from '@mantine/core'
+import { Stack, TextInput, Group, Button, Text, Select } from '@mantine/core'
 import { useField } from '@mantine/form'
 import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
 import { t } from 'i18next'
+import { useState } from 'react'
 import { generatePath, NavigateFunction } from 'react-router'
 
 import { queryClient } from '@shared/api'
@@ -14,13 +15,21 @@ interface IProps {
     navigate: NavigateFunction
 }
 
-const generateDefaultSingBoxConfig = () => {
+const generateDefaultSingBoxConfig = (protocol: 'anytls' | 'snell' = 'anytls') => {
     const randomNumber = Math.floor(Math.random() * 999999) + 1
 
     return {
         log: { level: 'info' },
         inbounds: [
-            {
+            protocol === 'snell' ? {
+                type: 'snell',
+                tag: `Snell_${randomNumber}`,
+                listen: '0.0.0.0',
+                listen_port: 54320,
+                version: 5,
+                multi_user_psk: true,
+                users: []
+            } : {
                 type: 'anytls',
                 tag: `AnyTLS_${randomNumber}`,
                 listen: '::',
@@ -43,6 +52,7 @@ const generateDefaultSingBoxConfig = () => {
 
 export const CreateConfigProfileContent = (props: IProps) => {
     const { onClose, navigate } = props
+    const [protocol, setProtocol] = useState<'anytls' | 'snell'>('anytls')
 
     const handleUpdate = async () => {
         await queryClient.refetchQueries({
@@ -83,7 +93,7 @@ export const CreateConfigProfileContent = (props: IProps) => {
                     variables: {
                         name: nameField.getValue(),
                         coreType: 'SING_BOX',
-                        config: generateDefaultSingBoxConfig()
+                        config: generateDefaultSingBoxConfig(protocol)
                     }
                 })
             }}
@@ -107,6 +117,16 @@ export const CreateConfigProfileContent = (props: IProps) => {
                     )}
                     required
                     {...nameField.getInputProps()}
+                />
+                <Select
+                    aria-label="Protocol"
+                    data={[
+                        { value: 'anytls', label: 'AnyTLS' },
+                        { value: 'snell', label: 'Snell v5 (Remnanode ≥ 3.14.0)' }
+                    ]}
+                    value={protocol}
+                    onChange={(value) => setProtocol(value === 'snell' ? 'snell' : 'anytls')}
+                    allowDeselect={false}
                 />
                 <Group justify="flex-end">
                     <Button color="gray" onClick={onClose} variant="light">

@@ -32,7 +32,10 @@ export const SharedListConfigSchema = z.discriminatedUnion('type', [
 
 const baseEgress = BaseNodePluginEditorSchema.shape.egressFilter.unwrap()
 
-export const NodePluginEditorSchema = BaseNodePluginEditorSchema.extend({
+export const NodePluginEditorSchema = BaseNodePluginEditorSchema.omit({
+    torrentBlocker: true,
+    connectionDrop: true
+}).extend({
     egressFilter: baseEgress
         .extend({
             blockedDomains: z.array(z.union([domainSchema, extSchema])).optional(),

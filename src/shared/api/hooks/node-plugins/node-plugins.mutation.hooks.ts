@@ -9,7 +9,6 @@ import {
     ReorderNodePluginCommand,
     SyncNodePluginCommand,
     SyncSharedListCommand,
-    TruncateTorrentBlockerReportsCommand,
     UpdateNodePluginCommand,
     UpdateSharedListCommand
 } from '@remnawave/backend-contract'
@@ -143,28 +142,6 @@ export const useNodePluginExecutor = createMutationHook({
         onError: (error) => {
             notifications.show({
                 title: `Node Plugin Executor`,
-                message:
-                    error instanceof Error ? error.message : `Request failed with unknown error.`,
-                color: 'red'
-            })
-        }
-    }
-})
-
-export const useTruncateTorrentBlockerReports = createMutationHook({
-    endpoint: TruncateTorrentBlockerReportsCommand.TSQ_url,
-    requestMethod: TruncateTorrentBlockerReportsCommand.endpointDetails.REQUEST_METHOD,
-    rMutationParams: {
-        onSuccess: () => {
-            notifications.show({
-                title: 'Success',
-                message: 'Reports truncated successfully',
-                color: 'teal'
-            })
-        },
-        onError: (error) => {
-            notifications.show({
-                title: `Truncate Torrent Blocker Reports`,
                 message:
                     error instanceof Error ? error.message : `Request failed with unknown error.`,
                 color: 'red'

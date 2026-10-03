@@ -40,7 +40,7 @@ export const MuxModalContent = ({ form }: IProps) => {
         <Stack gap="md">
             <Stack gap={0}>
                 <Text c="dimmed" size="sm">
-                    {t('base-host-form.this-will-only-be-used-for-xray-json-output')}
+                    Multiplex options for sing-box and Mihomo subscriptions.
                 </Text>
                 <Text c="dimmed" size="sm">
                     {t('base-host-form.please-ensure-you-provide-a-valid-json-mux-object')}

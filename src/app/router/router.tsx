@@ -25,7 +25,6 @@ import { SubpageConfigEditorPageConnector } from '@pages/dashboard/subpage-confi
 import { SubscriptionSettingsConnector } from '@pages/dashboard/subscription-settings/connectors'
 import { TemplateBasePageConnector } from '@pages/dashboard/templates/ui/connectors/template-base-page.connector'
 import { TemplateEditorPageConnector } from '@pages/dashboard/templates/ui/connectors/template-editor-page.connector'
-import { TorrentBlockerReportsPageConnector } from '@pages/dashboard/torrent-blocker-reports/ui/connectors'
 import { UsersPageConnector } from '@pages/dashboard/users/ui/connectors'
 import { NotFoundPageComponent } from '@pages/errors/4xx-error'
 import { ErrorPageComponent } from '@pages/errors/5xx-error'
@@ -145,10 +144,6 @@ const router = createBrowserRouter(
                             path={ROUTES.DASHBOARD.TOOLS.SRH_INSPECTOR}
                         />
 
-                        <Route
-                            element={<TorrentBlockerReportsPageConnector />}
-                            path={ROUTES.DASHBOARD.TOOLS.TORRENT_BLOCKER_REPORTS}
-                        />
                         <Route
                             element={<SessionsExplorerPageConnector />}
                             path={ROUTES.DASHBOARD.TOOLS.SESSIONS_EXPLORER}

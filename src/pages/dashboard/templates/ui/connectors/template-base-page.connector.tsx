@@ -35,8 +35,6 @@ export function TemplateBasePageConnector() {
         case SUBSCRIPTION_TEMPLATE_TYPE.SURGE:
             title = 'Surge'
             break
-        case SUBSCRIPTION_TEMPLATE_TYPE.XRAY_JSON:
-            title = 'Xray JSON'
             break
         default:
             navigate(ROUTES.DASHBOARD.HOME, { replace: true })

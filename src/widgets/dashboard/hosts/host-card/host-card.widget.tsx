@@ -17,15 +17,14 @@ import { modals } from '@mantine/modals'
 import {
     GetHostsCommand,
     GetNodesCommand,
-    GetConfigProfilesCommand,
-    SUBSCRIPTION_TEMPLATE_TYPE
+    GetConfigProfilesCommand
 } from '@remnawave/backend-contract'
 import cx from 'clsx'
 import ColorHash from 'color-hash'
 import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { CSSProperties, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PiNetwork, PiProhibit, PiPulse } from 'react-icons/pi'
+import { PiProhibit, PiPulse } from 'react-icons/pi'
 import { RiDraggable } from 'react-icons/ri'
 import {
     TbAlertCircle,
@@ -36,12 +35,10 @@ import {
     TbMask,
     TbStar
 } from 'react-icons/tb'
-import { generatePath } from 'react-router'
 
 import { showModal } from '@shared/_modals/show-modal'
-import { ROUTES } from '@shared/constants'
 import { useIsMobile } from '@shared/hooks'
-import { XrayLogo } from '@shared/ui/logos'
+import { Base64Logo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SingleRowOverflowList } from '@shared/ui/single-row-overflow-list'
 import { resolveCountryCode } from '@shared/utils/misc/resolve-country-code'
@@ -130,8 +127,6 @@ export function HostCardWidget(props: IProps) {
 
     const hasFinalMask = isParamSet(item.finalMask)
     const hasMuxParams = isParamSet(item.muxParams)
-    const hasSockoptParams = isParamSet(item.sockoptParams)
-    const hasXrayJsonTemplate = !!item.xrayJsonTemplateUuid
     const serverDescription = item.serverDescription?.trim() || ''
     const hasExcludedSquads = item.excludedInternalSquads.length > 0
 
@@ -235,7 +230,7 @@ export function HostCardWidget(props: IProps) {
                                     color={configProfile?.uuid ? ch.hex(configProfile.uuid) : 'red'}
                                     leftSection={
                                         configProfile?.uuid ? (
-                                            <XrayLogo size={12} />
+                                            <Base64Logo size={12} />
                                         ) : (
                                             <TbAlertCircle size={12} />
                                         )
@@ -420,30 +415,6 @@ export function HostCardWidget(props: IProps) {
                                 </Tooltip>
                             )}
 
-                            <Tooltip label={t('base-host-form.xray-json-template')}>
-                                <ActionIcon
-                                    color={hasXrayJsonTemplate ? 'teal' : 'gray'}
-                                    size={28}
-                                    onClick={(e) => {
-                                        if (!item.xrayJsonTemplateUuid) return
-                                        e.stopPropagation()
-                                        window.open(
-                                            generatePath(
-                                                ROUTES.DASHBOARD.TEMPLATES.TEMPLATE_EDITOR,
-                                                {
-                                                    type: SUBSCRIPTION_TEMPLATE_TYPE.XRAY_JSON,
-                                                    uuid: item.xrayJsonTemplateUuid
-                                                }
-                                            ),
-                                            '_blank'
-                                        )
-                                    }}
-                                    variant="soft"
-                                >
-                                    <XrayLogo size={16} />
-                                </ActionIcon>
-                            </Tooltip>
-
                             <Tooltip label="Mux">
                                 <ActionIcon
                                     color={hasMuxParams ? 'teal' : 'gray'}
@@ -519,44 +490,6 @@ export function HostCardWidget(props: IProps) {
                                     <TbMask size={16} />
                                 </ActionIcon>
                             </Tooltip>
-
-                            <Tooltip label="SockOpt">
-                                <ActionIcon
-                                    color={hasSockoptParams ? 'teal' : 'gray'}
-                                    size={28}
-                                    variant="soft"
-                                    onClick={(e) => {
-                                        if (!item.sockoptParams) return
-                                        e.stopPropagation()
-                                        modals.open({
-                                            children: (
-                                                <JsonEditor
-                                                    collapse={3}
-                                                    data={JSON.parse(
-                                                        JSON.stringify(item.sockoptParams)
-                                                    )}
-                                                    indent={2}
-                                                    maxWidth="100%"
-                                                    rootName=""
-                                                    theme={githubDarkTheme}
-                                                    viewOnly
-                                                />
-                                            ),
-                                            title: (
-                                                <BaseOverlayHeader
-                                                    iconColor="shaded-gray"
-                                                    IconComponent={PiNetwork}
-                                                    iconVariant="soft"
-                                                    title="SockOpt Params"
-                                                />
-                                            ),
-                                            size: 'xl'
-                                        })
-                                    }}
-                                >
-                                    <PiNetwork size={16} />
-                                </ActionIcon>
-                            </Tooltip>
                         </Group>
                     </Group>
 
@@ -578,7 +511,7 @@ export function HostCardWidget(props: IProps) {
                                 color={configProfile?.uuid ? ch.hex(configProfile.uuid) : 'red'}
                                 leftSection={
                                     configProfile?.uuid ? (
-                                        <XrayLogo size={12} />
+                                        <Base64Logo size={12} />
                                     ) : (
                                         <TbAlertCircle size={12} />
                                     )

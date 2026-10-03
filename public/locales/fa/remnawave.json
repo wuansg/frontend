@@ -29,7 +29,6 @@
     "response-rules": "قوانین پاسخ",
     "remnawave-settings": "تنظیمات Remnawave",
     "node-plugins": "Plugins",
-    "tb-reports": "Torrent Blocker Reports",
     "sessions-explorer": "Sessions Explorer",
     "http-stats": "HTTP Stats"
   },
@@ -2121,22 +2120,6 @@
       "execute": "Execute"
     }
   },
-  "torrent-blocker-stats": {
-    "widget": {
-      "total-reports": "Total Reports",
-      "distinct-nodes": "Distinct Nodes",
-      "distinct-users": "Distinct Users",
-      "last-24-hours": "Last 24 Hours",
-      "by-report-count": "By report count",
-      "top-users": "Top Users"
-    }
-  },
-  "torrent-blocker-reports-table": {
-    "widget": {
-      "truncate-reports": "Truncate reports",
-      "truncate-reports-description": "All Torrent Blocker reports will be permanently deleted."
-    }
-  },
   "node-active-session": {
     "item": {
       "widget": {
@@ -2156,22 +2139,6 @@
       "column-width": "Column Width",
       "column-order": "Column Order",
       "column-toggle": "Column Toggle"
-    }
-  },
-  "user-torrent-blocker-report-item": {
-    "processed-at": "Processed At",
-    "unblocked-at": "Unblocked At"
-  },
-  "get-user-torrent-blocker-reports": {
-    "feature": {
-      "blocker-reports": "Blocker Reports"
-    }
-  },
-  "user-torrent-blocker-reports": {
-    "drawer": {
-      "widget": {
-        "total-reports": "Total reports"
-      }
     }
   },
   "user-subscription-requests-drawer": {

@@ -74,7 +74,7 @@ const injectInboundPaths = (schema: unknown, rawInbound: unknown) => {
     const properties = (schema as { properties?: Record<string, { items?: ISchemaNode }> })
         .properties
 
-    for (const client of ['singbox', 'mihomo', 'base64', 'xrayJson']) {
+    for (const client of ['singbox', 'mihomo', 'base64']) {
         for (const branch of properties?.[client]?.items?.oneOf ?? []) {
             const from = branch.properties?.from as Record<string, unknown> | undefined
             if (from) from.defaultSnippets = snippets

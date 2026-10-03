@@ -249,11 +249,6 @@ export const SubpageConfigEditorPageComponent = (props: Props) => {
             <PageHeaderShared
                 actions={
                     <Group>
-                        {/* <HelpActionIconShared
-                            hidden={!isHelpDrawerVisible}
-                            screen="EDITOR_TEMPLATES_XRAY_JSON"
-                        /> */}
-
                         <FileButton
                             accept="application/json,.json"
                             onChange={handleImportConfig}

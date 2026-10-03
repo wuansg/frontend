@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://remnawave.local/schemas/sing-box-1.13.json",
-  "title": "sing-box 1.13 configuration",
-  "description": "Remnawave-compatible sing-box 1.13 schema with custom protocol coverage.",
+  "$id": "https://remnawave.local/schemas/sing-box-1.14.json",
+  "title": "sing-box 1.14 configuration",
+  "description": "Remnawave-compatible sing-box schema including managed Snell v5.",
   "type": "object",
   "properties": {
     "$schema": { "type": "string" },
@@ -12,7 +12,32 @@
     "certificate": { "type": "object" },
     "certificate_providers": { "type": "array", "items": { "type": "object" } },
     "endpoints": { "type": "array", "items": { "type": "object" } },
-    "inbounds": { "type": "array", "items": { "type": "object" } },
+    "inbounds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "if": { "properties": { "type": { "const": "snell" } }, "required": ["type"] },
+        "then": {
+          "description": "Managed Snell v5 requires Remnanode >= 3.14.0. Users are populated by the panel. Client subscriptions use compatible v4 mode, without QUIC Proxy Mode.",
+          "properties": {
+            "type": { "const": "snell" },
+            "tag": { "type": "string" },
+            "listen": { "type": "string" },
+            "listen_port": { "$ref": "#/$defs/port" },
+            "version": { "const": 5 },
+            "multi_user_psk": { "const": true },
+            "obfs_mode": { "enum": ["none", "http"] },
+            "users": { "type": "array", "maxItems": 256 },
+            "psk": false,
+            "tls": false,
+            "transport": false,
+            "multiplex": false,
+            "network": false
+          },
+          "required": ["tag", "version", "multi_user_psk"]
+        }
+      }
+    },
     "outbounds": {
       "type": "array",
       "items": { "$ref": "#/$defs/outbound" }
@@ -153,6 +178,26 @@
     },
     "outbound": {
       "oneOf": [
+        {
+          "title": "Snell outbound (v4 client to v5 server)",
+          "allOf": [
+            { "$ref": "#/$defs/proxyBase" },
+            {
+              "properties": {
+                "type": { "const": "snell" },
+                "version": { "const": 4 },
+                "psk": { "type": "string", "minLength": 1 },
+                "obfs_mode": { "enum": ["none", "http"] },
+                "obfs_host": { "type": "string" },
+                "reuse": { "type": "boolean" },
+                "tls": false,
+                "transport": false,
+                "multiplex": false
+              },
+              "required": ["type", "server", "server_port", "version", "psk"]
+            }
+          ]
+        },
         {
           "title": "AnyTLS outbound",
           "allOf": [

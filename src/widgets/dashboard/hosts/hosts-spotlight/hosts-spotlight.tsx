@@ -4,7 +4,6 @@ import { PiProhibit, PiPulse } from 'react-icons/pi'
 import { TbEyeOff } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
-import { XrayLogo } from '@shared/ui/logos'
 import { UniversalSpotlightContentShared } from '@shared/ui/universal-spotlight'
 
 interface IProps {
@@ -82,12 +81,6 @@ export const HostsSpotlightWidget = (props: IProps) => {
                             )}
                         </Stack>
                     </Group>
-
-                    {host.xrayJsonTemplateUuid && (
-                        <ThemeIcon color="teal" size="lg" style={{ flexShrink: 0 }} variant="soft">
-                            <XrayLogo size={20} />
-                        </ThemeIcon>
-                    )}
                 </Group>
             )
         }

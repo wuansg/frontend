@@ -21,7 +21,7 @@ interface IJsonSchemaDocument {
 export const getTemplateModelPath = (templateType: TSubscriptionTemplateType) =>
     `subscription-template://${templateType.toLowerCase()}`
 
-const DOCS_URL = 'https://docs.rw/docs/learn/xray-json-advanced'
+const DOCS_URL = 'https://sing-box.sagernet.org/configuration/'
 const DOCS_LINK = `\n\n[📖 Documentation](${DOCS_URL})`
 
 function getHostStatus(host: Host): { icon: string; label: string } {

@@ -29,7 +29,6 @@
     "response-rules": "请求订阅的应用",
     "remnawave-settings": "Remnawave 设置",
     "node-plugins": "插件",
-    "tb-reports": "Torrent 屏蔽报告",
     "sessions-explorer": "会话管理器",
     "http-stats": "HTTP 状态"
   },
@@ -2124,22 +2123,6 @@
       "execute": "启动"
     }
   },
-  "torrent-blocker-stats": {
-    "widget": {
-      "total-reports": "报告总数",
-      "distinct-nodes": "不同的节点",
-      "distinct-users": "不同的用户",
-      "last-24-hours": "最近24小时",
-      "by-report-count": "根据报表计数",
-      "top-users": "用户排行"
-    }
-  },
-  "torrent-blocker-reports-table": {
-    "widget": {
-      "truncate-reports": "截断报告",
-      "truncate-reports-description": "所有 Torrent 屏蔽报告将被永久删除。"
-    }
-  },
   "node-active-session": {
     "item": {
       "widget": {
@@ -2159,22 +2142,6 @@
       "column-width": "列宽",
       "column-order": "排序",
       "column-toggle": "筛选"
-    }
-  },
-  "user-torrent-blocker-report-item": {
-    "processed-at": "处理时间",
-    "unblocked-at": "解除阻止在"
-  },
-  "get-user-torrent-blocker-reports": {
-    "feature": {
-      "blocker-reports": "拦截报告"
-    }
-  },
-  "user-torrent-blocker-reports": {
-    "drawer": {
-      "widget": {
-        "total-reports": "报告总数"
-      }
     }
   },
   "user-subscription-requests-drawer": {

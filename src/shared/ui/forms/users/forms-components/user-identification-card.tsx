@@ -284,24 +284,6 @@ export const UserIdentificationCard = memo((props: IProps) => {
                                     <TbChartArcs size="24px" />
                                 </ActionIcon>
                             </Tooltip>
-                            <Tooltip
-                                label={t(
-                                    'get-user-torrent-blocker-reports.feature.blocker-reports'
-                                )}
-                            >
-                                <ActionIcon
-                                    color="indigo"
-                                    onClick={() =>
-                                        showModal('users_userTorrentBlockerReportsModal', {
-                                            userId: user.id
-                                        })
-                                    }
-                                    size="lg"
-                                    variant="soft"
-                                >
-                                    <TbFlame size="22px" />
-                                </ActionIcon>
-                            </Tooltip>
 
                             <Tooltip
                                 label={t(

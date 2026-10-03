@@ -29,7 +29,6 @@
     "response-rules": "Правила ответов",
     "remnawave-settings": "Настройки Remnawave",
     "node-plugins": "Плагины",
-    "tb-reports": "Torrent Blocker Reports",
     "sessions-explorer": "Обозреватель сессий",
     "http-stats": "HTTP Статистика"
   },
@@ -2121,22 +2120,6 @@
       "execute": "Выполнить"
     }
   },
-  "torrent-blocker-stats": {
-    "widget": {
-      "total-reports": "Всего репортов",
-      "distinct-nodes": "Отдельные ноды",
-      "distinct-users": "Отдельные пользователи",
-      "last-24-hours": "За последние 24 часа",
-      "by-report-count": "По количеству репортов",
-      "top-users": "Топ пользователей"
-    }
-  },
-  "torrent-blocker-reports-table": {
-    "widget": {
-      "truncate-reports": "Очистить список",
-      "truncate-reports-description": "Все репорты Torrent Blocker будут удалены навсегда."
-    }
-  },
   "node-active-session": {
     "item": {
       "widget": {
@@ -2156,22 +2139,6 @@
       "column-width": "Ширина столбца",
       "column-order": "Порядок столбцов",
       "column-toggle": "Отображаемые столбцы"
-    }
-  },
-  "user-torrent-blocker-report-item": {
-    "processed-at": "Обработано",
-    "unblocked-at": "Разблокировано"
-  },
-  "get-user-torrent-blocker-reports": {
-    "feature": {
-      "blocker-reports": "Репорты блокировщика"
-    }
-  },
-  "user-torrent-blocker-reports": {
-    "drawer": {
-      "widget": {
-        "total-reports": "Всего репортов"
-      }
     }
   },
   "user-subscription-requests-drawer": {

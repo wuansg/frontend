@@ -41,7 +41,6 @@ import {
     PiGearSixDuotone,
     PiInfo,
     PiListChecks,
-    PiNetwork,
     PiNoteDuotone,
     PiPencilDuotone,
     PiTag
@@ -62,7 +61,7 @@ import { useIsMobile } from '@shared/hooks'
 import { ChipMultiSelect } from '@shared/ui/chip-multi-select'
 import { DrawerFooter } from '@shared/ui/drawer-footer'
 import { MihomoLogo, SingboxLogo, StashLogo } from '@shared/ui/logos'
-import { XrayLogo } from '@shared/ui/logos/xray-logo'
+import { Base64Logo } from '@shared/ui/logos/base64-logo'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TemplateInfoPopoverShared } from '@shared/ui/popovers'
 import { PopoverWithInfoShared } from '@shared/ui/popovers/popover-with-info'
@@ -73,17 +72,12 @@ import { emojiFlag, resolveCountryCode } from '@shared/utils/misc/resolve-countr
 import { IProps } from './interfaces'
 import { FINAL_MASK_MODAL_ID, FinalMaskModalContent } from './modals/final-mask.modal.content'
 import { MUX_MODAL_ID, MuxModalContent } from './modals/mux.modal.content'
-import { SOCKOPT_MODAL_ID, SockoptModalContent } from './modals/sockopt.modal.content'
 import { XHTTP_MODAL_ID, XhttpModalContent } from './modals/xhttp.modal.content'
 
 const SUBSCRIPTION_TYPES = {
-    [SUBSCRIPTION_TEMPLATE_TYPE.XRAY_JSON]: {
-        label: 'Xray JSON',
-        icon: <XrayLogo size={16} />
-    },
     [SUBSCRIPTION_TEMPLATE_TYPE.XRAY_BASE64]: {
-        label: 'Xray Base64',
-        icon: <XrayLogo size={16} />
+        label: 'Base64',
+        icon: <Base64Logo size={16} />
     },
     [SUBSCRIPTION_TEMPLATE_TYPE.MIHOMO]: {
         label: 'Mihomo',
@@ -122,7 +116,6 @@ export const BaseHostForm = <
         isSubmitting,
         nodes,
         internalSquads,
-        subscriptionTemplates,
         hostTags,
         removeRequiredFields,
         hostUuid
@@ -900,37 +893,11 @@ export const BaseHostForm = <
                                     <SectionCard.Section>
                                         <BaseOverlayHeader
                                             iconColor="violet"
-                                            IconComponent={XrayLogo}
+                                            IconComponent={Base64Logo}
                                             iconVariant="soft"
-                                            title={t('base-host-form.xray-json-and-raw')}
+                                            title="Client options"
                                             titleOrder={5}
                                         />
-                                    </SectionCard.Section>
-                                    <SectionCard.Section>
-                                        <Stack gap="xs">
-                                            <Select
-                                                clearable
-                                                data={subscriptionTemplates
-                                                    .filter(
-                                                        (template) =>
-                                                            template.templateType === 'XRAY_JSON'
-                                                    )
-                                                    .map((template) => ({
-                                                        label: template.name,
-                                                        value: template.uuid
-                                                    }))}
-                                                description={t(
-                                                    'base-host-form.override-the-xray-json-template'
-                                                )}
-                                                key={form.key('xrayJsonTemplateUuid')}
-                                                label={t('base-host-form.xray-json-template')}
-                                                leftSection={<XrayLogo size={16} />}
-                                                placeholder={t(
-                                                    'base-host-form.select-a-xray-json-template'
-                                                )}
-                                                {...form.getInputProps('xrayJsonTemplateUuid')}
-                                            />
-                                        </Stack>
                                     </SectionCard.Section>
 
                                     <SectionCard.Section>
@@ -994,34 +961,6 @@ export const BaseHostForm = <
                                                 variant="soft"
                                             >
                                                 Mux
-                                            </Button>
-
-                                            <Button
-                                                color="gray"
-                                                leftSection={<PiNetwork />}
-                                                onClick={() => {
-                                                    modals.open({
-                                                        modalId: SOCKOPT_MODAL_ID,
-                                                        fullScreen: isMobile,
-                                                        title: (
-                                                            <BaseOverlayHeader
-                                                                iconColor="teal"
-                                                                IconComponent={PiNetwork}
-                                                                iconVariant="soft"
-                                                                title="SockOpt"
-                                                            />
-                                                        ),
-                                                        centered: true,
-                                                        size: 'lg',
-                                                        withCloseButton: true,
-                                                        children: (
-                                                            <SockoptModalContent form={form} />
-                                                        )
-                                                    })
-                                                }}
-                                                variant="soft"
-                                            >
-                                                SockOpt
                                             </Button>
 
                                             <Button
@@ -1152,7 +1091,7 @@ export const BaseHostForm = <
                                                                         Mihomo: FlClash X, Flowvy,
                                                                         prizrak-box, Koala Clash
                                                                         <br />
-                                                                        Xray: Happ, Incy
+                                                                        Share links: Happ, Incy
                                                                     </Text>
                                                                 </Stack>
                                                             </HoverCard.Dropdown>

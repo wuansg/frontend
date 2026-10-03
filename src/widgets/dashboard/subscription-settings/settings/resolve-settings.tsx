@@ -48,14 +48,6 @@ export function resolveSubscriptionSetting(
                 inputType: 'boolean',
                 hoverCard: hoverCard(t('subscription-tabs.widget.randomize-hosts-description'))
             }
-        case 'serveJsonAtBaseSubscription':
-            return {
-                description: t('subscription-settings.widget.serve-json-description'),
-                label: t('subscription-settings.widget.serve-json-at-base-subscription'),
-                inputType: 'boolean',
-                hoverCard: hoverCard(t('subscription-settings.widget.serve-json-description'))
-            }
-
         default:
             return {
                 label: 'Unknown setting'

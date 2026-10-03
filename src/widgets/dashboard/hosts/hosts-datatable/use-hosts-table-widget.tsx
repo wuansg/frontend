@@ -25,7 +25,6 @@ export interface HostTableContext {
     inboundTagByUuid: Map<string, string>
     internalSquadNameByUuid: Map<string, string>
     nodeNameByUuid: Map<string, string>
-    xrayTemplateNameByUuid: Map<string, string>
 }
 
 export interface HostsTableFilters {
@@ -218,14 +217,6 @@ export const HOST_SELECT_FIELDS: HostSelectFieldConfig[] = [
         key: 'excludedInternalSquads',
         label: (t) => t('base-host-form.excluded-internal-squads'),
         valueLabel: (value, context) => context.internalSquadNameByUuid.get(value) ?? value
-    },
-    {
-        accessor: 'xrayJsonTemplateUuid',
-        getValues: (host) => (host.xrayJsonTemplateUuid ? [host.xrayJsonTemplateUuid] : []),
-        hiddenByDefault: true,
-        key: 'xrayJsonTemplate',
-        label: (t) => t('base-host-form.xray-json-template'),
-        valueLabel: (value, context) => context.xrayTemplateNameByUuid.get(value) ?? value
     }
 ]
 

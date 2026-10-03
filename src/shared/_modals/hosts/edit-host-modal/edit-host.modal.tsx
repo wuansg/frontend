@@ -105,7 +105,6 @@ export const EditHostDrawer = NiceModal.create((props: IProps) => {
                 mihomoX25519: host.mihomoX25519 ?? undefined,
                 mihomoIpVersion: host.mihomoIpVersion ?? undefined,
                 nodes: host.nodes ?? undefined,
-                xrayJsonTemplateUuid: host.xrayJsonTemplateUuid ?? undefined,
                 excludedInternalSquads: host.excludedInternalSquads ?? undefined,
                 excludeFromSubscriptionTypes: host.excludeFromSubscriptionTypes ?? undefined,
                 mapper: host.mapper

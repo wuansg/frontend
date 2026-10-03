@@ -41,7 +41,7 @@ import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import classes from './HostMapperModal.module.css'
 
-const EMPTY_MAPPER = JSON.stringify({ singbox: [], mihomo: [], base64: [], xrayJson: [] }, null, 2)
+const EMPTY_MAPPER = JSON.stringify({ singbox: [], mihomo: [], base64: [] }, null, 2)
 
 type HostForm =
     | CreateHostCommand.RequestBody
@@ -59,8 +59,7 @@ interface IProps {
 const PREVIEW_TYPES: Array<{ label: string; value: PreviewType }> = [
     { label: 'Sing-box', value: 'SINGBOX' },
     { label: 'Mihomo', value: 'MIHOMO' },
-    { label: 'Base64', value: 'XRAY_BASE64' },
-    { label: 'Xray JSON', value: 'XRAY_JSON' }
+    { label: 'Base64', value: 'XRAY_BASE64' }
 ]
 
 export const HostMapperModal = NiceModal.create((props: IProps) => {
