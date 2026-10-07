@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing version tag to build and publish
+        required: true
+        type: string
 
 jobs:
   send-start-deploy-telegram-message:
@@ -25,11 +31,21 @@ jobs:
 
   build-and-release:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          ref: ${{ inputs.release_tag || github.ref }}
+
+      - name: Verify release tag matches package version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          test "${RELEASE_TAG#v}" = "$PACKAGE_VERSION"
 
       - name: NewTag
         id: tag
@@ -60,18 +76,18 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           files: remnawave-frontend.zip
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ env.RELEASE_TAG }}
           generate_release_notes: true
           append_body: true
           make_latest: true
           draft: false
           prerelease: false
-          name: ${{ github.ref_name }}
+          name: ${{ env.RELEASE_TAG }}
           body: |
-            # 🌊 Remnawave Frontend v${{ github.ref_name }}
+            # 🌊 Remnawave Frontend v${{ env.RELEASE_TAG }}
 
             <p align="center">
             <a href="https://t.me/remnawave" target="_blank" rel="noopener noreferrer">
