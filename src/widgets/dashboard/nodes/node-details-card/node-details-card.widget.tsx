@@ -1,4 +1,5 @@
 import { GetActiveSessionsOnNodeFeature } from '@features/ui/dashboard/nodes/get-active-sesions-on-node'
+import { GetNodeBenchmarkFeature } from '@features/ui/dashboard/nodes/get-node-benchmark/get-node-benchmark.feature'
 import { GetNodeGeocheckFeature } from '@features/ui/dashboard/nodes/get-node-geocheck'
 import { GetNodeInboundsHostsFeature } from '@features/ui/dashboard/nodes/get-node-inbounds-hosts'
 import { GetNodeLinkedHostsFeature } from '@features/ui/dashboard/nodes/get-node-linked-hosts'
@@ -513,6 +514,8 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
 
                     <Group gap="xs" justify="center">
                         <GetNodeGeocheckFeature node={node} />
+                        <GetNodeBenchmarkFeature node={node} kind="HARDWARE" />
+                        <GetNodeBenchmarkFeature node={node} kind="NETWORK" />
                         <GetNodeUsersUsageFeature nodeUuid={node.uuid} />
                         <GetActiveSessionsOnNodeFeature nodeUuid={node.uuid} />
                     </Group>

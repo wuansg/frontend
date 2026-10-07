@@ -35,6 +35,7 @@ import {
     NodeUsageStatsDrawer,
     NodeGeocheckModal
 } from './nodes'
+import { NodeBenchmarkModal } from './nodes/node-benchmark-modal/node-benchmark.modal'
 import { PasskeysDrawer } from './remnawave-settings'
 import { SharedListEditorModal, SharedListsModal } from './shared-lists'
 import { CreateModal, HelpDrawerShared, RenameModalShared } from './universal'
@@ -84,6 +85,7 @@ export const MODAL_REGISTRY = {
     nodes_nodesConfigProfilesDrawer: NodesConfigProfilesDrawer,
     nodes_nodeInboundsHostsDrawer: NodeInboundsHostsDrawer,
     nodes_nodeGeocheckModal: NodeGeocheckModal,
+    nodes_nodeBenchmarkModal: NodeBenchmarkModal,
 
     internalSquads_internalSquadsInboundsDrawer: InternalSquadsInboundsDrawer,
     internalSquads_internalSquadAccessibleNodesDrawer: InternalSquadAccessibleNodesDrawer,
