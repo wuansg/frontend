@@ -21,8 +21,10 @@ import { TbChartBar } from 'react-icons/tb'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { formatTimeUtil } from '@shared/utils/time-utils'
+import { TrafficDirection } from '@shared/utils/traffic-usage'
 
 interface IProps {
+    direction?: TrafficDirection
     categories: string[] | undefined
     isLoading: boolean
     onUserClick: (userId: number) => void
@@ -30,7 +32,7 @@ interface IProps {
 }
 
 export const UsersStatisticBarchartWidget = (props: IProps) => {
-    const { categories = [], series = [], isLoading, onUserClick } = props
+    const { direction = 'total', categories = [], series = [], isLoading, onUserClick } = props
 
     const { t, i18n } = useTranslation()
 
@@ -80,9 +82,7 @@ export const UsersStatisticBarchartWidget = (props: IProps) => {
                     iconColor="teal"
                     IconComponent={TbChartBar}
                     iconVariant="soft"
-                    subtitle={t('statistic-nodes.component.total-traffic-placeholder', {
-                        totalTraffic: prettifyBytesUtil(totalDayTraffic)
-                    })}
+                    subtitle={`${t(`traffic-usage.${direction}`)}: ${prettifyBytesUtil(totalDayTraffic)}`}
                     title={formatTimeUtil({
                         time: category,
                         template: 'FULL_DATE',

@@ -145,6 +145,8 @@ public/xray.schema.cn.json
 
 scripts
 scripts/**
+!scripts/
+!scripts/test-traffic-usage.ts
 
 public/assets/**
 !public/assets/

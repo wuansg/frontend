@@ -1,5 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+    GetStatsHostsUsageCommand,
+    GetStatsHostUsersUsageCommand,
     GetStatsNodesUsageCommand,
     GetStatsNodesUsersUsageCommand,
     GetStatsNodeUsersUsageCommand,
@@ -8,7 +10,6 @@ import {
     GetStatsUserUsageCommand,
     GetInternalSquadUsageCommand
 } from '@remnawave/backend-contract'
-import { z } from 'zod'
 
 import { sToMs } from '@shared/utils/time-utils'
 
@@ -19,56 +20,12 @@ import {
     errorHandler
 } from '../../tsq-helpers'
 
-const GetStatsHostUsersUsageRequestSchema = z.object({
-    uuid: z.string().uuid()
-})
+type GetStatsHostUsersUsageRequest = GetStatsHostUsersUsageCommand.Request
+type GetStatsHostUsersUsageRequestQuery = GetStatsHostUsersUsageCommand.RequestQuery
+type GetStatsHostsUsageRequestQuery = GetStatsHostsUsageCommand.RequestQuery
 
-const GetStatsHostUsersUsageRequestQuerySchema = z.object({
-    start: z.string().date(),
-    end: z.string().date(),
-    topUsersLimit: z.coerce.number().min(1).default(100)
-})
-
-type GetStatsHostUsersUsageRequest = z.infer<typeof GetStatsHostUsersUsageRequestSchema>
-type GetStatsHostUsersUsageRequestQuery = z.infer<typeof GetStatsHostUsersUsageRequestQuerySchema>
-type GetStatsHostsUsageRequestQuery = GetStatsUserHostsUsageCommand.RequestQuery
-
-const HostUsageMemberSchema = z.object({
-    uuid: z.string().uuid(),
-    remark: z.string(),
-    address: z.string(),
-    port: z.number()
-})
-
-const HostUsageItemSchema = z.object({
-    uuid: z.string().uuid(),
-    groupKey: z.string(),
-    nodeUuid: z.string().uuid(),
-    inboundTag: z.string(),
-    color: z.string(),
-    remark: z.string(),
-    address: z.string(),
-    port: z.number(),
-    tag: z.string().nullable(),
-    isShared: z.boolean(),
-    hosts: z.array(HostUsageMemberSchema),
-    total: z.number()
-})
-
-export const GetStatsHostsUsageResponseSchema = z.object({
-    response: z.object({
-        categories: z.array(z.string()),
-        sparklineData: z.array(z.number()),
-        topHosts: z.array(HostUsageItemSchema),
-        series: z.array(
-            HostUsageItemSchema.extend({
-                data: z.array(z.number())
-            })
-        )
-    })
-})
-
-export type GetStatsHostsUsageResponse = z.infer<typeof GetStatsHostsUsageResponseSchema>
+export const GetStatsHostsUsageResponseSchema = GetStatsHostsUsageCommand.ResponseSchema
+export type GetStatsHostsUsageResponse = GetStatsHostsUsageCommand.Response
 
 export const bandwidthStatsQueryKeys = createQueryKeys('bandwidthStats', {
     getStatsNodesUsageCommand: (filters: GetStatsNodesUsageCommand.RequestQuery) => ({
@@ -138,9 +95,9 @@ export const useGetStatsUsersUsage = createGetQueryHook({
 })
 
 export const useGetStatsHostsUsage = createGetQueryHook({
-    endpoint: '/api/bandwidth-stats/hosts',
+    endpoint: GetStatsHostsUsageCommand.TSQ_url,
     responseSchema: GetStatsHostsUsageResponseSchema,
-    requestQuerySchema: GetStatsUserHostsUsageCommand.RequestQuerySchema,
+    requestQuerySchema: GetStatsHostsUsageCommand.RequestQuerySchema,
     getQueryKey: ({ query }) => bandwidthStatsQueryKeys.getStatsHostsUsageCommand(query!).queryKey,
     rQueryParams: {
         staleTime: sToMs(60)
@@ -175,10 +132,10 @@ export const useGetStatsUserHostsUsage = createGetQueryHook({
 })
 
 export const useGetStatsHostUsersUsage = createGetQueryHook({
-    endpoint: '/api/bandwidth-stats/hosts/:uuid/users',
-    responseSchema: GetStatsNodeUsersUsageCommand.ResponseSchema,
-    requestQuerySchema: GetStatsHostUsersUsageRequestQuerySchema,
-    routeParamsSchema: GetStatsHostUsersUsageRequestSchema,
+    endpoint: GetStatsHostUsersUsageCommand.TSQ_url,
+    responseSchema: GetStatsHostUsersUsageCommand.ResponseSchema,
+    requestQuerySchema: GetStatsHostUsersUsageCommand.RequestQuerySchema,
+    routeParamsSchema: GetStatsHostUsersUsageCommand.RequestSchema,
     getQueryKey: ({ route, query }) =>
         bandwidthStatsQueryKeys.getStatsHostUsersUsageCommand({ ...route!, ...query! }).queryKey,
     rQueryParams: {

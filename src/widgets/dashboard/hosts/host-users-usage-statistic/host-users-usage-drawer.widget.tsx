@@ -8,7 +8,9 @@ import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, TrafficDirection } from '@shared/utils/traffic-usage'
 
 import { MODALS, useModalCloseActions, useModalState } from '@entities/dashboard/modal-store'
 
@@ -35,6 +37,7 @@ export const HostUsersUsageDrawer = () => {
 
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
 
     const [topUsersLimit, setTopUsersLimit] = useState<number>(DEFAULT_TOP_USERS_LIMIT)
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
@@ -78,6 +81,7 @@ export const HostUsersUsageDrawer = () => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topUsersLimit
         },
         rQueryParams: {
@@ -94,6 +98,7 @@ export const HostUsersUsageDrawer = () => {
                 setRawRange([todayRange.start, todayRange.end])
                 setQueryRange(todayRange)
                 setTopUsersLimit(DEFAULT_TOP_USERS_LIMIT)
+                setTrafficDirection('total')
                 clearInternalState()
             }}
             opened={isOpen}
@@ -112,6 +117,7 @@ export const HostUsersUsageDrawer = () => {
             }
         >
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <Group justify="space-between">
                     <Select
                         allowDeselect={false}
@@ -214,18 +220,23 @@ export const HostUsersUsageDrawer = () => {
                 </Group>
 
                 <HostUsersSparklineCardWidget
+                    direction={trafficDirection}
                     isLoading={isLoading}
                     sparklineData={hostUsersStats?.sparklineData}
+                    uploadSparklineData={hostUsersStats?.uploadSparklineData}
+                    downloadSparklineData={hostUsersStats?.downloadSparklineData}
                 />
 
                 <TopLeaderboardCardShared
                     emptyText={t('host-users-usage-drawer.widget.no-data-available')}
                     isLoading={isLoading}
-                    items={hostUsersStats?.topUsers?.map((user) => ({
-                        color: user.color,
-                        name: user.username,
-                        total: user.total
-                    }))}
+                    items={selectTraffic(hostUsersStats?.topUsers, trafficDirection)?.map(
+                        (user) => ({
+                            color: user.color,
+                            name: user.username,
+                            total: user.total
+                        })
+                    )}
                     maxHeight={500}
                     skeletonCount={25}
                 />

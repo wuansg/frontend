@@ -16,7 +16,9 @@ import { CompoundDrawerShared } from '@shared/ui/compound-drawer/compound-drawer
 import { CountryFlag } from '@shared/ui/get-country-flag'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, selectTrafficSeries, TrafficDirection } from '@shared/utils/traffic-usage'
 
 type UsageView = 'hosts' | 'nodes'
 
@@ -44,6 +46,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
     const { userId } = props
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
     const modal = useModal()
     const { modalProps } = useNiceMantineModal({ modal, drawer: true })
 
@@ -78,6 +81,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topNodesLimit: Number(topLimit)
         },
         rQueryParams: {
@@ -90,6 +94,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topHostsLimit: Number(topLimit)
         },
         rQueryParams: {
@@ -126,6 +131,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
             }
         >
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <Group gap="xs" justify="space-between" wrap="nowrap">
                     <SegmentedControl
                         data={[
@@ -167,6 +173,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
 
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                     <UserUsageSparklineCardWidget
+                        direction={trafficDirection}
                         downloadSparklineData={activeStats?.downloadSparklineData}
                         isLoading={activeQuery.isLoading}
                         sparklineData={activeStats?.sparklineData}
@@ -178,7 +185,10 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                             emptyText={t('user-usage-modal.widget.no-data-available')}
                             isLoading={userUsageQuery.isLoading}
                             onItemClick={(node) => handleNodeClick(node.uuid)}
-                            items={userUsageQuery.data?.topNodes?.map((node) => ({
+                            items={selectTraffic(
+                                userUsageQuery.data?.topNodes,
+                                trafficDirection
+                            )?.map((node) => ({
                                 color: node.color,
                                 countryCode: node.countryCode,
                                 name: node.name,
@@ -194,7 +204,10 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                         <TopLeaderboardCardShared
                             emptyText={t('user-usage-modal.widget.no-data-available')}
                             isLoading={userHostsUsageQuery.isLoading}
-                            items={userHostsUsageQuery.data?.topHosts?.map((host) => ({
+                            items={selectTraffic(
+                                userHostsUsageQuery.data?.topHosts,
+                                trafficDirection
+                            )?.map((host) => ({
                                 color: host.color,
                                 name: host.isShared
                                     ? `${getHostUsageName(host)} (${t('statistic-hosts.component.shared')})`
@@ -209,15 +222,20 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
 
                 {usageView === 'nodes' ? (
                     <UserUsageBarchartWidget
+                        direction={trafficDirection}
                         categories={userUsageQuery.data?.categories}
                         isLoading={userUsageQuery.isLoading}
-                        series={userUsageQuery.data?.series}
+                        series={selectTrafficSeries(userUsageQuery.data?.series, trafficDirection)}
                     />
                 ) : (
                     <HostsStatisticBarchartWidget
+                        direction={trafficDirection}
                         categories={userHostsUsageQuery.data?.categories}
                         isLoading={userHostsUsageQuery.isLoading}
-                        series={userHostsUsageQuery.data?.series}
+                        series={selectTrafficSeries(
+                            userHostsUsageQuery.data?.series,
+                            trafficDirection
+                        )}
                         showAddress={false}
                     />
                 )}

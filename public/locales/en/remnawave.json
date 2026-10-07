@@ -791,6 +791,20 @@
       "connection-keys": "Connection Keys"
     }
   },
+  "traffic-usage": {
+    "direction": "Traffic direction",
+    "total": "Total",
+    "upload": "Upload",
+    "download": "Download",
+    "period-label": "{{direction}} in selected period",
+    "daily-average": "Daily average",
+    "upload-share": "Upload is {{percentage}}% of total traffic",
+    "undirected": "{{bytes}} of historical traffic has no recorded direction; it is included only in total.",
+    "unavailable": "Not recorded",
+    "inconsistent": "Directional counters exceed total traffic. Please check the source data.",
+    "node-scope": "Node proxy outbound traffic, not host-interface RX/TX. Summary covers the whole period; ranking is Top N.",
+    "proxy-scope": "Upload: client → destination; download: destination → client. Summary covers the whole period; ranking is Top N."
+  },
   "user-usage-modal": {
     "widget": {
       "no-data-available-for-the-selected-period": "No data available for the selected period",

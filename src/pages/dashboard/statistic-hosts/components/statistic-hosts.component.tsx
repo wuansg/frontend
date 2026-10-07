@@ -1,7 +1,6 @@
 import { ActionIcon, Select, SimpleGrid, Stack } from '@mantine/core'
 import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
 import { HostsStatisticBarchartWidget } from '@widgets/dashboard/hosts-statistic/statistic-barchart'
-import { NodesStatisticSparklineCardWidget } from '@widgets/dashboard/nodes-statistic/statistic-sparkline-card'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +10,9 @@ import { TbCalendar, TbRefresh, TbWorld } from 'react-icons/tb'
 import { useGetStatsHostsUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
+import { TrafficDirectionControl, TrafficUsageSummary } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, selectTrafficSeries, TrafficDirection } from '@shared/utils/traffic-usage'
 
 const TOP_HOSTS_LIMIT_OPTIONS = [
     { value: '5', label: 'Top 5' },
@@ -41,6 +42,7 @@ const getHostUsageName = (host: {
 export const StatisticHostsPage = () => {
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
 
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
         defaultRange.start,
@@ -59,6 +61,7 @@ export const StatisticHostsPage = () => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topHostsLimit
         },
         rQueryParams: {
@@ -198,31 +201,39 @@ export const StatisticHostsPage = () => {
             />
 
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <NodesStatisticSparklineCardWidget
+                    <TrafficUsageSummary
+                        direction={trafficDirection}
                         isLoading={isLoading}
                         sparklineData={hostsStats?.sparklineData}
+                        uploadSparklineData={hostsStats?.uploadSparklineData}
+                        downloadSparklineData={hostsStats?.downloadSparklineData}
+                        scope="proxy"
                     />
 
                     <TopLeaderboardCardShared
                         emptyText={t('statistic-nodes.component.no-data-available')}
                         isLoading={isLoading}
-                        items={hostsStats?.topHosts?.map((host) => ({
-                            color: host.color,
-                            name: host.isShared
-                                ? `${getHostUsageName(host)} (${t('statistic-hosts.component.shared')})`
-                                : host.remark,
-                            total: host.total,
-                            uuid: host.groupKey
-                        }))}
+                        items={selectTraffic(hostsStats?.topHosts, trafficDirection)?.map(
+                            (host) => ({
+                                color: host.color,
+                                name: host.isShared
+                                    ? `${getHostUsageName(host)} (${t('statistic-hosts.component.shared')})`
+                                    : host.remark,
+                                total: host.total,
+                                uuid: host.groupKey
+                            })
+                        )}
                         maxHeight={230}
                     />
                 </SimpleGrid>
 
                 <HostsStatisticBarchartWidget
+                    direction={trafficDirection}
                     categories={hostsStats?.categories}
                     isLoading={isLoading}
-                    series={hostsStats?.series}
+                    series={selectTrafficSeries(hostsStats?.series, trafficDirection)}
                 />
             </Stack>
         </Page>

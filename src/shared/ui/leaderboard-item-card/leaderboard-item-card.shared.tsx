@@ -19,7 +19,10 @@ interface IProps {
 export const LeaderboardItemCardShared = (props: IProps) => {
     const { color, countryFlag, formatValue, value, name, total, uuid, onItemClick } = props
 
-    const width = (total / value) * 100
+    const width =
+        value > 0 && Number.isFinite(total) && Number.isFinite(value)
+            ? Math.min(100, Math.max(0, (total / value) * 100))
+            : 0
 
     return (
         <Box

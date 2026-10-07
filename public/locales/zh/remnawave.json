@@ -777,6 +777,20 @@
       "connection-keys": "连接密钥"
     }
   },
+  "traffic-usage": {
+    "direction": "流量方向",
+    "total": "总量",
+    "upload": "上传",
+    "download": "下载",
+    "period-label": "所选区间{{direction}}",
+    "daily-average": "日均",
+    "upload-share": "上传占区间总流量的 {{percentage}}%",
+    "undirected": "历史流量中有 {{bytes}} 未记录方向，仅计入总量，不归入上传或下载。",
+    "unavailable": "未记录",
+    "inconsistent": "上传与下载之和超过总流量，请检查采集数据。",
+    "node-scope": "统计节点代理出站上下行，不等于主机网卡 RX/TX。汇总覆盖整个区间，排行榜仅显示 Top N。",
+    "proxy-scope": "上传：客户端 → 目标；下载：目标 → 客户端。汇总覆盖整个区间，排行榜仅显示 Top N。"
+  },
   "user-usage-modal": {
     "widget": {
       "no-data-available-for-the-selected-period": "所选时段无可用数据",

@@ -13,7 +13,9 @@ import { useGetStatsNodeUsersUsage, useResolveUser } from '@shared/api/hooks'
 import { CompoundDrawerShared } from '@shared/ui/compound-drawer/compound-drawer.shared'
 import { ITopLeaderboardItem, TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
+import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, TrafficDirection } from '@shared/utils/traffic-usage'
 
 import { NodeUsersSparklineCardWidget } from './usage-sparkline-card'
 
@@ -44,6 +46,7 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
     })
 
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
 
     const { t, i18n } = useTranslation()
 
@@ -89,6 +92,7 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topUsersLimit
         },
         rQueryParams: {
@@ -138,6 +142,7 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
             }
         >
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <Group gap="xs" justify="space-between" wrap="nowrap">
                     <NativeSelect
                         data={TOP_USERS_LIMIT_OPTIONS}
@@ -236,18 +241,23 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
                 </Group>
 
                 <NodeUsersSparklineCardWidget
+                    direction={trafficDirection}
                     isLoading={isLoading}
                     sparklineData={nodeUsersStats?.sparklineData}
+                    uploadSparklineData={nodeUsersStats?.uploadSparklineData}
+                    downloadSparklineData={nodeUsersStats?.downloadSparklineData}
                 />
 
                 <TopLeaderboardCardShared
                     emptyText={t('node-users-usage-drawer.widget.no-data-available')}
                     isLoading={isLoading}
-                    items={nodeUsersStats?.topUsers?.map((user) => ({
-                        color: user.color,
-                        name: user.username,
-                        total: user.total
-                    }))}
+                    items={selectTraffic(nodeUsersStats?.topUsers, trafficDirection)?.map(
+                        (user) => ({
+                            color: user.color,
+                            name: user.username,
+                            total: user.total
+                        })
+                    )}
                     onItemClick={(user) => {
                         handleViewUser(user)
                     }}

@@ -12,7 +12,9 @@ import { showModal } from '@shared/_modals/show-modal'
 import { useGetStatsUsersUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
+import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, selectTrafficSeries, TrafficDirection } from '@shared/utils/traffic-usage'
 
 const TOP_USERS_LIMIT_OPTIONS = [
     { value: '5', label: 'Top 5' },
@@ -30,6 +32,7 @@ const DEFAULT_TOP_USERS_LIMIT = 100
 export const StatisticUsersPage = () => {
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
 
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
         defaultRange.start,
@@ -48,6 +51,7 @@ export const StatisticUsersPage = () => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topUsersLimit
         },
         rQueryParams: {
@@ -191,8 +195,10 @@ export const StatisticUsersPage = () => {
             />
 
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                     <UserUsageSparklineCardWidget
+                        direction={trafficDirection}
                         downloadSparklineData={usersStats?.downloadSparklineData}
                         isLoading={isLoading}
                         sparklineData={usersStats?.sparklineData}
@@ -202,12 +208,14 @@ export const StatisticUsersPage = () => {
                     <TopLeaderboardCardShared
                         emptyText={t('statistic-users.component.no-data-available')}
                         isLoading={isLoading}
-                        items={usersStats?.topUsers?.map((user) => ({
-                            color: user.color,
-                            name: user.username,
-                            total: user.total,
-                            uuid: String(user.id)
-                        }))}
+                        items={selectTraffic(usersStats?.topUsers, trafficDirection)?.map(
+                            (user) => ({
+                                color: user.color,
+                                name: user.username,
+                                total: user.total,
+                                uuid: String(user.id)
+                            })
+                        )}
                         maxHeight={230}
                         onItemClick={(user) => {
                             if (user.uuid) {
@@ -218,10 +226,11 @@ export const StatisticUsersPage = () => {
                 </SimpleGrid>
 
                 <UsersStatisticBarchartWidget
+                    direction={trafficDirection}
                     categories={usersStats?.categories}
                     isLoading={isLoading}
                     onUserClick={handleOpenUser}
-                    series={usersStats?.series}
+                    series={selectTrafficSeries(usersStats?.series, trafficDirection)}
                 />
             </Stack>
         </Page>

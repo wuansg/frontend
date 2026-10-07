@@ -70,7 +70,7 @@ export function TopLeaderboardCardShared<T extends ITopLeaderboardItem>(props: I
                     color={item.color}
                     countryFlag={renderCountryFlag?.(item)}
                     formatValue={formatValue}
-                    key={item.name}
+                    key={item.uuid ?? item.name}
                     name={item.name}
                     onItemClick={onItemClick ? () => onItemClick(item) : undefined}
                     total={item.total}
@@ -97,7 +97,7 @@ export function TopLeaderboardCardShared<T extends ITopLeaderboardItem>(props: I
                 {!isLoading && items && items.length > 0 && virtualized && (
                     <Virtuoso
                         components={{ Footer: isFetchingMore ? LoadingMoreFooter : undefined }}
-                        computeItemKey={(_, item) => item.name}
+                        computeItemKey={(_, item) => item.uuid ?? item.name}
                         data={items}
                         endReached={onEndReached}
                         increaseViewportBy={200}

@@ -21,15 +21,17 @@ import { CountryFlag } from '@shared/ui/get-country-flag'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { formatTimeUtil } from '@shared/utils/time-utils'
+import { TrafficDirection } from '@shared/utils/traffic-usage'
 
 interface IProps {
+    direction?: TrafficDirection
     categories: string[] | undefined
     isLoading: boolean
     series: GetStatsUserUsageCommand.Response['response']['series'] | undefined
 }
 
 export const UserUsageBarchartWidget = (props: IProps) => {
-    const { categories = [], series = [], isLoading } = props
+    const { categories = [], series = [], isLoading, direction = 'total' } = props
 
     const { t, i18n } = useTranslation()
 
@@ -77,7 +79,7 @@ export const UserUsageBarchartWidget = (props: IProps) => {
                     iconColor="teal"
                     IconComponent={TbChartBar}
                     iconVariant="soft"
-                    subtitle={`Σ ${prettifyBytesUtil(totalDayTraffic)}`}
+                    subtitle={`${t(`traffic-usage.${direction}`)}: ${prettifyBytesUtil(totalDayTraffic)}`}
                     title={formatTimeUtil({
                         time: category,
                         template: 'FULL_DATE',

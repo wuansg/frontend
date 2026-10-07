@@ -22,8 +22,10 @@ import { GetStatsHostsUsageResponse } from '@shared/api/hooks'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { formatTimeUtil } from '@shared/utils/time-utils'
+import { TrafficDirection } from '@shared/utils/traffic-usage'
 
 interface IProps {
+    direction?: TrafficDirection
     categories: string[] | undefined
     isLoading: boolean
     series: GetStatsHostsUsageResponse['response']['series'] | undefined
@@ -31,7 +33,13 @@ interface IProps {
 }
 
 export const HostsStatisticBarchartWidget = (props: IProps) => {
-    const { categories = [], series = [], isLoading, showAddress = true } = props
+    const {
+        direction = 'total',
+        categories = [],
+        series = [],
+        isLoading,
+        showAddress = true
+    } = props
 
     const { t, i18n } = useTranslation()
 
@@ -95,9 +103,7 @@ export const HostsStatisticBarchartWidget = (props: IProps) => {
                     iconColor="teal"
                     IconComponent={TbChartBar}
                     iconVariant="soft"
-                    subtitle={t('statistic-nodes.component.total-traffic-placeholder', {
-                        totalTraffic: prettifyBytesUtil(totalDayTraffic)
-                    })}
+                    subtitle={`${t(`traffic-usage.${direction}`)}: ${prettifyBytesUtil(totalDayTraffic)}`}
                     title={formatTimeUtil({
                         time: category,
                         template: 'FULL_DATE',

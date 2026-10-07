@@ -1,7 +1,6 @@
 import { ActionIcon, Select, SimpleGrid, Stack } from '@mantine/core'
 import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
 import { NodesStatisticBarchartWidget } from '@widgets/dashboard/nodes-statistic/statistic-barchart'
-import { NodesStatisticSparklineCardWidget } from '@widgets/dashboard/nodes-statistic/statistic-sparkline-card'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +11,9 @@ import { useGetStatsNodesUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { CountryFlag } from '@shared/ui/get-country-flag'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
+import { TrafficDirectionControl, TrafficUsageSummary } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
+import { selectTraffic, selectTrafficSeries, TrafficDirection } from '@shared/utils/traffic-usage'
 
 const TOP_NODES_LIMIT_OPTIONS = [
     { value: '5', label: 'Top 5' },
@@ -33,6 +34,7 @@ const DEFAULT_TOP_NODES_LIMIT = 20
 export const StatisticNodesPage = () => {
     const { t, i18n } = useTranslation()
     const defaultRange = getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
 
     const [rawRange, setRawRange] = useState<[null | string, null | string]>([
         defaultRange.start,
@@ -51,6 +53,7 @@ export const StatisticNodesPage = () => {
         query: {
             start: queryRange.start,
             end: queryRange.end,
+            trafficDirection,
             topNodesLimit
         },
         rQueryParams: {
@@ -190,30 +193,38 @@ export const StatisticNodesPage = () => {
             />
 
             <Stack gap="md">
+                <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <NodesStatisticSparklineCardWidget
+                    <TrafficUsageSummary
+                        direction={trafficDirection}
                         isLoading={isLoading}
                         sparklineData={nodesStats?.sparklineData}
+                        uploadSparklineData={nodesStats?.uploadSparklineData}
+                        downloadSparklineData={nodesStats?.downloadSparklineData}
+                        scope="node"
                     />
 
                     <TopLeaderboardCardShared
                         emptyText={t('statistic-nodes.component.no-data-available')}
                         isLoading={isLoading}
-                        items={nodesStats?.topNodes?.map((node) => ({
-                            color: node.color,
-                            countryCode: node.countryCode,
-                            name: node.name,
-                            total: node.total
-                        }))}
+                        items={selectTraffic(nodesStats?.topNodes, trafficDirection)?.map(
+                            (node) => ({
+                                color: node.color,
+                                countryCode: node.countryCode,
+                                name: node.name,
+                                total: node.total
+                            })
+                        )}
                         maxHeight={230}
                         renderCountryFlag={(item) => <CountryFlag countryCode={item.countryCode} />}
                     />
                 </SimpleGrid>
 
                 <NodesStatisticBarchartWidget
+                    direction={trafficDirection}
                     categories={nodesStats?.categories}
                     isLoading={isLoading}
-                    series={nodesStats?.series}
+                    series={selectTrafficSeries(nodesStats?.series, trafficDirection)}
                 />
             </Stack>
         </Page>
