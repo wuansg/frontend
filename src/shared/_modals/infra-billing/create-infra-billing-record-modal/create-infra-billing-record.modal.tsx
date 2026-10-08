@@ -1,6 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Button, Modal, NumberInput, Stack } from '@mantine/core'
-import { DatePickerInput } from '@mantine/dates'
 import { useForm, schemaResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { CreateInfraBillingRecordCommand } from '@remnawave/backend-contract'
@@ -12,6 +11,7 @@ import { TbInvoice } from 'react-icons/tb'
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useCreateInfraBillingHistoryRecord } from '@shared/api/hooks'
+import { DatePickerInput } from '@shared/ui/date-time-picker'
 import { SelectInfraProviderShared } from '@shared/ui/infra-billing/select-infra-provider/select-infra-provider.shared'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { handleFormErrors } from '@shared/utils/misc'
@@ -117,6 +117,7 @@ export const CreateInfraBillingRecordModal = NiceModal.create(() => {
                     />
 
                     <DatePickerInput
+                        presetDirection="past"
                         description={t(
                             'create-infra-billing-record.modal.widget.the-date-and-time-when-the-bill-was-paid'
                         )}

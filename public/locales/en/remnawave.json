@@ -1,4 +1,18 @@
 {
+  "date-picker-presets": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "current-month": "Current month",
+    "days": "{{count}} days",
+    "days-before": "{{count}} days ago",
+    "days-after": "+{{count}} days",
+    "one-month": "+1 month",
+    "three-months": "+3 months",
+    "one-year": "+1 year",
+    "end-of-today": "End of today",
+    "year-2099": "Year 2099"
+  },
   "constants": {
     "dashboard": "Dashboard",
     "config": "sing-box Config",

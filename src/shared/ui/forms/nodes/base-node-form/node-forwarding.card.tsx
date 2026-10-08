@@ -13,7 +13,7 @@ import {
     Text,
     TextInput
 } from '@mantine/core'
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
+import { DatesRangeValue } from '@mantine/dates'
 import { schemaResolver, useForm } from '@mantine/form'
 import dayjs from 'dayjs'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
@@ -31,6 +31,7 @@ import {
     useSyncNodeForwarding,
     useUpdateNodeForwarding
 } from '@shared/api/hooks'
+import { DatePickerInput } from '@shared/ui/date-time-picker'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
@@ -193,7 +194,6 @@ export const NodeForwardingCard = ({ cardVariants, motionWrapper, nodeUuid }: IP
                                 label={t('node-forwarding-card.persisted-traffic-range')}
                                 leftSection={<TbCalendar size={16} />}
                                 locale={i18n.language}
-                                maxDate={new Date()}
                                 onChange={handleUsageRangeChange}
                                 type="range"
                                 value={rawUsageRange}

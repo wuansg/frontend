@@ -1,11 +1,12 @@
 import { ActionIcon, Drawer, Group, Select, Stack } from '@mantine/core'
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
+import { DatesRangeValue } from '@mantine/dates'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 
 import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
+import { DatePickerInput } from '@shared/ui/date-time-picker'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
@@ -135,73 +136,11 @@ export const HostUsersUsageDrawer = () => {
                         headerControlsOrder={['previous', 'next', 'level']}
                         leftSection={<TbCalendar size="20px" />}
                         locale={i18n.language}
-                        maxDate={new Date()}
                         onChange={handleDateRangeChange}
-                        presets={[
-                            {
-                                label: t('statistic-nodes.component.current-month'),
-                                value: [
-                                    dayjs().startOf('month').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.3-days'),
-                                value: [
-                                    dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.7-days'),
-                                value: [
-                                    dayjs().subtract(6, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.14-days'),
-                                value: [
-                                    dayjs().subtract(13, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.30-days'),
-                                value: [
-                                    dayjs().subtract(29, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.60-days'),
-                                value: [
-                                    dayjs().subtract(59, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.90-days'),
-                                value: [
-                                    dayjs().subtract(89, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.180-days'),
-                                value: [
-                                    dayjs().subtract(179, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            }
-                        ]}
                         size="md"
                         styles={{
                             calendarHeaderLevel: {
                                 justifyContent: 'flex-end'
-                            },
-                            presetsList: {
-                                justifyContent: 'center'
                             }
                         }}
                         type="range"

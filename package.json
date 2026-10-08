@@ -1,6 +1,6 @@
 {
   "name": "@remnawave/frontend",
-  "version": "3.16.0",
+  "version": "3.16.1",
   "private": false,
   "homepage": "https://github.com/remnawave",
   "bugs": {
@@ -15,6 +15,7 @@
   "type": "module",
   "scripts": {
     "test:traffic-usage": "node --experimental-strip-types scripts/test-traffic-usage.ts",
+    "test:date-presets": "node --experimental-strip-types scripts/test-date-presets.ts",
     "start:dev": "vite",
     "start:build": "NODE_ENV=production tsc && vite build",
     "cb": "vite build",

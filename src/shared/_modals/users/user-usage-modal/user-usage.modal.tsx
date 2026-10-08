@@ -1,6 +1,6 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { ActionIcon, Group, NativeSelect, SegmentedControl, SimpleGrid, Stack } from '@mantine/core'
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
+import { DatesRangeValue } from '@mantine/dates'
 import { HostsStatisticBarchartWidget } from '@widgets/dashboard/hosts-statistic/statistic-barchart'
 import { UserUsageBarchartWidget } from '@widgets/dashboard/users/user-usage-statistic/usage-barchart'
 import { UserUsageSparklineCardWidget } from '@widgets/dashboard/users/user-usage-statistic/usage-sparkline-card'
@@ -13,6 +13,7 @@ import { showModal } from '@shared/_modals/show-modal'
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { useGetStatsUserHostsUsage, useGetStatsUserUsage } from '@shared/api/hooks'
 import { CompoundDrawerShared } from '@shared/ui/compound-drawer/compound-drawer.shared'
+import { DatePickerInput } from '@shared/ui/date-time-picker'
 import { CountryFlag } from '@shared/ui/get-country-flag'
 import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
@@ -161,7 +162,6 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                         headerControlsOrder={['previous', 'next', 'level']}
                         leftSection={<TbCalendar size="20px" />}
                         locale={i18n.language}
-                        maxDate={new Date()}
                         onChange={handleDateRangeChange}
                         size="md"
                         miw={0}

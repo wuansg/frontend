@@ -1,6 +1,6 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { ActionIcon, Group, NativeSelect, Stack } from '@mantine/core'
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates'
+import { DatesRangeValue } from '@mantine/dates'
 import { nprogress } from '@mantine/nprogress'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -13,6 +13,7 @@ import { showModal } from '@shared/_modals/show-modal'
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { useGetStatsNodesUsersUsage, useResolveUser } from '@shared/api/hooks'
 import { CompoundDrawerShared } from '@shared/ui/compound-drawer/compound-drawer.shared'
+import { DatePickerInput } from '@shared/ui/date-time-picker'
 import { ITopLeaderboardItem, TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
@@ -157,71 +158,11 @@ export const NodesUsageStatsModal = NiceModal.create((props: IProps) => {
                         headerControlsOrder={['previous', 'next', 'level']}
                         leftSection={<TbCalendar size="20px" />}
                         locale={i18n.language}
-                        maxDate={new Date()}
                         onChange={handleDateRangeChange}
-                        presets={[
-                            {
-                                label: t('statistic-nodes.component.current-month'),
-                                value: [
-                                    dayjs().startOf('month').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.3-days'),
-                                value: [
-                                    dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.7-days'),
-                                value: [
-                                    dayjs().subtract(6, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.14-days'),
-                                value: [
-                                    dayjs().subtract(13, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.30-days'),
-                                value: [
-                                    dayjs().subtract(29, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.60-days'),
-                                value: [
-                                    dayjs().subtract(59, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.90-days'),
-                                value: [
-                                    dayjs().subtract(89, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            },
-                            {
-                                label: t('statistic-nodes.component.180-days'),
-                                value: [
-                                    dayjs().subtract(179, 'day').format('YYYY-MM-DD'),
-                                    dayjs().format('YYYY-MM-DD')
-                                ]
-                            }
-                        ]}
                         size="md"
                         miw={0}
                         styles={{
                             calendarHeaderLevel: { justifyContent: 'flex-end' },
-                            presetsList: { justifyContent: 'center' },
                             input: {
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',

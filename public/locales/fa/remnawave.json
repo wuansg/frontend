@@ -1,4 +1,18 @@
 {
+  "date-picker-presets": {
+    "today": "امروز",
+    "yesterday": "دیروز",
+    "tomorrow": "فردا",
+    "current-month": "ماه جاری",
+    "days": "{{count}} روز",
+    "days-before": "{{count}} روز قبل",
+    "days-after": "+{{count}} روز",
+    "one-month": "+۱ ماه",
+    "three-months": "+۳ ماه",
+    "one-year": "+۱ سال",
+    "end-of-today": "پایان امروز",
+    "year-2099": "سال ۲۰۹۹"
+  },
   "constants": {
     "dashboard": "داشبورد",
     "config": "پیکربندی sing-box",

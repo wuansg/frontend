@@ -1,4 +1,18 @@
 {
+  "date-picker-presets": {
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "tomorrow": "Завтра",
+    "current-month": "Текущий месяц",
+    "days": "{{count}} дн.",
+    "days-before": "{{count}} дн. назад",
+    "days-after": "+{{count}} дн.",
+    "one-month": "+1 месяц",
+    "three-months": "+3 месяца",
+    "one-year": "+1 год",
+    "end-of-today": "Конец дня",
+    "year-2099": "2099 год"
+  },
   "constants": {
     "dashboard": "Панель управления",
     "config": "Конфиг",

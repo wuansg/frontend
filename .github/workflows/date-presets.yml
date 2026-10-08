@@ -1,0 +1,44 @@
+name: Date quick picker regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/shared/ui/date-time-picker/**'
+      - 'src/shared/constants/theme/**'
+      - 'src/pages/dashboard/statistic-*/**'
+      - 'src/shared/_modals/**'
+      - 'src/shared/ui/forms/**'
+      - 'src/widgets/dashboard/hosts/**'
+      - 'public/locales/**'
+      - 'scripts/test-date*'
+      - 'scripts/fixtures/date-pickers.*'
+      - '.github/workflows/date-presets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.x'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run typecheck
+      - run: npm run start:build
+      - name: Browser regression at desktop and mobile widths
+        run: |
+          npm install --prefix "$RUNNER_TEMP/date-picker-browser" --no-save --package-lock=false playwright-core@1.58.2
+          export PLAYWRIGHT_CORE_PATH="$RUNNER_TEMP/date-picker-browser/node_modules/playwright-core"
+          export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
+          npm run start:dev -- --host 127.0.0.1 > "$RUNNER_TEMP/date-picker-vite.log" 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5173/scripts/fixtures/date-pickers.html >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test-date-picker-ui.cjs

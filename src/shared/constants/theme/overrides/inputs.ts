@@ -1,5 +1,7 @@
 import { InputBase, PasswordInput, Select, TextInput } from '@mantine/core'
-import { DateTimePicker } from '@mantine/dates'
+import { DatePicker, DatePickerInput, DateTimePicker } from '@mantine/dates'
+
+import datePickerClassNames from '@shared/ui/date-time-picker/date-time-picker.module.css'
 
 export default {
     InputBase: InputBase.extend({
@@ -23,8 +25,15 @@ export default {
         }
     }),
     DateTimePicker: DateTimePicker.extend({
+        classNames: datePickerClassNames,
         defaultProps: {
             radius: 'md'
         }
+    }),
+    DatePickerInput: DatePickerInput.extend({
+        classNames: datePickerClassNames
+    }),
+    DatePicker: DatePicker.extend({
+        classNames: datePickerClassNames
     })
 }

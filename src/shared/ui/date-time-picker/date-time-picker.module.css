@@ -1,0 +1,35 @@
+.datePickerRoot {
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.presetsList {
+    flex-shrink: 0;
+    min-width: 5rem;
+    max-width: 8rem;
+    max-height: min(22rem, 64dvh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+}
+
+.presetButton {
+    flex-shrink: 0;
+    white-space: normal;
+    text-align: start;
+}
+
+@media (max-width: 30em) {
+    .presetsList {
+        min-width: 4.25rem;
+        max-width: 5.75rem;
+        padding-inline-end: 0.375rem;
+        margin-inline-end: 0.375rem;
+    }
+
+    .day {
+        /* Mantine sets this variable inline; the narrow-screen rule must win. */
+        --day-size: clamp(1.4rem, calc((100vw - 8rem) / 7), 2.25rem) !important;
+    }
+}

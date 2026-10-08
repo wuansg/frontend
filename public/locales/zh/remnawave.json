@@ -1,4 +1,18 @@
 {
+  "date-picker-presets": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "tomorrow": "明天",
+    "current-month": "本月",
+    "days": "{{count}} 天",
+    "days-before": "{{count}} 天前",
+    "days-after": "+{{count}} 天",
+    "one-month": "+1 个月",
+    "three-months": "+3 个月",
+    "one-year": "+1 年",
+    "end-of-today": "今天结束",
+    "year-2099": "2099 年"
+  },
   "constants": {
     "dashboard": "仪表",
     "config": "sing-box 配置",

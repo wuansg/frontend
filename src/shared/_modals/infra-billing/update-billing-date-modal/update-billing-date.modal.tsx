@@ -1,6 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core'
-import { DatePicker } from '@mantine/dates'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +8,7 @@ import { TbCalendar } from 'react-icons/tb'
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useUpdateInfraBillingNode } from '@shared/api/hooks'
+import { DatePicker } from '@shared/ui/date-time-picker'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { toUtcDayISO } from '@shared/utils/time-utils'
 
@@ -65,7 +65,9 @@ export const UpdateBillingDateModal = NiceModal.create((props: IProps) => {
     }
 
     const handleDateChange = (value: null | string) => {
-        setSelectedDate(value ? new Date(value) : null)
+        // Date-only presets/calendar values represent a local calendar day,
+        // not midnight UTC (which would move back a day in negative offsets).
+        setSelectedDate(value ? dayjs(value).toDate() : null)
     }
 
     return (
@@ -101,26 +103,11 @@ export const UpdateBillingDateModal = NiceModal.create((props: IProps) => {
                         w="100%"
                     />
                     <DatePicker
+                        presetBaseDate={selectedDate}
                         classNames={styles}
                         defaultDate={selectedDate ?? undefined}
                         maxDate={dayjs().add(2, 'years').toDate()}
                         onChange={handleDateChange}
-                        presets={[
-                            {
-                                label: t('update-billing-date-modal.widget.today'),
-                                value: dayjs().toISOString()
-                            },
-                            {
-                                label: t('update-billing-date-modal.widget.tomorrow'),
-                                value: dayjs().add(1, 'day').toISOString()
-                            },
-                            {
-                                label: t('update-billing-date-modal.widget.next-month'),
-                                value: dayjs(selectedDate ?? dayjs())
-                                    .add(1, 'month')
-                                    .toISOString()
-                            }
-                        ]}
                         value={selectedDate}
                     />
                 </Stack>

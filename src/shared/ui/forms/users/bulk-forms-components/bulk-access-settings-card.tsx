@@ -1,5 +1,5 @@
 import { Select, Stack } from '@mantine/core'
-import { DateTimePicker, getTimeRange } from '@mantine/dates'
+import { getTimeRange } from '@mantine/dates'
 import { UseFormReturnType } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { BulkAllUpdateUsersCommand, GetExternalSquadsCommand } from '@remnawave/backend-contract'
@@ -11,6 +11,7 @@ import { PiCalendarDuotone } from 'react-icons/pi'
 import { TbShield, TbStatusChange } from 'react-icons/tb'
 
 import { userStatusValues } from '@shared/constants/forms'
+import { DateTimePicker } from '@shared/ui/date-time-picker'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 
@@ -69,6 +70,7 @@ export const BulkAccessSettingsCard = (props: IProps) => {
                         />
 
                         <DateTimePicker
+                            presetBaseDate={localExpireAt}
                             dropdownType="popover"
                             headerControlsOrder={['previous', 'next', 'level']}
                             highlightToday
@@ -128,30 +130,6 @@ export const BulkAccessSettingsCard = (props: IProps) => {
                                     form.setFieldValue('expireAt', newDate)
                                 }
                             }}
-                            presets={[
-                                {
-                                    value: dayjs(localExpireAt)
-                                        .add(1, 'month')
-                                        .format('YYYY-MM-DD HH:mm:ss'),
-                                    label: t('create-user-modal.widget.1-month')
-                                },
-                                {
-                                    value: dayjs(localExpireAt)
-                                        .add(3, 'months')
-                                        .format('YYYY-MM-DD HH:mm:ss'),
-                                    label: t('create-user-modal.widget.3-months')
-                                },
-                                {
-                                    value: dayjs(localExpireAt)
-                                        .add(1, 'year')
-                                        .format('YYYY-MM-DD HH:mm:ss'),
-                                    label: t('create-user-modal.widget.1-year')
-                                },
-                                {
-                                    value: dayjs().year(2099).format('YYYY-MM-DD HH:mm:ss'),
-                                    label: t('create-user-modal.widget.2099-year')
-                                }
-                            ]}
                         />
                     </Stack>
                 </SectionCard.Section>
