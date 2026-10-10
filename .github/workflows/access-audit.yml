@@ -1,0 +1,44 @@
+name: Access audit UI regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/shared/_modals/users/user-access-audit/**'
+      - 'src/shared/_modals/modal-registry.ts'
+      - 'src/shared/ui/forms/users/**'
+      - 'src/widgets/dashboard/users/**'
+      - 'scripts/test-access-audit-ui.cjs'
+      - 'scripts/fixtures/access-audit.*'
+      - '.github/workflows/access-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.x'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run start:build
+      - name: Verify selected-user opt-in, filters and mobile UI
+        run: |
+          npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2
+          export PLAYWRIGHT_CORE_PATH="$RUNNER_TEMP/audit-browser/node_modules/playwright-core"
+          export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
+          npm run start:dev -- --host 127.0.0.1 --port 5173 --strictPort > "$RUNNER_TEMP/audit-vite.log" 2>&1 &
+          vite_pid=$!
+          trap 'kill "$vite_pid" 2>/dev/null || true' EXIT
+          ready=no
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5173/scripts/fixtures/access-audit.html >/dev/null 2>&1; then ready=yes; break; fi
+            sleep 1
+          done
+          if [ "$ready" != yes ]; then tail -n 50 "$RUNNER_TEMP/audit-vite.log"; exit 1; fi
+          node scripts/test-access-audit-ui.cjs

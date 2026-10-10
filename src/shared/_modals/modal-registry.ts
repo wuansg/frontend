@@ -55,6 +55,7 @@ import {
     BulkAllUsersActionsModal,
     BulkAllUsersUpdateModal
 } from './users'
+import { UserAccessAuditModal } from './users/user-access-audit/user-access-audit.modal'
 
 export const MODAL_REGISTRY = {
     helpDrawer: HelpDrawerShared,
@@ -62,6 +63,7 @@ export const MODAL_REGISTRY = {
     createModal: CreateModal,
 
     users_viewUserModal: ViewUserModal,
+    users_accessAuditModal: UserAccessAuditModal,
     users_detailedUserInfoDrawer: DetailedUserInfoDrawer,
     users_userAccessibleNodesModal: UserAccessibleNodesModal,
     users_createUserModal: CreateUserModal,

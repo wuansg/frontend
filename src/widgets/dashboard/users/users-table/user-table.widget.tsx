@@ -14,7 +14,7 @@ import { notifications } from '@mantine/notifications'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiUsersDuotone } from 'react-icons/pi'
-import { TbBolt, TbEdit } from 'react-icons/tb'
+import { TbBolt, TbEdit, TbShieldSearch } from 'react-icons/tb'
 import { useSearchParams } from 'react-router'
 
 import { showModal } from '@shared/_modals/show-modal'
@@ -38,7 +38,7 @@ import {
 import { useUsersTableStore } from '@entities/dashboard/users/users-table-store'
 
 export function UserTableWidget() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
 
     const { data: internalSquads } = useGetInternalSquads()
     const { data: externalSquads } = useGetExternalSquads()
@@ -225,6 +225,20 @@ export function UserTableWidget() {
         renderToolbarInternalActions: ({ table: tableInstance }) => (
             <>
                 <ActionIconGroup>
+                    <Tooltip
+                        label={i18n.language.startsWith('zh') ? '访问审计' : 'Access audit'}
+                        withArrow
+                    >
+                        <ActionIcon
+                            color="indigo"
+                            aria-label="Access audit"
+                            onClick={() => showModal('users_accessAuditModal', {})}
+                            size="lg"
+                            variant="soft"
+                        >
+                            <TbShieldSearch size={20} />
+                        </ActionIcon>
+                    </Tooltip>
                     <Tooltip label={t('common.bulk-actions')} withArrow>
                         <ActionIcon
                             color="green"

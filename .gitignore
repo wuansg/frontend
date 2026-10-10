@@ -147,6 +147,10 @@ scripts
 scripts/**
 !scripts/
 !scripts/test-traffic-usage.ts
+!scripts/test-access-audit-ui.cjs
+!scripts/fixtures/
+!scripts/fixtures/access-audit.html
+!scripts/fixtures/access-audit.tsx
 
 public/assets/**
 !public/assets/

@@ -30,6 +30,7 @@ import {
     TbJson,
     TbQrcode,
     TbRadar,
+    TbShieldSearch,
     TbServerCog,
     TbTimeline,
     TbUser,
@@ -319,6 +320,23 @@ export const UserIdentificationCard = memo((props: IProps) => {
                                 </ActionIcon>
                             </Tooltip>
 
+                            <Tooltip
+                                label={i18n.language.startsWith('zh') ? '访问审计' : 'Access audit'}
+                            >
+                                <ActionIcon
+                                    color="indigo"
+                                    aria-label={
+                                        i18n.language.startsWith('zh') ? '访问审计' : 'Access audit'
+                                    }
+                                    onClick={() =>
+                                        showModal('users_accessAuditModal', { userId: user.id })
+                                    }
+                                    size="lg"
+                                    variant="soft"
+                                >
+                                    <TbShieldSearch size="22px" />
+                                </ActionIcon>
+                            </Tooltip>
                             <Tooltip label={t('common.active-sessions')}>
                                 <ActionIcon
                                     color="indigo"
