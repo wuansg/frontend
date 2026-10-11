@@ -58,6 +58,8 @@ export const auditRecords = z.object({
     records: z.array(auditRecord),
     nextCursor: z.string().nullable()
 })
+export type AuditRecord = z.infer<typeof auditRecord>
+export type AuditDomain = z.infer<typeof auditDomains>[number]
 export type AuditFilter = {
     userId?: number
     start: string

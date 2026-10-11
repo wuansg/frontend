@@ -1,30 +1,47 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import {
+    Accordion,
     Alert,
     Badge,
+    Box,
     Button,
     Group,
+    Loader,
     Modal,
     NumberInput,
     Select,
+    SimpleGrid,
     Stack,
-    Table,
     Tabs,
     Text,
-    TextInput
+    TextInput,
+    ThemeIcon
 } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbShieldSearch } from 'react-icons/tb'
+import {
+    TbArrowDown,
+    TbArrowLeft,
+    TbArrowRight,
+    TbArrowUp,
+    TbCalendar,
+    TbChartBar,
+    TbListDetails,
+    TbRefresh,
+    TbSearch,
+    TbShieldSearch,
+    TbWorld
+} from 'react-icons/tb'
 
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { useGetNodes } from '@shared/api/hooks'
 import { DatePickerInput } from '@shared/ui/date-time-picker'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { auditAPI, type AuditFilter, formatAuditBytes } from './audit-api'
+import { AuditConnections, AuditRanking } from './audit-results'
+import classes from './user-access-audit.module.css'
 
 type Props = { userId?: number }
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e))
@@ -45,9 +62,8 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
     const [cursor, setCursor] = useState<string | undefined>()
     const [pages, setPages] = useState<(string | undefined)[]>([])
     const [retention, setRetention] = useState<number | null>(null)
-    const policyKey = ['access-audit-policy', selectedUser]
     const policy = useQuery({
-        queryKey: policyKey,
+        queryKey: ['access-audit-policy', selectedUser],
         queryFn: () => auditAPI.policy(selectedUser!),
         enabled: Boolean(selectedUser),
         refetchInterval: 15000
@@ -96,8 +112,27 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
     const activeNodes = selectedNodes.filter(
         (n) => n.supported && n.connected && n.mode === 'CORE_ACTIVE'
     )
+    const capturing = (n: (typeof selectedNodes)[number]) =>
+        Boolean(
+            policy.data?.enabled &&
+            n.connected &&
+            n.status.expiresAt &&
+            new Date(n.status.expiresAt) > new Date() &&
+            n.status.capturing &&
+            !n.lastError &&
+            !n.status.lastError
+        )
+    const capturingCount = activeNodes.filter(capturing).length
+    const summary = useMemo(() => {
+        const page = records.data?.records ?? []
+        return {
+            count: page.length,
+            targets: new Set(page.map((r) => r.domain || r.destinationIp).filter(Boolean)).size,
+            upload: page.reduce((total, r) => total + BigInt(r.upload), 0n).toString(),
+            download: page.reduce((total, r) => total + BigInt(r.download), 0n).toString()
+        }
+    }, [records.data])
     const minDate = new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10)
-    const time = (v: string) => new Date(v).toLocaleString(i18n.language, { hour12: false })
     const title = s('访问审计', 'Access audit')
     const confirmEnable = () =>
         modals.openConfirmModal({
@@ -116,85 +151,125 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
             },
             onConfirm: () => savePolicy(true)
         })
+    const empty = (loading: boolean, failed: boolean, ranking = false) => (
+        <Stack className={classes.empty} align="center" gap="sm" role="status">
+            {loading ? (
+                <Loader size="sm" />
+            ) : (
+                <ThemeIcon color="gray" variant="light" radius="xl" size={44}>
+                    <TbShieldSearch size={22} />
+                </ThemeIcon>
+            )}
+            <Text size="sm" fw={500}>
+                {!complete
+                    ? s('请选择完整的日期范围', 'Select a complete date range')
+                    : loading
+                      ? s('正在加载审计记录…', 'Loading audit records…')
+                      : failed
+                        ? s('暂时无法加载，请重试', 'Unable to load; please retry')
+                        : ranking
+                          ? s('暂无目标用量', 'No target usage yet')
+                          : s('暂无匹配的连接记录', 'No matching connections')}
+            </Text>
+            {complete && !loading && !failed && (
+                <Text size="xs" c="dimmed">
+                    {s(
+                        '仅开启后才开始保存；可以调整日期、域名或节点筛选。',
+                        'Collection starts only after opt-in. Try adjusting dates, domain or node filters.'
+                    )}
+                </Text>
+            )}
+        </Stack>
+    )
+
     return (
         <Modal
             {...modalProps}
-            size="min(1100px, 95vw)"
+            size="min(1240px, 96vw)"
+            classNames={{ body: classes.body, header: classes.header }}
             title={
-                <BaseOverlayHeader
-                    IconComponent={TbShieldSearch}
-                    iconColor="indigo"
-                    iconVariant="soft"
-                    title={selectedUser ? `${title} #${selectedUser}` : title}
-                />
+                <Group gap="sm" wrap="nowrap">
+                    <ThemeIcon color="indigo" variant="light" size="lg">
+                        <TbShieldSearch size={20} />
+                    </ThemeIcon>
+                    <Text component="h2" size="lg" fw={600}>
+                        {selectedUser ? `${title} #${selectedUser}` : title}
+                    </Text>
+                </Group>
             }
         >
-            <Stack>
-                <Alert color="blue">
-                    {s(
-                        '仅显式开启的用户会保存记录。只记录连接目标，不是完整浏览历史；HTTPS 路径/内容及无法识别的域名不可见。连接流量是参考值，不用于扣费，也不是所选日期内的精确流量。',
-                        'Only explicitly opted-in users are recorded. These are connection targets, not complete browsing history. HTTPS paths/content and unknown domains are not visible. Bytes are connection-level reference values, not billing or exact traffic within the selected dates.'
-                    )}
-                </Alert>
-                {!userId && (
-                    <NumberInput
-                        label={s(
-                            '用户 ID（留空查询全部已采集记录）',
-                            'User ID (empty = all recorded users)'
+            <Stack gap="md">
+                <Alert color="indigo" icon={<TbShieldSearch size={18} />} radius="lg">
+                    <Text size="xs">
+                        {s(
+                            '仅显式开启的用户会保存记录。只记录连接目标，不是完整浏览历史；HTTPS 路径/内容及无法识别的域名不可见。流量为连接级参考值，不用于扣费，也不是所选日期内的精确流量。',
+                            'Only opted-in users are recorded. These are connection targets, not complete browsing history; HTTPS paths/content and unknown domains are not visible. Bytes are connection-level reference values, not billing or exact traffic within the selected dates.'
                         )}
-                        value={selectedUser ?? ''}
-                        min={1}
-                        max={Number.MAX_SAFE_INTEGER}
-                        allowDecimal={false}
-                        onChange={(v) => {
-                            setSelectedUser(typeof v === 'number' ? v : undefined)
-                            setRetention(null)
-                            resetPage()
-                        }}
-                    />
-                )}
+                    </Text>
+                </Alert>
                 {selectedUser && (
-                    <>
-                        <Group justify="space-between" align="end">
-                            <Text>
-                                {s('审计状态', 'Audit policy')}:{' '}
-                                <Badge color={policy.data?.enabled ? 'teal' : 'gray'}>
+                    <Box className={classes.section}>
+                        <Box className={classes.policyHeader}>
+                            <Stack gap={5}>
+                                <Group gap="xs">
+                                    <Text size="sm" fw={600}>
+                                        {s('审计设置', 'Audit settings')}
+                                    </Text>
+                                    <Badge
+                                        color={policy.data?.enabled ? 'teal' : 'gray'}
+                                        variant="light"
+                                    >
+                                        {policy.isPending
+                                            ? s('加载中', 'Loading')
+                                            : policy.error
+                                              ? s('状态不可用', 'Unavailable')
+                                              : policy.data?.enabled
+                                                ? s('已开启', 'Enabled')
+                                                : s('默认关闭', 'Disabled')}
+                                    </Badge>
+                                </Group>
+                                <Text size="xs" c="dimmed">
+                                    {s(
+                                        `仅作用于用户 #${selectedUser}，不会开启其他用户的审计。`,
+                                        `Applies only to user #${selectedUser}; other users are not opted in.`
+                                    )}
+                                </Text>
+                            </Stack>
+                            <Box className={classes.policyControls}>
+                                <NumberInput
+                                    label={s('保存天数', 'Retention days')}
+                                    min={1}
+                                    max={30}
+                                    value={retention ?? policy.data?.retentionDays ?? 7}
+                                    allowDecimal={false}
+                                    onChange={(v) => setRetention(typeof v === 'number' ? v : 7)}
+                                    className={classes.retention}
+                                />
+                                <Button
+                                    variant="default"
+                                    loading={save.isPending}
+                                    disabled={!policy.data}
+                                    onClick={() => savePolicy(policy.data!.enabled)}
+                                >
+                                    {s('保存天数', 'Save retention')}
+                                </Button>
+                                <Button
+                                    color={policy.data?.enabled ? 'red' : 'teal'}
+                                    variant={policy.data?.enabled ? 'light' : 'filled'}
+                                    loading={save.isPending}
+                                    disabled={!policy.data}
+                                    onClick={() =>
+                                        policy.data?.enabled ? savePolicy(false) : confirmEnable()
+                                    }
+                                >
                                     {policy.data?.enabled
-                                        ? s('已开启', 'Enabled')
-                                        : s('默认关闭', 'Disabled')}
-                                </Badge>
-                            </Text>
-                            <NumberInput
-                                label={s('保存天数', 'Retention days')}
-                                min={1}
-                                max={30}
-                                value={retention ?? policy.data?.retentionDays ?? 7}
-                                allowDecimal={false}
-                                onChange={(v) => setRetention(typeof v === 'number' ? v : 7)}
-                                w={120}
-                            />
-                            <Button
-                                loading={save.isPending}
-                                disabled={!policy.data}
-                                onClick={() => savePolicy(policy.data!.enabled)}
-                            >
-                                {s('保存天数', 'Save retention')}
-                            </Button>
-                            <Button
-                                color={policy.data?.enabled ? 'red' : 'teal'}
-                                loading={save.isPending}
-                                disabled={!policy.data}
-                                onClick={() =>
-                                    policy.data?.enabled ? savePolicy(false) : confirmEnable()
-                                }
-                            >
-                                {policy.data?.enabled
-                                    ? s('停止审计', 'Stop audit')
-                                    : s('开启此用户', 'Enable this user')}
-                            </Button>
-                        </Group>
-                        {activeNodes.length === 0 && (
-                            <Alert color="yellow">
+                                        ? s('停止审计', 'Stop audit')
+                                        : s('开启此用户', 'Enable this user')}
+                                </Button>
+                            </Box>
+                        </Box>
+                        {policy.data && activeNodes.length === 0 && (
+                            <Alert color="yellow" mt="md" radius="md">
                                 {s(
                                     '还没有支持审计的在线核心节点，需要升级 Agent。纯转发节点不能关联用户和网站。',
                                     'No active core nodes support audit yet; upgrade the Agent. Forwarding-only nodes cannot identify users or sites.'
@@ -202,233 +277,301 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                             </Alert>
                         )}
                         {activeNodes.length > 0 && (
-                            <Group gap="xs">
-                                {activeNodes.map((n) => {
-                                    const fresh =
-                                        n.status.expiresAt &&
-                                        new Date(n.status.expiresAt) > new Date()
-                                    const ok =
-                                        policy.data?.enabled &&
-                                        n.connected &&
-                                        fresh &&
-                                        n.status.capturing &&
-                                        !n.lastError &&
-                                        !n.status.lastError
-                                    return (
-                                        <Badge key={n.uuid} color={ok ? 'teal' : 'yellow'}>
-                                            {n.name}:{' '}
-                                            {ok
-                                                ? s('采集中', 'Capturing')
-                                                : policy.data?.enabled
-                                                  ? s('等待同步 / 有缺口', 'Pending / gaps')
-                                                  : s('未启用', 'Disabled')}
-                                            {n.status.dropped
-                                                ? ` · ${s('丢弃', 'Dropped')} ${n.status.dropped}`
-                                                : ''}
-                                        </Badge>
-                                    )
-                                })}
-                            </Group>
+                            <Accordion variant="default" mt="sm">
+                                <Accordion.Item value="nodes">
+                                    <Accordion.Control>
+                                        <Group gap="sm">
+                                            <Text size="xs" fw={500}>
+                                                {s('节点采集状态', 'Node collection status')}
+                                            </Text>
+                                            <Badge
+                                                size="sm"
+                                                variant="light"
+                                                color={
+                                                    !policy.data?.enabled
+                                                        ? 'gray'
+                                                        : capturingCount === activeNodes.length
+                                                          ? 'teal'
+                                                          : 'yellow'
+                                                }
+                                            >
+                                                {policy.data?.enabled
+                                                    ? `${capturingCount} / ${activeNodes.length} ${s('采集中', 'capturing')}`
+                                                    : s('未启用', 'Disabled')}
+                                            </Badge>
+                                        </Group>
+                                    </Accordion.Control>
+                                    <Accordion.Panel>
+                                        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xs">
+                                            {activeNodes.map((n) => (
+                                                <Box key={n.uuid} className={classes.nodeCard}>
+                                                    <Text
+                                                        size="xs"
+                                                        fw={500}
+                                                        className={classes.wrap}
+                                                    >
+                                                        {n.name}
+                                                    </Text>
+                                                    <Text
+                                                        size="xs"
+                                                        c={
+                                                            capturing(n)
+                                                                ? 'teal'
+                                                                : policy.data?.enabled
+                                                                  ? 'yellow'
+                                                                  : 'dimmed'
+                                                        }
+                                                        mt={4}
+                                                    >
+                                                        {capturing(n)
+                                                            ? s('采集中', 'Capturing')
+                                                            : policy.data?.enabled
+                                                              ? s(
+                                                                    '等待同步 / 有缺口',
+                                                                    'Pending / gaps'
+                                                                )
+                                                              : s('未启用', 'Disabled')}
+                                                        {n.status.dropped
+                                                            ? ` · ${s('丢弃', 'Dropped')} ${n.status.dropped}`
+                                                            : ''}
+                                                    </Text>
+                                                </Box>
+                                            ))}
+                                        </SimpleGrid>
+                                    </Accordion.Panel>
+                                </Accordion.Item>
+                            </Accordion>
                         )}
-                    </>
+                    </Box>
                 )}
                 {(policy.error || save.error || records.error || domains.error) && (
-                    <Alert color="red">
-                        {errorText(policy.error || save.error || records.error || domains.error)}
+                    <Alert color="red" radius="lg" title={s('请求失败', 'Request failed')}>
+                        <Text size="xs" className={classes.wrap}>
+                            {errorText(
+                                policy.error || save.error || records.error || domains.error
+                            )}
+                        </Text>
                     </Alert>
                 )}
-                <Group align="end" grow>
-                    <DatePickerInput
-                        type="range"
-                        label={s('观察日期（UTC）', 'Observed dates (UTC)')}
-                        minDate={minDate}
-                        value={dates}
-                        onChange={(v) => {
-                            setDates(v)
-                            resetPage()
-                        }}
-                    />
-                    <TextInput
-                        label={s('域名包含', 'Domain contains')}
-                        value={domain}
-                        maxLength={253}
-                        onChange={(e) => {
-                            setDomain(e.currentTarget.value)
-                            resetPage()
-                        }}
-                    />
-                    <Select
-                        label={s('节点', 'Node')}
-                        placeholder={s('全部节点', 'All nodes')}
-                        clearable
-                        searchable
-                        value={node}
-                        data={(allNodes.data ?? []).map((n) => ({ value: n.uuid, label: n.name }))}
-                        onChange={(v) => {
-                            setNode(v)
-                            resetPage()
-                        }}
-                    />
-                </Group>
-                <Tabs defaultValue="records">
+                <Box className={classes.section}>
+                    <Group gap="xs" mb="sm">
+                        <TbSearch size={16} aria-hidden />
+                        <Text size="sm" fw={600}>
+                            {s('筛选范围', 'Filter records')}
+                        </Text>
+                        {!selectedUser && (
+                            <Badge color="gray" variant="light" size="sm">
+                                {s('全部已采集用户', 'All recorded users')}
+                            </Badge>
+                        )}
+                    </Group>
+                    <Box className={classes.filters} data-global={!userId || undefined}>
+                        {!userId && (
+                            <NumberInput
+                                label={s('用户 ID', 'User ID')}
+                                placeholder={s('全部已采集用户', 'All recorded users')}
+                                value={selectedUser ?? ''}
+                                min={1}
+                                max={Number.MAX_SAFE_INTEGER}
+                                allowDecimal={false}
+                                onChange={(v) => {
+                                    setSelectedUser(typeof v === 'number' ? v : undefined)
+                                    setRetention(null)
+                                    resetPage()
+                                }}
+                            />
+                        )}
+                        <DatePickerInput
+                            className={classes.dateFilter}
+                            type="range"
+                            label={s('观察日期（UTC）', 'Observed dates (UTC)')}
+                            leftSection={<TbCalendar size={16} />}
+                            minDate={minDate}
+                            value={dates}
+                            onChange={(v) => {
+                                setDates(v)
+                                resetPage()
+                            }}
+                        />
+                        <TextInput
+                            label={s('域名包含', 'Domain contains')}
+                            placeholder="example.com"
+                            leftSection={<TbWorld size={16} />}
+                            value={domain}
+                            maxLength={253}
+                            onChange={(e) => {
+                                setDomain(e.currentTarget.value)
+                                resetPage()
+                            }}
+                        />
+                        <Select
+                            label={s('节点', 'Node')}
+                            placeholder={s('全部节点', 'All nodes')}
+                            clearable
+                            searchable
+                            value={node}
+                            data={(allNodes.data ?? []).map((n) => ({
+                                value: n.uuid,
+                                label: n.name
+                            }))}
+                            onChange={(v) => {
+                                setNode(v)
+                                resetPage()
+                            }}
+                        />
+                    </Box>
+                </Box>
+                <Tabs
+                    defaultValue="records"
+                    color="indigo"
+                    keepMounted={false}
+                    classNames={{ tab: classes.tab }}
+                >
                     <Tabs.List>
-                        <Tabs.Tab value="records">{s('连接记录', 'Connections')}</Tabs.Tab>
-                        <Tabs.Tab value="domains">{s('目标用量排行', 'Target ranking')}</Tabs.Tab>
+                        <Tabs.Tab value="records" leftSection={<TbListDetails size={16} />}>
+                            {s('连接记录', 'Connections')}
+                        </Tabs.Tab>
+                        <Tabs.Tab value="domains" leftSection={<TbChartBar size={16} />}>
+                            {s('目标用量排行', 'Target ranking')}
+                        </Tabs.Tab>
                     </Tabs.List>
                     <Tabs.Panel value="records" pt="md">
-                        <Table.ScrollContainer minWidth={850}>
-                            <Table striped highlightOnHover>
-                                <Table.Thead>
-                                    <Table.Tr>
-                                        {[
-                                            s('用户 / 节点', 'User / node'),
-                                            s('网站 / 目标', 'Domain / target'),
-                                            s('时间', 'Time'),
-                                            s('协议 / 入站', 'Protocol / inbound'),
-                                            s('上传', 'Upload'),
-                                            s('下载', 'Download'),
-                                            s('状态', 'State')
-                                        ].map((h) => (
-                                            <Table.Th key={h}>{h}</Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>
-                                    {(records.data?.records ?? []).map((r) => (
-                                        <Table.Tr key={r.id}>
-                                            <Table.Td>
-                                                <Text size="sm">
-                                                    {r.username} (#{r.userId})
-                                                </Text>
+                        <Stack gap="md">
+                            {complete && (
+                                <Box className={classes.summary} data-testid="audit-page-summary">
+                                    {[
+                                        {
+                                            label: s('本页连接', 'Connections on this page'),
+                                            value: summary.count,
+                                            Icon: TbListDetails,
+                                            color: 'indigo'
+                                        },
+                                        {
+                                            label: s('本页目标', 'Targets on this page'),
+                                            value: summary.targets,
+                                            Icon: TbWorld,
+                                            color: 'indigo'
+                                        },
+                                        {
+                                            label: s('本页参考上传', 'Page reference upload'),
+                                            value: formatAuditBytes(summary.upload),
+                                            Icon: TbArrowUp,
+                                            color: 'violet'
+                                        },
+                                        {
+                                            label: s('本页参考下载', 'Page reference download'),
+                                            value: formatAuditBytes(summary.download),
+                                            Icon: TbArrowDown,
+                                            color: 'cyan'
+                                        }
+                                    ].map(({ label, value, Icon, color }) => (
+                                        <Box key={label} className={classes.summaryCard}>
+                                            <Group
+                                                justify="space-between"
+                                                gap={4}
+                                                mb={8}
+                                                wrap="nowrap"
+                                            >
                                                 <Text size="xs" c="dimmed">
-                                                    {r.nodeName}
+                                                    {label}
                                                 </Text>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Text
-                                                    size="sm"
-                                                    style={{ overflowWrap: 'anywhere' }}
-                                                >
-                                                    {r.domain || r.destinationIp || '—'}
-                                                </Text>
-                                                <Text size="xs" c="dimmed">
-                                                    {r.destinationIp ||
-                                                        s('域名连接', 'Domain connection')}
-                                                    :{r.destinationPort}
-                                                </Text>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Text size="xs">{time(r.startedAt)}</Text>
-                                                <Text size="xs" c="dimmed">
-                                                    {s('最后观察', 'Last observed')}:{' '}
-                                                    {time(r.observedAt)}
-                                                </Text>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Text size="sm">{r.protocol || r.network}</Text>
-                                                <Text size="xs" c="dimmed">
-                                                    {r.inbound}
-                                                </Text>
-                                            </Table.Td>
-                                            <Table.Td>{formatAuditBytes(r.upload)}</Table.Td>
-                                            <Table.Td>{formatAuditBytes(r.download)}</Table.Td>
-                                            <Table.Td>
-                                                <Badge color={r.closedAt ? 'gray' : 'blue'}>
-                                                    {r.closedAt
-                                                        ? s('已关闭', 'Closed')
-                                                        : s('最后观察为活跃', 'Last seen active')}
-                                                </Badge>
-                                                {r.partial && (
-                                                    <Text size="xs" c="yellow">
-                                                        {s(
-                                                            '部分记录 / 可能不完整',
-                                                            'Partial / may be incomplete'
-                                                        )}
-                                                    </Text>
-                                                )}
-                                            </Table.Td>
-                                        </Table.Tr>
+                                                <ThemeIcon size={24} color={color} variant="light">
+                                                    <Icon size={14} />
+                                                </ThemeIcon>
+                                            </Group>
+                                            <Text className={classes.summaryValue}>
+                                                {records.isPending || records.isError ? '—' : value}
+                                            </Text>
+                                        </Box>
                                     ))}
-                                </Table.Tbody>
-                            </Table>
-                        </Table.ScrollContainer>
-                        {!records.data?.records.length && (
-                            <Text ta="center" c="dimmed" py="md">
-                                {records.isFetching
-                                    ? s('加载中…', 'Loading…')
-                                    : s(
-                                          '暂无记录；仅开启后才开始保存',
-                                          'No records; collection begins only after opt-in'
-                                      )}
-                            </Text>
-                        )}
-                        <Group justify="space-between" mt="sm">
-                            <Button
-                                variant="light"
-                                disabled={!pages.length}
-                                onClick={() => {
-                                    setCursor(pages.at(-1))
-                                    setPages(pages.slice(0, -1))
-                                }}
-                            >
-                                {s('上一页', 'Previous')}
-                            </Button>
-                            <Button
-                                variant="light"
-                                loading={records.isFetching}
-                                onClick={() => void records.refetch()}
-                            >
-                                {s('刷新', 'Refresh')}
-                            </Button>
-                            <Button
-                                variant="light"
-                                disabled={!records.data?.nextCursor}
-                                onClick={() => {
-                                    setPages([...pages, cursor])
-                                    setCursor(records.data!.nextCursor!)
-                                }}
-                            >
-                                {s('下一页', 'Next')}
-                            </Button>
-                        </Group>
+                                </Box>
+                            )}
+                            <Group justify="space-between" gap="xs">
+                                <Text size="xs" c="dimmed">
+                                    {s(
+                                        '连接累计参考字节，非日期内精确用量。',
+                                        'Cumulative reference bytes per connection, not exact usage within the dates.'
+                                    )}
+                                </Text>
+                                <Button
+                                    variant="subtle"
+                                    size="compact-sm"
+                                    leftSection={<TbRefresh size={15} />}
+                                    loading={records.isFetching}
+                                    disabled={!complete}
+                                    onClick={() => void records.refetch()}
+                                >
+                                    {s('刷新', 'Refresh')}
+                                </Button>
+                            </Group>
+                            {complete && records.data?.records.length ? (
+                                <AuditConnections
+                                    records={records.data.records}
+                                    language={i18n.language}
+                                    s={s}
+                                />
+                            ) : (
+                                empty(records.isPending && complete, records.isError)
+                            )}
+                            <Box className={classes.pagination}>
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    leftSection={<TbArrowLeft size={15} />}
+                                    disabled={!pages.length || !complete || records.isFetching}
+                                    onClick={() => {
+                                        setCursor(pages.at(-1))
+                                        setPages(pages.slice(0, -1))
+                                    }}
+                                >
+                                    {s('上一页', 'Previous')}
+                                </Button>
+                                <Text size="xs" c="dimmed" className={classes.numeric}>
+                                    {s(`第 ${pages.length + 1} 页`, `Page ${pages.length + 1}`)}
+                                </Text>
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    rightSection={<TbArrowRight size={15} />}
+                                    disabled={
+                                        !records.data?.nextCursor || !complete || records.isFetching
+                                    }
+                                    onClick={() => {
+                                        setPages([...pages, cursor])
+                                        setCursor(records.data!.nextCursor!)
+                                    }}
+                                >
+                                    {s('下一页', 'Next')}
+                                </Button>
+                            </Box>
+                        </Stack>
                     </Tabs.Panel>
                     <Tabs.Panel value="domains" pt="md">
-                        <Table.ScrollContainer minWidth={500}>
-                            <Table striped>
-                                <Table.Thead>
-                                    <Table.Tr>
-                                        {[
-                                            s('目标', 'Target'),
-                                            s('连接数', 'Connections'),
-                                            s('上传', 'Upload'),
-                                            s('下载', 'Download'),
-                                            s('总量', 'Total')
-                                        ].map((h) => (
-                                            <Table.Th key={h}>{h}</Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>
-                                    {(domains.data ?? []).map((r, i) => (
-                                        <Table.Tr key={`${r.domain}-${r.destinationIp}`}>
-                                            <Table.Td>
-                                                {i + 1}. {r.domain || r.destinationIp || '—'}
-                                            </Table.Td>
-                                            <Table.Td>{r.connections}</Table.Td>
-                                            <Table.Td>{formatAuditBytes(r.upload)}</Table.Td>
-                                            <Table.Td>{formatAuditBytes(r.download)}</Table.Td>
-                                            <Table.Td>
-                                                {formatAuditBytes(
-                                                    (
-                                                        BigInt(r.upload) + BigInt(r.download)
-                                                    ).toString()
-                                                )}
-                                            </Table.Td>
-                                        </Table.Tr>
-                                    ))}
-                                </Table.Tbody>
-                            </Table>
-                        </Table.ScrollContainer>
+                        <Stack gap="md">
+                            <Group justify="space-between" gap="xs">
+                                <Text size="xs" c="dimmed">
+                                    {s(
+                                        '目标 Top 20 · 连接累计参考流量',
+                                        'Top 20 targets · cumulative reference traffic'
+                                    )}
+                                </Text>
+                                <Button
+                                    variant="subtle"
+                                    size="compact-sm"
+                                    leftSection={<TbRefresh size={15} />}
+                                    loading={domains.isFetching}
+                                    disabled={!complete}
+                                    onClick={() => void domains.refetch()}
+                                >
+                                    {s('刷新', 'Refresh')}
+                                </Button>
+                            </Group>
+                            {complete && domains.data?.length ? (
+                                <AuditRanking domains={domains.data} s={s} />
+                            ) : (
+                                empty(domains.isPending && complete, domains.isError, true)
+                            )}
+                        </Stack>
                     </Tabs.Panel>
                 </Tabs>
             </Stack>

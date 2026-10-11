@@ -1,0 +1,276 @@
+.body {
+    padding: var(--mantine-spacing-md) var(--mantine-spacing-lg) var(--mantine-spacing-lg);
+}
+
+.header.header {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-lg);
+    border-bottom: 1px solid var(--mantine-color-default-border);
+    background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.tab.tab {
+    border-color: var(--mantine-color-default-border);
+}
+
+.tab.tab[data-active],
+.tab.tab[data-active]:hover {
+    color: light-dark(var(--mantine-color-indigo-8), var(--mantine-color-indigo-3));
+    border-color: color-mix(in srgb, var(--mantine-color-indigo-5) 40%, transparent);
+    background: color-mix(in srgb, var(--mantine-color-indigo-5) 12%, transparent);
+}
+
+.body :is(button, input, [role='tab']):focus-visible {
+    outline: 2px solid var(--mantine-color-indigo-5);
+    outline-offset: 2px;
+}
+
+.section {
+    min-width: 0;
+    padding: var(--mantine-spacing-md);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-lg);
+    background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.policyHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+    flex-wrap: wrap;
+}
+
+.policyControls {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--mantine-spacing-xs);
+    flex-wrap: wrap;
+}
+
+.retention {
+    width: 112px;
+}
+
+.nodeCard {
+    min-width: 0;
+    padding: var(--mantine-spacing-sm);
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--mantine-spacing-sm);
+    align-items: end;
+}
+
+.filters[data-global] {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.filters > * {
+    min-width: 0;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--mantine-spacing-sm);
+}
+
+.summaryCard {
+    min-width: 0;
+    padding: var(--mantine-spacing-md);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.numeric {
+    font-variant-numeric: tabular-nums;
+}
+
+.summaryValue {
+    font-size: var(--mantine-font-size-xl);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.wrap {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.target {
+    min-width: 0;
+    flex: 1;
+}
+
+.targetIcon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--mantine-color-dimmed);
+}
+
+.tableFrame {
+    overflow: hidden;
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-lg);
+}
+
+.table {
+    table-layout: fixed;
+}
+
+.table thead {
+    background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+}
+
+.table th {
+    font-size: var(--mantine-font-size-xs);
+    color: var(--mantine-color-dimmed);
+    font-weight: 500;
+}
+
+.table td {
+    vertical-align: top;
+}
+
+.userCell {
+    width: 15%;
+}
+
+.targetCell {
+    width: 28%;
+}
+
+.rankingTarget {
+    width: 40%;
+}
+
+.timeCell {
+    width: 20%;
+}
+
+.byteValue {
+    white-space: nowrap;
+}
+
+.upload {
+    color: var(--mantine-color-violet-5);
+}
+
+.download {
+    color: var(--mantine-color-cyan-5);
+}
+
+.recordCards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--mantine-spacing-sm);
+}
+
+.recordCard {
+    min-width: 0;
+    padding: var(--mantine-spacing-md);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-lg);
+    background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.recordTimes {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 5px var(--mantine-spacing-sm);
+    margin-top: var(--mantine-spacing-sm);
+}
+
+.recordTimes > :nth-child(even) {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.cardTraffic {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--mantine-spacing-md);
+    margin-top: var(--mantine-spacing-sm);
+    padding-top: var(--mantine-spacing-sm);
+    border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.cardTraffic .byteValue {
+    justify-content: flex-start;
+}
+
+.empty {
+    padding: 36px var(--mantine-spacing-md);
+    border: 1px dashed var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-lg);
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-xs);
+}
+
+@media (max-width: 60em) {
+    .filters,
+    .filters[data-global] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dateFilter {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 40em) {
+    .body {
+        padding: var(--mantine-spacing-sm);
+    }
+
+    .header {
+        padding-inline: var(--mantine-spacing-sm);
+    }
+
+    .filters,
+    .filters[data-global],
+    .recordCards {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summaryCard,
+    .section,
+    .recordCard {
+        padding: var(--mantine-spacing-sm);
+    }
+
+    .policyControls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .policyControls .retention {
+        width: auto;
+    }
+
+    .policyControls > :last-child {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
