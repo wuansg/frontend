@@ -145,6 +145,12 @@ public/xray.schema.cn.json
 
 scripts
 scripts/**
+!scripts/test-node-edits.ts
+!scripts/test-node-deployments-ui.cjs
+!scripts/fixtures/
+scripts/fixtures/**
+!scripts/fixtures/node-deployments.html
+!scripts/fixtures/node-deployments.tsx
 !scripts/
 !scripts/test-traffic-usage.ts
 !scripts/test-access-audit-ui.cjs

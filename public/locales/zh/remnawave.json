@@ -139,6 +139,8 @@
     "feature": {
       "format": "格式化",
       "failed-to-save-invalid-json": "保存失败，无效的 JSON。",
+      "staged-save": "仅保存，稍后灰度",
+      "staged-save-description": "保存新 Profile，但暂不下发。现有核心节点保持原配置模板，随后到节点的“配置发布与回滚”开始灰度发布，或显式解除固定版本。",
       "error": "错误",
       "save-anyway": "仍然保存",
       "save-anyway-description": "您确定要保存无效的 sing-box 配置吗？ 此操作\n                                    可能导致意外行为。请仅在您清楚自己在做什么的情况下继续。",

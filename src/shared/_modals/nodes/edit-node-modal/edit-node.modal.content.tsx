@@ -1,9 +1,12 @@
-import { useForm, schemaResolver } from '@mantine/form'
+import NiceModal from '@ebay/nice-modal-react'
+import { Button, Stack } from '@mantine/core'
+import { useForm, schemaResolver, type UseFormReturnType } from '@mantine/form'
 import { UpdateNodeCommand } from '@remnawave/backend-contract'
 import { NodeDetailsCardWidget } from '@widgets/dashboard/nodes/node-details-card'
 import { NodeSystemCardWidget } from '@widgets/dashboard/nodes/node-system-card'
 import { motion } from 'motion/react'
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { queryClient } from '@shared/api'
 import {
@@ -18,6 +21,9 @@ import { BaseNodeForm } from '@shared/ui/forms/nodes/base-node-form/base-node-fo
 import { LoaderModalShared } from '@shared/ui/loader-modal'
 import { withNodeIpsErrors } from '@shared/ui/node-ips'
 
+import { NodeDeploymentsModal } from '../node-deployments/node-deployments.modal'
+import { nodeDirtyFields } from './node-dirty-fields'
+
 interface IProps {
     nodeUuid: string
     onClose: () => void
@@ -25,21 +31,24 @@ interface IProps {
 
 export const EditNodeByUuidModalContent = (props: IProps) => {
     const { nodeUuid, onClose } = props
+    const { i18n } = useTranslation()
 
     const isFormInitialized = useRef(false)
 
-    const form = useForm<UpdateNodeCommand.RequestBody>({
-        name: 'edit-node-form',
-        mode: 'uncontrolled',
-        onValuesChange: (values) => {
-            if (typeof values.proxyUrl === 'string' && values.proxyUrl === '') {
-                form.setFieldValue('proxyUrl', null)
-            }
-        },
-        validate: withNodeIpsErrors(
-            schemaResolver(UpdateNodeCommand.RequestBodySchema.omit({ uuid: true }))
-        )
-    })
+    const form: UseFormReturnType<UpdateNodeCommand.RequestBody> =
+        useForm<UpdateNodeCommand.RequestBody>({
+            name: 'edit-node-form',
+            mode: 'uncontrolled',
+            onValuesChange: (values) => {
+                if (typeof values.proxyUrl === 'string' && values.proxyUrl === '') {
+                    form.setFieldValue('proxyUrl', null)
+                }
+            },
+            validate: (values) =>
+                withNodeIpsErrors(
+                    schemaResolver(UpdateNodeCommand.RequestBodySchema.omit({ uuid: true }))
+                )(nodeDirtyFields(form.getInitialValues(), values))
+        })
 
     const { data: secretKey } = useGetNodeSecretKey()
     const { data: nodePlugins } = useGetNodePlugins()
@@ -70,6 +79,7 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                     queryKey: configProfilesQueryKeys.getConfigProfiles.queryKey
                 })
 
+                form.setInitialValues(form.getValues())
                 form.resetDirty()
             }
         }
@@ -116,17 +126,21 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
         if (!fetchedNode) {
             return
         }
+        if (!values.name || values.name.trim().length < 3) {
+            form.setFieldError('name', 'Name must contain at least 3 non-whitespace characters')
+            return
+        }
+        if (!values.address || values.address.trim().length < 2) {
+            form.setFieldError('address', 'Address must not be blank')
+            return
+        }
+        const changes = nodeDirtyFields(form.getInitialValues(), values)
+        if (!Object.keys(changes).length) return
 
         updateNode({
             variables: {
-                ...values,
-                name: values.name?.trim(),
-                address: values.address?.trim(),
-                trafficLimitBytes: values.trafficLimitBytes,
-                configProfile: {
-                    activeConfigProfileUuid: values.configProfile?.activeConfigProfileUuid ?? '',
-                    activeInbounds: values.configProfile?.activeInbounds ?? []
-                }
+                ...changes,
+                uuid: fetchedNode.uuid
             }
         })
     })
@@ -144,16 +158,26 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
     }
 
     return (
-        <BaseNodeForm
-            form={form}
-            handleClose={onClose}
-            handleSubmit={handleSubmit}
-            isDataSubmitting={isUpdateNodePending}
-            node={fetchedNode}
-            nodeDetailsCard={<NodeDetailsCardWidget node={fetchedNode} />}
-            nodePlugins={nodePlugins?.nodePlugins ?? []}
-            nodeSystemCard={<NodeSystemCardWidget node={fetchedNode} />}
-            secretKey={secretKey}
-        />
+        <Stack>
+            <Button
+                variant="light"
+                onClick={() => NiceModal.show(NodeDeploymentsModal, { nodeUuid })}
+            >
+                {i18n.language.startsWith('zh')
+                    ? '配置发布与回滚'
+                    : 'Configuration releases & rollback'}
+            </Button>
+            <BaseNodeForm
+                form={form}
+                handleClose={onClose}
+                handleSubmit={handleSubmit}
+                isDataSubmitting={isUpdateNodePending}
+                node={fetchedNode}
+                nodeDetailsCard={<NodeDetailsCardWidget node={fetchedNode} />}
+                nodePlugins={nodePlugins?.nodePlugins ?? []}
+                nodeSystemCard={<NodeSystemCardWidget node={fetchedNode} />}
+                secretKey={secretKey}
+            />
+        </Stack>
     )
 }

@@ -18,7 +18,7 @@ import {
 } from 'react-icons/tb'
 
 import { queryClient } from '@shared/api'
-import { QueryKeys, useUpdateConfigProfile } from '@shared/api/hooks'
+import { QueryKeys, useStageConfigProfile, useUpdateConfigProfile } from '@shared/api/hooks'
 import { useIsMobile } from '@shared/hooks'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
@@ -56,41 +56,44 @@ export function ConfigEditorActionsFeature(props: Props) {
 
     const [opened, handlers] = useDisclosure(false)
 
-    const { mutate: updateConfig, isPending: isUpdating } = useUpdateConfigProfile({
-        mutationFns: {
-            onSuccess: async (
-                updatedConfigProfile: UpdateConfigProfileCommand.Response['response']
-            ) => {
-                await queryClient.refetchQueries({
-                    queryKey: QueryKeys.configProfiles.getConfigProfiles.queryKey
-                })
+    const mutationFns = {
+        onSuccess: async (
+            updatedConfigProfile: UpdateConfigProfileCommand.Response['response']
+        ) => {
+            await queryClient.refetchQueries({
+                queryKey: QueryKeys.configProfiles.getConfigProfiles.queryKey
+            })
 
-                setIsConfigValid(true)
+            setIsConfigValid(true)
 
-                const newValue = JSON.stringify(updatedConfigProfile.config, null, 2)
+            const newValue = JSON.stringify(updatedConfigProfile.config, null, 2)
 
-                if (editorRef.current) {
-                    editorRef.current.setValue(newValue)
-                    setOriginalValue(newValue)
-                }
-
-                await queryClient.setQueryData(
-                    QueryKeys.configProfiles.getConfigProfile({
-                        uuid: configProfile.uuid
-                    }).queryKey,
-                    updatedConfigProfile
-                )
-
-                setHasUnsavedChanges(false)
-            },
-            onError: (error) => {
-                setIsConfigValid(false)
-                setResult(error.message)
+            if (editorRef.current) {
+                editorRef.current.setValue(newValue)
+                setOriginalValue(newValue)
             }
-        }
-    })
 
-    const handleSave = () => {
+            await queryClient.setQueryData(
+                QueryKeys.configProfiles.getConfigProfile({
+                    uuid: configProfile.uuid
+                }).queryKey,
+                updatedConfigProfile
+            )
+
+            setHasUnsavedChanges(false)
+        },
+        onError: (error: Error) => {
+            setIsConfigValid(false)
+            setResult(error.message)
+        }
+    }
+    const { mutate: updateConfig, isPending: isUpdatingNow } = useUpdateConfigProfile({
+        mutationFns
+    })
+    const { mutate: stageConfig, isPending: isStaging } = useStageConfigProfile({ mutationFns })
+    const isUpdating = isUpdatingNow || isStaging
+
+    const handleSave = (strategy: 'immediate' | 'staged' = 'immediate') => {
         if (!editorRef.current) return
 
         const currentValue = editorRef.current.getValue()
@@ -108,7 +111,8 @@ export function ConfigEditorActionsFeature(props: Props) {
         }
 
         if (currentValue) {
-            updateConfig({
+            const save = strategy === 'staged' ? stageConfig : updateConfig
+            save({
                 variables: {
                     uuid: configProfile.uuid,
                     config: JSON.parse(currentValue)
@@ -186,9 +190,32 @@ export function ConfigEditorActionsFeature(props: Props) {
                 disabled={!isConfigValid && !hasUnsavedChanges}
                 leftSection={<PiFloppyDisk size={16} />}
                 loading={isUpdating}
-                onClick={handleSave}
+                onClick={() => handleSave()}
             >
                 {t('common.save')}
+            </Button>
+            <Button
+                variant="light"
+                disabled={isUpdating || (!isConfigValid && !hasUnsavedChanges)}
+                onClick={() =>
+                    modals.openConfirmModal({
+                        title: t('common.confirm-action'),
+                        children: (
+                            <Text>
+                                {t('config-editor-actions.feature.staged-save-description', {
+                                    defaultValue:
+                                        'Save without applying the new profile. Existing core nodes stay pinned to their current templates until a canary batch or explicit resume.'
+                                })}
+                            </Text>
+                        ),
+                        labels: { confirm: t('common.save'), cancel: t('common.cancel') },
+                        onConfirm: () => handleSave('staged')
+                    })
+                }
+            >
+                {t('config-editor-actions.feature.staged-save', {
+                    defaultValue: 'Save only, deploy later'
+                })}
             </Button>
 
             {!isConfigValid && !isUpdating && (
@@ -213,7 +240,7 @@ export function ConfigEditorActionsFeature(props: Props) {
                             confirmProps: {
                                 color: 'red'
                             },
-                            onConfirm: handleSave
+                            onConfirm: () => handleSave()
                         })
                     }}
                 >

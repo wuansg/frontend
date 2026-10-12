@@ -138,6 +138,8 @@
   "config-editor-actions": {
     "feature": {
       "format": "Format",
+      "staged-save": "Save only, deploy later",
+      "staged-save-description": "Save without applying the new profile. Existing core nodes stay pinned to their current templates until a canary batch or explicit resume.",
       "failed-to-save-invalid-json": "Failed to save, invalid JSON.",
       "error": "Error",
       "save-anyway": "Save anyway",

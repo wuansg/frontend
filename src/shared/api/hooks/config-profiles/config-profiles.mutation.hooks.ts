@@ -12,6 +12,31 @@ import { createMutationHook } from '../../tsq-helpers'
 const ConfigProfileBodySchema = z.object({}).passthrough()
 const ConfigProfileResponseSchema = z.object({ response: z.any() }).passthrough()
 
+// A dedicated route fails closed on old Backends that would otherwise strip deployStrategy.
+export const useStageConfigProfile = createMutationHook({
+    endpoint: '/api/config-profiles/stage',
+    bodySchema: UpdateConfigProfileCommand.RequestBodySchema,
+    responseSchema: UpdateConfigProfileCommand.ResponseSchema,
+    requestMethod: CreateConfigProfileCommand.endpointDetails.REQUEST_METHOD,
+    rMutationParams: {
+        onSuccess: () =>
+            notifications.show({
+                title: 'Success',
+                message: 'Profile saved without deployment',
+                color: 'teal'
+            }),
+        onError: (error) =>
+            notifications.show({
+                title: 'Stage Config Profile',
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : 'Backend does not support safe staged releases',
+                color: 'red'
+            })
+    }
+})
+
 export const useUpdateConfigProfile = createMutationHook({
     endpoint: UpdateConfigProfileCommand.TSQ_url,
     bodySchema: UpdateConfigProfileCommand.RequestBodySchema,

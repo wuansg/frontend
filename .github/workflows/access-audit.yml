@@ -1,4 +1,4 @@
-name: Access audit UI regression
+name: Node release and access audit UI regression
 
 on:
   workflow_dispatch:
@@ -6,10 +6,17 @@ on:
     branches: [main]
     paths:
       - 'src/shared/_modals/users/user-access-audit/**'
+      - 'src/shared/_modals/nodes/node-deployments/**'
+      - 'src/shared/_modals/nodes/edit-node-modal/**'
+      - 'src/features/dashboard/config-profiles/config-editor-actions/**'
+      - 'src/shared/api/hooks/config-profiles/**'
       - 'src/shared/_modals/modal-registry.ts'
       - 'src/shared/ui/forms/users/**'
       - 'src/widgets/dashboard/users/**'
       - 'scripts/test-access-audit-ui.cjs'
+      - 'scripts/test-node-deployments-ui.cjs'
+      - 'scripts/test-node-edits.ts'
+      - 'scripts/fixtures/node-deployments.*'
       - 'scripts/fixtures/access-audit.*'
       - '.github/workflows/access-audit.yml'
 
@@ -26,7 +33,7 @@ jobs:
           node-version: '24.x'
           cache: npm
       - run: npm ci
-      - run: npm run test:date-presets && npm run test:traffic-usage && npm run start:build
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run start:build
       - name: Verify selected-user opt-in, filters and mobile UI
         run: |
           npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2
@@ -42,3 +49,5 @@ jobs:
           done
           if [ "$ready" != yes ]; then tail -n 50 "$RUNNER_TEMP/audit-vite.log"; exit 1; fi
           node scripts/test-access-audit-ui.cjs
+          export NODE_DEPLOYMENTS_TEST_URL=http://127.0.0.1:5173/scripts/fixtures/node-deployments.html
+          node scripts/test-node-deployments-ui.cjs

@@ -28,6 +28,7 @@ import {
     TbArrowUp,
     TbCalendar,
     TbChartBar,
+    TbDownload,
     TbListDetails,
     TbRefresh,
     TbSearch,
@@ -62,6 +63,8 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
     const [cursor, setCursor] = useState<string | undefined>()
     const [pages, setPages] = useState<(string | undefined)[]>([])
     const [retention, setRetention] = useState<number | null>(null)
+    const [expiryMode, setExpiryMode] = useState<string>('keep')
+    const [direction, setDirection] = useState<'total' | 'upload' | 'download'>('total')
     const policy = useQuery({
         queryKey: ['access-audit-policy', selectedUser],
         queryFn: () => auditAPI.policy(selectedUser!),
@@ -83,17 +86,42 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
         refetchInterval: cursor ? false : 15000
     })
     const domains = useQuery({
-        queryKey: ['access-audit-domains', filter],
-        queryFn: () => auditAPI.domains(filter),
+        queryKey: ['access-audit-domains', filter, direction],
+        queryFn: () => auditAPI.domains({ ...filter, direction }),
         enabled: complete,
         refetchInterval: 30000
     })
+    const rangeSummary = useQuery({
+        queryKey: ['access-audit-summary', filter],
+        queryFn: () => auditAPI.summary(filter),
+        enabled: complete,
+        refetchInterval: 30000
+    })
+    const exportCsv = useMutation({
+        mutationFn: () => auditAPI.export(filter),
+        onSuccess: (blob) => {
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `access-audit-${filter.start}-${filter.end}.csv`
+            link.click()
+            setTimeout(() => URL.revokeObjectURL(url), 1000)
+        }
+    })
     const save = useMutation({
-        mutationFn: (input: { userId: number; enabled: boolean; retentionDays: number }) =>
-            auditAPI.set(input.userId, input.enabled, input.retentionDays),
+        mutationFn: (input: {
+            userId: number
+            enabled: boolean
+            retentionDays: number
+            enabledUntil?: string | null
+        }) => auditAPI.set(input.userId, input.enabled, input.retentionDays, input.enabledUntil),
         onSuccess: (p, input) => {
             cache.setQueryData(['access-audit-policy', input.userId], p)
             void cache.invalidateQueries({ queryKey: ['access-audit-records'] })
+            void cache.invalidateQueries({ queryKey: ['access-audit-summary'] })
+            void cache.invalidateQueries({ queryKey: ['access-audit-domains'] })
+            setExpiryMode('keep')
+            setRetention(null)
         }
     })
     const savePolicy = (enabled: boolean) => {
@@ -101,7 +129,15 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
         save.mutate({
             userId: selectedUser,
             enabled,
-            retentionDays: retention ?? policy.data?.retentionDays ?? 7
+            retentionDays: retention ?? policy.data?.retentionDays ?? 7,
+            ...(expiryMode === 'keep'
+                ? {}
+                : {
+                      enabledUntil:
+                          expiryMode === 'none'
+                              ? null
+                              : new Date(Date.now() + Number(expiryMode) * 60000).toISOString()
+                  })
         })
     }
     const resetPage = () => {
@@ -253,6 +289,24 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                 >
                                     {s('保存天数', 'Save retention')}
                                 </Button>
+                                <Select
+                                    label={s('自动停止', 'Auto-stop')}
+                                    value={expiryMode}
+                                    onChange={(value) => setExpiryMode(value ?? 'keep')}
+                                    data={[
+                                        {
+                                            value: 'keep',
+                                            label: s('保留当前设置', 'Keep current setting')
+                                        },
+                                        {
+                                            value: 'none',
+                                            label: s('不自动停止', 'No automatic stop')
+                                        },
+                                        { value: '60', label: s('1 小时后', 'After 1 hour') },
+                                        { value: '1440', label: s('24 小时后', 'After 24 hours') },
+                                        { value: '10080', label: s('7 天后', 'After 7 days') }
+                                    ]}
+                                />
                                 <Button
                                     color={policy.data?.enabled ? 'red' : 'teal'}
                                     variant={policy.data?.enabled ? 'light' : 'filled'}
@@ -268,6 +322,17 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                 </Button>
                             </Box>
                         </Box>
+                        {policy.data?.enabledUntil && (
+                            <Text size="xs" c="dimmed" mt="xs">
+                                {s('自动停止时间：', 'Auto-stop at: ')}
+                                {new Date(policy.data.enabledUntil).toLocaleString(i18n.language)}
+                                {' · '}
+                                {s(
+                                    '停止后历史仍按保存天数保留。',
+                                    'History remains available until retention expiry.'
+                                )}
+                            </Text>
+                        )}
                         {policy.data && activeNodes.length === 0 && (
                             <Alert color="yellow" mt="md" radius="md">
                                 {s(
@@ -344,11 +409,21 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                         )}
                     </Box>
                 )}
-                {(policy.error || save.error || records.error || domains.error) && (
+                {(policy.error ||
+                    save.error ||
+                    records.error ||
+                    domains.error ||
+                    rangeSummary.error ||
+                    exportCsv.error) && (
                     <Alert color="red" radius="lg" title={s('请求失败', 'Request failed')}>
                         <Text size="xs" className={classes.wrap}>
                             {errorText(
-                                policy.error || save.error || records.error || domains.error
+                                policy.error ||
+                                    save.error ||
+                                    records.error ||
+                                    domains.error ||
+                                    rangeSummary.error ||
+                                    exportCsv.error
                             )}
                         </Text>
                     </Alert>
@@ -377,6 +452,7 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                 onChange={(v) => {
                                     setSelectedUser(typeof v === 'number' ? v : undefined)
                                     setRetention(null)
+                                    setExpiryMode('keep')
                                     resetPage()
                                 }}
                             />
@@ -421,6 +497,75 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                         />
                     </Box>
                 </Box>
+                {complete && (
+                    <Box className={classes.section} data-testid="audit-range-summary">
+                        <Group justify="space-between" mb="sm">
+                            <Text size="sm" fw={600}>
+                                {s('整个筛选范围', 'Complete filtered range')}
+                            </Text>
+                            <Button
+                                size="compact-sm"
+                                variant="light"
+                                leftSection={<TbDownload size={15} />}
+                                loading={exportCsv.isPending}
+                                data-testid="audit-export"
+                                onClick={() =>
+                                    modals.openConfirmModal({
+                                        title: s('导出访问审计？', 'Export access audit?'),
+                                        children: (
+                                            <Text size="sm">
+                                                {s(
+                                                    '最多 5000 条，超限需要缩小筛选。文件包含敏感访问记录，请妥善保管。',
+                                                    'Up to 5000 records; narrow the filters if exceeded. The file contains sensitive access records; store it securely.'
+                                                )}
+                                            </Text>
+                                        ),
+                                        labels: {
+                                            confirm: s('导出 CSV', 'Export CSV'),
+                                            cancel: s('取消', 'Cancel')
+                                        },
+                                        onConfirm: () => exportCsv.mutate()
+                                    })
+                                }
+                            >
+                                {s('导出 CSV', 'Export CSV')}
+                            </Button>
+                        </Group>
+                        <SimpleGrid cols={{ base: 2, sm: 4 }}>
+                            {[
+                                [s('连接数', 'Connections'), rangeSummary.data?.connections],
+                                [s('目标数', 'Targets'), rangeSummary.data?.targets],
+                                [
+                                    s('区间参考上传', 'Range reference upload'),
+                                    rangeSummary.data?.upload &&
+                                        formatAuditBytes(rangeSummary.data.upload)
+                                ],
+                                [
+                                    s('区间参考下载', 'Range reference download'),
+                                    rangeSummary.data?.download &&
+                                        formatAuditBytes(rangeSummary.data.download)
+                                ]
+                            ].map(([label, value]) => (
+                                <Box key={label}>
+                                    <Text size="xs" c="dimmed">
+                                        {label}
+                                    </Text>
+                                    <Text fw={600}>
+                                        {rangeSummary.isPending || rangeSummary.isError
+                                            ? '—'
+                                            : value}
+                                    </Text>
+                                </Box>
+                            ))}
+                        </SimpleGrid>
+                        <Text size="xs" c="dimmed" mt="xs">
+                            {s(
+                                '不受分页和 Top 20 截断影响；仍为连接累计参考字节，非日期内精确计费用量。',
+                                'Independent of pagination and Top 20; cumulative reference bytes, not exact billed usage within the dates.'
+                            )}
+                        </Text>
+                    </Box>
+                )}
                 <Tabs
                     defaultValue="records"
                     color="indigo"
@@ -555,6 +700,18 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                         'Top 20 targets · cumulative reference traffic'
                                     )}
                                 </Text>
+                                <Select
+                                    aria-label={s('排行方向', 'Ranking direction')}
+                                    value={direction}
+                                    onChange={(value) =>
+                                        setDirection((value ?? 'total') as typeof direction)
+                                    }
+                                    data={[
+                                        { value: 'total', label: s('按总量', 'Total') },
+                                        { value: 'upload', label: s('按上传', 'Upload') },
+                                        { value: 'download', label: s('按下载', 'Download') }
+                                    ]}
+                                />
                                 <Button
                                     variant="subtle"
                                     size="compact-sm"

@@ -10,8 +10,8 @@ const rows = [first, { ...first, id: '2', username: 'long-fixture-用户名'.rep
 
 async function fixture(browser, width, options = {}) {
     const context = await browser.newContext({ viewport: { width, height: options.preview ? 1100 : 950 }, timezoneId: 'America/Los_Angeles' })
-    const writes = [], queries = [], errors = []
-    let enabled = Boolean(options.preview), retentionDays = 7
+    const writes = [], queries = [], errors = [], rankQueries = [], exports = []
+    let enabled = Boolean(options.preview), retentionDays = 7, enabledUntil = null
     const data = options.preview ? rows.map((r, i) => ({ ...r, username: 'demo-user', nodeName: 'Singapore', inbound: 'trojan-ws', domain: ['www.cloudflare.com', 'docs.github.com', 'example.com'][i], destinationIp: '203.0.113.9', upload: ['1048576', '2097152', '524288'][i], download: ['8388608', '16777216', '3145728'][i], partial: i === 2 })) : rows
     let releaseRecords
     const gate = options.loading ? new Promise(resolve => { releaseRecords = resolve }) : undefined
@@ -25,16 +25,23 @@ async function fixture(browser, width, options = {}) {
         else if (target.pathname === '/api/access-audit/users/18/policy') {
             if (request.method() === 'PUT') {
                 const body = request.postDataJSON()
-                assert.deepEqual(Object.keys(body).sort(), ['enabled', 'retentionDays'])
+                assert.ok(Object.keys(body).every(k => ['enabled', 'retentionDays', 'enabledUntil'].includes(k)))
                 writes.push(body); enabled = body.enabled; retentionDays = body.retentionDays
+                if ('enabledUntil' in body) enabledUntil = body.enabledUntil
             }
-            response = { enabled, retentionDays, enabledAt: enabled ? first.startedAt : null, nodes: [1, 2].map((i) => ({ uuid: `10000000-0000-4000-8000-00000000000${i}`, name: `fixture-node-${i}`, connected: true, mode: 'CORE_ACTIVE', supported: true, syncedAt: first.observedAt, lastError: null, status: { capturing: enabled && i === 1, dropped: i === 2 ? 3 : 0, expiresAt: '2026-10-08T00:35:00Z', lastError: '' } })) }
+            response = { enabled, retentionDays, enabledUntil, enabledAt: enabled ? first.startedAt : null, nodes: [1, 2].map((i) => ({ uuid: `10000000-0000-4000-8000-00000000000${i}`, name: `fixture-node-${i}`, connected: true, mode: 'CORE_ACTIVE', supported: true, syncedAt: first.observedAt, lastError: null, status: { capturing: enabled && i === 1, dropped: i === 2 ? 3 : 0, expiresAt: '2026-10-08T00:35:00Z', lastError: '' } })) }
         } else if (target.pathname === '/api/access-audit/records') {
             queries.push(Object.fromEntries(target.searchParams))
             if (gate) await gate
             if (options.error) return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'fixture-only failure' }) })
             response = options.empty ? { nextCursor: null, records: [] } : target.searchParams.has('cursor') ? { nextCursor: null, records: [{ ...data[0], id: '4', domain: 'page-two.example' }] } : { nextCursor: 'fixture-next', records: data }
+        } else if (target.pathname === '/api/access-audit/summary') {
+            response = { connections: '125', targets: '26', users: '1', nodes: '1', partial: '5', upload: '9007199254740993', download: '20971520' }
+        } else if (target.pathname === '/api/access-audit/export') {
+            exports.push(Object.fromEntries(target.searchParams))
+            return route.fulfill({ contentType: 'text/csv', body: '\uFEFF"id","domain"\r\n"1","example.com"\r\n' })
         } else if (target.pathname === '/api/access-audit/domains') {
+            rankQueries.push(Object.fromEntries(target.searchParams))
             response = options.empty ? [] : data.map(r => ({ domain: r.domain, destinationIp: r.domain ? '' : r.destinationIp, connections: 1, upload: r.upload, download: r.download }))
         } else throw Error('Unexpected API request: ' + target.pathname)
         return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ response }) })
@@ -46,7 +53,7 @@ async function fixture(browser, width, options = {}) {
     if (options.light) pageUrl.searchParams.set('theme', 'light')
     if (options.en) pageUrl.searchParams.set('lang', 'en')
     await page.goto(pageUrl.href)
-    return { context, page, writes, queries, errors, releaseRecords }
+    return { context, page, writes, queries, errors, releaseRecords, rankQueries, exports }
 }
 
 async function fits(page, width) {
@@ -60,7 +67,7 @@ async function main() {
     const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--no-sandbox'] })
     try {
         for (const width of [1280, 768, 390, 320]) {
-            const { context, page, writes, queries, errors } = await fixture(browser, width)
+            const { context, page, writes, queries, errors, rankQueries, exports } = await fixture(browser, width)
             await page.getByRole('button', { name: 'Open selected user', exact: true }).click()
             await page.getByText('默认关闭', { exact: true }).waitFor()
             const results = width > 960 ? page.getByRole('table') : page.getByTestId('audit-connection-cards')
@@ -68,6 +75,8 @@ async function main() {
             assert.equal(await results.getByText('8 PiB', { exact: true }).count(), 1)
             assert.equal(await results.getByText('[2001:db8::9]:443', { exact: true }).count(), 1)
             assert.equal(await results.getByText('<script>fixture</script>', { exact: true }).count(), 1, 'Inbound is escaped text')
+            const rangeSummary = page.getByTestId('audit-range-summary')
+            await rangeSummary.getByText('125', { exact: true }).waitFor()
             const summary = page.getByTestId('audit-page-summary')
             assert.equal(await summary.getByText('3', { exact: true }).count(), 2, 'Summary is current-page connections and targets')
             assert.equal(await summary.getByText('16 MiB', { exact: true }).count(), 1, 'Page bytes are summed with BigInt')
@@ -82,6 +91,11 @@ async function main() {
             await page.getByText('page-two.example', { exact: true }).waitFor()
             await page.getByText('第 2 页', { exact: true }).waitFor()
             assert.equal(queries.at(-1).cursor, 'fixture-next')
+            assert.equal(await rangeSummary.getByText('125', { exact: true }).count(), 1, 'Full-range summary is independent of page')
+            await page.getByTestId('audit-export').click()
+            await page.clock.runFor(400)
+            await Promise.all([page.waitForEvent('download'), page.getByRole('dialog', { name: '导出访问审计？', exact: true }).getByRole('button', { name: '导出 CSV', exact: true }).click()])
+            assert.equal(exports.length, 1); assert.equal(exports[0].cursor, undefined, 'Export must use full filtered range')
             await page.getByRole('button', { name: '上一页', exact: true }).click()
             await page.getByText('第 1 页', { exact: true }).waitFor()
             await page.getByRole('button', { name: '开启此用户', exact: true }).click()
@@ -123,6 +137,31 @@ async function main() {
             assert.deepEqual(errors, [], 'No browser errors')
             await context.close()
             console.log(`PASS opt-in/retention, pagination, filters, BigInt, long text/IPv6 and responsive audit UI (${width}px)`)
+        }
+        {
+            const { context, page, writes, rankQueries, errors } = await fixture(browser, 390)
+            await page.getByRole('button', { name: 'Open selected user', exact: true }).click()
+            await page.getByText('默认关闭', { exact: true }).waitFor()
+            await page.getByLabel('自动停止', { exact: true }).first().click()
+            await page.getByRole('option', { name: '1 小时后', exact: true }).click()
+            await page.getByRole('button', { name: '开启此用户', exact: true }).click()
+            const confirmedAt = await page.evaluate(() => Date.now())
+            await page.getByRole('button', { name: '仅开启此用户', exact: true }).click()
+            await page.getByText('已开启', { exact: true }).waitFor()
+            const deadline = Date.parse(writes[0].enabledUntil)
+            assert.ok(deadline >= confirmedAt + 3600000 && deadline <= confirmedAt + 3610000, 'Temporary audit deadline must be one hour after confirmation')
+            await page.getByLabel('保存天数', { exact: true }).fill('14')
+            await page.getByRole('button', { name: '保存天数', exact: true }).click()
+            assert.equal(writes[1].enabledUntil, undefined, 'Retention edits must not remove a temporary audit deadline')
+            await page.getByRole('tab', { name: '目标用量排行', exact: true }).click()
+            await page.getByLabel('排行方向', { exact: true }).first().click()
+            await Promise.all([page.waitForResponse(r => r.url().includes('/domains?') && r.url().includes('direction=upload')), page.getByRole('option', { name: '按上传', exact: true }).click()])
+            assert.equal(rankQueries.at(-1).direction, 'upload')
+            await page.getByLabel('排行方向', { exact: true }).first().click()
+            await Promise.all([page.waitForResponse(r => r.url().includes('/domains?') && r.url().includes('direction=download')), page.getByRole('option', { name: '按下载', exact: true }).click()])
+            assert.equal(rankQueries.at(-1).direction, 'download')
+            await fits(page, 390); assert.deepEqual(errors, [])
+            await context.close(); console.log('PASS temporary opt-in deadline, retention preservation and upload/download ranking UI')
         }
         for (const options of [{ empty: true }, { error: true }, { loading: true }, { en: true, light: true }]) {
             const { context, page, writes, errors, releaseRecords } = await fixture(browser, 390, options)
