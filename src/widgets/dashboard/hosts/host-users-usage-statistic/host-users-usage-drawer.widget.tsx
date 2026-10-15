@@ -1,13 +1,15 @@
 import { ActionIcon, Drawer, Group, Select, Stack } from '@mantine/core'
 import { DatesRangeValue } from '@mantine/dates'
+import { nprogress } from '@mantine/nprogress'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbCalendar, TbChartArcs, TbRefresh, TbUsers } from 'react-icons/tb'
 
-import { useGetStatsHostUsersUsage } from '@shared/api/hooks'
+import { showModal } from '@shared/_modals/show-modal'
+import { useGetStatsHostUsersUsage, useResolveUser } from '@shared/api/hooks'
 import { DatePickerInput } from '@shared/ui/date-time-picker'
-import { TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
+import { ITopLeaderboardItem, TopLeaderboardCardShared } from '@shared/ui/leaderboard-item-card'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TrafficDirectionControl } from '@shared/ui/traffic-usage'
 import { getDefaultDateRange } from '@shared/utils/time-utils'
@@ -47,6 +49,24 @@ export const HostUsersUsageDrawer = () => {
     ])
 
     const [queryRange, setQueryRange] = useState<{ end: string; start: string }>(defaultRange)
+    const { mutateAsync: resolveUser } = useResolveUser()
+
+    const handleViewUser = async (user: ITopLeaderboardItem) => {
+        nprogress.start()
+        try {
+            const result = await resolveUser({ variables: { username: user.name } })
+            if (result.id) {
+                showModal('users_userUsageModal', {
+                    userId: result.id,
+                    initialRange: queryRange,
+                    initialDirection: trafficDirection,
+                    initialView: 'hosts'
+                })
+            }
+        } finally {
+            nprogress.complete()
+        }
+    }
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {
         if (value[0] === null && value[1] === null) {
@@ -177,6 +197,7 @@ export const HostUsersUsageDrawer = () => {
                         })
                     )}
                     maxHeight={500}
+                    onItemClick={handleViewUser}
                     skeletonCount={25}
                 />
             </Stack>

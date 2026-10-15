@@ -98,8 +98,11 @@ export const InternalSquadsUsageDrawer = NiceModal.create((props: IProps) => {
 
     const usageUsers = internalSquadUsage?.pages.flatMap((page) => page.users) ?? []
 
-    const handleViewUser = async (user: ITopLeaderboardItem) => {
-        showModal('users_viewUserModal', { userId: Number(user.name) })
+    const handleViewUser = (user: ITopLeaderboardItem) => {
+        showModal('users_userUsageModal', {
+            userId: Number(user.name),
+            initialRange: queryRange
+        })
     }
 
     return (

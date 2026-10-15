@@ -1,6 +1,6 @@
 {
   "name": "@remnawave/frontend",
-  "version": "3.18.0",
+  "version": "3.18.1",
   "private": false,
   "homepage": "https://github.com/remnawave",
   "bugs": {
@@ -14,6 +14,7 @@
   },
   "type": "module",
   "scripts": {
+    "test:usage-navigation": "node scripts/test-usage-navigation.cjs",
     "test:node-edits": "node --experimental-strip-types scripts/test-node-edits.ts",
     "test:traffic-usage": "node --experimental-strip-types scripts/test-traffic-usage.ts",
     "test:date-presets": "node --experimental-strip-types scripts/test-date-presets.ts",

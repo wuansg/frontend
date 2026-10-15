@@ -82,8 +82,10 @@ export const NodesUsageStatsModal = NiceModal.create((props: IProps) => {
             })
 
             if (result.id) {
-                showModal('users_viewUserModal', {
-                    userId: result.id
+                showModal('users_userUsageModal', {
+                    userId: result.id,
+                    initialRange: queryRange,
+                    initialDirection: trafficDirection
                 })
             }
         } finally {

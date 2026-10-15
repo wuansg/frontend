@@ -61,7 +61,11 @@ export const StatisticUsersPage = () => {
     })
 
     const handleOpenUser = (userId: number) => {
-        showModal('users_viewUserModal', { userId })
+        showModal('users_userUsageModal', {
+            userId,
+            initialRange: queryRange,
+            initialDirection: trafficDirection
+        })
     }
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {

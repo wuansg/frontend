@@ -41,13 +41,16 @@ const getHostUsageName = (host: {
 
 interface IProps {
     userId: number
+    initialRange?: { end: string; start: string }
+    initialDirection?: TrafficDirection
+    initialView?: UsageView
 }
 
 export const UserUsageModal = NiceModal.create((props: IProps) => {
-    const { userId } = props
+    const { userId, initialRange, initialDirection = 'total', initialView = 'nodes' } = props
     const { t, i18n } = useTranslation()
-    const defaultRange = getDefaultDateRange()
-    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
+    const defaultRange = initialRange ?? getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>(initialDirection)
     const modal = useModal()
     const { modalProps } = useNiceMantineModal({ modal, drawer: true })
 
@@ -57,7 +60,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
     ])
     const [queryRange, setQueryRange] = useState<{ end: string; start: string }>(defaultRange)
     const [topLimit, setTopLimit] = useState(String(DEFAULT_TOP_LIMIT))
-    const [usageView, setUsageView] = useState<UsageView>('nodes')
+    const [usageView, setUsageView] = useState<UsageView>(initialView)
 
     const handleDateRangeChange = (value: DatesRangeValue<string>) => {
         if (value[0] === null && value[1] === null) {

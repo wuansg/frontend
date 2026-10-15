@@ -6,6 +6,12 @@ on:
     branches: [main]
     paths:
       - 'src/shared/_modals/users/user-access-audit/**'
+      - 'src/shared/_modals/users/user-usage-modal/**'
+      - 'src/pages/dashboard/statistic-users/**'
+      - 'src/shared/_modals/nodes/node-usage-stats/**'
+      - 'src/shared/_modals/nodes/nodes-usage-stats/**'
+      - 'src/shared/_modals/internal-squads/internal-squads-usage-drawer/**'
+      - 'src/widgets/dashboard/hosts/host-users-usage-statistic/**'
       - 'src/shared/_modals/nodes/node-deployments/**'
       - 'src/shared/_modals/nodes/edit-node-modal/**'
       - 'src/features/dashboard/config-profiles/config-editor-actions/**'
@@ -16,6 +22,7 @@ on:
       - 'scripts/test-access-audit-ui.cjs'
       - 'scripts/test-node-deployments-ui.cjs'
       - 'scripts/test-node-edits.ts'
+      - 'scripts/test-usage-navigation.cjs'
       - 'scripts/fixtures/node-deployments.*'
       - 'scripts/fixtures/access-audit.*'
       - '.github/workflows/access-audit.yml'
@@ -33,7 +40,7 @@ jobs:
           node-version: '24.x'
           cache: npm
       - run: npm ci
-      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run start:build
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run start:build
       - name: Verify selected-user opt-in, filters and mobile UI
         run: |
           npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2
