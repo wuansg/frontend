@@ -1,0 +1,270 @@
+{
+  "generatedAt": "2026-10-17T10:00:00.000Z",
+  "start": "2026-10-17",
+  "end": "2026-10-17",
+  "nodes": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000001",
+      "name": "fixture-node-1",
+      "address": "198.51.100.1",
+      "countryCode": "SG",
+      "provider": "Fixture provider",
+      "connected": true,
+      "disabled": false,
+      "mode": "FORWARDING_ONLY",
+      "coreOnline": false,
+      "reportedAt": "2026-10-17T10:00:00.000Z",
+      "stale": false,
+      "configPending": false,
+      "configBlocked": false,
+      "forwardingState": "applied",
+      "configValid": true,
+      "hashMatches": true,
+      "dnsStale": false,
+      "dnsReportedAt": "2026-10-17T10:00:00.000Z",
+      "inbounds": [],
+      "quota": {
+        "tracking": true,
+        "used": "123456",
+        "limit": "214748364800",
+        "resetDay": 24
+      },
+      "coreUsage": {
+        "upload": "0",
+        "download": "0",
+        "total": "0",
+        "lastRecordedAt": null,
+        "shared": false
+      },
+      "snapshot": {
+        "lastSuccessAt": "2026-10-17T10:00:00.000Z",
+        "pending": "0",
+        "gap": "0",
+        "error": false
+      },
+      "exitObservation": null
+    },
+    {
+      "uuid": "00000000-0000-4000-8000-000000000002",
+      "name": "fixture-node-2",
+      "address": "relay.example",
+      "countryCode": "SG",
+      "provider": "Fixture provider",
+      "connected": true,
+      "disabled": false,
+      "mode": "FORWARDING_ONLY",
+      "coreOnline": false,
+      "reportedAt": "2026-10-17T10:00:00.000Z",
+      "stale": false,
+      "configPending": false,
+      "configBlocked": false,
+      "forwardingState": "applied",
+      "configValid": true,
+      "hashMatches": true,
+      "dnsStale": false,
+      "dnsReportedAt": "2026-10-17T10:00:00.000Z",
+      "inbounds": [],
+      "quota": {
+        "tracking": true,
+        "used": "123456",
+        "limit": "214748364800",
+        "resetDay": 24
+      },
+      "coreUsage": {
+        "upload": "0",
+        "download": "0",
+        "total": "0",
+        "lastRecordedAt": null,
+        "shared": false
+      },
+      "snapshot": {
+        "lastSuccessAt": "2026-10-17T10:00:00.000Z",
+        "pending": "0",
+        "gap": "0",
+        "error": false
+      },
+      "exitObservation": null
+    },
+    {
+      "uuid": "00000000-0000-4000-8000-000000000003",
+      "name": "fixture-node-3",
+      "address": "core.example",
+      "countryCode": "SG",
+      "provider": "Fixture provider",
+      "connected": true,
+      "disabled": false,
+      "mode": "CORE_ACTIVE",
+      "coreOnline": true,
+      "reportedAt": "2026-10-17T10:00:00.000Z",
+      "stale": false,
+      "configPending": false,
+      "configBlocked": false,
+      "forwardingState": "applied",
+      "configValid": true,
+      "hashMatches": true,
+      "dnsStale": false,
+      "dnsReportedAt": "2026-10-17T10:00:00.000Z",
+      "inbounds": [
+        {
+          "uuid": "00000000-0000-4000-8000-000000000030",
+          "tag": "AnyTLS",
+          "protocol": "anytls",
+          "port": 443,
+          "transport": "TCP"
+        }
+      ],
+      "quota": {
+        "tracking": true,
+        "used": "123456",
+        "limit": "214748364800",
+        "resetDay": 24
+      },
+      "coreUsage": {
+        "upload": "123",
+        "download": "456",
+        "total": "579",
+        "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+        "shared": false
+      },
+      "snapshot": {
+        "lastSuccessAt": "2026-10-17T10:00:00.000Z",
+        "pending": "0",
+        "gap": "0",
+        "error": false
+      },
+      "exitObservation": {
+        "ip": "192.0.2.99",
+        "asn": "AS64500",
+        "country": "SG",
+        "observedAt": "2026-10-17T10:00:00.000Z",
+        "sourceType": "DEFAULT"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "key": "00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000011",
+      "id": "00000000-0000-4000-8000-000000000011",
+      "nodeUuid": "00000000-0000-4000-8000-000000000001",
+      "name": "forward-11",
+      "enabled": true,
+      "protocol": "TCP_UDP",
+      "listenPort": 54320,
+      "targetAddress": "relay.example",
+      "targetPort": 1234,
+      "resolvedTargetAddress": null,
+      "resolution": "MISSING",
+      "targetNodeUuids": ["00000000-0000-4000-8000-000000000002"],
+      "targetMatch": "ADDRESS",
+      "state": "APPLIED",
+      "usage": {
+        "upload": "9007199254740995",
+        "download": "103",
+        "total": "9007199254741098",
+        "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+        "shared": false
+      },
+      "protocols": [
+        {
+          "protocol": "TCP",
+          "usage": {
+            "upload": "9007199254740993",
+            "download": "100",
+            "total": "9007199254741093",
+            "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+            "shared": false
+          }
+        },
+        {
+          "protocol": "UDP",
+          "usage": {
+            "upload": "2",
+            "download": "3",
+            "total": "5",
+            "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+            "shared": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "00000000-0000-4000-8000-000000000002:00000000-0000-4000-8000-000000000012",
+      "id": "00000000-0000-4000-8000-000000000012",
+      "nodeUuid": "00000000-0000-4000-8000-000000000002",
+      "name": "forward-12",
+      "enabled": true,
+      "protocol": "TCP_UDP",
+      "listenPort": 1234,
+      "targetAddress": "egress-alias.example",
+      "targetPort": 443,
+      "resolvedTargetAddress": "203.0.113.3",
+      "resolution": "OBSERVED",
+      "targetNodeUuids": ["00000000-0000-4000-8000-000000000003"],
+      "targetMatch": "DNS",
+      "state": "APPLIED",
+      "usage": {
+        "upload": "0",
+        "download": "0",
+        "total": "0",
+        "lastRecordedAt": null,
+        "shared": false
+      },
+      "protocols": []
+    }
+  ],
+  "hosts": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000040",
+      "remark": "Fixture Host",
+      "address": "198.51.100.1",
+      "port": 54320,
+      "disabled": false,
+      "protocol": "anytls",
+      "transport": "TCP",
+      "inboundUuid": "00000000-0000-4000-8000-000000000030",
+      "boundNodeUuids": ["00000000-0000-4000-8000-000000000003"],
+      "entryNodeUuids": ["00000000-0000-4000-8000-000000000001"],
+      "entryMatch": "ADDRESS",
+      "usage": {
+        "upload": "123",
+        "download": "456",
+        "total": "579",
+        "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+        "shared": true
+      }
+    },
+    {
+      "uuid": "00000000-0000-4000-8000-000000000041",
+      "remark": "Unknown CDN alias",
+      "address": "cdn.example",
+      "port": 54320,
+      "disabled": false,
+      "protocol": "anytls",
+      "transport": "TCP",
+      "inboundUuid": "00000000-0000-4000-8000-000000000030",
+      "boundNodeUuids": ["00000000-0000-4000-8000-000000000003"],
+      "entryNodeUuids": [],
+      "entryMatch": "NONE",
+      "usage": {
+        "upload": "0",
+        "download": "0",
+        "total": "0",
+        "lastRecordedAt": null,
+        "shared": false
+      }
+    }
+  ],
+  "orphanUsage": [
+    {
+      "nodeUuid": "00000000-0000-4000-8000-000000000001",
+      "ruleId": "00000000-0000-4000-8000-000000000099",
+      "usage": {
+        "upload": "1",
+        "download": "1",
+        "total": "2",
+        "lastRecordedAt": "2026-10-17T10:00:00.000Z",
+        "shared": false
+      }
+    }
+  ]
+}

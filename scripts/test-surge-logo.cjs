@@ -1,5 +1,4 @@
 const assert = require('node:assert/strict')
-const { createHash } = require('node:crypto')
 const fs = require('node:fs')
 const Module = require('node:module')
 const path = require('node:path')
@@ -10,10 +9,7 @@ const ts = require('typescript')
 const root = path.resolve(__dirname, '..')
 const filename = path.join(root, 'src/shared/ui/logos/surge-logo.tsx')
 const source = fs.readFileSync(filename, 'utf8')
-const png = Buffer.from(source.match(/data:image\/png;base64,([A-Za-z0-9+/=]+)/)[1], 'base64')
-assert.equal(createHash('sha256').update(png).digest('hex'), '579c7fc9e1022003d88cedc2b4632f90236dfd90c9c280c166d69c147e99e684', 'Keep the official icon unchanged')
-assert.equal(png.readUInt32BE(16), 256)
-assert.equal(png.readUInt32BE(20), 256)
+assert.ok(!source.includes('data:image/'), 'Use vector geometry, not a fixed-color bitmap')
 
 // Load only this TSX component; render it with the actual Mantine/React SSR runtime.
 const m = new Module(filename, module)
@@ -23,7 +19,9 @@ m._compile(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind
 const { SurgeLogo } = m.exports
 for (const colorScheme of ['dark', 'light']) {
     for (const size of [16, 20, 24, 28, '1.5rem']) {
-        const html = renderToStaticMarkup(React.createElement(MantineProvider, { forceColorScheme: colorScheme }, React.createElement(SurgeLogo, { size, style: { opacity: 0.75 }, 'data-testid': 'surge-logo' })))
+        const color = colorScheme === 'dark' ? '#c1c2c5' : '#495057'
+        const html = renderToStaticMarkup(React.createElement(MantineProvider, { forceColorScheme: colorScheme }, React.createElement('span', { style: { color } }, React.createElement(SurgeLogo, { size, style: { opacity: 0.75 }, 'data-testid': 'surge-logo' }))))
+        const svg = html.match(/<svg\b[^>]*>[\s\S]*?<\/svg>/)[0]
         const cssSize = typeof size === 'number' ? size + 'px' : size
         assert.ok(html.includes('<svg'))
         assert.ok(html.includes('viewBox="0 0 256 256"'))
@@ -32,11 +30,22 @@ for (const colorScheme of ['dark', 'light']) {
         assert.ok(html.includes('opacity:0.75'))
         assert.ok(html.includes('flex-shrink:0'))
         assert.ok(html.includes('data-testid="surge-logo"'))
-        assert.ok(html.includes('<image'))
-        assert.ok(html.includes('href="data:image/png;base64,'))
-        assert.ok(!html.includes('href="https:'), 'Do not depend on the official server at runtime')
+        assert.ok(html.includes('color:' + color))
+        assert.ok(svg.includes('stroke="currentColor"'), 'Inherit the same color as neighboring icons')
+        assert.ok(svg.includes('fill="none"'), 'Keep the background transparent')
+        assert.ok(svg.includes('<circle cx="128" cy="128" r="118" stroke-width="18"'))
+        assert.ok(svg.includes('d="M74 145v14 M101 122v56 M128 83v84 M155 71v57 M182 91v15"'))
+        assert.ok(svg.includes('stroke-linecap="round"'))
+        assert.ok(!/<(?:image|filter|mask)\b|\bhref=|#[0-9a-f]{3,8}\b|rgba?\(/i.test(svg), 'No bitmap, external asset, filter or hardcoded color')
     }
 }
+const overridden = renderToStaticMarkup(React.createElement(MantineProvider, null, React.createElement(SurgeLogo, { size: 24, style: { color: 'rebeccapurple', width: '2rem' } })))
+assert.ok(overridden.includes('stroke="currentColor"'))
+assert.ok(overridden.includes('color:rebeccapurple'))
+assert.ok(overridden.includes('width:2rem'))
+const themed = renderToStaticMarkup(React.createElement(MantineProvider, null, React.createElement(SurgeLogo, { c: 'red' })))
+assert.ok(themed.includes('stroke="currentColor"'))
+assert.ok(themed.includes('color:var(--mantine-color-red-text)'))
 
 function nodes(node, predicate) {
     const result = predicate(node) ? [node] : []
@@ -64,4 +73,4 @@ for (const file of files) {
     assert.ok(surgeEntry.every(node => /\bSurgeLogo\b/.test(node.getText(ast))), 'Use the shared official Surge logo: ' + file)
 }
 assert.ok(fs.readFileSync(path.join(root, 'src/shared/ui/logos/index.ts'), 'utf8').includes("export * from './surge-logo'"))
-console.log('PASS official Surge PNG integrity, light/dark SSR, sizes/styles, offline rendering and six consistent icon entry points')
+console.log('PASS monochrome Surge ring/waveform, inherited colors, light/dark SSR, sizes/styles, offline rendering and six consistent icon entry points')

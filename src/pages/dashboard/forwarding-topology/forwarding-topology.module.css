@@ -1,0 +1,97 @@
+.content {
+    min-width: 0;
+}
+.content :global(.mantine-Badge-root),
+.content :global(.mantine-Badge-label) {
+    white-space: normal;
+    height: auto;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.source :global(.mantine-Select-option) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.filters {
+    align-items: flex-end;
+}
+.source {
+    flex: 1;
+    min-width: 220px;
+}
+.lane {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: max-content;
+    min-width: 100%;
+    padding: 4px 0 12px;
+}
+.hop {
+    width: 245px;
+    flex: 0 0 245px;
+    overflow-wrap: anywhere;
+    background: var(--mantine-color-body);
+}
+.endpoint {
+    font-family: var(--mantine-font-family-monospace);
+    overflow-wrap: anywhere;
+}
+.arrow {
+    flex: 0 0 92px;
+    width: 92px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    overflow-wrap: anywhere;
+}
+.arrow svg {
+    color: var(--mantine-color-dimmed);
+    flex-shrink: 0;
+}
+.nodeCard {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.graph {
+    border-left: 3px solid var(--mantine-color-blue-6);
+}
+.warning {
+    border-left-color: var(--mantine-color-orange-6);
+}
+.muted {
+    border-left-color: var(--mantine-color-gray-6);
+}
+.metric {
+    font-variant-numeric: tabular-nums;
+}
+@media (max-width: 48em) {
+    .filters {
+        align-items: stretch;
+    }
+    .filters > * {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+    .lane {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch;
+    }
+    .hop {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+    .arrow {
+        width: 100%;
+        flex: 0 0 auto;
+        min-height: 48px;
+        flex-direction: row;
+        padding: 4px;
+    }
+    .arrow svg {
+        transform: rotate(90deg);
+    }
+}

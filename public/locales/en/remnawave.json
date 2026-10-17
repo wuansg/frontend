@@ -23,6 +23,7 @@
     "nodes-bandwidth-table": "Bandwidth",
     "nodes-statistics": "Statistics",
     "nodes-metrics": "Metrics",
+    "forwarding-topology": "Forwarding topology",
     "users": "Users",
     "users-statistics": "User Statistics",
     "overview": "Overview",

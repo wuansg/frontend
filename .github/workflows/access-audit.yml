@@ -6,6 +6,11 @@ on:
     branches: [main]
     paths:
       - 'src/shared/ui/logos/**'
+      - 'src/pages/dashboard/forwarding-topology/**'
+      - 'src/app/router/router.tsx'
+      - 'src/shared/constants/routes.ts'
+      - 'scripts/test-forwarding-topology*.cjs'
+      - 'scripts/fixtures/forwarding-topology.*'
       - 'src/shared/ui/get-core-logo-from-type.tsx'
       - 'src/app/layouts/dashboard/main-layout/menu-sections/**'
       - 'src/widgets/dashboard/templates/templates-grid/**'
@@ -47,7 +52,7 @@ jobs:
           node-version: '24.x'
           cache: npm
       - run: npm ci
-      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run test:surge-logo && npm run start:build
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run test:surge-logo && npm run test:forwarding-topology && npm run start:build
       - name: Verify selected-user opt-in, filters and mobile UI
         run: |
           npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2
@@ -65,3 +70,4 @@ jobs:
           node scripts/test-access-audit-ui.cjs
           export NODE_DEPLOYMENTS_TEST_URL=http://127.0.0.1:5173/scripts/fixtures/node-deployments.html
           node scripts/test-node-deployments-ui.cjs
+          node scripts/test-forwarding-topology-ui.cjs

@@ -126,6 +126,12 @@ export const useMobileMenuSections = (): MenuItem[] => {
                             id: 'nodes-statistics'
                         },
                         {
+                            name: t('constants.forwarding-topology'),
+                            href: ROUTES.DASHBOARD.MANAGEMENT.FORWARDING_TOPOLOGY,
+                            icon: TbRoute,
+                            id: 'forwarding-topology'
+                        },
+                        {
                             name: t('constants.infra-billing'),
                             href: ROUTES.DASHBOARD.CRM.INFRA_BILLING,
                             icon: TbCreditCard,

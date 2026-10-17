@@ -117,7 +117,8 @@ for (const file of walk('src').filter((file) => /\.tsx?$/.test(file))) {
         callers.push(file)
     }
 }
-assert.equal(callers.length, 16, 'Every current picker entry must use the shared component')
+assert.equal(callers.length, 17, 'Every current picker entry must use the shared component')
+assert.ok(callers.includes('src/pages/dashboard/forwarding-topology/forwarding-topology.page.tsx'))
 for (const language of ['en', 'zh', 'ru', 'fa']) {
     const labels = JSON.parse(readFileSync(`public/locales/${language}/remnawave.json`, 'utf8'))[
         'date-picker-presets'
@@ -129,5 +130,5 @@ for (const language of ['en', 'zh', 'ru', 'fa']) {
         assert.ok(labels[key], `${language}: ${key}`)
 }
 console.log(
-    'PASS date quick presets: all 16 entries, 4 locales, UTC inclusive ranges, bounds, expiry base/time, leap years, DST, fresh today and immutable custom presets'
+    `PASS date quick presets: all ${callers.length} entries, 4 locales, UTC inclusive ranges, bounds, expiry base/time, leap years, DST, fresh today and immutable custom presets`
 )

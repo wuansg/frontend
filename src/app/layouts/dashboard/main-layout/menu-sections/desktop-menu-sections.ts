@@ -85,6 +85,12 @@ export const useDesktopMenuSections = (): MenuItem[] => {
                     id: 'nodes-management'
                 },
                 {
+                    name: t('constants.forwarding-topology'),
+                    href: ROUTES.DASHBOARD.MANAGEMENT.FORWARDING_TOPOLOGY,
+                    icon: TbRoute,
+                    id: 'forwarding-topology'
+                },
+                {
                     name: `${t('constants.node-plugins')} β`,
                     href: ROUTES.DASHBOARD.MANAGEMENT.NODE_PLUGINS.ROOT,
                     icon: TbPackage,

@@ -4,6 +4,7 @@ import { ConfigProfilesPageConnector } from '@pages/dashboard/config-profiles/co
 import { ConfigProfileByUuidPageConnector } from '@pages/dashboard/config-profiles/connectors/config-profile-by-uuid.page.connector'
 import { InfraBillingPageConnector } from '@pages/dashboard/crm/infra-billing/connectors/infra-billing.page.connector'
 import { ExternalSquadsPageConnector } from '@pages/dashboard/external-squads/connectors'
+import { ForwardingTopologyPage } from '@pages/dashboard/forwarding-topology/forwarding-topology.page'
 import { HomePageConnector } from '@pages/dashboard/home/connectors'
 import { HostsPageConnector } from '@pages/dashboard/hosts/ui/connectors'
 import { HttpStatsPageConnector } from '@pages/dashboard/http-stats/ui/connectors/http-stats.page.connector'
@@ -84,6 +85,10 @@ const router = createBrowserRouter(
                         <Route
                             element={<NodesPageConnector />}
                             path={ROUTES.DASHBOARD.MANAGEMENT.NODES}
+                        />
+                        <Route
+                            element={<ForwardingTopologyPage />}
+                            path={ROUTES.DASHBOARD.MANAGEMENT.FORWARDING_TOPOLOGY}
                         />
                         <Route
                             element={<StatisticNodesConnector />}

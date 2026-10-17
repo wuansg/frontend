@@ -14,6 +14,7 @@
     "year-2099": "2099 年"
   },
   "constants": {
+    "forwarding-topology": "转发拓扑",
     "dashboard": "仪表",
     "config": "sing-box 配置",
     "home": "首页",

@@ -148,6 +148,8 @@ scripts/**
 !scripts/test-node-edits.ts
 !scripts/test-usage-navigation.cjs
 !scripts/test-surge-logo.cjs
+!scripts/test-forwarding-topology.cjs
+!scripts/test-forwarding-topology-ui.cjs
 !scripts/test-node-deployments-ui.cjs
 !scripts/fixtures/
 scripts/fixtures/**
@@ -159,6 +161,9 @@ scripts/fixtures/**
 !scripts/fixtures/
 !scripts/fixtures/access-audit.html
 !scripts/fixtures/access-audit.tsx
+!scripts/fixtures/forwarding-topology.html
+!scripts/fixtures/forwarding-topology.tsx
+!scripts/fixtures/forwarding-topology.json
 
 public/assets/**
 !public/assets/

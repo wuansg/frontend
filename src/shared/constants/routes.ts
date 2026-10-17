@@ -18,6 +18,7 @@ export const ROUTES = {
             NODES: '/dashboard/management/nodes',
             NODES_STATS: '/dashboard/management/stats/nodes',
             NODES_METRICS: '/dashboard/management/metrics/nodes',
+            FORWARDING_TOPOLOGY: '/dashboard/management/forwarding-topology',
             SUBSCRIPTION_SETTINGS: '/dashboard/management/subscription-settings',
             RESPONSE_RULES: '/dashboard/management/response-rules',
             CONFIG_PROFILES: '/dashboard/management/config-profiles',
