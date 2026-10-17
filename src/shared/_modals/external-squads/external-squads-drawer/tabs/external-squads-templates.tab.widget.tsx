@@ -6,12 +6,12 @@ import {
 } from '@remnawave/backend-contract'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbDeviceFloppy, TbFile } from 'react-icons/tb'
+import { TbDeviceFloppy } from 'react-icons/tb'
 
 import { queryClient } from '@shared/api'
 import { QueryKeys, useUpdateExternalSquad } from '@shared/api/hooks'
 import { useGetSubscriptionTemplates } from '@shared/api/hooks/subscription-template/subscription-template.query.hooks'
-import { MihomoLogo, SingboxLogo, StashLogo, Base64Logo } from '@shared/ui/logos'
+import { MihomoLogo, SingboxLogo, StashLogo, Base64Logo, SurgeLogo } from '@shared/ui/logos'
 
 interface IProps {
     externalSquad: GetExternalSquadByUuidCommand.Response['response']
@@ -138,7 +138,7 @@ export const ExternalSquadsTemplatesTabWidget = (props: IProps) => {
             case SUBSCRIPTION_TEMPLATE_TYPE.STASH:
                 return <StashLogo size={16} />
             case SUBSCRIPTION_TEMPLATE_TYPE.SURGE:
-                return <TbFile size={16} />
+                return <SurgeLogo size={16} />
             case SUBSCRIPTION_TEMPLATE_TYPE.XRAY_BASE64:
                 return <Base64Logo size={16} />
             default:

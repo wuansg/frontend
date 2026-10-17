@@ -5,6 +5,13 @@ on:
   push:
     branches: [main]
     paths:
+      - 'src/shared/ui/logos/**'
+      - 'src/shared/ui/get-core-logo-from-type.tsx'
+      - 'src/app/layouts/dashboard/main-layout/menu-sections/**'
+      - 'src/widgets/dashboard/templates/templates-grid/**'
+      - 'src/shared/_modals/external-squads/external-squads-drawer/tabs/external-squads-templates.tab.widget.tsx'
+      - 'src/shared/ui/forms/hosts/base-host-form/**'
+      - 'scripts/test-surge-logo.cjs'
       - 'src/shared/_modals/users/user-access-audit/**'
       - 'src/shared/_modals/users/user-usage-modal/**'
       - 'src/pages/dashboard/statistic-users/**'
@@ -40,7 +47,7 @@ jobs:
           node-version: '24.x'
           cache: npm
       - run: npm ci
-      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run start:build
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run test:surge-logo && npm run start:build
       - name: Verify selected-user opt-in, filters and mobile UI
         run: |
           npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2

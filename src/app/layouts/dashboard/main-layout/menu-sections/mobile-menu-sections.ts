@@ -14,7 +14,6 @@ import {
     TbCirclesRelation,
     TbCreditCard,
     TbDeviceAnalytics,
-    TbFile,
     TbFlame,
     TbFolder,
     TbHexagon,
@@ -27,7 +26,7 @@ import {
 
 import { ROUTES } from '@shared/constants'
 import { Logo } from '@shared/ui'
-import { Base64Logo, MihomoLogo, SingboxLogo, StashLogo } from '@shared/ui/logos'
+import { Base64Logo, MihomoLogo, SingboxLogo, StashLogo, SurgeLogo } from '@shared/ui/logos'
 
 import { MenuItem } from './interfaces'
 
@@ -207,7 +206,7 @@ export const useMobileMenuSections = (): MenuItem[] => {
                                 ':type',
                                 SUBSCRIPTION_TEMPLATE_TYPE.SURGE
                             ),
-                            icon: TbFile,
+                            icon: SurgeLogo,
                             id: 'surge'
                         }
                     ]
