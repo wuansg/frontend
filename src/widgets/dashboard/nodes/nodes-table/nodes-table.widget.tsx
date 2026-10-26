@@ -215,6 +215,9 @@ export const NodesTableWidget = memo((props: IProps) => {
                                         <Box
                                             data-index={virtualItem.index}
                                             key={item.uuid}
+                                            // Measure the wrapper, including the card's bottom margin.
+                                            // Captions and responsive layouts can change its height.
+                                            ref={virtualizer.measureElement}
                                             style={{
                                                 position: 'absolute',
                                                 marginLeft: isMobile ? '0px' : '16px',

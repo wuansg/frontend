@@ -9,9 +9,12 @@ on:
       - 'src/shared/ui/node-traffic-progress/**'
       - 'src/shared/utils/node-traffic-budget.ts'
       - 'src/widgets/dashboard/nodes/node-card/**'
+      - 'src/widgets/dashboard/nodes/nodes-table/**'
       - 'src/widgets/dashboard/nodes/node-details-card/**'
       - 'scripts/test-node-traffic-budget*'
       - 'scripts/fixtures/node-traffic-budget.*'
+      - 'scripts/test-nodes-table-ui.cjs'
+      - 'scripts/fixtures/nodes-table.*'
       - 'src/pages/dashboard/forwarding-topology/**'
       - 'src/app/router/router.tsx'
       - 'src/shared/constants/routes.ts'
@@ -78,3 +81,4 @@ jobs:
           node scripts/test-node-deployments-ui.cjs
           node scripts/test-forwarding-topology-ui.cjs
           node scripts/test-node-traffic-budget-ui.cjs
+          node scripts/test-nodes-table-ui.cjs

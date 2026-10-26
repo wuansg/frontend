@@ -159,6 +159,7 @@ scripts/fixtures/**
 !scripts/test-traffic-usage.ts
 !scripts/test-node-traffic-budget.ts
 !scripts/test-node-traffic-budget-ui.cjs
+!scripts/test-nodes-table-ui.cjs
 !scripts/test-access-audit-ui.cjs
 !scripts/fixtures/
 !scripts/fixtures/access-audit.html
@@ -168,6 +169,8 @@ scripts/fixtures/**
 !scripts/fixtures/forwarding-topology.json
 !scripts/fixtures/node-traffic-budget.html
 !scripts/fixtures/node-traffic-budget.tsx
+!scripts/fixtures/nodes-table.html
+!scripts/fixtures/nodes-table.tsx
 
 public/assets/**
 !public/assets/
