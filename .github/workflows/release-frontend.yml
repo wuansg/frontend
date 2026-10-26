@@ -68,6 +68,7 @@ jobs:
         run: |
           npm ci
           npm run test:traffic-usage
+          npm run test:node-traffic-budget
           npm run start:build
 
       - name: Create ZIP archive of /dist

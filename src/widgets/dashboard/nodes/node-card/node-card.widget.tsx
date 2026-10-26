@@ -20,6 +20,7 @@ import {
 import { TbAlertCircle } from 'react-icons/tb'
 
 import { Logo } from '@shared/ui/logo'
+import { NodeTrafficProgress } from '@shared/ui/node-traffic-progress'
 import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeCoreDisplay } from '@shared/utils/node-core-version'
@@ -341,11 +342,12 @@ export const NodeCardWidget = memo((props: IProps) => {
                                             {maxData}
                                         </Text>
                                     </Flex>
-                                    <Progress
+                                    <NodeTrafficProgress
                                         color={
                                             node.isTrafficTrackingActive ? progressColor : 'teal'
                                         }
-                                        radius="sm"
+                                        compact
+                                        node={node}
                                         size="sm"
                                         value={node.isTrafficTrackingActive ? percentage : 100}
                                     />
@@ -591,11 +593,12 @@ export const NodeCardWidget = memo((props: IProps) => {
                         </Flex>
                     </Box>
 
-                    <Progress
+                    <NodeTrafficProgress
                         color={
                             node.isTrafficTrackingActive && percentage >= 0 ? progressColor : 'teal'
                         }
-                        radius="sm"
+                        compact
+                        node={node}
                         size="xs"
                         value={node.isTrafficTrackingActive && percentage >= 0 ? percentage : 100}
                     />

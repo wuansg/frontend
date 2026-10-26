@@ -1439,6 +1439,18 @@
       "interface": "接口"
     }
   },
+  "node-traffic-progress": {
+    "actual": "节点已用流量",
+    "expected": "截至今日均分：{{amount}}（{{percent}}%）",
+    "expected-short": "均分应已用 {{amount}}",
+    "ahead": "超出均分 {{amount}}",
+    "behind": "节余 {{amount}}",
+    "on-track": "与均分持平",
+    "daily": "每日 {{amount}}",
+    "cycle-day": "周期第 {{day}} / {{days}} 天",
+    "cycle": "周期（UTC）：{{start}} — {{end}}",
+    "explanation": "均分参考，不是实际用量。按重置周期的实际天数分配，包含今天的全天额度，按 UTC 计算。"
+  },
   "node-stats": {
     "card": {
       "stats": "统计信息",

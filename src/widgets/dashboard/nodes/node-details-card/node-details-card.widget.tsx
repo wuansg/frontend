@@ -12,7 +12,6 @@ import {
     Group,
     Loader,
     Paper,
-    Progress,
     SimpleGrid,
     Text,
     ThemeIconProps,
@@ -35,6 +34,7 @@ import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useDisableNode, useEnableNode, useGetNodeMetadata } from '@shared/api/hooks'
 import { Logo } from '@shared/ui'
+import { NodeTrafficProgress } from '@shared/ui/node-traffic-progress'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
@@ -535,9 +535,9 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                         </Text>
                     </Group>
 
-                    <Progress
+                    <NodeTrafficProgress
                         color={getProgressColor()}
-                        radius="sm"
+                        node={node}
                         size="sm"
                         value={trafficData.isUnlimited ? 100 : trafficData.percentage}
                     />

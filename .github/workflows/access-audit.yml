@@ -6,6 +6,12 @@ on:
     branches: [main]
     paths:
       - 'src/shared/ui/logos/**'
+      - 'src/shared/ui/node-traffic-progress/**'
+      - 'src/shared/utils/node-traffic-budget.ts'
+      - 'src/widgets/dashboard/nodes/node-card/**'
+      - 'src/widgets/dashboard/nodes/node-details-card/**'
+      - 'scripts/test-node-traffic-budget*'
+      - 'scripts/fixtures/node-traffic-budget.*'
       - 'src/pages/dashboard/forwarding-topology/**'
       - 'src/app/router/router.tsx'
       - 'src/shared/constants/routes.ts'
@@ -52,7 +58,7 @@ jobs:
           node-version: '24.x'
           cache: npm
       - run: npm ci
-      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-edits && npm run test:usage-navigation && npm run test:surge-logo && npm run test:forwarding-topology && npm run start:build
+      - run: npm run test:date-presets && npm run test:traffic-usage && npm run test:node-traffic-budget && npm run test:node-edits && npm run test:usage-navigation && npm run test:surge-logo && npm run test:forwarding-topology && npm run start:build
       - name: Verify selected-user opt-in, filters and mobile UI
         run: |
           npm install --prefix "$RUNNER_TEMP/audit-browser" --no-save --package-lock=false playwright-core@1.58.2
@@ -71,3 +77,4 @@ jobs:
           export NODE_DEPLOYMENTS_TEST_URL=http://127.0.0.1:5173/scripts/fixtures/node-deployments.html
           node scripts/test-node-deployments-ui.cjs
           node scripts/test-forwarding-topology-ui.cjs
+          node scripts/test-node-traffic-budget-ui.cjs

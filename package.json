@@ -1,6 +1,6 @@
 {
   "name": "@remnawave/frontend",
-  "version": "3.19.0",
+  "version": "3.20.0",
   "private": false,
   "homepage": "https://github.com/remnawave",
   "bugs": {
@@ -14,6 +14,7 @@
   },
   "type": "module",
   "scripts": {
+    "test:node-traffic-budget": "node --experimental-strip-types scripts/test-node-traffic-budget.ts",
     "test:forwarding-topology": "node scripts/test-forwarding-topology.cjs",
     "test:surge-logo": "node scripts/test-surge-logo.cjs",
     "test:usage-navigation": "node scripts/test-usage-navigation.cjs",

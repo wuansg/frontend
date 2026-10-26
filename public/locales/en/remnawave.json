@@ -1456,6 +1456,18 @@
       "interface": "Interface"
     }
   },
+  "node-traffic-progress": {
+    "actual": "Node traffic used",
+    "expected": "Daily budget through today: {{amount}} ({{percent}}%)",
+    "expected-short": "Expected: {{amount}}",
+    "ahead": "Over budget by {{amount}}",
+    "behind": "Under budget by {{amount}}",
+    "on-track": "On budget",
+    "daily": "{{amount}} per day",
+    "cycle-day": "Day {{day}} of {{days}}",
+    "cycle": "Cycle (UTC): {{start}} — {{end}}",
+    "explanation": "Reference only, not actual usage. The quota is divided over the reset cycle's calendar days, including today's full allowance (UTC)."
+  },
   "node-stats": {
     "card": {
       "stats": "Stats",
