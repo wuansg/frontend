@@ -60,7 +60,7 @@ import { showModal } from '@shared/_modals/show-modal'
 import { useIsMobile } from '@shared/hooks'
 import { ChipMultiSelect } from '@shared/ui/chip-multi-select'
 import { DrawerFooter } from '@shared/ui/drawer-footer'
-import { MihomoLogo, SingboxLogo, StashLogo, SurgeLogo } from '@shared/ui/logos'
+import { MihomoLogo, ShadowrocketLogo, SingboxLogo, StashLogo, SurgeLogo } from '@shared/ui/logos'
 import { Base64Logo } from '@shared/ui/logos/base64-logo'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TemplateInfoPopoverShared } from '@shared/ui/popovers'
@@ -98,6 +98,10 @@ const SUBSCRIPTION_TYPES = {
     [SUBSCRIPTION_TEMPLATE_TYPE.SURGE]: {
         label: 'Surge',
         icon: <SurgeLogo size={16} />
+    },
+    [SUBSCRIPTION_TEMPLATE_TYPE.SHADOWROCKET]: {
+        label: 'Shadowrocket',
+        icon: <ShadowrocketLogo size={16} />
     }
 } as const
 

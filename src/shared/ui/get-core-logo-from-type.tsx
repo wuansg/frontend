@@ -1,7 +1,7 @@
 import { TSubscriptionTemplateType } from '@remnawave/backend-contract'
 import { TbFile } from 'react-icons/tb'
 
-import { MihomoLogo, SingboxLogo, StashLogo, SurgeLogo } from './logos'
+import { MihomoLogo, ShadowrocketLogo, SingboxLogo, StashLogo, SurgeLogo } from './logos'
 
 interface IProps {
     size?: number
@@ -22,6 +22,8 @@ export const getCoreLogoFromType = (props: IProps) => {
             return <StashLogo size={size} />
         case 'SURGE':
             return <SurgeLogo size={size} />
+        case 'SHADOWROCKET':
+            return <ShadowrocketLogo size={size} />
         default:
             return <TbFile size={size} />
     }

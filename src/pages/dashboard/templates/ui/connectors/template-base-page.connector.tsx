@@ -35,6 +35,8 @@ export function TemplateBasePageConnector() {
         case SUBSCRIPTION_TEMPLATE_TYPE.SURGE:
             title = 'Surge'
             break
+        case SUBSCRIPTION_TEMPLATE_TYPE.SHADOWROCKET:
+            title = 'Shadowrocket'
             break
         default:
             navigate(ROUTES.DASHBOARD.HOME, { replace: true })

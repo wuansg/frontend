@@ -9,6 +9,7 @@ import {
 } from '@shared/api/hooks'
 import { queryClient } from '@shared/api/query-client'
 import { MihomoLogo } from '@shared/ui/logos/mihomo-logo'
+import { ShadowrocketLogo } from '@shared/ui/logos/shadowrocket-logo'
 import { SingboxLogo } from '@shared/ui/logos/singbox-logo'
 import { StashLogo } from '@shared/ui/logos/stash-logo'
 import { SurgeLogo } from '@shared/ui/logos/surge-logo'
@@ -83,6 +84,8 @@ export function TemplatesGridWidget(props: IProps) {
                 return <StashLogo size={28} />
             case 'SURGE':
                 return <SurgeLogo size={28} />
+            case 'SHADOWROCKET':
+                return <ShadowrocketLogo size={28} />
             default:
                 return <PiBracketsAngle size={28} />
         }

@@ -21,7 +21,14 @@ import {
 
 import { ROUTES } from '@shared/constants'
 import { Logo } from '@shared/ui'
-import { Base64Logo, MihomoLogo, SingboxLogo, StashLogo, SurgeLogo } from '@shared/ui/logos'
+import {
+    Base64Logo,
+    MihomoLogo,
+    ShadowrocketLogo,
+    SingboxLogo,
+    StashLogo,
+    SurgeLogo
+} from '@shared/ui/logos'
 
 import { MenuItem } from './interfaces'
 
@@ -196,6 +203,15 @@ export const useDesktopMenuSections = (): MenuItem[] => {
                             ),
                             icon: SurgeLogo,
                             id: 'surge'
+                        },
+                        {
+                            name: 'Shadowrocket',
+                            href: ROUTES.DASHBOARD.TEMPLATES.TEMPLATES_BY_TYPE.replace(
+                                ':type',
+                                SUBSCRIPTION_TEMPLATE_TYPE.SHADOWROCKET
+                            ),
+                            icon: ShadowrocketLogo,
+                            id: 'shadowrocket'
                         }
                     ]
                 },

@@ -50,7 +50,9 @@ export function TemplateEditorPageConnector() {
             title = 'Surge'
             editorType = 'yaml'
             break
-            editorType = 'json'
+        case SUBSCRIPTION_TEMPLATE_TYPE.SHADOWROCKET:
+            title = 'Shadowrocket'
+            editorType = 'yaml'
             break
         default:
             navigate(ROUTES.DASHBOARD.HOME, { replace: true })
