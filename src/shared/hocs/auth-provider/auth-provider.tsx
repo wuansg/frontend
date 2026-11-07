@@ -1,6 +1,7 @@
 import consola from 'consola/browser'
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { clearQueryClient } from '@shared/api'
 import { logoutEvents } from '@shared/emitters'
 import { resetAllStores } from '@shared/hocs/store-wrapper'
 
@@ -22,23 +23,24 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isInitialized, setIsInitialized] = useState(false)
-    const [isLoggedOut, setIsLoggedOut] = useState(false)
+    const isLoggingOutRef = useRef(false)
     const token = useToken()
 
-    const logoutUser = () => {
-        if (isLoggedOut) {
+    const logoutUser = useCallback(() => {
+        if (isLoggingOutRef.current) {
             return
         }
 
         try {
-            setIsLoggedOut(true)
+            isLoggingOutRef.current = true
             setIsAuthenticated(false)
             removeToken()
             resetAllStores()
+            clearQueryClient()
         } finally {
-            setIsLoggedOut(false)
+            isLoggingOutRef.current = false
         }
-    }
+    }, [])
 
     useEffect(() => {
         const unsubscribe = logoutEvents.subscribe(() => {
@@ -46,7 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         })
 
         return unsubscribe
-    }, [])
+    }, [logoutUser])
 
     useEffect(() => {
         ;(async () => {
@@ -58,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             try {
                 setIsAuthenticated(true)
-                setIsLoggedOut(false)
+                isLoggingOutRef.current = false
             } catch (error) {
                 consola.error(error)
                 logoutUser()

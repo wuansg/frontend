@@ -52,7 +52,7 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response) {
             const responseStatus = error.response.status
-            if (responseStatus === 403 || responseStatus === 401) {
+            if (responseStatus === 401) {
                 try {
                     logoutEvents.emit()
                 } catch (error) {

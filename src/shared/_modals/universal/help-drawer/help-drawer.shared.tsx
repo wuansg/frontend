@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbAlertCircle, TbQuestionMark } from 'react-icons/tb'
 import ReactMarkdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
@@ -105,9 +104,7 @@ export const HelpDrawerShared = NiceModal.create((props: IProps) => {
             >
                 {!loading && content && (
                     <Typography className={classes.root}>
-                        <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
-                            {content}
-                        </ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
                     </Typography>
                 )}
             </Box>
