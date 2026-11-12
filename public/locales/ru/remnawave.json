@@ -2419,8 +2419,32 @@
     "running-description": "Нода проверяет соединение; обычно это занимает до минуты.",
     "failed-description": "Нода не смогла завершить GeoCheck.",
     "view-image": "Отчёт",
+    "view-trace": "Трассировка",
     "no-image": "В отчёте нет изображения; откройте JSON",
-    "requires-node-version": "Требуется Remnawave Node {{version}} или новее"
+    "requires-node-version": "Требуется Remnawave Node {{version}} или новее",
+    "trace": {
+      "empty": "Нет данных трассировки",
+      "score": "Оценка",
+      "floor": "Мин. задержка",
+      "no-icmp": "Без ICMP",
+      "anycast": "Anycast",
+      "rtt": "RTT",
+      "excess": "Превышение",
+      "jitter": "Джиттер",
+      "loss": "Потери",
+      "hops": "Хопы",
+      "verdict": {
+        "direct": "Прямой",
+        "on-net": "Внутри сети",
+        "peered": "Пиринг",
+        "regional": "Региональный",
+        "transit": "Транзит",
+        "detour": "Обходной",
+        "intercepted": "Перехвачен",
+        "failed": "Ошибка",
+        "unreachable": "Недоступен"
+      }
+    }
   },
   "node-deployment-card": {
     "title": "Развёртывание и версии",

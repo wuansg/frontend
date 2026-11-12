@@ -2448,8 +2448,32 @@
     "running-description": "节点正在探测网络连通性，通常需要一分钟以内。",
     "failed-description": "节点未能完成地理检测。",
     "view-image": "查看报告",
+    "view-trace": "路由追踪",
     "no-image": "报告中没有图像，请打开 JSON",
-    "requires-node-version": "需要 Remnawave Node {{version}} 或更高版本"
+    "requires-node-version": "需要 Remnawave Node {{version}} 或更高版本",
+    "trace": {
+      "empty": "暂无路由追踪数据",
+      "score": "评分",
+      "floor": "基准延迟",
+      "no-icmp": "ICMP 不可用",
+      "anycast": "任播",
+      "rtt": "往返延迟",
+      "excess": "附加延迟",
+      "jitter": "抖动",
+      "loss": "丢包",
+      "hops": "跳数",
+      "verdict": {
+        "direct": "直连",
+        "on-net": "网内直达",
+        "peered": "对等互联",
+        "regional": "区域直达",
+        "transit": "中转",
+        "detour": "绕路",
+        "intercepted": "被拦截",
+        "failed": "失败",
+        "unreachable": "不可达"
+      }
+    }
   },
   "node-deployment-card": {
     "title": "部署与版本管控",
