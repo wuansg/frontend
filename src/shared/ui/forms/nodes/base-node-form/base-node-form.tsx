@@ -138,6 +138,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                     <NodeForwardingCard
                         cardVariants={cardVariants}
                         motionWrapper={MotionWrapper}
+                        node={node}
                         nodeUuid={node.uuid}
                     />
                 </MotionStack>
@@ -207,6 +208,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         <NodeForwardingCard
                             cardVariants={cardVariants}
                             motionWrapper={MotionWrapper}
+                            node={node}
                             nodeUuid={node.uuid}
                         />
 

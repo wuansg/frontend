@@ -150,6 +150,7 @@ scripts/**
 !scripts/test-surge-logo.cjs
 !scripts/test-forwarding-topology.cjs
 !scripts/test-forwarding-topology-ui.cjs
+!scripts/test-node-forwarding-ui.ts
 !scripts/test-node-deployments-ui.cjs
 !scripts/fixtures/
 scripts/fixtures/**

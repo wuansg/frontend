@@ -16,6 +16,7 @@
   "scripts": {
     "test:node-traffic-budget": "node --experimental-strip-types scripts/test-node-traffic-budget.ts",
     "test:forwarding-topology": "node scripts/test-forwarding-topology.cjs",
+    "test:node-forwarding-ui": "node --experimental-strip-types scripts/test-node-forwarding-ui.ts",
     "test:surge-logo": "node scripts/test-surge-logo.cjs",
     "test:usage-navigation": "node scripts/test-usage-navigation.cjs",
     "test:node-edits": "node --experimental-strip-types scripts/test-node-edits.ts",

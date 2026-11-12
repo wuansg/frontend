@@ -6,6 +6,7 @@ import {
     SyncNodeForwardingCommand,
     UpdateNodeForwardingCommand
 } from '@remnawave/backend-contract'
+import { t } from 'i18next'
 
 import { createGetQueryHook, createMutationHook, errorHandler } from '../../tsq-helpers'
 import { nodesQueryKeys } from './nodes.query.hooks'
@@ -52,13 +53,13 @@ export const useUpdateNodeForwarding = createMutationHook({
         onSuccess: () =>
             notifications.show({
                 color: 'teal',
-                title: 'Forwarding',
-                message: 'Forwarding configuration applied'
+                title: t('node-forwarding-card.toast-title'),
+                message: t('node-forwarding-card.toast-applied')
             }),
         onError: (error) =>
             notifications.show({
                 color: 'red',
-                title: 'Forwarding',
+                title: t('node-forwarding-card.toast-title'),
                 message: error.message
             })
     }
@@ -73,10 +74,14 @@ export const useSyncNodeForwarding = createMutationHook({
         onSuccess: () =>
             notifications.show({
                 color: 'teal',
-                title: 'Forwarding',
-                message: 'Rules synchronized'
+                title: t('node-forwarding-card.toast-title'),
+                message: t('node-forwarding-card.toast-synced')
             }),
         onError: (error) =>
-            notifications.show({ color: 'red', title: 'Forwarding', message: error.message })
+            notifications.show({
+                color: 'red',
+                title: t('node-forwarding-card.toast-title'),
+                message: error.message
+            })
     }
 })
