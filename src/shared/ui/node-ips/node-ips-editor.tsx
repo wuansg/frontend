@@ -4,9 +4,11 @@ import { DragDropProvider, DragEndEvent } from '@dnd-kit/react'
 import {
     ActionIcon,
     Alert,
-    Center,
+    Badge,
+    Button,
     Group,
     MantineSize,
+    Paper,
     ScrollArea,
     Stack,
     Text,
@@ -24,6 +26,7 @@ import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbNetwork, TbPlus } from 'react-icons/tb'
 
+import surface from '@shared/ui/node-panel-surface.module.css'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 
@@ -41,10 +44,10 @@ interface IProps<T extends CreateNodeCommand.RequestBody | UpdateNodeCommand.Req
     size?: MantineSize
 }
 
-const VISIBLE_ROWS = 3
-const ROW_GAP = 10
-const ROW_HEIGHT: Record<string, number> = { xs: 30, sm: 36, md: 42 }
-const DEFAULT_ROW_HEIGHT = 36
+const VISIBLE_ROWS = 4
+const ROW_GAP = 8
+const ROW_HEIGHT: Record<string, number> = { xs: 30, sm: 34, md: 42 }
+const DEFAULT_ROW_HEIGHT = 34
 
 let rowIdCounter = 0
 const nextRowId = () => {
@@ -60,7 +63,7 @@ export const NodeIpsEditor = <
 >(
     props: IProps<T>
 ) => {
-    const { form, size = 'sm' } = props
+    const { form, size = 'xs' } = props
 
     const { t } = useTranslation()
 
@@ -77,6 +80,8 @@ export const NodeIpsEditor = <
             }))
 
             form.setFieldValue('ips', nextIps as never, { forceUpdate: false })
+            form.setTouched({ ips: true } as never)
+            form.setDirty({ ips: true } as never)
         },
         [form]
     )
@@ -121,52 +126,73 @@ export const NodeIpsEditor = <
     }
 
     const isFull = items.length >= MAX_NODE_IPS
+    const subtitle =
+        items.length > 0
+            ? t('node-ips.subtitle-count', { count: items.length })
+            : t('node-ips.subtitle-empty')
 
     return (
         <SectionCard.Root>
             <SectionCard.Section>
-                <Group gap="sm" justify="space-between" wrap="nowrap">
+                <Group gap="xs" justify="space-between" wrap="nowrap">
                     <BaseOverlayHeader
                         iconColor="cyan"
                         IconComponent={TbNetwork}
                         iconVariant="soft"
+                        subtitle={subtitle}
                         title={t('node-ips.title')}
                         titleOrder={5}
                     />
 
-                    <Tooltip
-                        label={
-                            isFull
-                                ? t('node-ips.max-ips-reached', { max: MAX_NODE_IPS })
-                                : t('node-ips.add-ip')
-                        }
-                    >
-                        <ActionIcon
-                            color="cyan"
-                            disabled={isFull}
-                            onClick={handleAdd}
-                            size="lg"
-                            variant="soft"
+                    <Group gap={6} style={{ flexShrink: 0 }} wrap="nowrap">
+                        {items.length > 0 && (
+                            <Badge color="cyan" size="xs" variant="light">
+                                {items.length}/{MAX_NODE_IPS}
+                            </Badge>
+                        )}
+                        <Tooltip
+                            label={
+                                isFull
+                                    ? t('node-ips.max-ips-reached', { max: MAX_NODE_IPS })
+                                    : t('node-ips.add-ip')
+                            }
                         >
-                            <TbPlus size={18} />
-                        </ActionIcon>
-                    </Tooltip>
+                            <ActionIcon
+                                color="cyan"
+                                disabled={isFull}
+                                size="md"
+                                variant="light"
+                                onClick={handleAdd}
+                            >
+                                <TbPlus size={16} />
+                            </ActionIcon>
+                        </Tooltip>
+                    </Group>
                 </Group>
             </SectionCard.Section>
 
             <SectionCard.Section>
                 <Stack gap="sm">
                     {items.length === 0 ? (
-                        <Center py="xs">
+                        <Paper className={surface.emptyState} p="md" radius="md">
                             <Stack align="center" gap="xs">
-                                <ThemeIcon color="gray" radius="xl" size={48} variant="soft">
-                                    <TbNetwork size={24} />
+                                <ThemeIcon color="cyan" radius="xl" size="lg" variant="light">
+                                    <TbNetwork size={20} />
                                 </ThemeIcon>
-                                <Text c="dimmed" fw={600} size="sm" ta="center">
+                                <Text c="dimmed" fw={500} size="xs" ta="center">
                                     {t('node-ips.no-ips-yet')}
                                 </Text>
+                                <Button
+                                    color="cyan"
+                                    leftSection={<TbPlus size={14} />}
+                                    size="xs"
+                                    variant="light"
+                                    onClick={handleAdd}
+                                >
+                                    {t('node-ips.add-ip')}
+                                </Button>
                             </Stack>
-                        </Center>
+                        </Paper>
                     ) : (
                         <DragDropProvider
                             modifiers={[RestrictToVerticalAxis]}
@@ -183,19 +209,19 @@ export const NodeIpsEditor = <
                                 <Stack gap="xs" px={4}>
                                     {items.map((item, index) => (
                                         <NodeIpRow
+                                            key={item.id}
                                             autoFocus={item.id === addedRowId}
                                             error={resolveRowError(item, index)}
                                             id={item.id}
                                             index={index}
                                             ip={item.ip}
-                                            key={item.id}
+                                            size={size}
+                                            status={item.status}
                                             onChangeIp={(ip) => handleChangeIp(item.id, ip)}
                                             onChangeStatus={(status) =>
                                                 handleChangeStatus(item.id, status)
                                             }
                                             onRemove={() => handleRemove(item.id)}
-                                            size={size}
-                                            status={item.status}
                                         />
                                     ))}
                                 </Stack>

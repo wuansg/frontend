@@ -53,11 +53,13 @@ export const NodeSystemCardWidget = memo((props: IProps) => {
         }
     }
 
-    const memoryData = useMemo(() => {
-        if (!node.system) return null
+    const system = node.system
 
-        const total = node.system.info.memoryTotal
-        const free = node.system.stats.memoryFree
+    const memoryData = useMemo(() => {
+        if (!system) return null
+
+        const total = system.info.memoryTotal
+        const free = system.stats.memoryFree
         const used = total - free
         const percentage = total > 0 ? Math.round((used / total) * 100) : 0
 
@@ -72,17 +74,17 @@ export const NodeSystemCardWidget = memo((props: IProps) => {
             percentage,
             color
         }
-    }, [node.system])
+    }, [system])
 
     const systemUptime = useMemo(() => {
-        if (!node.system) return null
-        return formatDurationUtil(Math.floor(node.system.stats.uptime))
-    }, [node.system])
+        if (!system) return null
+        return formatDurationUtil(Math.floor(system.stats.uptime))
+    }, [system])
 
     const interfaceData = useMemo(() => {
-        if (!node.system?.stats.interface) return null
+        if (!system?.stats.interface) return null
 
-        const { interface: iface } = node.system.stats
+        const { interface: iface } = system.stats
 
         return {
             name: iface.interface,
@@ -91,70 +93,75 @@ export const NodeSystemCardWidget = memo((props: IProps) => {
             rxTotal: prettySiBytesUtil(iface.rxTotal) || '0 B',
             txTotal: prettySiBytesUtil(iface.txTotal) || '0 B'
         }
-    }, [node.system])
+    }, [system])
 
-    if (!node.system) return null
+    if (!system) return null
 
-    const { info } = node.system
+    const { info } = system
+    const nonLoopbackInterfaces = info.networkInterfaces.filter((iface) => iface !== 'lo')
+    const visibleInterfaces = nonLoopbackInterfaces.slice(0, 3)
+    const restInterfaces = nonLoopbackInterfaces.length - 3
 
     return (
         <div className={classes.wrapper}>
-            <ActionIcon
-                className={classes.screenshotButton}
-                color="gray"
-                loading={copying}
-                onClick={copy}
-                radius="md"
-                size="sm"
-                variant="subtle"
-            >
-                <TbCamera size={24} />
-            </ActionIcon>
+            <Tooltip label={t('node-system-card.widget.copy-screenshot')}>
+                <ActionIcon
+                    aria-label={t('node-system-card.widget.copy-screenshot')}
+                    className={classes.screenshotButton}
+                    color="gray"
+                    loading={copying}
+                    radius="md"
+                    size="md"
+                    variant="subtle"
+                    onClick={copy}
+                >
+                    <TbCamera size={16} />
+                </ActionIcon>
+            </Tooltip>
 
             <SectionCard.Root gap="sm" ref={cardRef} style={{ overflow: 'hidden' }}>
                 <SectionCard.Section>
-                    <Group justify="space-between" wrap="nowrap">
+                    <Group align="center" justify="space-between" pr={34} wrap="nowrap">
                         <BaseOverlayHeader
                             iconColor="violet"
                             IconComponent={PiDesktopTowerDuotone}
                             iconSize={20}
                             iconVariant="soft"
+                            subtitle={`${info.platform} / ${info.arch} · ${info.cpus} vCPU`}
                             title={t('node-system-card.widget.system-info')}
                             titleOrder={5}
+                            truncateTitle
                         />
 
-                        <Group gap="xs">
-                            <Badge
-                                color="violet"
-                                ff="monospace"
-                                size="sm"
-                                variant="soft"
-                                visibleFrom="sm"
-                            >
-                                {info.platform} / {info.arch}
-                            </Badge>
+                        <Tooltip label={t('node-system-card.widget.system-uptime')}>
                             <Badge
                                 color="teal"
-                                ff="monospace"
-                                leftSection={<PiTimerDuotone size={12} />}
-                                size="lg"
+                                leftSection={<PiTimerDuotone size={13} />}
+                                size="sm"
+                                style={{ fontVariantNumeric: 'tabular-nums' }}
                                 variant="light"
                             >
                                 {systemUptime}
                             </Badge>
-                        </Group>
+                        </Tooltip>
                     </Group>
                 </SectionCard.Section>
 
                 <SectionCard.Section>
-                    <div className={classes.memorySection}>
-                        <Stack gap={6}>
-                            <Text c="dimmed" fw={600} lh={1} lts={1} size="10px" tt="uppercase">
-                                {t('node-system-card.widget.memory')}
-                            </Text>
-
-                            <div>
-                                <Group justify="space-between" mb={4}>
+                    <Stack gap="xs">
+                        <div className={classes.memorySection}>
+                            <Stack gap={6}>
+                                <Group gap={6} justify="space-between" wrap="nowrap">
+                                    <Text
+                                        c="dimmed"
+                                        fw={600}
+                                        lh={1}
+                                        lts={0.6}
+                                        size="10px"
+                                        tt="uppercase"
+                                    >
+                                        {t('node-system-card.widget.memory')}
+                                    </Text>
                                     <Text className={classes.memoryValues}>
                                         {memoryData?.used} / {memoryData?.total}{' '}
                                         <span className={classes.memoryPercent}>
@@ -162,147 +169,146 @@ export const NodeSystemCardWidget = memo((props: IProps) => {
                                         </span>
                                     </Text>
                                 </Group>
+
                                 <Progress
                                     color={memoryData?.color ?? 'teal'}
                                     radius="xl"
                                     size="sm"
                                     value={memoryData?.percentage ?? 0}
                                 />
+                            </Stack>
+                        </div>
+
+                        {interfaceData && (
+                            <div className={classes.interfaceSection}>
+                                <Stack gap={6}>
+                                    <Group gap={6} justify="space-between">
+                                        <Text
+                                            c="dimmed"
+                                            fw={600}
+                                            lh={1}
+                                            lts={0.6}
+                                            size="10px"
+                                            tt="uppercase"
+                                        >
+                                            {t('node-system-card.widget.interface')}
+                                        </Text>
+                                        <Badge color="cyan" size="xs" variant="soft">
+                                            {interfaceData.name}
+                                        </Badge>
+                                    </Group>
+
+                                    <Group grow>
+                                        <Stack gap={1}>
+                                            <Text className={classes.statLabel} component="div">
+                                                <Group gap={4}>
+                                                    <PiArrowDownDuotone
+                                                        color="var(--mantine-color-teal-5)"
+                                                        size={12}
+                                                    />
+                                                    RX
+                                                </Group>
+                                            </Text>
+                                            <Text className={classes.statValue}>
+                                                {interfaceData.rxSpeed}
+                                            </Text>
+                                            <Text
+                                                c="dimmed"
+                                                size="10px"
+                                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                                            >
+                                                {t('node-system-card.widget.total')}:{' '}
+                                                {interfaceData.rxTotal}
+                                            </Text>
+                                        </Stack>
+                                        <Stack gap={1}>
+                                            <Text className={classes.statLabel} component="div">
+                                                <Group gap={4}>
+                                                    <PiArrowUpDuotone
+                                                        color="var(--mantine-color-cyan-5)"
+                                                        size={12}
+                                                    />
+                                                    TX
+                                                </Group>
+                                            </Text>
+                                            <Text className={classes.statValue}>
+                                                {interfaceData.txSpeed}
+                                            </Text>
+                                            <Text
+                                                c="dimmed"
+                                                size="10px"
+                                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                                            >
+                                                {t('node-system-card.widget.total')}:{' '}
+                                                {interfaceData.txTotal}
+                                            </Text>
+                                        </Stack>
+                                    </Group>
+                                </Stack>
                             </div>
-                        </Stack>
-                    </div>
-                </SectionCard.Section>
+                        )}
 
-                {interfaceData && (
-                    <SectionCard.Section>
-                        <div className={classes.interfaceSection}>
+                        <div className={classes.infoSection}>
                             <Stack gap={6}>
-                                <Group gap={6} justify="space-between">
-                                    <Text
-                                        c="dimmed"
-                                        fw={600}
-                                        lh={1}
-                                        lts={1}
-                                        size="10px"
-                                        tt="uppercase"
-                                    >
-                                        {t('node-system-card.widget.interface')}
-                                    </Text>
-                                    <Badge color="cyan" ff="monospace" size="xs" variant="soft">
-                                        {interfaceData.name}
-                                    </Badge>
-                                </Group>
+                                <Text
+                                    c="dimmed"
+                                    fw={600}
+                                    lh={1}
+                                    lts={0.6}
+                                    size="10px"
+                                    tt="uppercase"
+                                >
+                                    {t('node-system-card.widget.system')}
+                                </Text>
 
-                                <Group grow>
-                                    <Stack gap={0}>
+                                <Stack gap={1} style={{ minWidth: 0, overflow: 'hidden' }}>
+                                    <Text className={classes.statLabel} component="div">
+                                        <Group gap={4}>
+                                            <PiCpuDuotone size={12} />
+                                            CPU
+                                        </Group>
+                                    </Text>
+                                    <Tooltip label={`${info.cpus} x ${info.cpuModel}`}>
+                                        <Text className={classes.statValue}>
+                                            {info.cpus} x {info.cpuModel}
+                                        </Text>
+                                    </Tooltip>
+                                </Stack>
+
+                                <Group grow style={{ overflow: 'hidden' }}>
+                                    <Stack gap={1} style={{ minWidth: 0 }}>
                                         <Text className={classes.statLabel} component="div">
                                             <Group gap={4}>
-                                                <PiArrowDownDuotone
-                                                    color="var(--mantine-color-teal-5)"
-                                                    size={12}
-                                                />
-                                                RX
+                                                <PiLinuxLogoDuotone size={12} />
+                                                {t('node-system-card.widget.kernel')}
                                             </Group>
                                         </Text>
-                                        <Text className={classes.statValue}>
-                                            {interfaceData.rxSpeed}
-                                        </Text>
-                                        <Text c="dimmed" ff="monospace" size="10px">
-                                            {t('node-system-card.widget.total')}:{' '}
-                                            {interfaceData.rxTotal}
-                                        </Text>
+                                        <Text className={classes.statValue}>{info.release}</Text>
                                     </Stack>
-                                    <Stack gap={0}>
-                                        <Text className={classes.statLabel} component="div">
-                                            <Group gap={4}>
-                                                <PiArrowUpDuotone
-                                                    color="var(--mantine-color-cyan-5)"
-                                                    size={12}
-                                                />
-                                                TX
-                                            </Group>
-                                        </Text>
-                                        <Text className={classes.statValue}>
-                                            {interfaceData.txSpeed}
-                                        </Text>
-                                        <Text c="dimmed" ff="monospace" size="10px">
-                                            {t('node-system-card.widget.total')}:{' '}
-                                            {interfaceData.txTotal}
-                                        </Text>
-                                    </Stack>
+                                    {nonLoopbackInterfaces.length > 0 && (
+                                        <Stack gap={1} style={{ minWidth: 0 }}>
+                                            <Text className={classes.statLabel} component="div">
+                                                <Group gap={4}>
+                                                    <PiNetworkDuotone size={12} />
+                                                    {t('node-system-card.widget.network')}
+                                                </Group>
+                                            </Text>
+                                            <Tooltip
+                                                disabled={nonLoopbackInterfaces.length <= 3}
+                                                label={nonLoopbackInterfaces.join(', ')}
+                                            >
+                                                <Text className={classes.statValue}>
+                                                    {restInterfaces > 0
+                                                        ? `${visibleInterfaces.join(', ')} +${restInterfaces}`
+                                                        : visibleInterfaces.join(', ')}
+                                                </Text>
+                                            </Tooltip>
+                                        </Stack>
+                                    )}
                                 </Group>
                             </Stack>
                         </div>
-                    </SectionCard.Section>
-                )}
-
-                <SectionCard.Section>
-                    <div className={classes.infoSection}>
-                        <Stack gap={6}>
-                            <Text c="dimmed" fw={600} lh={1} lts={1} size="10px" tt="uppercase">
-                                {t('node-system-card.widget.system')}
-                            </Text>
-
-                            <Stack gap={0} style={{ minWidth: 0, overflow: 'hidden' }}>
-                                <Text className={classes.statLabel} component="div">
-                                    <Group gap={4}>
-                                        <PiCpuDuotone size={12} />
-                                        CPU
-                                    </Group>
-                                </Text>
-                                <Tooltip label={`${info.cpus} x ${info.cpuModel}`}>
-                                    <Text className={classes.statValue}>
-                                        {info.cpus} x {info.cpuModel}
-                                    </Text>
-                                </Tooltip>
-                            </Stack>
-
-                            <Group grow style={{ overflow: 'hidden' }}>
-                                <Stack gap={0} style={{ minWidth: 0 }}>
-                                    <Text className={classes.statLabel} component="div">
-                                        <Group gap={4}>
-                                            <PiLinuxLogoDuotone size={12} />
-                                            {t('node-system-card.widget.kernel')}
-                                        </Group>
-                                    </Text>
-                                    <Text className={classes.statValue}>{info.release}</Text>
-                                </Stack>
-                                {info.networkInterfaces.length > 0 && (
-                                    <Stack gap={0} style={{ minWidth: 0 }}>
-                                        <Text className={classes.statLabel} component="div">
-                                            <Group gap={4}>
-                                                <PiNetworkDuotone size={12} />
-                                                {t('node-system-card.widget.network')}
-                                            </Group>
-                                        </Text>
-                                        <Tooltip
-                                            disabled={
-                                                info.networkInterfaces.filter((i) => i !== 'lo')
-                                                    .length <= 3
-                                            }
-                                            label={info.networkInterfaces
-                                                .filter((i) => i !== 'lo')
-                                                .join(', ')}
-                                        >
-                                            <Text className={classes.statValue}>
-                                                {(() => {
-                                                    const ifaces = info.networkInterfaces.filter(
-                                                        (i) => i !== 'lo'
-                                                    )
-                                                    const visible = ifaces.slice(0, 3)
-                                                    const rest = ifaces.length - 3
-
-                                                    return rest > 0
-                                                        ? `${visible.join(', ')} +${rest}`
-                                                        : visible.join(', ')
-                                                })()}
-                                            </Text>
-                                        </Tooltip>
-                                    </Stack>
-                                )}
-                            </Group>
-                        </Stack>
-                    </div>
+                    </Stack>
                 </SectionCard.Section>
             </SectionCard.Root>
         </div>

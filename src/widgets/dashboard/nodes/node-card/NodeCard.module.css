@@ -91,13 +91,17 @@
 }
 
 .addressText {
-    font-family: var(--mantine-font-family-monospace);
+    font-variant-numeric: tabular-nums;
     transition: color 0.15s ease;
     cursor: copy;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
 }
 
 .addressText:hover {

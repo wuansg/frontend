@@ -287,7 +287,10 @@
   },
   "edit-node-modal": {
     "widget": {
-      "edit-node": "编辑节点"
+      "edit-node": "编辑节点",
+      "title-with-name": "编辑节点 — {{name}}",
+      "error-name-short": "名称至少需要包含 3 个非空白字符",
+      "error-address-blank": "节点地址不能为空"
     }
   },
   "error-accordeon": {
@@ -502,7 +505,18 @@
     "more-actions": "更多操作",
     "quick-actions": "快捷操作",
     "copy-node-uuid": "复制节点 UUID",
-    "management": "管理"
+    "management": "管理",
+    "node-port": "通信端口",
+    "secret-key": "节点密钥 (SECRET_KEY)",
+    "secret-key-loading": "加载中...",
+    "consumption-subtitle": "用户计费与节点配额的流量折算倍率",
+    "core-configuration-subtitle": "已启用 {{count}} 个入站",
+    "core-configuration-empty-subtitle": "纯转发模式或尚未选择入站",
+    "tracking-subtitle": "服务商归属、流量配额周期、标签与备注",
+    "tags-placeholder": "输入或选择标签（支持逗号、空格、分号分隔）",
+    "unsaved": "未保存",
+    "discard": "撤销更改",
+    "releases-and-rollback": "配置发布与回滚"
   },
   "node-forwarding-card": {
     "title": "端口转发",
@@ -1436,7 +1450,20 @@
       "disable-node": "禁用节点",
       "config-profile-or-inbounds-is-missing": "缺少配置文件或者入站配置",
       "core-version": "当前核心版本",
-      "remnawave-node-version": "节点版本，@remnawave/节点"
+      "remnawave-node-version": "节点版本，@remnawave/节点",
+      "metadata": "节点元数据",
+      "online-users": "在线用户",
+      "core-engine": "代理核心",
+      "node-agent": "节点 Agent",
+      "core-not-required": "无需启动",
+      "config-status-applied": "配置: 已生效",
+      "config-status-unchanged": "配置: 已同步",
+      "config-status-pending": "配置: 下发中",
+      "config-status-rolled_back": "配置: 已回滚",
+      "config-status-failed": "配置: 失败",
+      "stats-active": "统计队列 {{pending}}/{{lag}}",
+      "stats-paused": "统计已暂停",
+      "quick-tools": "关联配置与诊断工具"
     }
   },
   "config-profiles": {
@@ -1473,7 +1500,8 @@
       "system-uptime": "系统运行时间",
       "network": "网络",
       "kernel": "内核",
-      "interface": "接口"
+      "interface": "接口",
+      "copy-screenshot": "复制系统信息截图"
     }
   },
   "node-traffic-progress": {
@@ -2383,7 +2411,9 @@
     "invalid-ip": "不是有效的 IPv4 或 IPv6 地址",
     "ip-is-required": "IP 地址为必填项",
     "max-ips-reached": "最多允许 {{max}} 个 IP 地址",
-    "no-ips-yet": "尚未填写 IP 地址"
+    "no-ips-yet": "尚未填写 IP 地址",
+    "subtitle-count": "已配置 {{count}} 个出口 IP",
+    "subtitle-empty": "可选记录节点出口 IP 与健康状态"
   },
   "node-ip-statuses": {
     "inbound": "入站",
@@ -2420,5 +2450,43 @@
     "view-image": "查看报告",
     "no-image": "报告中没有图像，请打开 JSON",
     "requires-node-version": "需要 Remnawave Node {{version}} 或更高版本"
+  },
+  "node-deployment-card": {
+    "title": "部署与版本管控",
+    "subtitle-default": "Agent 版本对齐、灰度批次与通信 SNI",
+    "subtitle-running": "当前运行 {{version}} · {{arch}}",
+    "releases-button": "发布与回滚",
+    "status-no-expected": "未设期望",
+    "status-drift": "版本漂移",
+    "status-aligned": "版本一致",
+    "unknown-arch": "未知架构",
+    "no-inventory": "未上报运行态",
+    "last-reported": "上报于 {{time}}",
+    "never-reported": "尚未上报",
+    "expected-agent-version": "期望 Agent 版本",
+    "expected-image-tag": "期望镜像标签",
+    "rollout-batch": "灰度发布批次",
+    "use-running-version": "填入当前 ({{version}})",
+    "sni-label": "发送派生的 Node API SNI",
+    "sni-supported": "支持 SNI",
+    "sni-enforced": "强制校验 SNI",
+    "sni-unsupported": "需 Agent 支持 node_api_sni_v1",
+    "sni-description-supported": "建议确认下方门控握手成功后再开启节点侧强制校验。",
+    "sni-handshake-ok": "握手成功 · {{time}}",
+    "sni-handshake-pending": "等待首次握手"
+  },
+  "node-rollout-overview": {
+    "title": "节点版本与运行态总览",
+    "subtitle": "在线 {{connected}} / {{total}} 台 · 离线节点仍保留最近一次上报状态",
+    "filter-all": "全部 ({{count}})",
+    "filter-drift": "版本漂移 ({{count}})",
+    "filter-missing-sni": "未支持 SNI ({{count}})",
+    "agent-version": "Agent 版本",
+    "architecture": "系统架构",
+    "runtime-mode": "运行模式",
+    "country": "国家 / 地区",
+    "unknown": "未知",
+    "expand": "展开分布",
+    "collapse": "收起分布"
   }
 }

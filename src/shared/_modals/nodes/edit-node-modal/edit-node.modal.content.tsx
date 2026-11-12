@@ -1,5 +1,4 @@
 import NiceModal from '@ebay/nice-modal-react'
-import { Button, Stack } from '@mantine/core'
 import { useForm, schemaResolver, type UseFormReturnType } from '@mantine/form'
 import { UpdateNodeCommand } from '@remnawave/backend-contract'
 import { NodeDetailsCardWidget } from '@widgets/dashboard/nodes/node-details-card'
@@ -31,7 +30,7 @@ interface IProps {
 
 export const EditNodeByUuidModalContent = (props: IProps) => {
     const { nodeUuid, onClose } = props
-    const { i18n } = useTranslation()
+    const { t } = useTranslation()
 
     const isFormInitialized = useRef(false)
 
@@ -127,11 +126,11 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
             return
         }
         if (!values.name || values.name.trim().length < 3) {
-            form.setFieldError('name', 'Name must contain at least 3 non-whitespace characters')
+            form.setFieldError('name', t('edit-node-modal.widget.error-name-short'))
             return
         }
         if (!values.address || values.address.trim().length < 2) {
-            form.setFieldError('address', 'Address must not be blank')
+            form.setFieldError('address', t('edit-node-modal.widget.error-address-blank'))
             return
         }
         const changes = nodeDirtyFields(form.getInitialValues(), values)
@@ -157,27 +156,22 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
         )
     }
 
+    const openDeployments = () => {
+        NiceModal.show(NodeDeploymentsModal, { nodeUuid })
+    }
+
     return (
-        <Stack>
-            <Button
-                variant="light"
-                onClick={() => NiceModal.show(NodeDeploymentsModal, { nodeUuid })}
-            >
-                {i18n.language.startsWith('zh')
-                    ? '配置发布与回滚'
-                    : 'Configuration releases & rollback'}
-            </Button>
-            <BaseNodeForm
-                form={form}
-                handleClose={onClose}
-                handleSubmit={handleSubmit}
-                isDataSubmitting={isUpdateNodePending}
-                node={fetchedNode}
-                nodeDetailsCard={<NodeDetailsCardWidget node={fetchedNode} />}
-                nodePlugins={nodePlugins?.nodePlugins ?? []}
-                nodeSystemCard={<NodeSystemCardWidget node={fetchedNode} />}
-                secretKey={secretKey}
-            />
-        </Stack>
+        <BaseNodeForm
+            form={form}
+            handleClose={onClose}
+            handleSubmit={handleSubmit}
+            isDataSubmitting={isUpdateNodePending}
+            node={fetchedNode}
+            nodeDetailsCard={<NodeDetailsCardWidget node={fetchedNode} />}
+            nodePlugins={nodePlugins?.nodePlugins ?? []}
+            nodeSystemCard={<NodeSystemCardWidget node={fetchedNode} />}
+            secretKey={secretKey}
+            onOpenDeployments={openDeployments}
+        />
     )
 }

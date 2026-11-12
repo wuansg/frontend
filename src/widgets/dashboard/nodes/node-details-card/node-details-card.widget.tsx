@@ -11,8 +11,8 @@ import {
     Divider,
     Group,
     Loader,
-    Paper,
     SimpleGrid,
+    Stack,
     Text,
     ThemeIconProps,
     Tooltip
@@ -34,6 +34,7 @@ import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useDisableNode, useEnableNode, useGetNodeMetadata } from '@shared/api/hooks'
 import { Logo } from '@shared/ui'
+import surface from '@shared/ui/node-panel-surface.module.css'
 import { NodeTrafficProgress } from '@shared/ui/node-traffic-progress'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
@@ -75,10 +76,10 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
             uuid: node.uuid
         },
         mutationFns: {
-            onSuccess: async (node: UpdateNodeCommand.Response['response']) => {
+            onSuccess: async (updatedNode: UpdateNodeCommand.Response['response']) => {
                 await queryClient.setQueryData(
-                    QueryKeys.nodes.getNode({ uuid: node.uuid }).queryKey,
-                    node
+                    QueryKeys.nodes.getNode({ uuid: updatedNode.uuid }).queryKey,
+                    updatedNode
                 )
             }
         }
@@ -90,25 +91,44 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { mutate: disableNode, isPending: isDisableNodePending } = useDisableNode(mutationParams)
     const { mutate: enableNode, isPending: isEnableNodePending } = useEnableNode(mutationParams)
 
-    const isConfigMissing = useMemo(() => {
-        return node.configProfile.activeConfigProfileUuid === null
-    }, [node.configProfile])
+    const activeProfileUuid = node.configProfile.activeConfigProfileUuid
+    const isConfigMissing = activeProfileUuid === null
     const hasCore = node.configProfile.activeInbounds.length > 0
-    const configApplyColor = useMemo(() => {
-        switch (node.configApply?.status) {
+    const configApplyStatus = node.configApply?.status
+    const runtimeMode = runtimeStatus?.mode
+
+    const configApplyPresentation = useMemo(() => {
+        switch (configApplyStatus) {
             case 'APPLIED':
+                return {
+                    color: 'teal',
+                    key: 'node-details-card.widget.config-status-applied'
+                } as const
             case 'UNCHANGED':
-                return 'teal'
+                return {
+                    color: 'teal',
+                    key: 'node-details-card.widget.config-status-unchanged'
+                } as const
             case 'PENDING':
-                return 'blue'
+                return {
+                    color: 'blue',
+                    key: 'node-details-card.widget.config-status-pending'
+                } as const
             case 'ROLLED_BACK':
-                return 'yellow'
+                return {
+                    color: 'yellow',
+                    key: 'node-details-card.widget.config-status-rolled_back'
+                } as const
             default:
-                return 'red'
+                return {
+                    color: 'red',
+                    key: 'node-details-card.widget.config-status-failed'
+                } as const
         }
-    }, [node.configApply?.status])
+    }, [configApplyStatus])
+
     const runtimePresentation = useMemo(() => {
-        switch (runtimeStatus?.mode) {
+        switch (runtimeMode) {
             case 'FORWARDING_ONLY':
                 return {
                     color: 'blue',
@@ -130,46 +150,46 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                     translationKey: 'node-status-badge.widget.core-active'
                 } as const
         }
-    }, [runtimeStatus?.mode])
+    }, [runtimeMode])
 
     const { IconComponent, themeIconColor } = useMemo(() => {
-        let IconComponent: React.ComponentType<{ size: number }>
-        let themeIconColor: ThemeIconProps['color'] = 'red'
+        let IconComp: React.ComponentType<{ size: number }>
+        let iconColor: ThemeIconProps['color'] = 'red'
 
         if (isConfigMissing) {
-            IconComponent = PiWarningCircle
-            themeIconColor = 'red'
-            return { IconComponent, themeIconColor }
+            IconComp = PiWarningCircle
+            iconColor = 'red'
+            return { IconComponent: IconComp, themeIconColor: iconColor }
         }
 
         if (node.isDisabled) {
-            IconComponent = TbWifiOff
-            themeIconColor = 'gray'
-            return { IconComponent, themeIconColor }
+            IconComp = TbWifiOff
+            iconColor = 'gray'
+            return { IconComponent: IconComp, themeIconColor: iconColor }
         }
 
-        if (node.isConnected && runtimeStatus?.mode === 'DEGRADED') {
-            IconComponent = PiWarningCircle
-            themeIconColor = 'orange'
-        } else if (node.isConnected && runtimeStatus?.mode === 'FORWARDING_ONLY') {
-            IconComponent = PiCloudArrowUpDuotone
-            themeIconColor = 'blue'
-        } else if (node.isConnected && runtimeStatus?.mode === 'IDLE') {
-            IconComponent = TbWifi
-            themeIconColor = 'gray'
+        if (node.isConnected && runtimeMode === 'DEGRADED') {
+            IconComp = PiWarningCircle
+            iconColor = 'orange'
+        } else if (node.isConnected && runtimeMode === 'FORWARDING_ONLY') {
+            IconComp = PiCloudArrowUpDuotone
+            iconColor = 'blue'
+        } else if (node.isConnected && runtimeMode === 'IDLE') {
+            IconComp = TbWifi
+            iconColor = 'gray'
         } else if (node.isConnected) {
-            IconComponent = TbWifi
-            themeIconColor = 'teal'
+            IconComp = TbWifi
+            iconColor = 'teal'
         } else if (node.isConnecting) {
-            IconComponent = PiCloudArrowUpDuotone
-            themeIconColor = 'yellow'
+            IconComp = PiCloudArrowUpDuotone
+            iconColor = 'yellow'
         } else {
-            IconComponent = PiWarningCircle
-            themeIconColor = 'red'
+            IconComp = PiWarningCircle
+            iconColor = 'red'
         }
 
-        return { IconComponent, themeIconColor }
-    }, [node.isConnected, node.isConnecting, node.isDisabled, isConfigMissing, runtimeStatus?.mode])
+        return { IconComponent: IconComp, themeIconColor: iconColor }
+    }, [node.isConnected, node.isConnecting, node.isDisabled, isConfigMissing, runtimeMode])
 
     const trafficData = useMemo(() => {
         let maxData = '∞'
@@ -211,21 +231,53 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
         }
     }
 
+    const showCoreUptime =
+        node.isConnected &&
+        hasCore &&
+        node.coreUptime > 0 &&
+        (!runtimeStatus || runtimeMode === 'CORE_ACTIVE')
+
+    const endpointLabel = node.port ? `${node.address}:${node.port}` : node.address
+    const onlineUsers = node.usersOnline ?? 0
+    const coreLabel =
+        hasCore && node.versions
+            ? getNodeCoreDisplay(node.versions)
+            : t('node-details-card.widget.core-not-required')
+
     return (
-        <SectionCard.Root>
+        <SectionCard.Root gap="sm">
             <SectionCard.Section>
-                <Group align="flex-center" justify="space-between">
+                <Group align="center" justify="space-between" wrap="nowrap">
                     <BaseOverlayHeader
                         iconColor={themeIconColor}
                         IconComponent={IconComponent}
                         iconSize={20}
                         iconVariant="soft"
+                        subtitle={endpointLabel}
                         title={t('node-details-card.widget.node-details')}
                         titleOrder={5}
+                        truncateTitle
+                        withCopy
                     />
 
-                    <Group gap="xs">
-                        {runtimeStatus && (
+                    <Group gap={6} wrap="nowrap">
+                        {node.isDisabled ? (
+                            <Badge color="gray" size="sm" variant="light">
+                                {t('node-status-badge.widget.disabled')}
+                            </Badge>
+                        ) : !node.isConnected ? (
+                            <Badge
+                                color={node.isConnecting ? 'yellow' : 'red'}
+                                size="sm"
+                                variant="light"
+                            >
+                                {t(
+                                    node.isConnecting
+                                        ? 'node-status-badge.widget.connecting'
+                                        : 'node-status-badge.widget.disconnected'
+                                )}
+                            </Badge>
+                        ) : runtimeStatus ? (
                             <Tooltip
                                 label={
                                     <Box>
@@ -280,106 +332,30 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                         )}
                                     </Box>
                                 }
-                                multiline
                                 maw={560}
+                                multiline
                             >
                                 <Badge
                                     color={runtimePresentation.color}
-                                    leftSection={<PiCpuDuotone size={14} />}
-                                    size="lg"
+                                    leftSection={<PiCpuDuotone size={13} />}
+                                    size="sm"
                                     variant="light"
                                 >
                                     {t(runtimePresentation.translationKey)}
                                 </Badge>
                             </Tooltip>
-                        )}
-                        {node.configApply && (
-                            <Tooltip
-                                label={
-                                    <Box>
-                                        <Text fw={600} size="xs">
-                                            Sing-box config {node.configApply.status.toLowerCase()}
-                                        </Text>
-                                        <Text ff="monospace" size="xs">
-                                            active: {node.configApply.activeHash ?? '—'}
-                                        </Text>
-                                        <Text ff="monospace" size="xs">
-                                            requested: {node.configApply.requestedHash}
-                                        </Text>
-                                        <Text size="xs">
-                                            time:{' '}
-                                            {new Date(
-                                                node.configApply.appliedAt ??
-                                                    node.configApply.attemptedAt
-                                            ).toLocaleString()}
-                                        </Text>
-                                        <Text size="xs">
-                                            rollback: {node.configApply.rollback.toLowerCase()}
-                                        </Text>
-                                    </Box>
-                                }
-                                multiline
-                                maw={520}
+                        ) : (
+                            <Badge
+                                color="teal"
+                                leftSection={<PiCpuDuotone size={13} />}
+                                size="sm"
+                                variant="light"
                             >
-                                <Badge
-                                    color={configApplyColor}
-                                    leftSection={<TbJson size={14} />}
-                                    size="lg"
-                                    variant="light"
-                                >
-                                    config {node.configApply.status.toLowerCase()}
-                                </Badge>
-                            </Tooltip>
+                                {t('node-status-badge.widget.connected')}
+                            </Badge>
                         )}
-                        {usageSnapshot && (
-                            <Tooltip
-                                label={
-                                    usageSnapshot.lastError ??
-                                    `received ${usageSnapshot.receivedThrough}, applied ${usageSnapshot.appliedThrough}, node queue ${prettifyBytesUtil(usageSnapshot.queueBytes)}, retries ${usageSnapshot.databaseRetries}, failures ${usageSnapshot.ingestFailures}`
-                                }
-                            >
-                                <Badge
-                                    color={
-                                        usageSnapshot.lastError
-                                            ? 'red'
-                                            : !usageSnapshot.capturing
-                                              ? 'gray'
-                                              : usageSnapshot.pending > 0 ||
-                                                  usageSnapshot.receivedThrough >
-                                                      usageSnapshot.appliedThrough
-                                                ? 'yellow'
-                                                : 'teal'
-                                    }
-                                    leftSection={<PiArrowsCounterClockwise size={14} />}
-                                    size="lg"
-                                    variant="light"
-                                    visibleFrom="sm"
-                                >
-                                    {usageSnapshot.capturing ? 'stats' : 'stats paused'}{' '}
-                                    {usageSnapshot.pending} /{' '}
-                                    {usageSnapshot.receivedThrough - usageSnapshot.appliedThrough}
-                                </Badge>
-                            </Tooltip>
-                        )}
-                        {node.isConnected &&
-                            hasCore &&
-                            (!runtimeStatus || runtimeStatus.mode === 'CORE_ACTIVE') && (
-                                <Tooltip
-                                    label={t('node-stats.card.represents-the-uptime-of-the-core')}
-                                >
-                                    <Badge
-                                        color="teal"
-                                        h={28}
-                                        leftSection={<PiCpuDuotone size={14} />}
-                                        size="lg"
-                                        variant="light"
-                                        visibleFrom="sm"
-                                    >
-                                        {getCoreUptimeUtil(node.coreUptime)}
-                                    </Badge>
-                                </Tooltip>
-                            )}
-                        {!isConfigMissing && (
+
+                        {!isConfigMissing ? (
                             <Tooltip
                                 label={
                                     node.isDisabled
@@ -390,24 +366,10 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 <ActionIcon
                                     color={node.isDisabled ? 'teal' : 'red'}
                                     disabled={isDisableNodePending || isEnableNodePending}
-                                    onClick={handleToggleNodeStatus}
+                                    radius="md"
                                     size="md"
-                                    style={{
-                                        backgroundColor: node.isDisabled
-                                            ? 'rgba(45, 212, 191, 0.15)'
-                                            : 'rgba(239, 68, 68, 0.15)',
-                                        border: `1px solid ${
-                                            node.isDisabled
-                                                ? 'rgba(45, 212, 191, 0.3)'
-                                                : 'rgba(239, 68, 68, 0.3)'
-                                        }`,
-                                        boxShadow: `0 0 10px ${
-                                            node.isDisabled
-                                                ? 'rgba(45, 212, 191, 0.2)'
-                                                : 'rgba(239, 68, 68, 0.2)'
-                                        }`
-                                    }}
                                     variant="light"
+                                    onClick={handleToggleNodeStatus}
                                 >
                                     {isDisableNodePending || isEnableNodePending ? (
                                         <Loader
@@ -415,20 +377,11 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                             size="xs"
                                         />
                                     ) : (
-                                        <TbPower
-                                            size={16}
-                                            style={{
-                                                color: node.isDisabled
-                                                    ? 'var(--mantine-color-teal-4)'
-                                                    : 'var(--mantine-color-red-4)'
-                                            }}
-                                        />
+                                        <TbPower size={16} />
                                     )}
                                 </ActionIcon>
                             </Tooltip>
-                        )}
-
-                        {isConfigMissing && (
+                        ) : (
                             <Tooltip
                                 label={t(
                                     'node-details-card.widget.config-profile-or-inbounds-is-missing'
@@ -437,21 +390,11 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 <ActionIcon
                                     color="gray"
                                     disabled
+                                    radius="md"
                                     size="md"
-                                    style={{
-                                        backgroundColor: 'rgba(107, 114, 128, 0.15)',
-                                        border: `1px solid rgba(107, 114, 128, 0.3)`,
-                                        boxShadow: `0 0 10px rgba(107, 114, 128, 0.2)`,
-                                        opacity: 0.7
-                                    }}
                                     variant="light"
                                 >
-                                    <TbPower
-                                        size={16}
-                                        style={{
-                                            color: 'var(--mantine-color-teal-4)'
-                                        }}
-                                    />
+                                    <TbPower size={16} />
                                 </ActionIcon>
                             </Tooltip>
                         )}
@@ -460,224 +403,288 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
             </SectionCard.Section>
 
             <SectionCard.Section>
-                <Group gap="xs" justify="flex-end">
-                    <Group gap="xs" justify="center">
-                        <Tooltip label="Metadata">
-                            <ActionIcon
-                                color="teal"
-                                disabled={!metadata}
-                                loading={isMetadataLoading}
-                                onClick={() => {
-                                    if (!metadata) return
-                                    modals.open({
-                                        centered: true,
-                                        size: 'auto',
-                                        title: (
-                                            <BaseOverlayHeader
-                                                iconColor="teal"
-                                                IconComponent={TbJson}
-                                                iconVariant="soft"
-                                                title="Metadata"
-                                            />
-                                        ),
-                                        children: (
-                                            <Box>
-                                                <JsonEditor
-                                                    collapse={3}
-                                                    data={metadata.metadata as object}
-                                                    indent={4}
-                                                    maxWidth="100%"
-                                                    rootName=""
-                                                    theme={githubDarkTheme}
-                                                    viewOnly
-                                                />
-                                            </Box>
-                                        )
-                                    })
-                                }}
-                                size="lg"
-                                variant="soft"
-                            >
-                                <TbJson size={22} />
-                            </ActionIcon>
-                        </Tooltip>
-                    </Group>
+                <Stack gap="sm">
+                    <Box className={surface.subPanel} p="xs">
+                        <Stack gap={8}>
+                            <Group gap={6} justify="space-between" wrap="wrap">
+                                <Text
+                                    c="dimmed"
+                                    fw={600}
+                                    lh={1.2}
+                                    lts={0.5}
+                                    size="10px"
+                                    tt="uppercase"
+                                >
+                                    {t('node-details-card.widget.quick-tools')}
+                                </Text>
 
-                    <Divider opacity={0.3} orientation="vertical" />
+                                <Group gap={6} wrap="wrap">
+                                    {node.configApply && (
+                                        <Tooltip
+                                            label={
+                                                <Box>
+                                                    <Text fw={600} size="xs">
+                                                        Sing-box config{' '}
+                                                        {node.configApply.status.toLowerCase()}
+                                                    </Text>
+                                                    <Text ff="monospace" size="xs">
+                                                        active: {node.configApply.activeHash ?? '—'}
+                                                    </Text>
+                                                    <Text ff="monospace" size="xs">
+                                                        requested: {node.configApply.requestedHash}
+                                                    </Text>
+                                                    <Text size="xs">
+                                                        time:{' '}
+                                                        {new Date(
+                                                            node.configApply.appliedAt ??
+                                                                node.configApply.attemptedAt
+                                                        ).toLocaleString()}
+                                                    </Text>
+                                                    <Text size="xs">
+                                                        rollback:{' '}
+                                                        {node.configApply.rollback.toLowerCase()}
+                                                    </Text>
+                                                </Box>
+                                            }
+                                            maw={520}
+                                            multiline
+                                        >
+                                            <Badge
+                                                color={configApplyPresentation.color}
+                                                leftSection={<TbJson size={11} />}
+                                                size="xs"
+                                                variant="light"
+                                            >
+                                                {t(configApplyPresentation.key)}
+                                            </Badge>
+                                        </Tooltip>
+                                    )}
 
-                    <Group gap="xs" justify="center">
-                        <GetNodeLinkedHostsFeature nodeUuid={node.uuid} />
-                        <GetNodeInboundsHostsFeature nodeUuid={node.uuid} />
-                    </Group>
+                                    {usageSnapshot && (
+                                        <Tooltip
+                                            label={
+                                                usageSnapshot.lastError ??
+                                                `received ${usageSnapshot.receivedThrough}, applied ${usageSnapshot.appliedThrough}, node queue ${prettifyBytesUtil(usageSnapshot.queueBytes)}, retries ${usageSnapshot.databaseRetries}, failures ${usageSnapshot.ingestFailures}`
+                                            }
+                                        >
+                                            <Badge
+                                                color={
+                                                    usageSnapshot.lastError
+                                                        ? 'red'
+                                                        : !usageSnapshot.capturing
+                                                          ? 'gray'
+                                                          : usageSnapshot.pending > 0 ||
+                                                              usageSnapshot.receivedThrough >
+                                                                  usageSnapshot.appliedThrough
+                                                            ? 'yellow'
+                                                            : 'teal'
+                                                }
+                                                leftSection={<PiArrowsCounterClockwise size={11} />}
+                                                size="xs"
+                                                variant="light"
+                                            >
+                                                {usageSnapshot.capturing
+                                                    ? t('node-details-card.widget.stats-active', {
+                                                          pending: usageSnapshot.pending,
+                                                          lag: Math.max(
+                                                              0,
+                                                              usageSnapshot.receivedThrough -
+                                                                  usageSnapshot.appliedThrough
+                                                          )
+                                                      })
+                                                    : t('node-details-card.widget.stats-paused')}
+                                            </Badge>
+                                        </Tooltip>
+                                    )}
 
-                    <Divider opacity={0.3} orientation="vertical" />
+                                    {showCoreUptime && (
+                                        <Tooltip
+                                            label={t(
+                                                'node-stats.card.represents-the-uptime-of-the-core'
+                                            )}
+                                        >
+                                            <Badge
+                                                className={surface.tabular}
+                                                color="teal"
+                                                leftSection={<PiCpuDuotone size={11} />}
+                                                size="xs"
+                                                variant="light"
+                                            >
+                                                {getCoreUptimeUtil(node.coreUptime)}
+                                            </Badge>
+                                        </Tooltip>
+                                    )}
+                                </Group>
+                            </Group>
 
-                    <Group gap="xs" justify="center">
-                        <GetNodeGeocheckFeature node={node} />
-                        <GetNodeBenchmarkFeature node={node} kind="HARDWARE" />
-                        <GetNodeBenchmarkFeature node={node} kind="NETWORK" />
-                        <GetNodeUsersUsageFeature nodeUuid={node.uuid} />
-                        <GetActiveSessionsOnNodeFeature nodeUuid={node.uuid} />
-                    </Group>
-                </Group>
-            </SectionCard.Section>
+                            <Group gap="xs" justify="space-between" wrap="wrap">
+                                <Group gap={6} wrap="wrap">
+                                    <Tooltip label={t('node-details-card.widget.metadata')}>
+                                        <ActionIcon
+                                            color="teal"
+                                            disabled={!metadata}
+                                            loading={isMetadataLoading}
+                                            size="lg"
+                                            variant="soft"
+                                            onClick={() => {
+                                                if (!metadata) return
+                                                modals.open({
+                                                    centered: true,
+                                                    size: 'auto',
+                                                    title: (
+                                                        <BaseOverlayHeader
+                                                            iconColor="teal"
+                                                            IconComponent={TbJson}
+                                                            iconVariant="soft"
+                                                            title={t(
+                                                                'node-details-card.widget.metadata'
+                                                            )}
+                                                        />
+                                                    ),
+                                                    children: (
+                                                        <Box>
+                                                            <JsonEditor
+                                                                collapse={3}
+                                                                data={metadata.metadata as object}
+                                                                indent={4}
+                                                                maxWidth="100%"
+                                                                rootName=""
+                                                                theme={githubDarkTheme}
+                                                                viewOnly
+                                                            />
+                                                        </Box>
+                                                    )
+                                                })
+                                            }}
+                                        >
+                                            <TbJson size={20} />
+                                        </ActionIcon>
+                                    </Tooltip>
 
-            <SectionCard.Section>
-                <Box>
-                    <Group gap="xs" justify="space-between" mb={6}>
-                        <Group gap={6}>
-                            <Text c="gray.3" ff="monospace" fw={600} size="sm">
+                                    <Divider opacity={0.25} orientation="vertical" />
+
+                                    <GetNodeLinkedHostsFeature nodeUuid={node.uuid} />
+                                    <GetNodeInboundsHostsFeature nodeUuid={node.uuid} />
+                                </Group>
+
+                                <Group gap={6} wrap="wrap">
+                                    <GetNodeGeocheckFeature node={node} />
+                                    <GetNodeBenchmarkFeature kind="HARDWARE" node={node} />
+                                    <GetNodeBenchmarkFeature kind="NETWORK" node={node} />
+                                    <GetNodeUsersUsageFeature nodeUuid={node.uuid} />
+                                    <GetActiveSessionsOnNodeFeature nodeUuid={node.uuid} />
+                                </Group>
+                            </Group>
+                        </Stack>
+                    </Box>
+
+                    <Box className={surface.subPanel} p="xs">
+                        <Group gap="xs" justify="space-between" mb={6}>
+                            <Text className={surface.tabular} fw={700} size="sm">
                                 {trafficData.prettyUsedData}
                             </Text>
-                        </Group>
-                        <Text c="dimmed" size="xs">
-                            {trafficData.maxData}
-                        </Text>
-                    </Group>
-
-                    <NodeTrafficProgress
-                        color={getProgressColor()}
-                        node={node}
-                        size="sm"
-                        value={trafficData.isUnlimited ? 100 : trafficData.percentage}
-                    />
-
-                    {node.isTrafficTrackingActive && node.trafficResetDay && (
-                        <Group gap={4} justify="center" mt={6}>
-                            <PiArrowsCounterClockwise
-                                color="var(--mantine-color-dimmed)"
-                                size={12}
-                            />
-                            <Text c="dimmed" size="xs">
-                                {t('node-stats.card.traffic-refill-in-days')}{' '}
-                                {getNodeResetDaysUtil(node.trafficResetDay)}
+                            <Text c="dimmed" className={surface.tabular} size="xs">
+                                {trafficData.maxData}
                             </Text>
                         </Group>
-                    )}
-                </Box>
-            </SectionCard.Section>
-            {node.isConnected && (
-                <SectionCard.Section>
-                    <SimpleGrid
-                        cols={{
-                            base: 1,
-                            xs: 2,
-                            sm: 3
-                        }}
-                        spacing="xs"
-                    >
-                        <Paper
-                            p="xs"
-                            radius="md"
-                            style={{
-                                background:
-                                    node.usersOnline! > 0
-                                        ? 'rgba(45, 212, 191, 0.08)'
-                                        : 'rgba(107, 114, 128, 0.08)',
-                                border: `1px solid ${
-                                    node.usersOnline! > 0
-                                        ? 'rgba(45, 212, 191, 0.2)'
-                                        : 'rgba(107, 114, 128, 0.2)'
-                                }`
-                            }}
-                        >
-                            <Group gap="xs" justify="center">
-                                <PiUsersDuotone
-                                    color={
-                                        node.usersOnline! > 0
-                                            ? 'var(--mantine-color-teal-5)'
-                                            : 'var(--mantine-color-gray-6)'
-                                    }
-                                    size={16}
+
+                        <NodeTrafficProgress
+                            color={getProgressColor()}
+                            node={node}
+                            size="sm"
+                            value={trafficData.isUnlimited ? 100 : trafficData.percentage}
+                        />
+
+                        {node.isTrafficTrackingActive && node.trafficResetDay && (
+                            <Group gap={4} justify="flex-end" mt={6}>
+                                <PiArrowsCounterClockwise
+                                    color="var(--mantine-color-dimmed)"
+                                    size={12}
                                 />
-                                <Text
-                                    c={node.usersOnline! > 0 ? 'teal.5' : 'gray.6'}
-                                    fw={600}
-                                    size="sm"
-                                >
-                                    {node.usersOnline}
+                                <Text c="dimmed" className={surface.tabular} size="xs">
+                                    {t('node-stats.card.traffic-refill-in-days')}{' '}
+                                    {getNodeResetDaysUtil(node.trafficResetDay)}
                                 </Text>
                             </Group>
-                        </Paper>
-
-                        {node.versions && (
-                            <Paper
-                                p="xs"
-                                radius="md"
-                                style={{
-                                    background: 'rgba(139, 92, 246, 0.08)',
-                                    border: '1px solid rgba(139, 92, 246, 0.2)'
-                                }}
-                            >
-                                <Tooltip label={t('node-details-card.widget.core-version')}>
-                                    <Group gap="xs" justify="center">
-                                        <PiCpuDuotone
-                                            color="var(--mantine-color-violet-5)"
-                                            size={16}
-                                        />
-                                        <Text c="violet.5" fw={600} size="sm">
-                                            {getNodeCoreDisplay(node.versions)}
-                                        </Text>
-                                    </Group>
-                                </Tooltip>
-                            </Paper>
                         )}
+                    </Box>
 
-                        {node.coreUptime !== 0 && (
-                            <Paper
-                                hiddenFrom="sm"
-                                p="xs"
-                                radius="md"
-                                style={{
-                                    background: 'rgba(20, 184, 166, 0.08)', // teal-500 at 8%
-                                    border: '1px solid rgba(20, 184, 166, 0.2)' // teal-500 at 20%
-                                }}
-                            >
-                                <Tooltip
-                                    label={t('node-stats.card.represents-the-uptime-of-the-core')}
+                    {node.isConnected && (
+                        <SimpleGrid cols={{ base: 1, xs: 3 }} spacing="xs">
+                            <Box className={surface.metricBlock}>
+                                <Group gap={4} justify="space-between" mb={2} wrap="nowrap">
+                                    <Text c="dimmed" fw={600} size="10px" tt="uppercase">
+                                        {t('node-details-card.widget.online-users')}
+                                    </Text>
+                                    <PiUsersDuotone
+                                        color={
+                                            onlineUsers > 0
+                                                ? 'var(--mantine-color-teal-4)'
+                                                : 'var(--mantine-color-gray-6)'
+                                        }
+                                        size={13}
+                                    />
+                                </Group>
+                                <Text
+                                    c={onlineUsers > 0 ? 'teal.4' : 'dimmed'}
+                                    className={surface.tabular}
+                                    fw={700}
+                                    size="sm"
                                 >
-                                    <Group gap="xs" justify="center">
-                                        <PiCpuDuotone
-                                            color="var(--mantine-color-teal-5)"
-                                            size={16}
-                                        />
-                                        <Text
-                                            c="teal.5"
-                                            fw={600}
-                                            size="sm"
-                                            style={{ textTransform: 'uppercase' }}
-                                        >
-                                            {getCoreUptimeUtil(node.coreUptime)}
-                                        </Text>
-                                    </Group>
-                                </Tooltip>
-                            </Paper>
-                        )}
+                                    {onlineUsers}
+                                </Text>
+                            </Box>
 
-                        {node.versions && (
-                            <Paper
-                                p="xs"
-                                radius="md"
-                                style={{
-                                    background: 'rgba(99, 102, 241, 0.08)',
-                                    border: '1px solid rgba(99, 102, 241, 0.2)'
-                                }}
-                            >
-                                <Tooltip
-                                    label={t('node-details-card.widget.remnawave-node-version')}
-                                >
-                                    <Group gap="xs" justify="center">
-                                        <Logo color="var(--mantine-color-indigo-5)" size={16} />
-                                        <Text c="indigo.5" fw={600} size="sm">
-                                            {node.versions.node}
+                            <Tooltip label={t('node-details-card.widget.core-version')}>
+                                <Box className={surface.metricBlock} style={{ minWidth: 0 }}>
+                                    <Group gap={4} justify="space-between" mb={2} wrap="nowrap">
+                                        <Text c="dimmed" fw={600} size="10px" tt="uppercase">
+                                            {t('node-details-card.widget.core-engine')}
                                         </Text>
+                                        <PiCpuDuotone
+                                            color={
+                                                hasCore
+                                                    ? 'var(--mantine-color-violet-4)'
+                                                    : 'var(--mantine-color-gray-6)'
+                                            }
+                                            size={13}
+                                        />
                                     </Group>
-                                </Tooltip>
-                            </Paper>
-                        )}
-                    </SimpleGrid>
-                </SectionCard.Section>
-            )}
+                                    <Text
+                                        c={hasCore ? 'violet.3' : 'dimmed'}
+                                        className={surface.tabular}
+                                        fw={600}
+                                        size="xs"
+                                        truncate
+                                    >
+                                        {coreLabel}
+                                    </Text>
+                                </Box>
+                            </Tooltip>
+
+                            <Tooltip label={t('node-details-card.widget.remnawave-node-version')}>
+                                <Box className={surface.metricBlock} style={{ minWidth: 0 }}>
+                                    <Group gap={4} justify="space-between" mb={2} wrap="nowrap">
+                                        <Text c="dimmed" fw={600} size="10px" tt="uppercase">
+                                            {t('node-details-card.widget.node-agent')}
+                                        </Text>
+                                        <Logo color="var(--mantine-color-indigo-4)" size={12} />
+                                    </Group>
+                                    <Text
+                                        c="indigo.3"
+                                        className={surface.tabular}
+                                        fw={600}
+                                        size="xs"
+                                        truncate
+                                    >
+                                        {node.versions?.node ?? '—'}
+                                    </Text>
+                                </Box>
+                            </Tooltip>
+                        </SimpleGrid>
+                    )}
+                </Stack>
+            </SectionCard.Section>
         </SectionCard.Root>
     )
 })

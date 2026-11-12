@@ -100,7 +100,7 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
                 <Divider />
                 <Stack gap="xs">
                     <CopyableFieldShared
-                        label="Secret Key (SECRET_KEY)"
+                        label={t('base-node-form.secret-key')}
                         leftSection={<TbCertificate size={16} />}
                         size="sm"
                         value={secretKey ?? ''}
@@ -150,7 +150,7 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
 
                         <NumberInput
                             key={form.key('port')}
-                            label="Node Port"
+                            label={t('base-node-form.node-port')}
                             {...form.getInputProps('port')}
                             allowDecimal={false}
                             allowNegative={false}
@@ -233,6 +233,7 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
                                     description={t(
                                         'node-vitals.card.review-documentation-for-more-information'
                                     )}
+                                    inputWrapperOrder={['label', 'input', 'description', 'error']}
                                     leftSection={<TbPackage size={16} />}
                                     nothingFoundMessage={t('node-vitals.card.nothing-found')}
                                     placeholder={t('node-vitals.card.select-plugin')}
@@ -250,7 +251,7 @@ export const CreateNodeStep1Connection = ({ form, onNext, secretKey, port }: IPr
                                     label={t('use-nodes-table-widget.tags')}
                                     leftSection={<PiTagDuotone size="16px" />}
                                     maxTags={10}
-                                    placeholder="Enter tags (comma, space, semicolon)"
+                                    placeholder={t('base-node-form.tags-placeholder')}
                                     size="sm"
                                     splitChars={[',', ' ', ';']}
                                     {...form.getInputProps('tags')}

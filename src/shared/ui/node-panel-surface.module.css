@@ -1,0 +1,82 @@
+.subPanel {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--mantine-radius-md);
+    transition:
+        border-color 140ms ease,
+        background-color 140ms ease;
+}
+
+.subPanelInteractive:hover {
+    background: rgba(255, 255, 255, 0.038);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.accentTeal {
+    border-left: 3px solid var(--mantine-color-teal-5);
+}
+
+.accentCyan {
+    border-left: 3px solid var(--mantine-color-cyan-5);
+}
+
+.accentViolet {
+    border-left: 3px solid var(--mantine-color-violet-5);
+}
+
+.accentOrange {
+    border-left: 3px solid var(--mantine-color-orange-5);
+}
+
+.accentMuted {
+    border-left: 3px solid var(--mantine-color-dark-3);
+    opacity: 0.78;
+}
+
+.accentError {
+    border-color: rgba(239, 68, 68, 0.55);
+    border-left: 3px solid var(--mantine-color-red-5);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.metricBlock {
+    padding: 8px 10px;
+    border-radius: var(--mantine-radius-sm);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.emptyState {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    border-radius: var(--mantine-radius-md);
+}
+
+.quickChip {
+    cursor: pointer;
+    user-select: none;
+    transition:
+        transform 100ms ease,
+        background-color 120ms ease;
+}
+
+.quickChip:hover {
+    transform: translateY(-1px);
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
+
+.routePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: var(--mantine-radius-sm);
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: var(--mantine-font-family-monospace);
+    font-size: 12px;
+    line-height: 1.35;
+}

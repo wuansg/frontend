@@ -42,7 +42,7 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 SelectItem.displayName = 'SelectItem'
 
 export const SelectInfraProviderShared = (props: IProps) => {
-    const { selectedInfraProviderUuid, setSelectedInfraProviderUuid } = props
+    const { selectedInfraProviderUuid, setSelectedInfraProviderUuid, size } = props
     const { data: infraProviders, isLoading } = useGetInfraProviders()
     const { t } = useTranslation()
 
@@ -65,6 +65,7 @@ export const SelectInfraProviderShared = (props: IProps) => {
                 disabled
                 label={t('select-infra-provider.shared.infrastructure-provider')}
                 placeholder={t('select-infra-provider.shared.no-providers-available')}
+                size={size}
             />
         )
     }
@@ -111,6 +112,7 @@ export const SelectInfraProviderShared = (props: IProps) => {
             }}
             data={selectData}
             description={t('select-infra-provider.shared.select-the-infrastructure-provider')}
+            inputWrapperOrder={['label', 'input', 'description', 'error']}
             label={t('select-infra-provider.shared.infrastructure-provider')}
             leftSection={leftSection}
             leftSectionPointerEvents="none"
@@ -123,6 +125,7 @@ export const SelectInfraProviderShared = (props: IProps) => {
                 return <SelectItem {...option} />
             }}
             searchable
+            size={size}
             value={selectedInfraProviderUuid ?? null}
         />
     )

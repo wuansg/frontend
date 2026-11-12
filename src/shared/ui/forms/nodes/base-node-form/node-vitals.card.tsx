@@ -1,4 +1,4 @@
-import { Group, NumberInput, Select, Stack, TextInput } from '@mantine/core'
+import { Group, NumberInput, Select, SimpleGrid, Stack, TextInput } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
 import {
     CreateNodeCommand,
@@ -9,7 +9,15 @@ import {
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 import { HiOutlineServer } from 'react-icons/hi'
-import { TbCertificate, TbMapPin, TbNetwork, TbPackage, TbUserCheck, TbWorld } from 'react-icons/tb'
+import {
+    TbCertificate,
+    TbMapPin,
+    TbNetwork,
+    TbPackage,
+    TbPlugConnected,
+    TbUserCheck,
+    TbWorld
+} from 'react-icons/tb'
 
 import { CopyableFieldShared } from '@shared/ui/copyable-field/copyable-field'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
@@ -32,9 +40,14 @@ export const NodeVitalsCard = <
     props: IProps<T>
 ) => {
     const { t } = useTranslation()
-    const { cardVariants, form, motionWrapper, nodePlugins, secretKey, nodeUuid } = props
-
-    const MotionWrapper = motionWrapper
+    const {
+        cardVariants,
+        form,
+        motionWrapper: MotionWrapper,
+        nodePlugins,
+        secretKey,
+        nodeUuid
+    } = props
 
     return (
         <MotionWrapper variants={cardVariants}>
@@ -47,80 +60,79 @@ export const NodeVitalsCard = <
                         subtitle={nodeUuid}
                         title={t('base-node-form.node-vitals')}
                         titleOrder={5}
+                        truncateTitle
                         withCopy
                     />
                 </SectionCard.Section>
                 <SectionCard.Section>
-                    <Stack gap="md">
-                        <Select
-                            key={form.key('countryCode')}
-                            label={t('base-node-form.country')}
-                            {...form.getInputProps('countryCode')}
-                            data={COUNTRIES}
-                            leftSection={<TbMapPin size={16} />}
-                            placeholder={t('base-node-form.select-country')}
-                            required
-                            searchable
-                            styles={{
-                                label: { fontWeight: 500 }
-                            }}
-                        />
+                    <Stack gap="sm">
+                        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs">
+                            <Select
+                                key={form.key('countryCode')}
+                                data={COUNTRIES}
+                                label={t('base-node-form.country')}
+                                leftSection={<TbMapPin size={15} />}
+                                placeholder={t('base-node-form.select-country')}
+                                required
+                                searchable
+                                size="xs"
+                                {...form.getInputProps('countryCode')}
+                            />
 
-                        <TextInput
-                            key={form.key('name')}
-                            label={t('base-node-form.internal-name')}
-                            {...form.getInputProps('name')}
-                            leftSection={<TbUserCheck size={16} />}
-                            required
-                            styles={{
-                                label: { fontWeight: 500 }
-                            }}
-                        />
+                            <TextInput
+                                key={form.key('name')}
+                                label={t('base-node-form.internal-name')}
+                                leftSection={<TbUserCheck size={15} />}
+                                placeholder={t('base-node-form.internal-name-placeholder')}
+                                required
+                                size="xs"
+                                {...form.getInputProps('name')}
+                            />
+                        </SimpleGrid>
 
-                        <Group gap="xs" grow justify="space-between" w="100%">
+                        <Group align="flex-start" gap="xs" grow={false} w="100%" wrap="nowrap">
                             <TextInput
                                 key={form.key('address')}
                                 label={t('base-node-form.address')}
-                                {...form.getInputProps('address')}
-                                leftSection={<TbWorld size={16} />}
+                                leftSection={<TbWorld size={15} />}
                                 placeholder={t('base-node-form.e-g-example-com')}
                                 required
-                                styles={{
-                                    label: { fontWeight: 500 },
-                                    root: { flex: '1 1 70%' }
-                                }}
+                                size="xs"
+                                style={{ flex: '1 1 68%', minWidth: 0 }}
+                                {...form.getInputProps('address')}
                             />
 
                             <NumberInput
                                 key={form.key('port')}
-                                label="Node Port"
-                                {...form.getInputProps('port')}
                                 allowDecimal={false}
                                 allowNegative={false}
                                 clampBehavior="strict"
                                 decimalScale={0}
                                 hideControls
+                                label={t('base-node-form.node-port')}
+                                leftSection={<TbPlugConnected size={15} />}
                                 max={65535}
+                                min={1}
                                 placeholder="2222"
                                 required
-                                styles={{
-                                    label: { fontWeight: 500 },
-                                    root: { flex: '1 1 25%' }
-                                }}
+                                size="xs"
+                                style={{ flex: '1 1 32%', minWidth: 112 }}
+                                {...form.getInputProps('port')}
                             />
                         </Group>
 
                         <CopyableFieldShared
-                            label="Secret Key (SECRET_KEY)"
-                            leftSection={<TbCertificate size={16} />}
-                            size="sm"
-                            value={`${secretKey?.secretKey.trimEnd() ?? 'Error loading...'}`}
+                            label={t('base-node-form.secret-key')}
+                            leftSection={<TbCertificate size={15} />}
+                            size="xs"
+                            value={
+                                secretKey?.secretKey?.trimEnd() ??
+                                t('base-node-form.secret-key-loading')
+                            }
                         />
 
                         <Select
                             key={form.key('activePluginUuid')}
-                            label={t('node-vitals.card.plugin')}
-                            {...form.getInputProps('activePluginUuid')}
                             allowDeselect
                             clearable
                             data={nodePlugins.map((nodePlugin) => ({
@@ -130,22 +142,25 @@ export const NodeVitalsCard = <
                             description={t(
                                 'node-vitals.card.review-documentation-for-more-information'
                             )}
-                            leftSection={<TbPackage size={16} />}
+                            inputWrapperOrder={['label', 'input', 'description', 'error']}
+                            label={t('node-vitals.card.plugin')}
+                            leftSection={<TbPackage size={15} />}
                             nothingFoundMessage={t('node-vitals.card.nothing-found')}
                             placeholder={t('node-vitals.card.select-plugin')}
                             searchable
-                            styles={{
-                                label: { fontWeight: 500 }
-                            }}
+                            size="xs"
+                            {...form.getInputProps('activePluginUuid')}
                         />
 
                         <TextInput
                             key={form.key('proxyUrl')}
-                            label={t('node-vitals.card.proxy-url')}
-                            {...form.getInputProps('proxyUrl')}
                             description={t('node-vitals.card.proxy-url-description')}
-                            leftSection={<TbNetwork size={16} />}
+                            inputWrapperOrder={['label', 'input', 'description', 'error']}
+                            label={t('node-vitals.card.proxy-url')}
+                            leftSection={<TbNetwork size={15} />}
                             placeholder="socks5://user:pass@address:port"
+                            size="xs"
+                            {...form.getInputProps('proxyUrl')}
                         />
                     </Stack>
                 </SectionCard.Section>

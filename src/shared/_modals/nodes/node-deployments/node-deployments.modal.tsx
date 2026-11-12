@@ -17,10 +17,14 @@ import {
 } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { TbInfoCircle, TbVersions } from 'react-icons/tb'
 
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
+import surface from '@shared/ui/node-panel-surface.module.css'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { nodeDeploymentsAPI } from './node-deployments.api'
 
@@ -54,69 +58,117 @@ export const NodeDeploymentsModal = NiceModal.create(({ nodeUuid }: { nodeUuid: 
     const data = query.data
     const busy = action.isPending || Boolean(data?.state?.applying)
     const color = (state: string) =>
-        state === 'APPLIED' || state === 'NO_CORE'
+        state === 'APPLIED' || state === 'NO_CORE' || state === 'COMPLETED'
             ? 'teal'
             : ['FAILED', 'ROLLED_BACK', 'UNKNOWN'].includes(state)
               ? 'red'
-              : 'gray'
+              : state === 'RUNNING' || state === 'PENDING'
+                ? 'blue'
+                : 'gray'
+    const accentClass = (state: string) =>
+        state === 'APPLIED' || state === 'NO_CORE' || state === 'COMPLETED'
+            ? surface.accentTeal
+            : ['FAILED', 'ROLLED_BACK', 'UNKNOWN'].includes(state)
+              ? surface.accentError
+              : state === 'RUNNING' || state === 'PENDING'
+                ? surface.accentCyan
+                : surface.accentMuted
     const when = (date: string) => new Date(date).toLocaleString(zh ? 'zh-CN' : 'en-GB')
     const name = (id: string) => data?.eligibleNodes.find((n) => n.uuid === id)?.name ?? id
     return (
         <Modal
             {...modalProps}
-            size="1100px"
-            title={l('配置发布与回滚', 'Configuration releases & rollback')}
+            size="1080px"
+            title={
+                <BaseOverlayHeader
+                    iconColor="violet"
+                    IconComponent={TbVersions}
+                    iconSize={20}
+                    iconVariant="soft"
+                    title={l('配置发布与回滚', 'Configuration releases & rollback')}
+                    titleOrder={5}
+                />
+            }
         >
-            <Stack>
-                <Alert color="blue">
+            <Stack gap="sm">
+                <Alert color="blue" icon={<TbInfoCircle size={16} />} variant="light">
                     {l(
                         '快照仅包含配置模板，回滚时重新注入当前有效用户。历史仅显示摘要，不展示密码和私钥。',
                         'Snapshots contain configuration templates only. Rollback injects current authorized users; passwords and private keys are never displayed.'
                     )}
                 </Alert>
                 {(query.error || action.error) && (
-                    <Alert color="red">{(query.error || action.error)?.message}</Alert>
+                    <Alert color="red" variant="light">
+                        {(query.error || action.error)?.message}
+                    </Alert>
                 )}
-                {query.isPending && <Loader />}
+                {query.isPending && (
+                    <Group justify="center" py="lg">
+                        <Loader size="sm" />
+                    </Group>
+                )}
                 {data && (
                     <>
-                        <Group justify="space-between" wrap="wrap">
-                            <Box>
-                                <Text size="sm">
-                                    {l('当前版本', 'Active revision')}:{' '}
-                                    <Code>
-                                        {data.state?.appliedRevisionUuid?.slice(0, 8) ?? '—'}
-                                    </Code>
-                                </Text>
-                                <Text size="xs" c="dimmed">
-                                    {data.state?.applying
-                                        ? l('正在应用', 'Applying')
-                                        : data.state &&
-                                            data.state.requestedSeq !== data.state.processedSeq
-                                          ? l('等待同步', 'Pending reconciliation')
-                                          : l('已同步', 'Reconciled')}
-                                    {data.state?.lastError ? ` · ${data.state.lastError}` : ''}
-                                </Text>
-                            </Box>
-                            {(data.state?.pinnedRevisionUuid || data.state?.blocked) && (
-                                <Button
-                                    disabled={busy}
-                                    variant="light"
-                                    onClick={() =>
-                                        confirm(
-                                            l('恢复当前 Profile', 'Resume current profile'),
-                                            l(
-                                                '解除固定版本后应用当前 Profile，不会恢复历史用户。',
-                                                'Unpin this revision and apply the current profile without restoring historical users.'
-                                            ),
-                                            () => nodeDeploymentsAPI.resume(nodeUuid)
-                                        )
-                                    }
-                                >
-                                    {l('解除固定版本', 'Unpin revision')}
-                                </Button>
+                        <Box
+                            className={clsx(
+                                surface.subPanel,
+                                data.state?.lastError
+                                    ? surface.accentError
+                                    : data.state?.pinnedRevisionUuid
+                                      ? surface.accentOrange
+                                      : surface.accentTeal
                             )}
-                        </Group>
+                            p="sm"
+                        >
+                            <Group justify="space-between" wrap="wrap">
+                                <Box>
+                                    <Group gap="xs">
+                                        <Text className={surface.tabular} fw={600} size="sm">
+                                            {l('当前版本', 'Active revision')}:{' '}
+                                            <Code className={surface.tabular} ff="text">
+                                                {data.state?.appliedRevisionUuid?.slice(0, 8) ??
+                                                    '—'}
+                                            </Code>
+                                        </Text>
+                                        {data.state?.pinnedRevisionUuid && (
+                                            <Badge color="orange" size="xs" variant="light">
+                                                {l('已固定版本', 'Pinned')}
+                                            </Badge>
+                                        )}
+                                    </Group>
+                                    <Text c="dimmed" size="xs">
+                                        {data.state?.applying
+                                            ? l('正在应用', 'Applying')
+                                            : data.state &&
+                                                data.state.requestedSeq !== data.state.processedSeq
+                                              ? l('等待同步', 'Pending reconciliation')
+                                              : l('已同步', 'Reconciled')}
+                                        {data.state?.lastError ? ` · ${data.state.lastError}` : ''}
+                                    </Text>
+                                </Box>
+                                {(data.state?.pinnedRevisionUuid || data.state?.blocked) && (
+                                    <Button
+                                        color="orange"
+                                        disabled={busy}
+                                        size="xs"
+                                        variant="light"
+                                        onClick={() =>
+                                            confirm(
+                                                l('恢复当前 Profile', 'Resume current profile'),
+                                                l(
+                                                    '解除固定版本后应用当前 Profile，不会恢复历史用户。',
+                                                    'Unpin this revision and apply the current profile without restoring historical users.'
+                                                ),
+                                                () => nodeDeploymentsAPI.resume(nodeUuid)
+                                            )
+                                        }
+                                    >
+                                        {l('解除固定版本', 'Unpin revision')}
+                                    </Button>
+                                )}
+                            </Group>
+                        </Box>
+
                         <Tabs defaultValue="deployments">
                             <Tabs.List>
                                 <Tabs.Tab value="deployments">
@@ -125,32 +177,49 @@ export const NodeDeploymentsModal = NiceModal.create(({ nodeUuid }: { nodeUuid: 
                                 <Tabs.Tab value="revisions">{l('配置版本', 'Revisions')}</Tabs.Tab>
                                 <Tabs.Tab value="batch">{l('灰度批次', 'Canary batches')}</Tabs.Tab>
                             </Tabs.List>
-                            <Tabs.Panel value="deployments" pt="md">
+                            <Tabs.Panel pt="sm" value="deployments">
                                 <Stack gap="xs">
                                     {!data.deployments.length && (
-                                        <Text c="dimmed">
-                                            {l('暂无发布记录', 'No deployments yet')}
-                                        </Text>
+                                        <Box className={surface.emptyState} p="md">
+                                            <Text c="dimmed" size="sm" ta="center">
+                                                {l('暂无发布记录', 'No deployments yet')}
+                                            </Text>
+                                        </Box>
                                     )}
                                     {data.deployments.map((d) => (
                                         <Box
+                                            className={clsx(surface.subPanel, accentClass(d.state))}
                                             key={d.uuid}
                                             p="sm"
                                             style={{
-                                                border: '1px solid var(--mantine-color-default-border)',
-                                                borderRadius: 8,
                                                 overflowWrap: 'anywhere'
                                             }}
                                         >
-                                            <Group justify="space-between">
-                                                <Text size="sm">{when(d.startedAt)}</Text>
-                                                <Badge color={color(d.state)}>{d.state}</Badge>
+                                            <Group justify="space-between" mb={2}>
+                                                <Text
+                                                    className={surface.tabular}
+                                                    fw={600}
+                                                    size="xs"
+                                                >
+                                                    {when(d.startedAt)}
+                                                </Text>
+                                                <Badge
+                                                    color={color(d.state)}
+                                                    size="xs"
+                                                    variant="light"
+                                                >
+                                                    {d.state}
+                                                </Badge>
                                             </Group>
-                                            <Text size="sm">
-                                                {d.reason} · {d.revisionUuid?.slice(0, 8) ?? '—'} ·{' '}
+                                            <Text className={surface.tabular} size="sm">
+                                                {d.reason} ·{' '}
+                                                <Code className={surface.tabular} ff="text">
+                                                    {d.revisionUuid?.slice(0, 8) ?? '—'}
+                                                </Code>{' '}
+                                                ·{' '}
                                                 {d.durationMs === null ? '—' : `${d.durationMs} ms`}
                                             </Text>
-                                            <Text size="xs" c="dimmed">
+                                            <Text c="dimmed" size="xs">
                                                 {l('操作者', 'Actor')}:{' '}
                                                 {d.actorUuid ?? l('系统', 'System')}
                                                 {d.batchUuid
@@ -158,159 +227,221 @@ export const NodeDeploymentsModal = NiceModal.create(({ nodeUuid }: { nodeUuid: 
                                                     : ''}
                                             </Text>
                                             {(d.errorCode || d.rollback) && (
-                                                <Text size="xs" c="red">
+                                                <Text c="red.4" size="xs">
                                                     {d.errorCode} {d.rollback}
                                                 </Text>
                                             )}
-                                            <Text size="xs" c="dimmed">
+                                            <Text c="dimmed" className={surface.tabular} size="xs">
                                                 {l('请求 / 活跃 hash', 'Requested / active hash')}:{' '}
-                                                {d.requestedHash?.slice(0, 12) ?? '—'} /{' '}
-                                                {d.activeHash?.slice(0, 12) ?? '—'}
+                                                <Code className={surface.tabular} ff="text">
+                                                    {d.requestedHash?.slice(0, 12) ?? '—'}
+                                                </Code>{' '}
+                                                /{' '}
+                                                <Code className={surface.tabular} ff="text">
+                                                    {d.activeHash?.slice(0, 12) ?? '—'}
+                                                </Code>
                                             </Text>
                                         </Box>
                                     ))}
                                 </Stack>
                             </Tabs.Panel>
-                            <Tabs.Panel value="revisions" pt="md">
-                                <Table.ScrollContainer minWidth={620}>
-                                    <Table>
-                                        <Table.Thead>
-                                            <Table.Tr>
-                                                <Table.Th>{l('版本', 'Revision')}</Table.Th>
-                                                <Table.Th>{l('创建时间', 'Created')}</Table.Th>
-                                                <Table.Th>
-                                                    {l('变更区段', 'Changed sections')}
-                                                </Table.Th>
-                                                <Table.Th>{l('操作', 'Action')}</Table.Th>
-                                            </Table.Tr>
-                                        </Table.Thead>
-                                        <Table.Tbody>
-                                            {data.revisions.map((r) => (
-                                                <Table.Tr key={r.uuid}>
-                                                    <Table.Td>
-                                                        <Code>{r.uuid.slice(0, 8)}</Code>
-                                                        {data.state?.pinnedRevisionUuid ===
-                                                            r.uuid && (
-                                                            <Badge size="xs">
-                                                                {l('固定', 'Pinned')}
-                                                            </Badge>
-                                                        )}
-                                                    </Table.Td>
-                                                    <Table.Td>{when(r.createdAt)}</Table.Td>
-                                                    <Table.Td>
-                                                        <Text size="xs">
-                                                            {r.changedSections.join(', ') || '—'}
-                                                        </Text>
-                                                    </Table.Td>
-                                                    <Table.Td>
-                                                        <Button
-                                                            size="xs"
-                                                            color="orange"
-                                                            disabled={
-                                                                busy ||
-                                                                r.uuid ===
-                                                                    data.state
-                                                                        ?.appliedRevisionUuid ||
-                                                                !data.deployments.some(
-                                                                    (d) =>
-                                                                        d.revisionUuid === r.uuid &&
-                                                                        d.state === 'APPLIED'
-                                                                )
-                                                            }
-                                                            onClick={() =>
-                                                                confirm(
-                                                                    l(
-                                                                        '回滚配置',
-                                                                        'Roll back configuration'
-                                                                    ),
-                                                                    l(
-                                                                        '只恢复此配置模板，并使用当前授权用户。成功后固定此版本，直到解除固定或显式更新 Profile。',
-                                                                        'Restore this template using current authorized users. The revision stays pinned until unpinned or the profile is explicitly updated.'
-                                                                    ),
-                                                                    () =>
-                                                                        nodeDeploymentsAPI.rollback(
-                                                                            nodeUuid,
-                                                                            r.uuid
-                                                                        )
-                                                                )
-                                                            }
-                                                        >
-                                                            {l('回滚', 'Roll back')}
-                                                        </Button>
-                                                    </Table.Td>
+                            <Tabs.Panel pt="sm" value="revisions">
+                                <Box className={surface.subPanel} p="xs">
+                                    <Table.ScrollContainer minWidth={620}>
+                                        <Table highlightOnHover verticalSpacing="xs">
+                                            <Table.Thead>
+                                                <Table.Tr>
+                                                    <Table.Th>{l('版本', 'Revision')}</Table.Th>
+                                                    <Table.Th>{l('创建时间', 'Created')}</Table.Th>
+                                                    <Table.Th>
+                                                        {l('变更区段', 'Changed sections')}
+                                                    </Table.Th>
+                                                    <Table.Th>{l('操作', 'Action')}</Table.Th>
                                                 </Table.Tr>
-                                            ))}
-                                        </Table.Tbody>
-                                    </Table>
-                                </Table.ScrollContainer>
+                                            </Table.Thead>
+                                            <Table.Tbody>
+                                                {data.revisions.map((r) => (
+                                                    <Table.Tr key={r.uuid}>
+                                                        <Table.Td>
+                                                            <Group gap={6} wrap="nowrap">
+                                                                <Code
+                                                                    className={surface.tabular}
+                                                                    ff="text"
+                                                                >
+                                                                    {r.uuid.slice(0, 8)}
+                                                                </Code>
+                                                                {data.state?.pinnedRevisionUuid ===
+                                                                    r.uuid && (
+                                                                    <Badge
+                                                                        color="orange"
+                                                                        size="xs"
+                                                                        variant="light"
+                                                                    >
+                                                                        {l('固定', 'Pinned')}
+                                                                    </Badge>
+                                                                )}
+                                                            </Group>
+                                                        </Table.Td>
+                                                        <Table.Td>
+                                                            <Text
+                                                                className={surface.tabular}
+                                                                size="xs"
+                                                            >
+                                                                {when(r.createdAt)}
+                                                            </Text>
+                                                        </Table.Td>
+                                                        <Table.Td>
+                                                            <Text size="xs">
+                                                                {r.changedSections.join(', ') ||
+                                                                    '—'}
+                                                            </Text>
+                                                        </Table.Td>
+                                                        <Table.Td>
+                                                            <Button
+                                                                color="orange"
+                                                                disabled={
+                                                                    busy ||
+                                                                    r.uuid ===
+                                                                        data.state
+                                                                            ?.appliedRevisionUuid ||
+                                                                    !data.deployments.some(
+                                                                        (d) =>
+                                                                            d.revisionUuid ===
+                                                                                r.uuid &&
+                                                                            d.state === 'APPLIED'
+                                                                    )
+                                                                }
+                                                                size="xs"
+                                                                variant="light"
+                                                                onClick={() =>
+                                                                    confirm(
+                                                                        l(
+                                                                            '回滚配置',
+                                                                            'Roll back configuration'
+                                                                        ),
+                                                                        l(
+                                                                            '只恢复此配置模板，并使用当前授权用户。成功后固定此版本，直到解除固定或显式更新 Profile。',
+                                                                            'Restore this template using current authorized users. The revision stays pinned until unpinned or the profile is explicitly updated.'
+                                                                        ),
+                                                                        () =>
+                                                                            nodeDeploymentsAPI.rollback(
+                                                                                nodeUuid,
+                                                                                r.uuid
+                                                                            )
+                                                                    )
+                                                                }
+                                                            >
+                                                                {l('回滚', 'Roll back')}
+                                                            </Button>
+                                                        </Table.Td>
+                                                    </Table.Tr>
+                                                ))}
+                                            </Table.Tbody>
+                                        </Table>
+                                    </Table.ScrollContainer>
+                                </Box>
                             </Tabs.Panel>
-                            <Tabs.Panel value="batch" pt="md">
-                                <Stack>
-                                    <Text size="sm" c="dimmed">
-                                        {l(
-                                            '先在 Profile 编辑器选择“仅保存，稍后灰度”。此处固定本次模板，先应用灰度节点；确认 hash 成功后逐台继续，失败停止后续节点。不会等待额外的人工网络测试。',
-                                            'First choose “Save only, deploy later” in the profile editor. This batch snapshots the template, applies the canary first, then proceeds sequentially after a successful hash acknowledgement. A failure stops subsequent nodes; no separate manual network test is performed.'
-                                        )}
-                                    </Text>
-                                    <MultiSelect
-                                        searchable
-                                        label={l('同 Profile 节点', 'Nodes sharing this profile')}
-                                        data={data.eligibleNodes.map((n) => ({
-                                            value: n.uuid,
-                                            label: n.name,
-                                            disabled: !n.isConnected
-                                        }))}
-                                        value={selected}
-                                        onChange={(ids) => {
-                                            setSelected(ids)
-                                            if (!ids.includes(canary ?? ''))
-                                                setCanary(ids[0] ?? null)
-                                        }}
-                                    />
-                                    <Select
-                                        label={l('灰度节点', 'Canary node')}
-                                        data={data.eligibleNodes
-                                            .filter((n) => selected.includes(n.uuid))
-                                            .map((n) => ({ value: n.uuid, label: n.name }))}
-                                        value={canary}
-                                        onChange={setCanary}
-                                    />
-                                    <Button
-                                        disabled={
-                                            busy ||
-                                            !selected.length ||
-                                            !canary ||
-                                            !selected.includes(canary) ||
-                                            data.batches.some((b) =>
-                                                ['PENDING', 'RUNNING'].includes(b.state)
-                                            )
-                                        }
-                                        loading={action.isPending}
-                                        onClick={() =>
-                                            confirm(
-                                                l('开始灰度发布', 'Start canary deployment'),
-                                                `${l('首先应用', 'Apply first')}: ${name(canary!)} · ${selected.length} ${l('个节点', 'nodes')}`,
-                                                () => nodeDeploymentsAPI.batch(selected, canary!)
-                                            )
-                                        }
-                                    >
-                                        {l('开始灰度发布', 'Start canary deployment')}
-                                    </Button>
+                            <Tabs.Panel pt="sm" value="batch">
+                                <Stack gap="sm">
+                                    <Box className={surface.subPanel} p="sm">
+                                        <Stack gap="sm">
+                                            <Text c="dimmed" size="xs">
+                                                {l(
+                                                    '先在 Profile 编辑器选择“仅保存，稍后灰度”。此处固定本次模板，先应用灰度节点；确认 hash 成功后逐台继续，失败停止后续节点。不会等待额外的人工网络测试。',
+                                                    'First choose “Save only, deploy later” in the profile editor. This batch snapshots the template, applies the canary first, then proceeds sequentially after a successful hash acknowledgement. A failure stops subsequent nodes; no separate manual network test is performed.'
+                                                )}
+                                            </Text>
+                                            <MultiSelect
+                                                data={data.eligibleNodes.map((n) => ({
+                                                    value: n.uuid,
+                                                    label: n.name,
+                                                    disabled: !n.isConnected
+                                                }))}
+                                                label={l(
+                                                    '同 Profile 节点',
+                                                    'Nodes sharing this profile'
+                                                )}
+                                                searchable
+                                                size="xs"
+                                                value={selected}
+                                                onChange={(ids) => {
+                                                    setSelected(ids)
+                                                    if (!ids.includes(canary ?? ''))
+                                                        setCanary(ids[0] ?? null)
+                                                }}
+                                            />
+                                            <Select
+                                                data={data.eligibleNodes
+                                                    .filter((n) => selected.includes(n.uuid))
+                                                    .map((n) => ({
+                                                        value: n.uuid,
+                                                        label: n.name
+                                                    }))}
+                                                label={l('灰度节点', 'Canary node')}
+                                                size="xs"
+                                                value={canary}
+                                                onChange={setCanary}
+                                            />
+                                            <Group justify="flex-end">
+                                                <Button
+                                                    color="teal"
+                                                    disabled={
+                                                        busy ||
+                                                        !selected.length ||
+                                                        !canary ||
+                                                        !selected.includes(canary) ||
+                                                        data.batches.some((b) =>
+                                                            ['PENDING', 'RUNNING'].includes(b.state)
+                                                        )
+                                                    }
+                                                    loading={action.isPending}
+                                                    size="xs"
+                                                    variant="light"
+                                                    onClick={() =>
+                                                        confirm(
+                                                            l(
+                                                                '开始灰度发布',
+                                                                'Start canary deployment'
+                                                            ),
+                                                            `${l('首先应用', 'Apply first')}: ${name(canary!)} · ${selected.length} ${l('个节点', 'nodes')}`,
+                                                            () =>
+                                                                nodeDeploymentsAPI.batch(
+                                                                    selected,
+                                                                    canary!
+                                                                )
+                                                        )
+                                                    }
+                                                >
+                                                    {l('开始灰度发布', 'Start canary deployment')}
+                                                </Button>
+                                            </Group>
+                                        </Stack>
+                                    </Box>
+
                                     {data.batches.map((b) => (
                                         <Box
+                                            className={clsx(surface.subPanel, accentClass(b.state))}
                                             key={b.uuid}
                                             p="sm"
-                                            style={{
-                                                border: '1px solid var(--mantine-color-default-border)',
-                                                borderRadius: 8
-                                            }}
                                         >
-                                            <Group justify="space-between">
-                                                <Text size="sm">
-                                                    {b.uuid.slice(0, 8)} · {b.nextIndex}/
-                                                    {b.nodeUuids.length}
+                                            <Group justify="space-between" mb={4}>
+                                                <Text
+                                                    className={surface.tabular}
+                                                    fw={600}
+                                                    size="xs"
+                                                >
+                                                    <Code className={surface.tabular} ff="text">
+                                                        {b.uuid.slice(0, 8)}
+                                                    </Code>{' '}
+                                                    · {b.nextIndex}/{b.nodeUuids.length}
                                                 </Text>
-                                                <Badge color={color(b.state)}>{b.state}</Badge>
+                                                <Badge
+                                                    color={color(b.state)}
+                                                    size="xs"
+                                                    variant="light"
+                                                >
+                                                    {b.state}
+                                                </Badge>
                                             </Group>
                                             <Text size="xs" style={{ overflowWrap: 'anywhere' }}>
                                                 {b.nodeUuids.map(name).join(' → ')}
@@ -318,11 +449,11 @@ export const NodeDeploymentsModal = NiceModal.create(({ nodeUuid }: { nodeUuid: 
                                             </Text>
                                             {['PENDING', 'RUNNING'].includes(b.state) && (
                                                 <Button
-                                                    size="xs"
                                                     color="red"
-                                                    variant="light"
-                                                    mt="xs"
                                                     disabled={action.isPending}
+                                                    mt="xs"
+                                                    size="xs"
+                                                    variant="light"
                                                     onClick={() =>
                                                         confirm(
                                                             l(

@@ -284,7 +284,10 @@
   },
   "edit-node-modal": {
     "widget": {
-      "edit-node": "ویرایش نود"
+      "edit-node": "ویرایش نود",
+      "title-with-name": "ویرایش نود — {{name}}",
+      "error-name-short": "نام باید حداقل شامل ۳ کاراکتر غیرخالی باشد",
+      "error-address-blank": "آدرس نباید خالی باشد"
     }
   },
   "error-accordeon": {
@@ -499,7 +502,18 @@
     "more-actions": "عملیات بیشتر",
     "quick-actions": "عملیات سریع",
     "copy-node-uuid": "کپی کردن UUID نود",
-    "management": "مدیریت"
+    "management": "مدیریت",
+    "node-port": "پورت نود",
+    "secret-key": "کلید مخفی (SECRET_KEY)",
+    "secret-key-loading": "در حال بارگذاری...",
+    "consumption-subtitle": "ضریب محاسبه ترافیک برای کاربران و سهمیه نود",
+    "core-configuration-subtitle": "{{count}} اینباند فعال",
+    "core-configuration-empty-subtitle": "فقط فورواردینگ یا تنظیم‌نشده",
+    "tracking-subtitle": "ارائه‌دهنده، چرخه سهمیه، برچسب‌ها و یادداشت",
+    "tags-placeholder": "وارد کردن یا انتخاب برچسب‌ها (کاما، فاصله، نقطه‌ویرگول)",
+    "unsaved": "ذخیره‌نشده",
+    "discard": "لغو تغییرات",
+    "releases-and-rollback": "انتشارها و بازگشت"
   },
   "node-forwarding-card": {
     "title": "هدایت پورت",
@@ -1419,7 +1433,20 @@
       "disable-node": "غیرفعالسازی نود",
       "config-profile-or-inbounds-is-missing": "پروفایل پیکربندی یا اینباند وجود ندارد",
       "core-version": "نسخه هسته فعال",
-      "remnawave-node-version": "نسخه نود، @remnawave/node"
+      "remnawave-node-version": "نسخه نود، @remnawave/node",
+      "metadata": "متادیتای نود",
+      "online-users": "کاربران آنلاین",
+      "core-engine": "هسته پروکسی",
+      "node-agent": "ایجنت نود",
+      "core-not-required": "نیاز نیست",
+      "config-status-applied": "پیکربندی: اعمال شد",
+      "config-status-unchanged": "پیکربندی: همگام",
+      "config-status-pending": "پیکربندی: در انتظار",
+      "config-status-rolled_back": "پیکربندی: بازگشت‌داده‌شده",
+      "config-status-failed": "پیکربندی: خطا",
+      "stats-active": "آمار {{pending}}/{{lag}}",
+      "stats-paused": "آمار متوقف",
+      "quick-tools": "ابزارهای تشخیصی و ارتباطات"
     }
   },
   "config-profiles": {
@@ -1456,7 +1483,8 @@
       "system-uptime": "System Uptime",
       "network": "Network",
       "kernel": "Kernel",
-      "interface": "Interface"
+      "interface": "Interface",
+      "copy-screenshot": "کپی تصویر کارت سیستم"
     }
   },
   "node-stats": {
@@ -2354,7 +2382,9 @@
     "invalid-ip": "Not a valid IPv4 or IPv6 address",
     "ip-is-required": "IP address is required",
     "max-ips-reached": "Maximum {{max}} IP addresses",
-    "no-ips-yet": "No IP addresses yet"
+    "no-ips-yet": "No IP addresses yet",
+    "subtitle-count": "{{count}} آدرس IP خروجی ثبت شده",
+    "subtitle-empty": "فهرست اختیاری IPهای خروجی"
   },
   "node-ip-statuses": {
     "inbound": "Inbound",
@@ -2391,5 +2421,43 @@
     "view-image": "Report",
     "no-image": "No image in the report; open JSON",
     "requires-node-version": "نیازمند Remnawave Node نسخه {{version}} یا بالاتر"
+  },
+  "node-deployment-card": {
+    "title": "استقرار و نسخه‌ها",
+    "subtitle-default": "هم‌ترازی نسخه ایجنت، دسته انتشار و API SNI",
+    "subtitle-running": "در حال اجرا {{version}} · {{arch}}",
+    "releases-button": "انتشارها و بازگشت",
+    "status-no-expected": "بدون نسخه هدف",
+    "status-drift": "عدم تطابق نسخه",
+    "status-aligned": "هم‌تراز",
+    "unknown-arch": "معماری نامشخص",
+    "no-inventory": "بدون گزارش",
+    "last-reported": "گزارش در {{time}}",
+    "never-reported": "گزارش نشده",
+    "expected-agent-version": "نسخه مورد انتظار ایجنت",
+    "expected-image-tag": "تگ ایمیج مورد انتظار",
+    "rollout-batch": "دسته انتشار",
+    "use-running-version": "نسخه فعلی ({{version}})",
+    "sni-label": "ارسال Node API SNI مشتق‌شده",
+    "sni-supported": "پشتیبانی SNI",
+    "sni-enforced": "الزام SNI",
+    "sni-unsupported": "نیازمند node_api_sni_v1",
+    "sni-description-supported": "الزام سخت‌گیرانه ایجنت را تنها پس از موفقیت هندشیک فعال کنید.",
+    "sni-handshake-ok": "هندشیک موفق · {{time}}",
+    "sni-handshake-pending": "در انتظار هندشیک"
+  },
+  "node-rollout-overview": {
+    "title": "نمای کلی نسخه و وضعیت نودها",
+    "subtitle": "{{connected}} / {{total}} متصل · آخرین وضعیت ثبت‌شده در حالت آفلاین حفظ می‌شود",
+    "filter-all": "همه ({{count}})",
+    "filter-drift": "عدم تطابق ({{count}})",
+    "filter-missing-sni": "بدون SNI ({{count}})",
+    "agent-version": "نسخه ایجنت",
+    "architecture": "معماری",
+    "runtime-mode": "حالت اجرا",
+    "country": "منطقه",
+    "unknown": "نامشخص",
+    "expand": "نمایش جزئیات",
+    "collapse": "بستن جزئیات"
   }
 }

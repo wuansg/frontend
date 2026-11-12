@@ -2,20 +2,20 @@ import { DeleteNodeFeature } from '@features/ui/dashboard/nodes/delete-node'
 import { ResetNodeTrafficFeature } from '@features/ui/dashboard/nodes/reset-node-traffic'
 import { RestartNodeButtonFeature } from '@features/ui/dashboard/nodes/restart-node-button'
 import { ToggleNodeStatusButtonFeature } from '@features/ui/dashboard/nodes/toggle-node-status-button'
-import { Button, CopyButton, Group, Menu, px, Stack } from '@mantine/core'
+import { Badge, Button, CopyButton, Group, Menu, px, Stack } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
 import {
+    GetNodeCommand,
     GetNodePluginsCommand,
     GetNodeSecretKeyCommand,
-    GetNodeCommand,
     UpdateNodeCommand
 } from '@remnawave/backend-contract'
 import { ModalAccordionWidget } from '@widgets/dashboard/nodes/modal-accordeon-widget'
 import { motion } from 'framer-motion'
-import { t } from 'i18next'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PiFloppyDiskDuotone } from 'react-icons/pi'
-import { TbCopy, TbDots } from 'react-icons/tb'
+import { TbCopy, TbDots, TbHistory, TbRotate } from 'react-icons/tb'
 
 import { useIsMobile } from '@shared/hooks'
 import { ModalFooter } from '@shared/ui/modal-footer'
@@ -35,17 +35,17 @@ const containerVariants = {
     hidden: {},
     visible: {
         transition: {
-            staggerChildren: 0.1
+            staggerChildren: 0.08
         }
     }
 }
 
 const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 16 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.3 }
+        transition: { duration: 0.25 }
     }
 }
 
@@ -58,6 +58,7 @@ interface IProps<T extends UpdateNodeCommand.RequestBody> {
     nodeDetailsCard?: ReactNode
     nodePlugins: GetNodePluginsCommand.Response['response']['nodePlugins']
     nodeSystemCard?: ReactNode
+    onOpenDeployments?: () => void
     secretKey: GetNodeSecretKeyCommand.Response['response'] | undefined
 }
 
@@ -71,17 +72,28 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
         nodeSystemCard,
         handleClose,
         handleSubmit,
-        isDataSubmitting
+        isDataSubmitting,
+        onOpenDeployments
     } = props
 
+    const { t } = useTranslation()
     const isMobile = useIsMobile()
+    const [resetSeed, setResetSeed] = useState(0)
+
+    const isDirty = form.isDirty()
+
+    const handleDiscard = () => {
+        form.reset()
+        form.clearErrors()
+        setResetSeed((prev) => prev + 1)
+    }
 
     return (
         <>
             {isMobile ? (
                 <MotionStack
                     animate="visible"
-                    gap="lg"
+                    gap="md"
                     initial="hidden"
                     variants={containerVariants}
                 >
@@ -109,27 +121,10 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         form={form}
                         motionWrapper={MotionWrapper}
                         node={node}
+                        onOpenDeployments={onOpenDeployments}
                     />
 
                     <NodeConfigProfilesCard
-                        cardVariants={cardVariants}
-                        form={form}
-                        motionWrapper={MotionWrapper}
-                    />
-
-                    <NodeTrackingAndBillingCard
-                        cardVariants={cardVariants}
-                        form={form}
-                        motionWrapper={MotionWrapper}
-                    />
-
-                    <NodeConsumptionCard
-                        cardVariants={cardVariants}
-                        form={form}
-                        motionWrapper={MotionWrapper}
-                    />
-
-                    <NodeIpsCard
                         cardVariants={cardVariants}
                         form={form}
                         motionWrapper={MotionWrapper}
@@ -141,6 +136,26 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         node={node}
                         nodeUuid={node.uuid}
                     />
+
+                    <NodeConsumptionCard
+                        cardVariants={cardVariants}
+                        form={form}
+                        motionWrapper={MotionWrapper}
+                    />
+
+                    <NodeIpsCard
+                        key={`ips-m-${resetSeed}`}
+                        cardVariants={cardVariants}
+                        form={form}
+                        motionWrapper={MotionWrapper}
+                    />
+
+                    <NodeTrackingAndBillingCard
+                        key={`track-m-${resetSeed}`}
+                        cardVariants={cardVariants}
+                        form={form}
+                        motionWrapper={MotionWrapper}
+                    />
                 </MotionStack>
             ) : (
                 <Group align="flex-start" gap="md" grow={false} wrap="wrap">
@@ -149,7 +164,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         animate="visible"
                         gap="md"
                         initial="hidden"
-                        style={{ flex: '1 1 400px' }}
+                        style={{ flex: '1 1 420px', minWidth: 0 }}
                         variants={containerVariants}
                     >
                         <ModalAccordionWidget node={node} />
@@ -172,6 +187,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                             form={form}
                             motionWrapper={MotionWrapper}
                             node={node}
+                            onOpenDeployments={onOpenDeployments}
                         />
 
                         <NodeConsumptionCard
@@ -181,6 +197,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         />
 
                         <NodeIpsCard
+                            key={`ips-d-${resetSeed}`}
                             cardVariants={cardVariants}
                             form={form}
                             motionWrapper={MotionWrapper}
@@ -192,7 +209,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         animate="visible"
                         gap="md"
                         initial="hidden"
-                        style={{ flex: '1 1 400px' }}
+                        style={{ flex: '1 1 420px', minWidth: 0 }}
                         variants={containerVariants}
                     >
                         {nodeSystemCard && node.system && (
@@ -213,6 +230,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         />
 
                         <NodeTrackingAndBillingCard
+                            key={`track-d-${resetSeed}`}
                             cardVariants={cardVariants}
                             form={form}
                             motionWrapper={MotionWrapper}
@@ -229,6 +247,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                                 color="gray"
                                 leftSection={<TbDots size={px('1.2rem')} />}
                                 size="md"
+                                variant="light"
                             >
                                 {t('base-node-form.more-actions')}
                             </Button>
@@ -239,6 +258,14 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                             <Menu.Divider />
 
                             <Menu.Label>{t('base-node-form.management')}</Menu.Label>
+                            {onOpenDeployments && (
+                                <Menu.Item
+                                    leftSection={<TbHistory size="16px" />}
+                                    onClick={onOpenDeployments}
+                                >
+                                    {t('base-node-form.releases-and-rollback')}
+                                </Menu.Item>
+                            )}
                             <CopyButton value={node.uuid}>
                                 {({ copy }) => (
                                     <Menu.Item leftSection={<TbCopy size="16px" />} onClick={copy}>
@@ -253,17 +280,36 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         </Menu.Dropdown>
                     </Menu>
                 )}
-                <Button
-                    color="teal"
-                    disabled={!form.isDirty() || !form.isTouched()}
-                    leftSection={<PiFloppyDiskDuotone size="16px" />}
-                    loading={isDataSubmitting}
-                    onClick={handleSubmit}
-                    size="md"
-                    variant="light"
-                >
-                    {t('common.save')}
-                </Button>
+
+                <Group gap="xs" wrap="nowrap">
+                    {isDirty && (
+                        <>
+                            <Badge color="yellow" size="sm" variant="outline" visibleFrom="xs">
+                                {t('base-node-form.unsaved')}
+                            </Badge>
+                            <Button
+                                color="gray"
+                                leftSection={<TbRotate size={16} />}
+                                size="md"
+                                variant="subtle"
+                                onClick={handleDiscard}
+                            >
+                                {t('base-node-form.discard')}
+                            </Button>
+                        </>
+                    )}
+                    <Button
+                        color="teal"
+                        disabled={!isDirty || !form.isTouched()}
+                        leftSection={<PiFloppyDiskDuotone size="16px" />}
+                        loading={isDataSubmitting}
+                        size="md"
+                        variant="light"
+                        onClick={handleSubmit}
+                    >
+                        {t('common.save')}
+                    </Button>
+                </Group>
             </ModalFooter>
         </>
     )

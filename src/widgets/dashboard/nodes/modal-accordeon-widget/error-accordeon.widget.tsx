@@ -1,6 +1,9 @@
-import { Accordion, Code, Text } from '@mantine/core'
+import { Accordion, Code, Text, ThemeIcon } from '@mantine/core'
+import clsx from 'clsx'
 import { useTranslation } from 'react-i18next'
 import { PiNetworkSlash } from 'react-icons/pi'
+
+import surface from '@shared/ui/node-panel-surface.module.css'
 
 import { IProps } from './interfaces'
 
@@ -15,12 +18,27 @@ export const ModalAccordionWidget = (props: IProps) => {
 
     return (
         <Accordion key={node.uuid} radius="md" variant="separated">
-            <Accordion.Item value="error">
-                <Accordion.Control icon={<PiNetworkSlash color="#FF8787" size="24px" />}>
-                    <Text fw={600}>{t('error-accordeon.widget.last-error-message')}</Text>
+            <Accordion.Item className={clsx(surface.subPanel, surface.accentError)} value="error">
+                <Accordion.Control
+                    icon={
+                        <ThemeIcon color="red" radius="md" size="md" variant="light">
+                            <PiNetworkSlash size={16} />
+                        </ThemeIcon>
+                    }
+                >
+                    <Text c="red.3" fw={600} size="sm">
+                        {t('error-accordeon.widget.last-error-message')}
+                    </Text>
                 </Accordion.Control>
                 <Accordion.Panel>
-                    <Code color="var(--mantine-color-red-light)">{node.lastStatusMessage}</Code>
+                    <Code
+                        block
+                        color="var(--mantine-color-red-light)"
+                        fz="xs"
+                        style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                    >
+                        {node.lastStatusMessage}
+                    </Code>
                 </Accordion.Panel>
             </Accordion.Item>
         </Accordion>

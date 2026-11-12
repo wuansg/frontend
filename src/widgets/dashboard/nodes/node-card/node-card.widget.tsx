@@ -335,10 +335,21 @@ export const NodeCardWidget = memo((props: IProps) => {
                             <Box>
                                 <Flex direction="column" gap={4}>
                                     <Flex align="center" justify="space-between">
-                                        <Text c="dimmed" ff="monospace" fw={600} size="sm" truncate>
+                                        <Text
+                                            c="dimmed"
+                                            className={classes.tabular}
+                                            fw={600}
+                                            size="sm"
+                                            truncate
+                                        >
                                             {prettyUsedData}
                                         </Text>
-                                        <Text c="dimmed" size="xs" truncate>
+                                        <Text
+                                            c="dimmed"
+                                            className={classes.tabular}
+                                            size="xs"
+                                            truncate
+                                        >
                                             {maxData}
                                         </Text>
                                     </Flex>
@@ -393,7 +404,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                                 style={{ flex: 1 }}
                                 value={ramPercentage ?? 0}
                             />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {ramPercentage !== null ? `${ramPercentage}%` : '—'}
                             </Text>
                         </Flex>
@@ -428,12 +439,12 @@ export const NodeCardWidget = memo((props: IProps) => {
                             <Flex align="center" gap={4}>
                                 <PiCpuDuotone className={classes.icon} size={12} />
                                 {loadAvg ? (
-                                    <Text ff="monospace" size="xs">
+                                    <Text className={classes.tabular} size="xs">
                                         {loadAvg.map((load, i) => (
                                             <Text
                                                 c={getLoadColor(load, cpus)}
+                                                className={classes.tabular}
                                                 component="span"
-                                                ff="monospace"
                                                 key={i}
                                                 size="xs"
                                             >
@@ -443,7 +454,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                                         ))}
                                     </Text>
                                 ) : (
-                                    <Text c="dimmed" ff="monospace" size="xs">
+                                    <Text c="dimmed" className={classes.tabular} size="xs">
                                         {'—'}
                                     </Text>
                                 )}
@@ -451,26 +462,26 @@ export const NodeCardWidget = memo((props: IProps) => {
                         </Tooltip>
                         <Flex align="center" gap={4}>
                             <PiArrowDownDuotone color="var(--mantine-color-teal-5)" size={12} />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {rxSpeed ?? '—'}
                             </Text>
                         </Flex>
                         <Flex align="center" gap={4}>
                             <PiArrowUpDuotone color="var(--mantine-color-cyan-5)" size={12} />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {txSpeed ?? '—'}
                             </Text>
                         </Flex>
                         <Flex align="center" gap="md" ml="auto">
                             <Flex align="center" gap={4}>
                                 <PiCpuDuotone color="var(--mantine-color-dimmed)" size={12} />
-                                <Text c="dimmed" ff="monospace" size="xs">
+                                <Text c="dimmed" className={classes.tabular} size="xs">
                                     {node.versions ? getNodeCoreDisplay(node.versions) : '—'}
                                 </Text>
                             </Flex>
                             <Flex align="center" gap={4}>
                                 <Logo color="var(--mantine-color-dimmed)" size={12} />
-                                <Text c="dimmed" ff="monospace" size="xs">
+                                <Text c="dimmed" className={classes.tabular} size="xs">
                                     {node.versions ? node.versions.node : '—'}
                                 </Text>
                             </Flex>
@@ -583,10 +594,16 @@ export const NodeCardWidget = memo((props: IProps) => {
                     <Box mb="xs">
                         <Flex direction="column" gap={2}>
                             <Flex align="center" justify="space-between">
-                                <Text c="dimmed" ff="monospace" fw={600} size="sm" truncate>
+                                <Text
+                                    c="dimmed"
+                                    className={classes.tabular}
+                                    fw={600}
+                                    size="sm"
+                                    truncate
+                                >
                                     {prettyUsedData}
                                 </Text>
-                                <Text c="dimmed" size="xs">
+                                <Text c="dimmed" className={classes.tabular} size="xs">
                                     {maxData}
                                 </Text>
                             </Flex>
@@ -637,19 +654,19 @@ export const NodeCardWidget = memo((props: IProps) => {
                                 style={{ flex: 1 }}
                                 value={ramPercentage ?? 0}
                             />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {ramPercentage !== null ? `${ramPercentage}%` : '—'}
                             </Text>
                         </Flex>
                         <Flex align="center" gap={4}>
                             <PiArrowUpDuotone color="var(--mantine-color-cyan-5)" size={10} />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {txSpeed ?? '—'}
                             </Text>
                         </Flex>
                         <Flex align="center" gap={4}>
                             <PiArrowDownDuotone color="var(--mantine-color-teal-5)" size={10} />
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {rxSpeed ?? '—'}
                             </Text>
                         </Flex>

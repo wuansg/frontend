@@ -5,7 +5,7 @@ import { TbCpu } from 'react-icons/tb'
 
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { queryClient } from '@shared/api'
-import { QueryKeys } from '@shared/api/hooks'
+import { QueryKeys, useGetNode, useGetNodes } from '@shared/api/hooks'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { EditNodeByUuidModalContent } from './edit-node.modal.content'
@@ -28,17 +28,33 @@ export const EditNodeModal = NiceModal.create((props: IProps) => {
     })
 
     const { t } = useTranslation()
+    const { data: detailNode } = useGetNode({
+        route: { uuid: nodeUuid },
+        rQueryParams: { enabled: false }
+    })
+    const { data: allNodes } = useGetNodes()
+    const cachedNode = detailNode ?? allNodes?.find((item) => item.uuid === nodeUuid)
+
+    const title = cachedNode?.name
+        ? t('edit-node-modal.widget.title-with-name', { name: cachedNode.name })
+        : t('edit-node-modal.widget.edit-node')
+    const subtitle = cachedNode
+        ? `${cachedNode.address}${cachedNode.port ? `:${cachedNode.port}` : ''}`
+        : undefined
 
     return (
         <Modal
             {...modalProps}
-            size="1000px"
+            size="1080px"
             title={
                 <BaseOverlayHeader
+                    countryCode={cachedNode?.countryCode}
                     iconColor="teal"
                     IconComponent={TbCpu}
                     iconVariant="soft"
-                    title={t('edit-node-modal.widget.edit-node')}
+                    subtitle={subtitle}
+                    title={title}
+                    truncateTitle
                 />
             }
         >

@@ -284,7 +284,10 @@
   },
   "edit-node-modal": {
     "widget": {
-      "edit-node": "Редактировать ноду"
+      "edit-node": "Редактировать ноду",
+      "title-with-name": "Редактирование узла — {{name}}",
+      "error-name-short": "Имя должно содержать не менее 3 непробельных символов",
+      "error-address-blank": "Адрес не должен быть пустым"
     }
   },
   "error-accordeon": {
@@ -499,7 +502,18 @@
     "more-actions": "Действия",
     "quick-actions": "Быстрые действия",
     "copy-node-uuid": "Скопировать UUID ноды",
-    "management": "Менеджмент"
+    "management": "Менеджмент",
+    "node-port": "Порт узла",
+    "secret-key": "Секретный ключ (SECRET_KEY)",
+    "secret-key-loading": "Загрузка...",
+    "consumption-subtitle": "Множители учёта трафика для пользователей и квоты узла",
+    "core-configuration-subtitle": "Активных инбаундов: {{count}}",
+    "core-configuration-empty-subtitle": "Только пересылка или не настроено",
+    "tracking-subtitle": "Провайдер, цикл квоты, теги и заметки",
+    "tags-placeholder": "Введите или выберите теги (запятая, пробел, точка с запятой)",
+    "unsaved": "Не сохранено",
+    "discard": "Сбросить",
+    "releases-and-rollback": "Релизы и откат"
   },
   "node-forwarding-card": {
     "title": "Перенаправление портов",
@@ -1419,7 +1433,20 @@
       "disable-node": "Выключить ноду",
       "config-profile-or-inbounds-is-missing": "Профиль или инбаунд не выбран",
       "core-version": "Версия активного ядра",
-      "remnawave-node-version": "Версия модуля @remnawave/node"
+      "remnawave-node-version": "Версия модуля @remnawave/node",
+      "metadata": "Метаданные узла",
+      "online-users": "Онлайн",
+      "core-engine": "Ядро",
+      "node-agent": "Агент узла",
+      "core-not-required": "Не требуется",
+      "config-status-applied": "Конфиг: применён",
+      "config-status-unchanged": "Конфиг: синхр.",
+      "config-status-pending": "Конфиг: ожидание",
+      "config-status-rolled_back": "Конфиг: откат",
+      "config-status-failed": "Конфиг: ошибка",
+      "stats-active": "Стат. {{pending}}/{{lag}}",
+      "stats-paused": "Стат. пауза",
+      "quick-tools": "Диагностика и связи"
     }
   },
   "config-profiles": {
@@ -1456,7 +1483,8 @@
       "system-uptime": "Время работы системы",
       "network": "Сеть",
       "kernel": "Ядро",
-      "interface": "Интерфейс"
+      "interface": "Интерфейс",
+      "copy-screenshot": "Скопировать скриншот карточки"
     }
   },
   "node-stats": {
@@ -2354,7 +2382,9 @@
     "invalid-ip": "Недопустимый IPv4 или IPv6 адрес",
     "ip-is-required": "IP-адрес обязателен",
     "max-ips-reached": "Максимум {{max}} IP-адресов",
-    "no-ips-yet": "Нет IP-адресов"
+    "no-ips-yet": "Нет IP-адресов",
+    "subtitle-count": "Настроено IP: {{count}}",
+    "subtitle-empty": "Опциональный список выходных IP"
   },
   "node-ip-statuses": {
     "inbound": "Входящий",
@@ -2391,5 +2421,43 @@
     "view-image": "Отчёт",
     "no-image": "В отчёте нет изображения; откройте JSON",
     "requires-node-version": "Требуется Remnawave Node {{version}} или новее"
+  },
+  "node-deployment-card": {
+    "title": "Развёртывание и версии",
+    "subtitle-default": "Контроль версии агента, батча выкатки и API SNI",
+    "subtitle-running": "Запущен {{version}} · {{arch}}",
+    "releases-button": "Релизы и откат",
+    "status-no-expected": "Без фиксации",
+    "status-drift": "Расхождение версий",
+    "status-aligned": "Совпадает",
+    "unknown-arch": "Неизв. арх.",
+    "no-inventory": "Нет данных",
+    "last-reported": "Отчёт {{time}}",
+    "never-reported": "Нет отчётов",
+    "expected-agent-version": "Ожидаемая версия агента",
+    "expected-image-tag": "Ожидаемый тег образа",
+    "rollout-batch": "Группа выкатки",
+    "use-running-version": "Текущая ({{version}})",
+    "sni-label": "Отправлять производный Node API SNI",
+    "sni-supported": "SNI поддерживается",
+    "sni-enforced": "SNI обязателен",
+    "sni-unsupported": "Требуется node_api_sni_v1",
+    "sni-description-supported": "Включайте строгую проверку на агенте только после успешного рукопожатия.",
+    "sni-handshake-ok": "Рукопожатие ОК · {{time}}",
+    "sni-handshake-pending": "Ожидание рукопожатия"
+  },
+  "node-rollout-overview": {
+    "title": "Обзор версий и состояния узлов",
+    "subtitle": "Онлайн {{connected}} / {{total}} · Последнее состояние доступно и офлайн",
+    "filter-all": "Все ({{count}})",
+    "filter-drift": "Расхождение ({{count}})",
+    "filter-missing-sni": "Без SNI ({{count}})",
+    "agent-version": "Версия агента",
+    "architecture": "Архитектура",
+    "runtime-mode": "Режим работы",
+    "country": "Регион",
+    "unknown": "неизвестно",
+    "expand": "Показать сводку",
+    "collapse": "Скрыть сводку"
   }
 }
