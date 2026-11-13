@@ -80,6 +80,35 @@
     animation-delay: calc(var(--section-delay, 0ms) + var(--card-index, 0) * 100ms + 200ms);
 }
 
+.telegramCard {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        light-dark(var(--mantine-color-white), var(--mantine-color-dark-6)) 0%,
+        light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7)) 100%
+    );
+    border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+    border-left: 3px solid var(--mantine-color-dark-3);
+    transition: border-color 150ms ease;
+}
+
+.telegramCard[data-status='green'] {
+    border-left-color: var(--mantine-color-teal-6);
+}
+
+.telegramCard[data-status='yellow'] {
+    border-left-color: var(--mantine-color-yellow-6);
+}
+
+.telegramCard[data-status='red'] {
+    border-left-color: var(--mantine-color-red-6);
+}
+
+.numeric {
+    font-variant-numeric: tabular-nums;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .section,
     .title,

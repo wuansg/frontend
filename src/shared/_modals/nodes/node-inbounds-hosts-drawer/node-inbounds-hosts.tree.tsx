@@ -191,16 +191,21 @@ export function NodeInboundsHostsTree(props: IProps) {
 
                 <Text
                     c={isInactiveInbound ? 'dimmed' : undefined}
-                    ff={meta?.kind === 'inbound' ? 'monospace' : undefined}
-                    fw={meta?.kind === 'node' ? 600 : undefined}
+                    fw={meta?.kind === 'node' ? 600 : meta?.kind === 'inbound' ? 500 : undefined}
                     size="sm"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
                     truncate="end"
                 >
                     {treeNode.label}
                 </Text>
 
                 {(meta?.kind === 'node' || meta?.kind === 'host') && (
-                    <Text c="dimmed" ff="monospace" size="xs" truncate="end">
+                    <Text
+                        c="dimmed"
+                        size="xs"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                        truncate="end"
+                    >
                         {meta.address}
                     </Text>
                 )}

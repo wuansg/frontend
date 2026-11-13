@@ -22,16 +22,16 @@
 }
 
 .label {
-    font-family: var(--mantine-font-family-monospace);
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--mantine-font-size-sm);
+    font-variant-numeric: tabular-nums;
     line-height: 1.3;
     color: var(--mantine-color-bright);
 }
 
 .hostInfoLabel {
-    font-family: var(--mantine-font-family-monospace);
     font-size: var(--mantine-font-size-sm);
+    font-variant-numeric: tabular-nums;
     line-height: 1.3;
     color: var(--mantine-color-dimmed);
 }
@@ -65,7 +65,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-family: var(--mantine-font-family-monospace);
+    font-variant-numeric: tabular-nums;
     font-size: var(--mantine-font-size-sm);
 }
 

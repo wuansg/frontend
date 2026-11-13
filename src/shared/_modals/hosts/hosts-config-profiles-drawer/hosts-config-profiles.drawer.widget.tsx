@@ -163,7 +163,7 @@ export const HostsConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                         <Box>
                             {selectedInbound && selectedProfileUuid ? (
                                 <>
-                                    <Text ff="monospace" fw={700} size="sm">
+                                    <Text fw={700} size="sm">
                                         {filteredProfiles.find(
                                             (p) => p.uuid === selectedProfileUuid
                                         )?.name ||
@@ -171,7 +171,12 @@ export const HostsConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                                                 'hosts-config-profiles.drawer.widget.no-profile-selected'
                                             )}
                                     </Text>
-                                    <Text c="white" ff="monospace" size="xs">
+                                    <Text
+                                        c="dimmed"
+                                        fw={500}
+                                        size="xs"
+                                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                                    >
                                         {filteredProfiles
                                             .find((p) => p.uuid === selectedProfileUuid)
                                             ?.inbounds.find((i) => i.uuid === selectedInbound)
@@ -188,7 +193,7 @@ export const HostsConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                                             'hosts-config-profiles.drawer.widget.no-inbound-selected'
                                         )}
                                     </Text>
-                                    <Text c="dimmed" ff="monospace" size="xs">
+                                    <Text c="dimmed" size="xs">
                                         {t(
                                             'hosts-config-profiles.drawer.widget.assign-an-inbound-to-the-host'
                                         )}

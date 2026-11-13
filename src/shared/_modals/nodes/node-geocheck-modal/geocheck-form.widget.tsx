@@ -102,7 +102,7 @@ export const GeocheckFormWidget = (props: IProps) => {
                             <Group gap="xs" w="100%" wrap="nowrap">
                                 <NodeIpStatusIcon size="sm" status={status} />
 
-                                <Text ff="monospace" size="sm">
+                                <Text size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                                     {option.value}
                                 </Text>
 
@@ -130,7 +130,7 @@ export const GeocheckFormWidget = (props: IProps) => {
                                 <TbAffiliate size={14} />
                             </ThemeIcon>
 
-                            <Text ff="monospace" size="sm">
+                            <Text size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                                 {option.value}
                             </Text>
                         </Group>

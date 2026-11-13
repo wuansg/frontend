@@ -123,7 +123,8 @@
     "system-uptime": "Время работы системы",
     "ram-usage": "Использование RAM",
     "total-traffic": "Общий трафик",
-    "total-online-on-nodes": "Всего онлайн на нодах"
+    "total-online-on-nodes": "Всего онлайн на нодах",
+    "total-ram": "Всего RAM"
   },
   "users-metrics": {
     "disabled-users": "Disabled польз.",
@@ -587,7 +588,10 @@
       "bandwidth": "Трафик",
       "short-stats": "Краткая статистика",
       "remnawave-usage": "Remnawave Usage",
-      "process-details": "Детали по процессам"
+      "process-details": "Детали по процессам",
+      "runtime": "Среда выполнения",
+      "heap-used": "Используемый Heap",
+      "avg-event-loop": "Средняя задержка Event Loop"
     },
     "runtime-info": {
       "title": "Справка по метрикам Runtime",
@@ -607,6 +611,36 @@
       "delay-description": "Среднее время между последовательными тактами цикла событий. Нормальное значение близко к <highlight>0–2 ms</highlight>. Более высокие значения означают, что цикл блокируется длительной синхронной работой.",
       "p99-description": "<highlight>99th percentile</highlight> задержка цикла событий в течение окна измерения. Выявляет наихудшую задержку, которую скрывает только среднее значение — полезно для обнаружения случайных всплесков.",
       "active-handles-description": "Долгоживущие ресурсы, поддерживающие работоспособность контура: <highlight>open sockets</highlight>, <highlight>timers</highlight>, <highlight>file descriptors</highlight>. Стационарный режим — это нормально; <highlight>unbounded growth</highlight>— это сильный сигнал утечки."
+    },
+    "telegram-status": {
+      "title": "Каналы уведомлений Telegram",
+      "enabled": "Включено",
+      "disabled": "Отключено",
+      "available": "Доступно",
+      "unavailable": "Недоступно",
+      "pending": "Ожидание проверки",
+      "not-configured": "Не настроено",
+      "last-check": "Последняя проверка",
+      "not-checked": "Ещё не проверялось",
+      "targets": {
+        "users": "Пользователи",
+        "nodes": "Ноды",
+        "crm": "CRM / Биллинг",
+        "service": "Система / Сервис",
+        "tblocker": "TBlocker"
+      }
+    },
+    "runtime-card": {
+      "memory": "Память",
+      "heap": "Heap",
+      "rss": "RSS",
+      "external": "External",
+      "array-buffers": "Array Buffers",
+      "event-loop": "Event Loop",
+      "delay": "Задержка",
+      "p99": "P99",
+      "handles": "Дескрипторы",
+      "active-handles": "Активные дескрипторы"
     }
   },
   "login-form": {

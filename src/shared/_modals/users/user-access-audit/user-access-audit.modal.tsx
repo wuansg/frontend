@@ -19,6 +19,7 @@ import {
 } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -39,6 +40,7 @@ import {
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
 import { useGetNodes } from '@shared/api/hooks'
 import { DatePickerInput } from '@shared/ui/date-time-picker'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 import { auditAPI, type AuditFilter, formatAuditBytes } from './audit-api'
 import { AuditConnections, AuditRanking } from './audit-results'
@@ -224,18 +226,25 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
             size="min(1240px, 96vw)"
             classNames={{ body: classes.body, header: classes.header }}
             title={
-                <Group gap="sm" wrap="nowrap">
-                    <ThemeIcon color="indigo" variant="light" size="lg">
-                        <TbShieldSearch size={20} />
-                    </ThemeIcon>
-                    <Text component="h2" size="lg" fw={600}>
-                        {selectedUser ? `${title} #${selectedUser}` : title}
-                    </Text>
-                </Group>
+                <BaseOverlayHeader
+                    iconColor="indigo"
+                    IconComponent={TbShieldSearch}
+                    iconVariant="soft"
+                    subtitle={s(
+                        '单用户显式开启 · 连接目标参考记录',
+                        'Opt-in per-user connection targets'
+                    )}
+                    title={selectedUser ? `${title} #${selectedUser}` : title}
+                />
             }
         >
             <Stack gap="md">
-                <Alert color="indigo" icon={<TbShieldSearch size={18} />} radius="lg">
+                <Alert
+                    color="indigo"
+                    variant="light"
+                    icon={<TbShieldSearch size={18} />}
+                    radius="md"
+                >
                     <Text size="xs">
                         {s(
                             '仅显式开启的用户会保存记录。只记录连接目标，不是完整浏览历史；HTTPS 路径/内容及无法识别的域名不可见。流量为连接级参考值，不用于扣费，也不是所选日期内的精确流量。',
@@ -244,7 +253,14 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                     </Text>
                 </Alert>
                 {selectedUser && (
-                    <Box className={classes.section}>
+                    <Box
+                        className={clsx(
+                            classes.section,
+                            policy.data?.enabled
+                                ? classes.sectionAccentTeal
+                                : classes.sectionAccentIndigo
+                        )}
+                    >
                         <Box className={classes.policyHeader}>
                             <Stack gap={5}>
                                 <Group gap="xs">
@@ -369,16 +385,25 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                     <Accordion.Panel>
                                         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xs">
                                             {activeNodes.map((n) => (
-                                                <Box key={n.uuid} className={classes.nodeCard}>
+                                                <Box
+                                                    key={n.uuid}
+                                                    className={classes.nodeCard}
+                                                    data-capturing={capturing(n) || undefined}
+                                                    data-pending={
+                                                        (!capturing(n) && policy.data?.enabled) ||
+                                                        undefined
+                                                    }
+                                                >
                                                     <Text
                                                         size="xs"
-                                                        fw={500}
+                                                        fw={600}
                                                         className={classes.wrap}
                                                     >
                                                         {n.name}
                                                     </Text>
                                                     <Text
                                                         size="xs"
+                                                        className={classes.numeric}
                                                         c={
                                                             capturing(n)
                                                                 ? 'teal'
@@ -498,7 +523,10 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                     </Box>
                 </Box>
                 {complete && (
-                    <Box className={classes.section} data-testid="audit-range-summary">
+                    <Box
+                        className={`${classes.section} ${classes.sectionAccentIndigo}`}
+                        data-testid="audit-range-summary"
+                    >
                         <Group justify="space-between" mb="sm">
                             <Text size="sm" fw={600}>
                                 {s('整个筛选范围', 'Complete filtered range')}
@@ -531,7 +559,7 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                 {s('导出 CSV', 'Export CSV')}
                             </Button>
                         </Group>
-                        <SimpleGrid cols={{ base: 2, sm: 4 }}>
+                        <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="xs">
                             {[
                                 [s('连接数', 'Connections'), rangeSummary.data?.connections],
                                 [s('目标数', 'Targets'), rangeSummary.data?.targets],
@@ -546,11 +574,11 @@ export const UserAccessAuditModal = NiceModal.create(({ userId }: Props) => {
                                         formatAuditBytes(rangeSummary.data.download)
                                 ]
                             ].map(([label, value]) => (
-                                <Box key={label}>
+                                <Box key={label} className={classes.rangeTile}>
                                     <Text size="xs" c="dimmed">
                                         {label}
                                     </Text>
-                                    <Text fw={600}>
+                                    <Text className={classes.numeric} fw={700} mt={2} size="md">
                                         {rangeSummary.isPending || rangeSummary.isError
                                             ? '—'
                                             : value}

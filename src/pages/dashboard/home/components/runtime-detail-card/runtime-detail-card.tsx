@@ -1,5 +1,6 @@
 import { Badge, Card, Grid, Group, Progress, Stack, Text, ThemeIcon } from '@mantine/core'
 import { GetRemnawaveHealthCommand } from '@remnawave/backend-contract'
+import { useTranslation } from 'react-i18next'
 import { PiClockDuotone, PiCloudDuotone, PiGearSixDuotone, PiQueueDuotone } from 'react-icons/pi'
 
 import { prettifyBytesUtil } from '@shared/utils/bytes'
@@ -54,6 +55,7 @@ interface RuntimeDetailCardProps {
 }
 
 export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
+    const { t } = useTranslation()
     const config = PROCESS_CONFIG[metric.instanceType] ?? DEFAULT_PROCESS
     const heapPercent = metric.heapTotal > 0 ? (metric.heapUsed / metric.heapTotal) * 100 : 0
 
@@ -78,10 +80,15 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
                             <config.Icon size={18} />
                         </ThemeIcon>
                         <Stack gap={2}>
-                            <Text c="white" ff="monospace" fw={700} lh={1} size="sm">
+                            <Text c="white" className={classes.numeric} fw={700} lh={1} size="sm">
                                 {config.name}-{metric.instanceId}
                             </Text>
-                            <Badge color={config.color} ff="monospace" size="xs" variant="soft">
+                            <Badge
+                                className={classes.numeric}
+                                color={config.color}
+                                size="xs"
+                                variant="soft"
+                            >
                                 PID: {metric.pid}
                             </Badge>
                         </Stack>
@@ -93,12 +100,14 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
                         <div className={classes.memorySection}>
                             <Stack gap={6}>
                                 <Text c="dimmed" fw={600} lh={1} lts={1} size="10px" tt="uppercase">
-                                    Memory
+                                    {t('home.runtime-card.memory')}
                                 </Text>
 
                                 <div>
                                     <Group justify="space-between" mb={4}>
-                                        <Text className={classes.statLabel}>Heap</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.heap')}
+                                        </Text>
                                         <Text className={classes.heapValues}>
                                             {prettifyBytesUtil(metric.heapUsed, true)} /{' '}
                                             {prettifyBytesUtil(metric.heapTotal, true)}{' '}
@@ -117,19 +126,25 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
 
                                 <Group grow>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>RSS</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.rss')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {prettifyBytesUtil(metric.rss, true)}
                                         </Text>
                                     </Stack>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>External</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.external')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {prettifyBytesUtil(metric.external, true)}
                                         </Text>
                                     </Stack>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>Array Buffers</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.array-buffers')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {prettifyBytesUtil(metric.arrayBuffers, true)}
                                         </Text>
@@ -143,24 +158,30 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
                         <div className={classes.perfSection}>
                             <Stack gap={6}>
                                 <Text c="dimmed" fw={600} lh={1} lts={1} size="10px" tt="uppercase">
-                                    Event Loop
+                                    {t('home.runtime-card.event-loop')}
                                 </Text>
 
                                 <Group grow hiddenFrom="sm">
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>Delay</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.delay')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {metric.eventLoopDelayMs.toFixed(2)} ms
                                         </Text>
                                     </Stack>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>P99</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.p99')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {metric.eventLoopP99Ms.toFixed(2)} ms
                                         </Text>
                                     </Stack>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>Handles</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.handles')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {metric.activeHandles}
                                         </Text>
@@ -170,20 +191,26 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
                                 <Stack gap={6} visibleFrom="sm">
                                     <Group grow>
                                         <Stack gap={0}>
-                                            <Text className={classes.statLabel}>Delay</Text>
+                                            <Text className={classes.statLabel}>
+                                                {t('home.runtime-card.delay')}
+                                            </Text>
                                             <Text className={classes.statValue}>
                                                 {metric.eventLoopDelayMs.toFixed(2)} ms
                                             </Text>
                                         </Stack>
                                         <Stack gap={0}>
-                                            <Text className={classes.statLabel}>P99</Text>
+                                            <Text className={classes.statLabel}>
+                                                {t('home.runtime-card.p99')}
+                                            </Text>
                                             <Text className={classes.statValue}>
                                                 {metric.eventLoopP99Ms.toFixed(2)} ms
                                             </Text>
                                         </Stack>
                                     </Group>
                                     <Stack gap={0}>
-                                        <Text className={classes.statLabel}>Active Handles</Text>
+                                        <Text className={classes.statLabel}>
+                                            {t('home.runtime-card.active-handles')}
+                                        </Text>
                                         <Text className={classes.statValue}>
                                             {metric.activeHandles}
                                         </Text>

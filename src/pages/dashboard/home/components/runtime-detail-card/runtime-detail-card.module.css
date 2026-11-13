@@ -68,7 +68,7 @@
 .statValue {
     font-weight: 600;
     font-size: var(--mantine-font-size-xs);
-    font-family: var(--mantine-font-family-monospace);
+    font-variant-numeric: tabular-nums;
     color: var(--mantine-color-white-5);
     line-height: 1.2;
     white-space: nowrap;
@@ -76,7 +76,7 @@
 
 .heapValues {
     font-size: var(--mantine-font-size-xs);
-    font-family: var(--mantine-font-family-monospace);
+    font-variant-numeric: tabular-nums;
     color: var(--mantine-color-white-5);
     font-weight: 600;
 }
@@ -84,5 +84,9 @@
 .heapPercent {
     color: var(--mantine-color-dimmed);
     font-size: var(--mantine-font-size-xs);
-    font-family: var(--mantine-font-family-monospace);
+    font-variant-numeric: tabular-nums;
+}
+
+.numeric {
+    font-variant-numeric: tabular-nums;
 }

@@ -39,7 +39,7 @@ export const getSimpleMetrics = (
         {
             value: totalRamGB,
             IconComponent: PiMemoryFill,
-            title: 'Total RAM',
+            title: t('simple-metrics.total-ram'),
             iconVariant: 'soft',
             iconColor: 'cyan'
         }

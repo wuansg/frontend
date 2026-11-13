@@ -1,0 +1,77 @@
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
+
+.budgetBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--mantine-radius-sm);
+    background: light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.22));
+    border: 1px solid light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.07));
+}
+
+.actionRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--mantine-spacing-sm);
+}
+
+.historySelect {
+    flex: 1 1 260px;
+    max-width: 360px;
+    min-width: 220px;
+}
+
+.tableFrame {
+    overflow: hidden;
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+    border-radius: var(--mantine-radius-md);
+}
+
+.table thead {
+    background: light-dark(var(--mantine-color-gray-0), rgba(0, 0, 0, 0.24));
+}
+
+.table th {
+    font-size: var(--mantine-font-size-xs);
+    color: var(--mantine-color-dimmed);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.speedCell {
+    min-width: 128px;
+}
+
+.speedBarTrack {
+    height: 4px;
+    margin-top: 4px;
+    border-radius: 2px;
+    background: light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.07));
+    overflow: hidden;
+}
+
+.speedBarFill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.metricValue {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 40em) {
+    .historySelect {
+        max-width: 100%;
+        width: 100%;
+    }
+}

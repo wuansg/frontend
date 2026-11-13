@@ -7,6 +7,7 @@ import {
     Box,
     Button,
     Card,
+    Divider,
     Group,
     Loader,
     Paper,
@@ -15,12 +16,23 @@ import {
     SimpleGrid,
     Stack,
     Text,
+    ThemeIcon,
     Tooltip
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbAlertTriangle, TbCalendar, TbRefresh, TbRoute, TbServer2, TbWorld } from 'react-icons/tb'
+import {
+    TbAlertTriangle,
+    TbArrowsRightLeft,
+    TbCalendar,
+    TbRefresh,
+    TbRoute,
+    TbServer2,
+    TbShieldCheck,
+    TbWorld
+} from 'react-icons/tb'
 
 import { Page, PageHeaderShared } from '@shared/ui'
 import { DatePickerInput } from '@shared/ui/date-time-picker'
@@ -32,16 +44,41 @@ import { endpointLabel, topologyBytes, traceTopology, type TopologyPath } from '
 
 type Node = ForwardingTopology['nodes'][number]
 type Rule = ForwardingTopology['rules'][number]
+
 const useCopy = () => {
     const { i18n } = useTranslation()
     const zh = i18n.language.startsWith('zh')
     return (cn: string, en: string) => (zh ? cn : en)
 }
+
 function timestamp(value: string | null) {
     return value
         ? new Date(value).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
         : '—'
 }
+
+function formatNodeMode(mode: string, s: (cn: string, en: string) => string) {
+    if (mode === 'CORE_ACTIVE') return s('核心活跃', 'Core active')
+    if (mode === 'FORWARDING_ONLY') return s('纯转发', 'Forwarding only')
+    return mode
+}
+
+function formatResolution(resolution: string, s: (cn: string, en: string) => string) {
+    if (resolution === 'LITERAL') return s('字面 IP', 'Literal IP')
+    if (resolution === 'OBSERVED') return s('已观测', 'Observed')
+    if (resolution === 'RESOLVED') return s('已解析', 'Resolved')
+    if (resolution === 'STALE') return s('观测过期', 'Stale')
+    if (resolution === 'MISSING') return s('待观测', 'Unobserved')
+    return resolution
+}
+
+function formatEgressSource(sourceType: string, s: (cn: string, en: string) => string) {
+    if (sourceType === 'DEFAULT') return s('默认路由', 'Default route')
+    if (sourceType === 'IP') return s('指定 IP', 'Assigned IP')
+    if (sourceType === 'INTERFACE') return s('指定网卡', 'Interface')
+    return sourceType
+}
+
 function Usage({ value, label }: { value: TopologyUsage; label: string }) {
     const s = useCopy()
     const missing = BigInt(value.total) - BigInt(value.upload) - BigInt(value.download)
@@ -50,8 +87,10 @@ function Usage({ value, label }: { value: TopologyUsage; label: string }) {
             <Text c="dimmed" size="xs">
                 {label}
             </Text>
-            <Text fw={650}>{topologyBytes(value.total)}</Text>
-            <Text size="xs">
+            <Text fw={650} size="sm">
+                {topologyBytes(value.total)}
+            </Text>
+            <Text c="dimmed" size="xs">
                 ↑ {topologyBytes(value.upload)} · ↓ {topologyBytes(value.download)}
             </Text>
             {missing > 0n && (
@@ -75,6 +114,7 @@ function Usage({ value, label }: { value: TopologyUsage; label: string }) {
         </Stack>
     )
 }
+
 function NodeState({ node }: { node: Node }) {
     const s = useCopy()
     return (
@@ -82,6 +122,7 @@ function NodeState({ node }: { node: Node }) {
             <Badge
                 color={node.disabled ? 'gray' : node.connected && !node.stale ? 'teal' : 'orange'}
                 size="xs"
+                variant="light"
             >
                 {node.disabled
                     ? s('已禁用', 'Disabled')
@@ -92,22 +133,24 @@ function NodeState({ node }: { node: Node }) {
                         : s('Agent 在线', 'Agent online')}
             </Badge>
             {(node.configPending || node.configBlocked) && (
-                <Badge color="orange" size="xs">
+                <Badge color="orange" size="xs" variant="light">
                     {node.configBlocked
                         ? s('配置阻塞', 'Config blocked')
                         : s('配置待同步', 'Config pending')}
                 </Badge>
             )}
             {!node.configValid && (
-                <Badge color="red" size="xs">
+                <Badge color="red" size="xs" variant="light">
                     {s('转发配置无效', 'Invalid forwarding config')}
                 </Badge>
             )}
         </Group>
     )
 }
+
 const ruleColor = (r: Rule) =>
     r.state === 'APPLIED' ? 'teal' : r.state === 'DISABLED' ? 'gray' : 'orange'
+
 function RuleState({ rule }: { rule: Rule }) {
     const s = useCopy()
     const label = {
@@ -126,11 +169,13 @@ function RuleState({ rule }: { rule: Rule }) {
         </Badge>
     )
 }
+
 function Quota({ node }: { node: Node }) {
     const s = useCopy()
     return (
         <Text
             c="dimmed"
+            className={classes.tabular}
             size="xs"
             title={s(
                 '计费周期累计，可能包含倍率；与所选日期区间独立。',
@@ -149,6 +194,7 @@ function Quota({ node }: { node: Node }) {
         </Text>
     )
 }
+
 function Arrow({ label, warning = false }: { label: string; warning?: boolean }) {
     return (
         <Box className={classes.arrow} aria-label={label}>
@@ -156,7 +202,7 @@ function Arrow({ label, warning = false }: { label: string; warning?: boolean })
                 <path
                     d="M2 11h33m-8-7 8 7-8 7"
                     fill="none"
-                    stroke={warning ? 'var(--mantine-color-orange-6)' : 'currentColor'}
+                    stroke={warning ? 'var(--mantine-color-orange-5)' : 'currentColor'}
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -168,6 +214,7 @@ function Arrow({ label, warning = false }: { label: string; warning?: boolean })
         </Box>
     )
 }
+
 function HopCard({
     node,
     rule,
@@ -180,40 +227,62 @@ function HopCard({
     inboundTag: string | null
 }) {
     const s = useCopy()
+    const accentClass = rule
+        ? rule.state === 'APPLIED'
+            ? classes.hopAccentCyan
+            : classes.hopAccentOrange
+        : classes.hopAccentTeal
+
     return (
-        <Paper p="sm" radius="md" withBorder className={classes.hop} data-testid="topology-hop">
+        <Paper
+            p="sm"
+            radius="md"
+            withBorder
+            className={clsx(classes.hop, accentClass)}
+            data-testid="topology-hop"
+        >
             <Stack gap="xs">
                 <Group gap="xs" wrap="nowrap">
-                    <TbServer2 size={18} />
-                    <Text fw={650}>{node.name}</Text>
+                    <ThemeIcon color={rule ? 'cyan' : 'teal'} radius="md" size="sm" variant="light">
+                        {rule ? <TbArrowsRightLeft size={14} /> : <TbServer2 size={14} />}
+                    </ThemeIcon>
+                    <Text fw={650} size="sm" style={{ flex: 1, minWidth: 0 }}>
+                        {node.name}
+                    </Text>
                 </Group>
                 <NodeState node={node} />
-                <Text className={classes.endpoint} size="xs">
-                    {endpointLabel(node.address, port)}
-                </Text>
+                <Box>
+                    <Text className={classes.endpointPill} size="xs">
+                        {endpointLabel(node.address, port)}
+                    </Text>
+                </Box>
                 <Text c="dimmed" size="xs">
                     {node.countryCode} · {node.provider ?? s('供应商未填写', 'Provider not set')}
                 </Text>
+                <Divider opacity={0.45} />
                 {rule ? (
                     <>
                         <Group gap={5}>
                             <RuleState rule={rule} />
-                            <Badge size="xs" variant="outline">
+                            <Badge color="gray" size="xs" variant="light">
                                 {rule.protocol}
                             </Badge>
                         </Group>
                         <Text fw={600} size="sm">
                             {rule.name}
                         </Text>
-                        <Text className={classes.endpoint} size="xs">
-                            → {endpointLabel(rule.targetAddress, rule.targetPort)}
-                        </Text>
+                        <Box>
+                            <Text className={classes.endpointPill} size="xs">
+                                → {endpointLabel(rule.targetAddress, rule.targetPort)}
+                            </Text>
+                        </Box>
                         <Text
                             c={
                                 rule.resolution === 'STALE' || rule.resolution === 'MISSING'
                                     ? 'orange'
                                     : 'dimmed'
                             }
+                            className={classes.tabular}
                             size="xs"
                         >
                             {rule.resolution === 'LITERAL'
@@ -226,7 +295,7 @@ function HopCard({
                                     )}
                         </Text>
                         {rule.resolution !== 'LITERAL' && (
-                            <Text c="dimmed" size="xs">
+                            <Text c="dimmed" className={classes.tabular} size="xs">
                                 {s('DNS 最后解析', 'Last DNS resolution')}:{' '}
                                 {timestamp(node.dnsReportedAt)} (UTC+8)
                             </Text>
@@ -239,7 +308,7 @@ function HopCard({
                             )}
                         />
                         {rule.protocols.length > 1 && (
-                            <Text size="xs" c="dimmed">
+                            <Text size="xs" c="dimmed" className={classes.tabular}>
                                 {rule.protocols
                                     .map((p) => `${p.protocol} ${topologyBytes(p.usage.total)}`)
                                     .join(' · ')}
@@ -248,10 +317,14 @@ function HopCard({
                     </>
                 ) : (
                     <>
-                        <Badge size="xs" variant="light">
-                            {s('核心入站（配置）', 'Core inbound (configured)')}
-                        </Badge>
-                        <Text size="sm">{inboundTag ?? '—'}</Text>
+                        <Group gap={6}>
+                            <Badge color="teal" size="xs" variant="light">
+                                {s('核心入站（配置）', 'Core inbound (configured)')}
+                            </Badge>
+                        </Group>
+                        <Text fw={500} size="sm">
+                            {inboundTag ?? '—'}
+                        </Text>
                         <Text
                             size="xs"
                             c={node.coreOnline && !node.stale && node.connected ? 'teal' : 'orange'}
@@ -271,6 +344,7 @@ function HopCard({
         </Paper>
     )
 }
+
 function PathGraph({
     data,
     path,
@@ -314,16 +388,20 @@ function PathGraph({
     }
     const terminal = path.hops.length ? nodes.get(path.hops.at(-1)!.nodeUuid) : null
     const exit = path.outcome === 'CORE' ? terminal?.exitObservation : null
+
     return (
         <Paper
             p="md"
             withBorder
             radius="md"
-            className={`${classes.graph} ${path.outcome !== 'CORE' || path.ambiguous ? classes.warning : ''}`}
+            className={clsx(
+                classes.graph,
+                (path.outcome !== 'CORE' || path.ambiguous) && classes.warning
+            )}
             data-testid="topology-path"
         >
             <Group mb="sm" gap="xs">
-                <Badge color={path.outcome === 'CORE' ? 'blue' : 'orange'} variant="light">
+                <Badge color={path.outcome === 'CORE' ? 'teal' : 'orange'} variant="light">
                     {outcome[path.outcome]}
                 </Badge>
                 {path.ambiguous && (
@@ -338,19 +416,36 @@ function PathGraph({
             <ScrollArea type="auto" offsetScrollbars>
                 <Box className={classes.lane}>
                     {host && (
-                        <Paper p="sm" radius="md" withBorder className={classes.hop}>
+                        <Paper
+                            p="sm"
+                            radius="md"
+                            withBorder
+                            className={clsx(classes.hop, classes.hopAccentBlue)}
+                        >
                             <Stack gap="xs">
-                                <Group gap="xs">
-                                    <TbWorld size={18} />
-                                    <Text fw={650}>{host.remark}</Text>
+                                <Group gap="xs" wrap="nowrap">
+                                    <ThemeIcon color="blue" radius="md" size="sm" variant="light">
+                                        <TbWorld size={14} />
+                                    </ThemeIcon>
+                                    <Text fw={650} size="sm" style={{ flex: 1, minWidth: 0 }}>
+                                        {host.remark}
+                                    </Text>
                                 </Group>
-                                <Badge size="xs" color={host.disabled ? 'gray' : 'blue'}>
-                                    {s('Host 入口', 'Host entry')} ·{' '}
-                                    {host.protocol ?? s('未知协议', 'Unknown protocol')}
-                                </Badge>
-                                <Text size="xs" className={classes.endpoint}>
-                                    {endpointLabel(host.address, host.port)}
-                                </Text>
+                                <Group gap={5}>
+                                    <Badge
+                                        size="xs"
+                                        color={host.disabled ? 'gray' : 'blue'}
+                                        variant="light"
+                                    >
+                                        {s('Host 入口', 'Host entry')} ·{' '}
+                                        {host.protocol ?? s('未知协议', 'Unknown protocol')}
+                                    </Badge>
+                                </Group>
+                                <Box>
+                                    <Text size="xs" className={classes.endpointPill}>
+                                        {endpointLabel(host.address, host.port)}
+                                    </Text>
+                                </Box>
                                 <Usage
                                     value={host.usage}
                                     label={s(
@@ -397,13 +492,24 @@ function PathGraph({
                     {path.outcome !== 'CORE' && path.outcome !== 'LIMIT' && (
                         <>
                             <Arrow label={s('待确认', 'Unconfirmed')} warning />
-                            <Paper p="sm" radius="md" withBorder className={classes.hop}>
+                            <Paper
+                                p="sm"
+                                radius="md"
+                                withBorder
+                                className={clsx(classes.hop, classes.hopAccentOrange)}
+                            >
                                 <Stack gap="xs">
-                                    <TbAlertTriangle size={22} />
-                                    <Text fw={600}>{outcome[path.outcome]}</Text>
-                                    <Text size="xs" className={classes.endpoint}>
-                                        {endpointLabel(path.address, path.port)}
+                                    <ThemeIcon color="orange" radius="md" size="md" variant="light">
+                                        <TbAlertTriangle size={18} />
+                                    </ThemeIcon>
+                                    <Text fw={600} size="sm">
+                                        {outcome[path.outcome]}
                                     </Text>
+                                    <Box>
+                                        <Text size="xs" className={classes.endpointPill}>
+                                            {endpointLabel(path.address, path.port)}
+                                        </Text>
+                                    </Box>
                                 </Stack>
                             </Paper>
                         </>
@@ -416,23 +522,39 @@ function PathGraph({
                                     'Node egress observation, not a Host test'
                                 )}
                             />
-                            <Paper p="sm" radius="md" withBorder className={classes.hop}>
+                            <Paper
+                                p="sm"
+                                radius="md"
+                                withBorder
+                                className={clsx(classes.hop, classes.hopAccentViolet)}
+                            >
                                 <Stack gap="xs">
-                                    <TbWorld size={22} />
-                                    <Text fw={600}>
-                                        {s('最近出口观测', 'Last observed egress')}
-                                    </Text>
-                                    <Text size="sm" className={classes.endpoint}>
-                                        {exit?.ip ?? s('暂无出口观测', 'No egress observation')}
-                                    </Text>
+                                    <Group gap="xs" wrap="nowrap">
+                                        <ThemeIcon
+                                            color="violet"
+                                            radius="md"
+                                            size="sm"
+                                            variant="light"
+                                        >
+                                            <TbWorld size={14} />
+                                        </ThemeIcon>
+                                        <Text fw={600} size="sm">
+                                            {s('最近出口观测', 'Last observed egress')}
+                                        </Text>
+                                    </Group>
+                                    <Box>
+                                        <Text size="xs" className={classes.endpointPill}>
+                                            {exit?.ip ?? s('暂无出口观测', 'No egress observation')}
+                                        </Text>
+                                    </Box>
                                     {exit && (
                                         <>
-                                            <Text size="xs">
+                                            <Text size="xs" className={classes.tabular}>
                                                 {exit.country ?? '—'} · {exit.asn ?? '—'}
                                             </Text>
-                                            <Text size="xs" c="dimmed">
+                                            <Text size="xs" c="dimmed" className={classes.tabular}>
                                                 {timestamp(exit.observedAt)} (UTC+8) ·{' '}
-                                                {exit.sourceType}
+                                                {formatEgressSource(exit.sourceType, s)}
                                             </Text>
                                         </>
                                     )}
@@ -466,6 +588,7 @@ export function ForwardingTopologyContent() {
         !!dates[1] &&
         dates[0] <= dates[1] &&
         Date.parse(dates[1]) - Date.parse(dates[0]) <= 365 * 86400000
+
     const query = useQuery({
         queryKey: ['forwarding-topology', ...dates],
         queryFn: ({ signal }) => topologyAPI.get({ start: dates[0]!, end: dates[1]! }, signal),
@@ -474,7 +597,9 @@ export function ForwardingTopologyContent() {
         staleTime: 15000,
         retry: false
     })
+
     const data = query.data
+
     const sourceOptions = useMemo(() => {
         if (!data) return []
         const names = new Map(data.nodes.map((n) => [n.uuid, n.name]))
@@ -497,6 +622,7 @@ export function ForwardingTopologyContent() {
                       label: `${names.get(r.nodeUuid)} · ${r.name} · ${r.listenPort} → ${endpointLabel(r.targetAddress, r.targetPort)}`
                   }))
     }, [data, nodeId, scope])
+
     const selected = sourceOptions.some((o) => o.value === sourceId)
         ? sourceId
         : (sourceOptions[0]?.value ?? null)
@@ -507,60 +633,76 @@ export function ForwardingTopologyContent() {
             data && (host || rule) ? traceTopology(data, host ? { host } : { rule: rule! }) : [],
         [data, host, rule]
     )
+
+    const onlineCount =
+        data?.nodes.filter((n) => n.connected && !n.disabled && !n.stale).length ?? 0
+    const enabledRulesCount = data?.rules.filter((r) => r.enabled).length ?? 0
+    const unconfirmedHostsCount =
+        data?.hosts.filter((h) => h.entryNodeUuids.length !== 1).length ?? 0
+    const attentionRulesCount =
+        data?.rules.filter((r) => r.enabled && r.state !== 'APPLIED').length ?? 0
+
     return (
         <Stack gap="md" className={classes.content}>
-            <Alert color="blue" variant="light" icon={<TbRoute size={20} />}>
-                {s(
-                    '根据已保存配置和运行观测推导关联，不是抓包或端到端探活。节点配额、转发字节、核心流量与 Host 归因各自独立；不提供跨跳相加的“总流量”。',
-                    'Links are inferred from saved configuration and observations, not packet traces or end-to-end probes. Provider quotas, forwarding bytes, core usage and Host attribution are independent; there is no cross-hop traffic total.'
-                )}
+            <Alert color="cyan" radius="md" variant="light" icon={<TbRoute size={20} />}>
+                <Text size="xs">
+                    {s(
+                        '根据已保存配置和运行观测推导关联，不是抓包或端到端探活。节点配额、转发字节、核心流量与 Host 归因各自独立；不提供跨跳相加的“总流量”。',
+                        'Links are inferred from saved configuration and observations, not packet traces or end-to-end probes. Provider quotas, forwarding bytes, core usage and Host attribution are independent; there is no cross-hop traffic total.'
+                    )}
+                </Text>
             </Alert>
-            <SimpleGrid className={classes.filters} cols={{ base: 1, sm: 2, lg: 4 }}>
-                <DatePickerInput
-                    type="range"
-                    label={s('用量日期（UTC）', 'Usage dates (UTC)')}
-                    value={dates}
-                    onChange={setDates}
-                    clearable={false}
-                    maxDate={getDefaultDateRange().end}
-                    presetDirection="past"
-                    leftSection={<TbCalendar size={16} />}
-                    leftSectionPointerEvents="none"
-                />
-                <Select
-                    label={s('范围', 'View')}
-                    data={[
-                        { value: 'host', label: s('Host 链路', 'Host paths') },
-                        { value: 'rule', label: s('转发规则链路', 'Forwarding rule paths') }
-                    ]}
-                    value={scope}
-                    allowDeselect={false}
-                    onChange={(v) => {
-                        setScope(v)
-                        setSourceId(null)
-                    }}
-                />
-                <Select
-                    searchable
-                    clearable
-                    label={s('筛选节点', 'Filter node')}
-                    placeholder={s('所有节点', 'All nodes')}
-                    data={data?.nodes.map((n) => ({ value: n.uuid, label: n.name })) ?? []}
-                    value={nodeId}
-                    onChange={setNodeId}
-                />
-                <Button
-                    variant="light"
-                    leftSection={<TbRefresh size={16} />}
-                    loading={query.isFetching}
-                    onClick={() => void query.refetch()}
-                    disabled={!valid}
-                >
-                    {s('刷新', 'Refresh')}
-                </Button>
-            </SimpleGrid>
+
+            <Paper className={classes.toolbarCard} p="sm" radius="md">
+                <SimpleGrid className={classes.filters} cols={{ base: 1, sm: 2, lg: 4 }}>
+                    <DatePickerInput
+                        type="range"
+                        label={s('用量日期（UTC）', 'Usage dates (UTC)')}
+                        value={dates}
+                        onChange={setDates}
+                        clearable={false}
+                        maxDate={getDefaultDateRange().end}
+                        presetDirection="past"
+                        leftSection={<TbCalendar size={16} />}
+                        leftSectionPointerEvents="none"
+                    />
+                    <Select
+                        label={s('范围', 'View')}
+                        data={[
+                            { value: 'host', label: s('Host 链路', 'Host paths') },
+                            { value: 'rule', label: s('转发规则链路', 'Forwarding rule paths') }
+                        ]}
+                        value={scope}
+                        allowDeselect={false}
+                        onChange={(v) => {
+                            setScope(v)
+                            setSourceId(null)
+                        }}
+                    />
+                    <Select
+                        searchable
+                        clearable
+                        label={s('筛选节点', 'Filter node')}
+                        placeholder={s('所有节点', 'All nodes')}
+                        data={data?.nodes.map((n) => ({ value: n.uuid, label: n.name })) ?? []}
+                        value={nodeId}
+                        onChange={setNodeId}
+                    />
+                    <Button
+                        color="cyan"
+                        variant="light"
+                        leftSection={<TbRefresh size={16} />}
+                        loading={query.isFetching}
+                        onClick={() => void query.refetch()}
+                        disabled={!valid}
+                    >
+                        {s('刷新', 'Refresh')}
+                    </Button>
+                </SimpleGrid>
+            </Paper>
+
             {!valid ? (
-                <Alert color="orange">
+                <Alert color="orange" radius="md">
                     {s(
                         '请选择完整且有序的日期范围，最多 366 天。',
                         'Choose an ordered date range of up to 366 days.'
@@ -568,11 +710,13 @@ export function ForwardingTopologyContent() {
                 </Alert>
             ) : query.isLoading ? (
                 <Group justify="center" mih={180}>
-                    <Loader />
-                    <Text>{s('读取拓扑与历史流量…', 'Loading topology and persisted usage…')}</Text>
+                    <Loader size="sm" />
+                    <Text size="sm">
+                        {s('读取拓扑与历史流量…', 'Loading topology and persisted usage…')}
+                    </Text>
                 </Group>
             ) : query.isError ? (
-                <Alert color="red" title={s('无法读取拓扑', 'Cannot load topology')}>
+                <Alert color="red" radius="md" title={s('无法读取拓扑', 'Cannot load topology')}>
                     {s(
                         '请确认后端已支持此功能且账号有读取权限，然后重试。',
                         'Check backend support and read permissions, then retry.'
@@ -581,72 +725,97 @@ export function ForwardingTopologyContent() {
             ) : (
                 data && (
                     <>
-                        <SimpleGrid cols={{ base: 2, sm: 4 }}>
+                        <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm">
                             {[
-                                [
-                                    s('在线 / 总节点', 'Online / total nodes'),
-                                    `${data.nodes.filter((n) => n.connected && !n.disabled && !n.stale).length} / ${data.nodes.length}`
-                                ],
-                                [
-                                    s('启用转发规则', 'Enabled forwarding rules'),
-                                    String(data.rules.filter((r) => r.enabled).length)
-                                ],
-                                [
-                                    s('未确认入口的 Host', 'Hosts with unconfirmed entries'),
-                                    String(
-                                        data.hosts.filter((h) => h.entryNodeUuids.length !== 1)
-                                            .length
-                                    )
-                                ],
-                                [
-                                    s('规则需关注', 'Rules requiring attention'),
-                                    String(
-                                        data.rules.filter((r) => r.enabled && r.state !== 'APPLIED')
-                                            .length
-                                    )
-                                ]
-                            ].map(([label, value]) => (
-                                <Paper withBorder p="sm" radius="md" key={label}>
-                                    <Text size="xs" c="dimmed">
-                                        {label}
-                                    </Text>
-                                    <Text size="xl" fw={700}>
-                                        {value}
-                                    </Text>
+                                {
+                                    label: s('在线 / 总节点', 'Online / total nodes'),
+                                    value: `${onlineCount} / ${data.nodes.length}`,
+                                    color: 'teal',
+                                    Icon: TbServer2
+                                },
+                                {
+                                    label: s('启用转发规则', 'Enabled forwarding rules'),
+                                    value: String(enabledRulesCount),
+                                    color: 'cyan',
+                                    Icon: TbArrowsRightLeft
+                                },
+                                {
+                                    label: s('未确认入口的 Host', 'Hosts with unconfirmed entries'),
+                                    value: String(unconfirmedHostsCount),
+                                    color: unconfirmedHostsCount > 0 ? 'orange' : 'teal',
+                                    Icon:
+                                        unconfirmedHostsCount > 0 ? TbAlertTriangle : TbShieldCheck
+                                },
+                                {
+                                    label: s('规则需关注', 'Rules requiring attention'),
+                                    value: String(attentionRulesCount),
+                                    color: attentionRulesCount > 0 ? 'orange' : 'teal',
+                                    Icon: attentionRulesCount > 0 ? TbAlertTriangle : TbShieldCheck
+                                }
+                            ].map(({ label, value, color, Icon }) => (
+                                <Paper className={classes.kpiCard} p="sm" radius="md" key={label}>
+                                    <Group justify="space-between" gap={6} mb={6} wrap="nowrap">
+                                        <Text size="xs" c="dimmed">
+                                            {label}
+                                        </Text>
+                                        <ThemeIcon
+                                            color={color}
+                                            radius="md"
+                                            size="sm"
+                                            variant="light"
+                                        >
+                                            <Icon size={14} />
+                                        </ThemeIcon>
+                                    </Group>
+                                    <Text className={classes.kpiValue}>{value}</Text>
                                 </Paper>
                             ))}
                         </SimpleGrid>
-                        <Select
-                            className={classes.source}
-                            label={s('选择入口 / 转发规则', 'Select Host / forwarding rule')}
-                            searchable
-                            nothingFoundMessage={s('没有匹配项', 'No matches')}
-                            data={sourceOptions}
-                            value={selected}
-                            onChange={setSourceId}
-                            allowDeselect={false}
-                            data-testid="topology-source"
-                        />
+
+                        <Paper className={classes.toolbarCard} p="sm" radius="md">
+                            <Stack gap="xs">
+                                <Select
+                                    className={classes.source}
+                                    label={s(
+                                        '选择入口 / 转发规则',
+                                        'Select Host / forwarding rule'
+                                    )}
+                                    searchable
+                                    nothingFoundMessage={s('没有匹配项', 'No matches')}
+                                    data={sourceOptions}
+                                    value={selected}
+                                    onChange={setSourceId}
+                                    allowDeselect={false}
+                                    data-testid="topology-source"
+                                />
+                                {host && (
+                                    <Text size="xs" c="dimmed" data-testid="topology-binding">
+                                        {s(
+                                            'Host 面板绑定（逻辑关联，不代表入口直达）',
+                                            'Host panel bindings (logical, not proof of a direct route)'
+                                        )}
+                                        :{' '}
+                                        {host.boundNodeUuids
+                                            .map(
+                                                (id) =>
+                                                    data.nodes.find((n) => n.uuid === id)?.name ??
+                                                    id
+                                            )
+                                            .join(' · ') || '—'}
+                                    </Text>
+                                )}
+                            </Stack>
+                        </Paper>
+
                         {!sourceOptions.length && (
-                            <Alert color="gray">
+                            <Alert color="gray" radius="md">
                                 {s(
                                     '当前范围没有 Host 或转发规则。仍可在下方查看节点与历史用量。',
                                     'No Hosts or rules in this view. Node inventory and historical usage remain available below.'
                                 )}
                             </Alert>
                         )}
-                        {host && (
-                            <Text size="xs" c="dimmed" data-testid="topology-binding">
-                                {s(
-                                    'Host 面板绑定（逻辑关联，不代表入口直达）',
-                                    'Host panel bindings (logical, not proof of a direct route)'
-                                )}
-                                :{' '}
-                                {host.boundNodeUuids
-                                    .map((id) => data.nodes.find((n) => n.uuid === id)?.name ?? id)
-                                    .join(' · ') || '—'}
-                            </Text>
-                        )}
+
                         {paths.map((path, i) => (
                             <PathGraph
                                 key={`${selected}:${i}`}
@@ -655,11 +824,23 @@ export function ForwardingTopologyContent() {
                                 host={host}
                             />
                         ))}
+
                         <Accordion variant="separated" radius="md">
                             <Accordion.Item value="inventory">
                                 <Accordion.Control icon={<TbServer2 size={18} />}>
-                                    {s('节点与规则明细', 'Node and rule details')} (
-                                    {data.nodes.length})
+                                    <Group gap="xs">
+                                        <Text fw={600} size="sm">
+                                            {s('节点与规则明细', 'Node and rule details')}
+                                        </Text>
+                                        <Badge
+                                            className={classes.tabular}
+                                            color="gray"
+                                            size="sm"
+                                            variant="light"
+                                        >
+                                            {data.nodes.length}
+                                        </Badge>
+                                    </Group>
                                 </Accordion.Control>
                                 <Accordion.Panel>
                                     <SimpleGrid cols={{ base: 1, md: 2, xl: 3 }}>
@@ -673,19 +854,38 @@ export function ForwardingTopologyContent() {
                                                     key={n.uuid}
                                                 >
                                                     <Stack gap="xs">
-                                                        <Group justify="space-between">
-                                                            <Text fw={650}>{n.name}</Text>
-                                                            <Badge size="xs" variant="outline">
-                                                                {n.mode}
+                                                        <Group
+                                                            justify="space-between"
+                                                            wrap="nowrap"
+                                                        >
+                                                            <Text
+                                                                fw={650}
+                                                                size="sm"
+                                                                style={{ flex: 1, minWidth: 0 }}
+                                                            >
+                                                                {n.name}
+                                                            </Text>
+                                                            <Badge
+                                                                color={
+                                                                    n.mode === 'CORE_ACTIVE'
+                                                                        ? 'teal'
+                                                                        : 'cyan'
+                                                                }
+                                                                size="xs"
+                                                                variant="light"
+                                                            >
+                                                                {formatNodeMode(n.mode, s)}
                                                             </Badge>
                                                         </Group>
                                                         <NodeState node={n} />
-                                                        <Text
-                                                            className={classes.endpoint}
-                                                            size="xs"
-                                                        >
-                                                            {n.address}
-                                                        </Text>
+                                                        <Box>
+                                                            <Text
+                                                                className={classes.endpointPill}
+                                                                size="xs"
+                                                            >
+                                                                {n.address}
+                                                            </Text>
+                                                        </Box>
                                                         <Quota node={n} />
                                                         <Usage
                                                             value={n.coreUsage}
@@ -694,11 +894,16 @@ export function ForwardingTopologyContent() {
                                                                 'Node core usage in range (raw bytes)'
                                                             )}
                                                         />
-                                                        <Text c="dimmed" size="xs">
+                                                        <Text
+                                                            c="dimmed"
+                                                            className={classes.tabular}
+                                                            size="xs"
+                                                        >
                                                             {s('运行观测', 'Runtime observation')}:{' '}
                                                             {timestamp(n.reportedAt)} (UTC+8)
                                                         </Text>
                                                         <Text
+                                                            className={classes.tabular}
                                                             size="xs"
                                                             c={
                                                                 !n.snapshot ||
@@ -713,8 +918,10 @@ export function ForwardingTopologyContent() {
                                                             {timestamp(
                                                                 n.snapshot?.lastSuccessAt ?? null
                                                             )}{' '}
-                                                            · pending {n.snapshot?.pending ?? '—'} /
-                                                            gap {n.snapshot?.gap ?? '—'}
+                                                            · {s('待同步', 'pending')}{' '}
+                                                            {n.snapshot?.pending ?? '—'} /{' '}
+                                                            {s('缺口', 'gap')}{' '}
+                                                            {n.snapshot?.gap ?? '—'}
                                                         </Text>
                                                         {data.rules
                                                             .filter((r) => r.nodeUuid === n.uuid)
@@ -724,8 +931,9 @@ export function ForwardingTopologyContent() {
                                                                     withBorder
                                                                     p="xs"
                                                                     radius="sm"
+                                                                    className={classes.ruleSubCard}
                                                                 >
-                                                                    <Stack gap={5}>
+                                                                    <Stack gap={6}>
                                                                         <Group justify="space-between">
                                                                             <Text
                                                                                 size="sm"
@@ -735,26 +943,38 @@ export function ForwardingTopologyContent() {
                                                                             </Text>
                                                                             <RuleState rule={r} />
                                                                         </Group>
+                                                                        <Box>
+                                                                            <Text
+                                                                                size="xs"
+                                                                                className={
+                                                                                    classes.endpointPill
+                                                                                }
+                                                                            >
+                                                                                {r.protocol} :
+                                                                                {r.listenPort} →{' '}
+                                                                                {endpointLabel(
+                                                                                    r.targetAddress,
+                                                                                    r.targetPort
+                                                                                )}
+                                                                            </Text>
+                                                                        </Box>
                                                                         <Text
-                                                                            size="xs"
+                                                                            c="dimmed"
                                                                             className={
-                                                                                classes.endpoint
+                                                                                classes.tabular
                                                                             }
+                                                                            size="xs"
                                                                         >
-                                                                            {r.protocol} :
-                                                                            {r.listenPort} →{' '}
-                                                                            {endpointLabel(
-                                                                                r.targetAddress,
-                                                                                r.targetPort
-                                                                            )}
-                                                                        </Text>
-                                                                        <Text c="dimmed" size="xs">
                                                                             {r.resolvedTargetAddress ??
                                                                                 s(
                                                                                     '无 DNS 观测',
                                                                                     'No observed DNS'
                                                                                 )}{' '}
-                                                                            · {r.resolution}
+                                                                            ·{' '}
+                                                                            {formatResolution(
+                                                                                r.resolution,
+                                                                                s
+                                                                            )}
                                                                         </Text>
                                                                         <Usage
                                                                             value={r.usage}
@@ -764,8 +984,9 @@ export function ForwardingTopologyContent() {
                                                                             )}
                                                                         />
                                                                         <Button
+                                                                            color="cyan"
                                                                             size="compact-xs"
-                                                                            variant="subtle"
+                                                                            variant="light"
                                                                             onClick={() => {
                                                                                 setScope('rule')
                                                                                 setSourceId(r.key)
@@ -786,9 +1007,11 @@ export function ForwardingTopologyContent() {
                                 </Accordion.Panel>
                             </Accordion.Item>
                         </Accordion>
+
                         {data.orphanUsage.some((r) => !nodeId || r.nodeUuid === nodeId) && (
                             <Alert
                                 color="orange"
+                                radius="md"
                                 title={s(
                                     '已删除 / 无法解析规则的历史用量',
                                     'Usage for deleted / unreadable rules'
@@ -816,13 +1039,14 @@ export function ForwardingTopologyContent() {
                                 </Stack>
                             </Alert>
                         )}
+
                         <Tooltip
                             label={s(
                                 'DNS 只使用 Agent 已上报结果；打开页面不会执行测试或解析域名。',
                                 'DNS comes only from Agent observations. Opening this page runs no probes or DNS lookups.'
                             )}
                         >
-                            <Text size="xs" c="dimmed">
+                            <Text size="xs" c="dimmed" className={classes.tabular}>
                                 {s('数据读取时间', 'Snapshot read at')}:{' '}
                                 {timestamp(data.generatedAt)} (UTC+8) ·{' '}
                                 {s(

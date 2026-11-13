@@ -27,9 +27,17 @@
 .section {
     min-width: 0;
     padding: var(--mantine-spacing-md);
-    border: 1px solid var(--mantine-color-default-border);
-    border-radius: var(--mantine-radius-lg);
-    background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.025));
+}
+
+.sectionAccentTeal {
+    border-left: 3px solid var(--mantine-color-teal-5);
+}
+
+.sectionAccentIndigo {
+    border-left: 3px solid var(--mantine-color-indigo-5);
 }
 
 .policyHeader {
@@ -55,7 +63,35 @@
     min-width: 0;
     padding: var(--mantine-spacing-sm);
     border-radius: var(--mantine-radius-md);
-    background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.07));
+    border-left: 3px solid var(--mantine-color-gray-5);
+    background: light-dark(var(--mantine-color-gray-0), rgba(0, 0, 0, 0.22));
+}
+
+.nodeCard[data-capturing] {
+    border-left-color: var(--mantine-color-teal-5);
+}
+
+.nodeCard[data-pending] {
+    border-left-color: var(--mantine-color-yellow-5);
+}
+
+.rangeTile {
+    min-width: 0;
+    padding: 10px 12px;
+    border-radius: var(--mantine-radius-sm);
+    border: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
+    background: light-dark(var(--mantine-color-gray-0), rgba(0, 0, 0, 0.22));
+}
+
+.inboundPill {
+    display: inline-block;
+    max-width: 100%;
+    padding: 2px 7px;
+    border-radius: var(--mantine-radius-sm);
+    background: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.05));
+    border: 1px solid light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.07));
+    overflow-wrap: anywhere;
 }
 
 .filters {

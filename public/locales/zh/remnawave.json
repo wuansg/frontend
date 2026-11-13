@@ -124,7 +124,8 @@
     "system-uptime": "系统运行时间",
     "ram-usage": "内存使用率",
     "total-traffic": "总流量",
-    "total-online-on-nodes": "所有节点在线用户总数"
+    "total-online-on-nodes": "所有节点在线用户总数",
+    "total-ram": "总内存"
   },
   "users-metrics": {
     "disabled-users": "禁用用户",
@@ -590,7 +591,10 @@
       "bandwidth": "带宽",
       "short-stats": "简要统计",
       "remnawave-usage": "Remnawave 使用情况",
-      "process-details": "进程详情"
+      "process-details": "进程详情",
+      "runtime": "运行时详情",
+      "heap-used": "已用堆内存",
+      "avg-event-loop": "平均事件循环延迟"
     },
     "runtime-info": {
       "title": "运行时指标指南",
@@ -610,6 +614,36 @@
       "delay-description": "连续两次事件循环 tick 之间的平均间隔时间。健康状态通常接近 <highlight>0–2 毫秒</highlight>。数值越高，通常意味着事件循环正被较长时间的同步任务阻塞。",
       "p99-description": "测量时间窗口内事件循环延迟的 <highlight>99 百分位</highlight>。它能够反映平均值所掩盖的最坏情况延迟，对于发现偶发性的延迟尖峰非常有用。",
       "active-handles-description": "保持事件循环持续运行的长期资源，例如 <highlight>已打开的 socket 连接</highlight>、<highlight>定时器</highlight> 以及 <highlight>文件描述符</highlight>。数量在稳定范围内通常属于正常现象；若出现<highlight>持续无上限增长</highlight>，则往往是资源泄漏的重要信号。"
+    },
+    "telegram-status": {
+      "title": "Telegram 通知渠道",
+      "enabled": "已启用",
+      "disabled": "已停用",
+      "available": "正常",
+      "unavailable": "不可用",
+      "pending": "待检测",
+      "not-configured": "未配置",
+      "last-check": "最近检测",
+      "not-checked": "尚未检测",
+      "targets": {
+        "users": "用户通知",
+        "nodes": "节点通知",
+        "crm": "账单 / CRM",
+        "service": "系统服务",
+        "tblocker": "TBlocker 封禁"
+      }
+    },
+    "runtime-card": {
+      "memory": "内存占用",
+      "heap": "堆内存",
+      "rss": "常驻内存 (RSS)",
+      "external": "外部内存",
+      "array-buffers": "缓冲区",
+      "event-loop": "事件循环",
+      "delay": "平均延迟",
+      "p99": "P99 延迟",
+      "handles": "句柄数",
+      "active-handles": "活跃句柄"
     }
   },
   "login-form": {

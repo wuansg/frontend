@@ -1,5 +1,6 @@
 import { Badge, Box, Group, Stack, Table, Text, ThemeIcon, Tooltip } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import clsx from 'clsx'
 import { TbArrowDown, TbArrowUp, TbWorld } from 'react-icons/tb'
 
 import { type AuditDomain, type AuditRecord, formatAuditBytes } from './audit-api'
@@ -19,7 +20,7 @@ function Target({ domain, ip, port }: { domain: string; ip: string; port?: numbe
                 </Text>
             </Group>
             {port !== undefined && (
-                <Text size="xs" c="dimmed" className={classes.wrap} ff="monospace">
+                <Text size="xs" c="dimmed" className={clsx(classes.wrap, classes.numeric)}>
                     {address ? `${address}:${port}` : `:${port}`}
                 </Text>
             )}
@@ -58,11 +59,11 @@ function ByteValue({ value, upload }: { value: string; upload: boolean }) {
 
 function Protocol({ record }: { record: AuditRecord }) {
     return (
-        <Stack gap={4}>
+        <Stack gap={4} align="flex-start">
             <Text size="xs" c="dimmed" className={classes.wrap}>
                 {[record.protocol, record.network].filter(Boolean).join(' · ')}
             </Text>
-            <Text size="xs" c="dimmed" className={classes.wrap} ff="monospace">
+            <Text size="xs" c="dimmed" className={classes.inboundPill}>
                 {record.inbound}
             </Text>
         </Stack>

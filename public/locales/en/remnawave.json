@@ -124,7 +124,8 @@
     "system-uptime": "System uptime",
     "ram-usage": "RAM usage",
     "total-traffic": "Total traffic",
-    "total-online-on-nodes": "Total online on nodes"
+    "total-online-on-nodes": "Total online on nodes",
+    "total-ram": "Total RAM"
   },
   "users-metrics": {
     "disabled-users": "Disabled users",
@@ -593,7 +594,14 @@
       "pending": "Waiting for check",
       "not-configured": "Not configured",
       "last-check": "Last check",
-      "not-checked": "Not checked yet"
+      "not-checked": "Not checked yet",
+      "targets": {
+        "users": "Users",
+        "nodes": "Nodes",
+        "crm": "CRM / Billing",
+        "service": "System / Service",
+        "tblocker": "TBlocker"
+      }
     },
     "page": {
       "online-stats": "Online stats",
@@ -601,7 +609,10 @@
       "bandwidth": "Bandwidth",
       "short-stats": "Home",
       "remnawave-usage": "Remnawave Usage",
-      "process-details": "Process Details"
+      "process-details": "Process Details",
+      "runtime": "Runtime",
+      "heap-used": "Heap Used",
+      "avg-event-loop": "Avg Event Loop"
     },
     "runtime-info": {
       "title": "Runtime Metrics Guide",
@@ -621,6 +632,18 @@
       "delay-description": "Average time between consecutive event loop ticks. A healthy value sits close to <highlight>0–2 ms</highlight>. Higher numbers mean the loop is being blocked by long synchronous work.",
       "p99-description": "<highlight>99th percentile</highlight> of event loop delay over the measurement window. Reveals worst-case latency that the average alone hides — useful for spotting occasional spikes.",
       "active-handles-description": "Long-lived resources keeping the loop alive: <highlight>open sockets</highlight>, <highlight>timers</highlight>, <highlight>file descriptors</highlight>. Steady-state is normal; <highlight>unbounded growth</highlight> is a strong leak signal."
+    },
+    "runtime-card": {
+      "memory": "Memory",
+      "heap": "Heap",
+      "rss": "RSS",
+      "external": "External",
+      "array-buffers": "Array Buffers",
+      "event-loop": "Event Loop",
+      "delay": "Delay",
+      "p99": "P99",
+      "handles": "Handles",
+      "active-handles": "Active Handles"
     }
   },
   "login-form": {

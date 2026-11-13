@@ -140,24 +140,47 @@ export const HomePage = (props: IProps) => {
                             </Badge>
                         </Group>
                         <SimpleGrid cols={{ base: 1, sm: 2, xl: 5 }} spacing="xs">
-                            {telegram.targets.map((target) => {
+                            {telegram.targets.map((target, index) => {
                                 const status = telegramStatus(target)
                                 return (
-                                    <Paper key={target.target} p="md" radius="md" withBorder>
-                                        <Group justify="space-between" wrap="nowrap">
-                                            <Text fw={600} tt="capitalize">
-                                                {target.target}
+                                    <AnimatedCard index={index} key={target.target}>
+                                        <Paper
+                                            className={classes.telegramCard}
+                                            data-status={status.color}
+                                            p="md"
+                                            radius="md"
+                                        >
+                                            <Group justify="space-between" wrap="nowrap">
+                                                <Text fw={600} size="sm">
+                                                    {t(
+                                                        `home.telegram-status.targets.${target.target}`,
+                                                        { defaultValue: target.target }
+                                                    )}
+                                                </Text>
+                                                <Badge
+                                                    color={
+                                                        status.color === 'green'
+                                                            ? 'teal'
+                                                            : status.color
+                                                    }
+                                                    size="sm"
+                                                    variant="light"
+                                                >
+                                                    {status.label}
+                                                </Badge>
+                                            </Group>
+                                            <Text
+                                                c="dimmed"
+                                                className={classes.numeric}
+                                                mt="xs"
+                                                size="xs"
+                                            >
+                                                {target.lastCheckedAt
+                                                    ? `${t('home.telegram-status.last-check')}: ${new Date(target.lastCheckedAt).toLocaleString()}`
+                                                    : t('home.telegram-status.not-checked')}
                                             </Text>
-                                            <Badge color={status.color} variant="light">
-                                                {status.label}
-                                            </Badge>
-                                        </Group>
-                                        <Text c="dimmed" mt="xs" size="xs">
-                                            {target.lastCheckedAt
-                                                ? `${t('home.telegram-status.last-check')}: ${new Date(target.lastCheckedAt).toLocaleString()}`
-                                                : t('home.telegram-status.not-checked')}
-                                        </Text>
-                                    </Paper>
+                                        </Paper>
+                                    </AnimatedCard>
                                 )
                             })}
                         </SimpleGrid>
@@ -241,7 +264,7 @@ export const HomePage = (props: IProps) => {
                     <div className={classes.section}>
                         <Group align="center" gap="xs" m="xs" ml={0}>
                             <Title className={classes.title} order={4}>
-                                Runtime
+                                {t('home.page.runtime')}
                             </Title>
 
                             <ActionIcon

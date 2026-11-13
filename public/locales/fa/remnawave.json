@@ -123,7 +123,8 @@
     "system-uptime": "آپتایم سیستم",
     "ram-usage": "مصرف رم",
     "total-traffic": "مصرف کل ترافیک",
-    "total-online-on-nodes": "کل افراد آنلاین روی تمام نودها"
+    "total-online-on-nodes": "کل افراد آنلاین روی تمام نودها",
+    "total-ram": "کل رم"
   },
   "users-metrics": {
     "disabled-users": "کاربران غیرفعال",
@@ -587,7 +588,10 @@
       "bandwidth": "پهنای باند",
       "short-stats": "آمار مختصر",
       "remnawave-usage": "مصرف منابع Remnawave",
-      "process-details": "مشخصات Process"
+      "process-details": "مشخصات Process",
+      "runtime": "جزئیات زمان اجرا",
+      "heap-used": "حافظه Heap مصرفی",
+      "avg-event-loop": "میانگین تاخیر Event Loop"
     },
     "runtime-info": {
       "title": "Runtime Metrics Guide",
@@ -607,6 +611,36 @@
       "delay-description": "Average time between consecutive event loop ticks. A healthy value sits close to <highlight>0–2 ms</highlight>. Higher numbers mean the loop is being blocked by long synchronous work.",
       "p99-description": "<highlight>99th percentile</highlight> of event loop delay over the measurement window. Reveals worst-case latency that the average alone hides — useful for spotting occasional spikes.",
       "active-handles-description": "Long-lived resources keeping the loop alive: <highlight>open sockets</highlight>, <highlight>timers</highlight>, <highlight>file descriptors</highlight>. Steady-state is normal; <highlight>unbounded growth</highlight> is a strong leak signal."
+    },
+    "telegram-status": {
+      "title": "مقصدهای اعلان تلگرام",
+      "enabled": "فعال",
+      "disabled": "غیرفعال",
+      "available": "در دسترس",
+      "unavailable": "خارج از دسترس",
+      "pending": "در انتظار بررسی",
+      "not-configured": "پیکربندی نشده",
+      "last-check": "آخرین بررسی",
+      "not-checked": "هنوز بررسی نشده",
+      "targets": {
+        "users": "کاربران",
+        "nodes": "نودها",
+        "crm": "CRM / صورتحساب",
+        "service": "سیستم / سرویس",
+        "tblocker": "TBlocker"
+      }
+    },
+    "runtime-card": {
+      "memory": "حافظه",
+      "heap": "Heap",
+      "rss": "RSS",
+      "external": "External",
+      "array-buffers": "Array Buffers",
+      "event-loop": "Event Loop",
+      "delay": "تاخیر",
+      "p99": "P99",
+      "handles": "هندل‌ها",
+      "active-handles": "هندل‌های فعال"
     }
   },
   "login-form": {
