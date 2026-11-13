@@ -1,5 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
-import { ActionIcon, Group, NativeSelect, Stack } from '@mantine/core'
+import { ActionIcon, Group, Select, Stack } from '@mantine/core'
 import { DatesRangeValue } from '@mantine/dates'
 import { nprogress } from '@mantine/nprogress'
 import dayjs from 'dayjs'
@@ -35,10 +35,12 @@ const DEFAULT_TOP_USERS_LIMIT = 100
 
 interface IProps {
     nodeUuid: string
+    initialRange?: { end: string; start: string }
+    initialDirection?: TrafficDirection
 }
 
 export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
-    const { nodeUuid } = props
+    const { nodeUuid, initialRange, initialDirection = 'total' } = props
 
     const modal = useModal()
     const { modalProps } = useNiceMantineModal({
@@ -46,8 +48,8 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
         drawer: true
     })
 
-    const defaultRange = getDefaultDateRange()
-    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>('total')
+    const defaultRange = initialRange ?? getDefaultDateRange()
+    const [trafficDirection, setTrafficDirection] = useState<TrafficDirection>(initialDirection)
 
     const { t, i18n } = useTranslation()
 
@@ -125,7 +127,7 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
                 ...modalProps,
                 padding: 'lg',
                 position: 'right',
-                size: '600px'
+                size: '620px'
             }}
             title={
                 <BaseOverlayHeader
@@ -148,25 +150,29 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
         >
             <Stack gap="md">
                 <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
-                <Group gap="xs" justify="space-between" wrap="nowrap">
-                    <NativeSelect
+                <Group gap="xs" justify="space-between" wrap="wrap">
+                    <Select
+                        allowDeselect={false}
                         data={TOP_USERS_LIMIT_OPTIONS}
-                        leftSection={<TbUsers size="20px" />}
-                        onChange={(value) => setTopUsersLimit(Number(value.target.value))}
-                        size="md"
+                        leftSection={<TbUsers size="18px" />}
+                        onChange={(value) => {
+                            if (value) setTopUsersLimit(Number(value))
+                        }}
+                        size="sm"
                         value={String(topUsersLimit)}
-                        miw="fit-content"
+                        w={140}
                     />
 
                     <DatePickerInput
                         allowSingleDateInRange
                         dropdownType="modal"
                         headerControlsOrder={['previous', 'next', 'level']}
-                        leftSection={<TbCalendar size="20px" />}
+                        leftSection={<TbCalendar size="18px" />}
                         locale={i18n.language}
+                        miw={190}
                         onChange={handleDateRangeChange}
-                        size="md"
-                        miw={0}
+                        size="sm"
+                        style={{ flex: '1 1 220px' }}
                         styles={{
                             calendarHeaderLevel: {
                                 justifyContent: 'flex-end'
@@ -185,10 +191,11 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
 
                 <NodeUsersSparklineCardWidget
                     direction={trafficDirection}
+                    downloadSparklineData={nodeUsersStats?.downloadSparklineData}
                     isLoading={isLoading}
+                    scope="node"
                     sparklineData={nodeUsersStats?.sparklineData}
                     uploadSparklineData={nodeUsersStats?.uploadSparklineData}
-                    downloadSparklineData={nodeUsersStats?.downloadSparklineData}
                 />
 
                 <TopLeaderboardCardShared
@@ -201,11 +208,15 @@ export const NodeUsageStatsDrawer = NiceModal.create((props: IProps) => {
                             total: user.total
                         })
                     )}
+                    maxHeight={460}
                     onItemClick={(user) => {
                         handleViewUser(user)
                     }}
-                    maxHeight={500}
-                    skeletonCount={11}
+                    searchable
+                    showRank
+                    showShare
+                    skeletonCount={8}
+                    title={t('traffic-usage.leaderboard-title')}
                 />
             </Stack>
         </CompoundDrawerShared>

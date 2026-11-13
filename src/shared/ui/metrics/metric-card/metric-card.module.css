@@ -14,11 +14,11 @@
     font-weight: 700;
     font-size: var(--mantine-font-size-xl);
     line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
     overflow: hidden;
-    font-family: var(--mantine-font-family-monospace);
     text-overflow: ellipsis;
-    color: var(--mantine-color-white-5);
 }
 
 .subtitle {

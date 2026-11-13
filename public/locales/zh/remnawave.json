@@ -22,8 +22,8 @@
     "hosts-statistics": "主机统计",
     "nodes": "节点",
     "nodes-bandwidth-table": "流量使用情况",
-    "nodes-statistics": "统计数据",
-    "nodes-metrics": "指标",
+    "nodes-statistics": "节点统计",
+    "nodes-metrics": "实时指标",
     "users": "用户",
     "users-statistics": "用户统计",
     "overview": "概述",
@@ -45,7 +45,7 @@
     "remnawave-settings": "Remnawave 设置",
     "node-plugins": "插件",
     "sessions-explorer": "会话管理器",
-    "http-stats": "HTTP 状态"
+    "http-stats": "HTTP 统计"
   },
   "common": {
     "delete": "删除",
@@ -95,7 +95,7 @@
     "creation": "创建",
     "processing": "处理中",
     "operation-completed": "操作已完成",
-    "usage-stats": "使用状态",
+    "usage-stats": "流量统计",
     "active-sessions": "活跃会话",
     "shared-lists": "共享列表",
     "try-again": "重试",
@@ -213,8 +213,13 @@
       "force-restart-description": "将保证所有节点完全重启 sing-box 核心。",
       "graceful-restart": "平滑重启",
       "graceful-restart-description-1": "将向所有节点发送请求以重启 sing-box；如果节点哈希没有变化，请求可能会被跳过。这是默认选项。",
-      "force": "强制执行",
-      "graceful": "平滑的"
+      "force": "强制重启",
+      "graceful": "平滑重启",
+      "view-cards": "卡片",
+      "view-table": "表格",
+      "toggle-view-mode": "切换视图模式",
+      "view-list": "列表",
+      "view-matrix": "矩阵"
     }
   },
   "config-editor": {
@@ -301,7 +306,17 @@
   },
   "node-card": {
     "widget": {
-      "copied": "已复制"
+      "copied": "已复制",
+      "dangling": "未绑定配置",
+      "version-drift": "版本漂移",
+      "load-average-title": "系统负载（{{count}} 核）",
+      "load-1m": "1 分钟：{{value}} ({{percent}}%)",
+      "load-5m": "5 分钟：{{value}} ({{percent}}%)",
+      "load-15m": "15 分钟：{{value}} ({{percent}}%)",
+      "load-legend": "0–70% 正常 · 70–100% 较高 · >100% 过载",
+      "no-data": "暂无数据",
+      "copy-address": "点击复制节点地址",
+      "usage-stats": "节点流量统计"
     }
   },
   "node-status-badge": {
@@ -891,7 +906,19 @@
     "unavailable": "未记录",
     "inconsistent": "上传与下载之和超过总流量，请检查采集数据。",
     "node-scope": "统计节点代理出站上下行，不等于主机网卡 RX/TX。汇总覆盖整个区间，排行榜仅显示 Top N。",
-    "proxy-scope": "上传：客户端 → 目标；下载：目标 → 客户端。汇总覆盖整个区间，排行榜仅显示 Top N。"
+    "proxy-scope": "上传：客户端 → 目标；下载：目标 → 客户端。汇总覆盖整个区间，排行榜仅显示 Top N。",
+    "days-count": "{{count}} 天",
+    "leaderboard-title": "流量排行榜",
+    "search-placeholder": "搜索名称筛选…",
+    "daily-chart-title": "每日流量趋势明细",
+    "daily-chart-hint": "点击任意日期柱条可查看当日完整排行与占比",
+    "chart-column": "纵向趋势",
+    "chart-bar": "横向对比",
+    "share": "占比",
+    "rank": "排名",
+    "active-items": "{{count}} 项活跃",
+    "download-share": "下载 {{percentage}}%",
+    "upload-short": "上传 {{percentage}}%"
   },
   "user-usage-modal": {
     "widget": {
@@ -1969,7 +1996,11 @@
   },
   "multi-select-nodes": {
     "feature": {
-      "profile-and-inbounds": "个人资料和入站"
+      "profile-and-inbounds": "配置方案与入站",
+      "move-to-top": "移至顶部",
+      "move-up": "上移",
+      "move-down": "下移",
+      "move-to-bottom": "移至底部"
     }
   },
   "use-nodes-table-widget": {
@@ -1977,15 +2008,29 @@
     "name": "名称",
     "address": "地址",
     "ip-addresses": "IP 地址",
-    "traffic-used": "流量使用",
-    "config-profile": "配置文件",
+    "traffic-used": "已用流量",
+    "config-profile": "配置方案",
     "inbounds": "入站",
     "core-v": "核心版本",
-    "node-v": "节点 V.",
+    "node-v": "节点版本",
     "provider": "服务商",
     "tags": "标签",
     "total-ram": "内存总数",
-    "cpu-model": "CPU 型号"
+    "cpu-model": "CPU 型号",
+    "status": "运行状态",
+    "core-uptime": "核心运行时长",
+    "plugin": "节点插件",
+    "cpu-cores": "CPU 核心",
+    "free-ram": "可用内存",
+    "used-ram": "已用内存",
+    "server-uptime": "系统运行时长",
+    "network-interfaces": "网络接口",
+    "rx-speed": "下行速率",
+    "tx-speed": "上行速率",
+    "rx-total": "累计下行",
+    "tx-total": "累计上行",
+    "os-release": "系统内核",
+    "actions": "操作"
   },
   "subpage-config-visual-editor": {
     "widget": {
@@ -2545,6 +2590,41 @@
     "country": "国家 / 地区",
     "unknown": "未知",
     "expand": "展开分布",
-    "collapse": "收起分布"
+    "collapse": "收起分布",
+    "filter-online": "在线 ({{count}})",
+    "filter-attention": "异常 / 离线 ({{count}})",
+    "search-placeholder": "搜索节点名称、地址、服务商或地区…"
+  },
+  "nodes-metrics-page": {
+    "title": "节点实时流量指标",
+    "total-nodes": "节点总数",
+    "active-nodes": "活跃节点",
+    "users-online": "当前在线用户",
+    "total-inbounds": "入站协议总数",
+    "empty": "暂无节点实时指标数据",
+    "prometheus-source": "Prometheus 实时指标采集",
+    "live-updates": "每 30 秒自动从 /metrics 端点同步节点累计出入站流量",
+    "info-title": "实时指标说明",
+    "info-1": "每 30 秒自动从 /metrics 接口拉取最新指标快照",
+    "info-2": "入站 / 出站流量为节点或面板启动以来的累计字节计数",
+    "info-3": "点击节点卡片右上角眼睛图标可切换显示或隐藏零流量标签",
+    "search-nodes": "搜索节点名称或供应商…",
+    "inbound-traffic": "入站流量（Inbound）",
+    "outbound-traffic": "出站流量（Outbound）"
+  },
+  "nodes-matrix": {
+    "widget": {
+      "sort-order": "默认排序",
+      "sort-traffic-rate": "实时速率",
+      "sort-online-users": "在线人数",
+      "sort-load": "负载水位",
+      "sort-quota": "流量占比",
+      "select-all": "全选当前 ({{count}})",
+      "selected-count": "已选 {{selected}} / {{total}}",
+      "cpu": "CPU",
+      "ram": "内存",
+      "ram-detail": "内存占用：{{used}} / {{total}} ({{percent}}%)",
+      "select-node": "选择节点 {{name}}"
+    }
   }
 }

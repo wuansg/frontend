@@ -44,7 +44,7 @@ export const useViewPreferencesStore = create<IActions & IState>()(
         ),
         {
             name: 'viewPreferencesStore',
-            version: 1,
+            version: 2,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 nodesViewMode: state.nodesViewMode,
@@ -54,12 +54,30 @@ export const useViewPreferencesStore = create<IActions & IState>()(
                 hostsActiveTag: state.hostsActiveTag,
                 layoutStyle: state.layoutStyle
             }),
-            migrate: () => initialState
+            migrate: (persistedState) => {
+                const prev = (persistedState ?? {}) as Omit<Partial<IState>, 'nodesViewMode'> & {
+                    nodesViewMode?: string
+                }
+                return {
+                    ...initialState,
+                    ...prev,
+                    nodesViewMode:
+                        prev.nodesViewMode === NODES_VIEW_MODE.MATRIX ||
+                        prev.nodesViewMode === 'table'
+                            ? NODES_VIEW_MODE.MATRIX
+                            : NODES_VIEW_MODE.CARDS
+                }
+            }
         }
     )
 )
 
-export const useNodesViewMode = () => useViewPreferencesStore((state) => state.nodesViewMode)
+export const useNodesViewMode = () =>
+    useViewPreferencesStore((state) =>
+        state.nodesViewMode === NODES_VIEW_MODE.MATRIX
+            ? NODES_VIEW_MODE.MATRIX
+            : NODES_VIEW_MODE.CARDS
+    )
 export const useNodesActiveTag = () => useViewPreferencesStore((state) => state.nodesActiveTag)
 export const useConfigProfilesViewMode = () =>
     useViewPreferencesStore((state) => state.configProfilesViewMode)

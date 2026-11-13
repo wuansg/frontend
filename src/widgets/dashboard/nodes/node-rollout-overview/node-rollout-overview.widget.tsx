@@ -2,29 +2,34 @@ import {
     Badge,
     Box,
     Button,
+    CloseButton,
     Collapse,
     Group,
+    Scroller,
     SegmentedControl,
     SimpleGrid,
     Stack,
-    Text
+    Text,
+    TextInput
 } from '@mantine/core'
 import { GetNodesCommand } from '@remnawave/backend-contract'
 import { ReactNode, useState } from 'react'
 import ReactCountryFlag from 'react-country-flag'
 import { useTranslation } from 'react-i18next'
-import { TbChevronDown, TbVersions } from 'react-icons/tb'
+import { TbChevronDown, TbSearch, TbVersions } from 'react-icons/tb'
 
 import surface from '@shared/ui/node-panel-surface.module.css'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 
-export type NodeRolloutFilter = 'all' | 'drift' | 'missing-sni'
+export type NodeRolloutFilter = 'all' | 'attention' | 'drift' | 'missing-sni' | 'online'
 
 interface IProps {
     filter: NodeRolloutFilter
     nodes: GetNodesCommand.Response['response']
     onFilterChange: (value: NodeRolloutFilter) => void
+    onSearchChange?: (value: string) => void
+    searchQuery?: string
 }
 
 const countBy = (
@@ -74,11 +79,25 @@ const Distribution = ({
     </Box>
 )
 
-export const NodeRolloutOverview = ({ filter, nodes, onFilterChange }: IProps) => {
+export const isNodeAttention = (node: GetNodesCommand.Response['response'][number]) =>
+    (!node.isConnected && !node.isDisabled) ||
+    node.runtimeStatus?.mode === 'DEGRADED' ||
+    node.configProfile.activeConfigProfileUuid === null
+
+export const NodeRolloutOverview = ({
+    filter,
+    nodes,
+    onFilterChange,
+    onSearchChange,
+    searchQuery = ''
+}: IProps) => {
     const { t } = useTranslation()
-    const [expanded, setExpanded] = useState(true)
+    const [expanded, setExpanded] = useState(
+        () => typeof window === 'undefined' || window.innerWidth > 768
+    )
 
     const connected = nodes.filter((node) => node.isConnected).length
+    const attention = nodes.filter(isNodeAttention).length
     const drift = nodes.filter((node) => node.versionDrift === true).length
     const missingSni = nodes.filter(
         (node) => !node.runtimeInventory?.capabilities.includes('node_api_sni_v1')
@@ -113,21 +132,66 @@ export const NodeRolloutOverview = ({ filter, nodes, onFilterChange }: IProps) =
     return (
         <SectionCard.Root gap="sm">
             <SectionCard.Section>
-                <Group align="center" gap="sm" justify="space-between" wrap="wrap">
-                    <BaseOverlayHeader
-                        iconColor="violet"
-                        IconComponent={TbVersions}
-                        iconSize={20}
-                        iconVariant="soft"
-                        subtitle={t('node-rollout-overview.subtitle', {
-                            connected,
-                            total: nodes.length
-                        })}
-                        title={t('node-rollout-overview.title')}
-                        titleOrder={5}
-                    />
+                <Stack gap="xs">
+                    <Group align="center" gap="sm" justify="space-between" wrap="wrap">
+                        <BaseOverlayHeader
+                            iconColor="violet"
+                            IconComponent={TbVersions}
+                            iconSize={20}
+                            iconVariant="soft"
+                            subtitle={t('node-rollout-overview.subtitle', {
+                                connected,
+                                total: nodes.length
+                            })}
+                            title={t('node-rollout-overview.title')}
+                            titleOrder={5}
+                        />
 
-                    <Group gap="xs" wrap="wrap">
+                        <Group gap="xs" wrap="wrap">
+                            {onSearchChange && (
+                                <TextInput
+                                    leftSection={<TbSearch size={14} />}
+                                    onChange={(event) => onSearchChange(event.currentTarget.value)}
+                                    placeholder={t('node-rollout-overview.search-placeholder')}
+                                    rightSection={
+                                        searchQuery ? (
+                                            <CloseButton
+                                                onClick={() => onSearchChange('')}
+                                                size="sm"
+                                            />
+                                        ) : null
+                                    }
+                                    size="xs"
+                                    style={{ flex: '1 1 220px', maxWidth: '100%' }}
+                                    value={searchQuery}
+                                    w={260}
+                                />
+                            )}
+                            <Button
+                                color="gray"
+                                onClick={() => setExpanded((prev) => !prev)}
+                                rightSection={
+                                    <TbChevronDown
+                                        size={14}
+                                        style={{
+                                            transform: expanded ? 'rotate(180deg)' : undefined,
+                                            transition: 'transform 160ms ease'
+                                        }}
+                                    />
+                                }
+                                size="xs"
+                                variant="subtle"
+                            >
+                                {t(
+                                    expanded
+                                        ? 'node-rollout-overview.collapse'
+                                        : 'node-rollout-overview.expand'
+                                )}
+                            </Button>
+                        </Group>
+                    </Group>
+
+                    <Scroller draggable>
                         <SegmentedControl
                             data={[
                                 {
@@ -135,6 +199,18 @@ export const NodeRolloutOverview = ({ filter, nodes, onFilterChange }: IProps) =
                                         count: nodes.length
                                     }),
                                     value: 'all'
+                                },
+                                {
+                                    label: t('node-rollout-overview.filter-online', {
+                                        count: connected
+                                    }),
+                                    value: 'online'
+                                },
+                                {
+                                    label: t('node-rollout-overview.filter-attention', {
+                                        count: attention
+                                    }),
+                                    value: 'attention'
                                 },
                                 {
                                     label: t('node-rollout-overview.filter-drift', {
@@ -149,33 +225,13 @@ export const NodeRolloutOverview = ({ filter, nodes, onFilterChange }: IProps) =
                                     value: 'missing-sni'
                                 }
                             ]}
-                            size="xs"
-                            value={filter}
                             onChange={(value) => onFilterChange(value as NodeRolloutFilter)}
-                        />
-                        <Button
-                            color="gray"
-                            rightSection={
-                                <TbChevronDown
-                                    size={14}
-                                    style={{
-                                        transform: expanded ? 'rotate(180deg)' : undefined,
-                                        transition: 'transform 160ms ease'
-                                    }}
-                                />
-                            }
                             size="xs"
-                            variant="subtle"
-                            onClick={() => setExpanded((prev) => !prev)}
-                        >
-                            {t(
-                                expanded
-                                    ? 'node-rollout-overview.collapse'
-                                    : 'node-rollout-overview.expand'
-                            )}
-                        </Button>
-                    </Group>
-                </Group>
+                            style={{ flexShrink: 0 }}
+                            value={filter}
+                        />
+                    </Scroller>
+                </Stack>
             </SectionCard.Section>
 
             <Collapse expanded={expanded}>

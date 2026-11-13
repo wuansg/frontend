@@ -159,12 +159,16 @@ export const StatisticUsersPage = () => {
                                 uuid: String(user.id)
                             })
                         )}
-                        maxHeight={230}
+                        maxHeight={306}
                         onItemClick={(user) => {
                             if (user.uuid) {
                                 handleOpenUser(Number(user.uuid))
                             }
                         }}
+                        searchable
+                        showRank
+                        showShare
+                        title={t('traffic-usage.leaderboard-title')}
                     />
                 </SimpleGrid>
 

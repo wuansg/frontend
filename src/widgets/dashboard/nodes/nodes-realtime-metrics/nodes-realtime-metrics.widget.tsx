@@ -57,13 +57,15 @@ export function NodesRealtimeUsageMetrics(props: IProps) {
         {
             IconComponent: PiPulse,
             title: t('nodes-quick-stats.widget.online-nodes'),
-            value: nodes?.filter((node) => node.isConnected).length ?? 0,
+            value: nodes?.length
+                ? `${nodes.filter((node) => node.isConnected).length} / ${nodes.length}`
+                : 0,
             iconVariant: 'soft',
             iconColor: 'teal'
         }
     ]
     return (
-        <SimpleGrid cols={{ base: 1, xs: 2, sm: 2, xl: 4 }} spacing="xs">
+        <SimpleGrid cols={{ base: 2, xl: 4 }} spacing="xs">
             {cards.map((card, index) => (
                 <motion.div
                     animate={{ opacity: 1, y: 0 }}

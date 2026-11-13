@@ -12,7 +12,10 @@ export default function NodesMetricsPageComponent(props: IProps) {
 
     return (
         <Page title={t('constants.nodes-metrics')}>
-            <PageHeaderShared icon={<PiSpeedometer size={24} />} title="Metrics Overview" />
+            <PageHeaderShared
+                icon={<PiSpeedometer size={24} />}
+                title={t('nodes-metrics-page.title')}
+            />
 
             {isLoading ? <LoadingScreen height="80vh" /> : <NodeMetricsWidget />}
         </Page>

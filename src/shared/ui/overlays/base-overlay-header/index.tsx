@@ -54,7 +54,6 @@ export const BaseOverlayHeader = (props: IProps) => {
 
             <Stack gap="0" style={truncateTitle ? { overflow: 'hidden' } : undefined}>
                 <Title
-                    c="white"
                     onClick={() => withCopy && copy(title)}
                     order={titleOrder}
                     style={{
@@ -68,14 +67,16 @@ export const BaseOverlayHeader = (props: IProps) => {
                 >
                     {title}
                 </Title>
-                <Text
-                    c="dimmed"
-                    onClick={() => withCopy && copy(subtitle)}
-                    size="xs"
-                    style={{ cursor: withCopy ? 'copy' : 'default' }}
-                >
-                    {subtitle}
-                </Text>
+                {subtitle && (
+                    <Text
+                        c="dimmed"
+                        onClick={() => withCopy && copy(subtitle)}
+                        size="xs"
+                        style={{ cursor: withCopy ? 'copy' : 'default' }}
+                    >
+                        {subtitle}
+                    </Text>
+                )}
             </Stack>
         </Group>
     )

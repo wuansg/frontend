@@ -79,7 +79,7 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                         style={{
                             ...styles,
                             width: '300px',
-                            maxWidth: '1200px',
+                            maxWidth: 'calc(100vw - 32px)',
                             margin: '0 auto'
                         }}
                         withBorder
@@ -88,12 +88,17 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                             p="md"
                             style={{
                                 borderRadius: 'calc(var(--mantine-radius-default) - 4px)',
-                                border: '1px solid var(--mantine-color-dark-5)'
+                                border: '1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5))'
                             }}
                         >
                             <Stack gap="sm">
                                 <Group justify="space-between">
-                                    <Badge color="shaded-gray" size="lg" variant="soft">
+                                    <Badge
+                                        color="shaded-gray"
+                                        size="lg"
+                                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                                        variant="soft"
+                                    >
                                         {t('common.selected', { count: selectedRecords.length })}
                                     </Badge>
                                     <Group gap={0} justify="flex-end">
@@ -104,8 +109,12 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                                 </Group>
 
                                 <ActionIcon.Group style={{ width: '100%' }}>
-                                    <Tooltip label="Move to top" withArrow>
+                                    <Tooltip
+                                        label={t('multi-select-nodes.feature.move-to-top')}
+                                        withArrow
+                                    >
                                         <ActionIcon
+                                            aria-label={t('multi-select-nodes.feature.move-to-top')}
                                             color="gray"
                                             onClick={() => moveSelected('top')}
                                             size="lg"
@@ -116,8 +125,12 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                                         </ActionIcon>
                                     </Tooltip>
 
-                                    <Tooltip label="Move up" withArrow>
+                                    <Tooltip
+                                        label={t('multi-select-nodes.feature.move-up')}
+                                        withArrow
+                                    >
                                         <ActionIcon
+                                            aria-label={t('multi-select-nodes.feature.move-up')}
                                             color="gray"
                                             onClick={() => moveSelected('up')}
                                             size="lg"
@@ -128,8 +141,12 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                                         </ActionIcon>
                                     </Tooltip>
 
-                                    <Tooltip label="Move down" withArrow>
+                                    <Tooltip
+                                        label={t('multi-select-nodes.feature.move-down')}
+                                        withArrow
+                                    >
                                         <ActionIcon
+                                            aria-label={t('multi-select-nodes.feature.move-down')}
                                             color="gray"
                                             onClick={() => moveSelected('down')}
                                             size="lg"
@@ -140,8 +157,14 @@ export const MultiSelectNodesFeature = (props: IProps) => {
                                         </ActionIcon>
                                     </Tooltip>
 
-                                    <Tooltip label="Move to bottom" withArrow>
+                                    <Tooltip
+                                        label={t('multi-select-nodes.feature.move-to-bottom')}
+                                        withArrow
+                                    >
                                         <ActionIcon
+                                            aria-label={t(
+                                                'multi-select-nodes.feature.move-to-bottom'
+                                            )}
                                             color="gray"
                                             onClick={() => moveSelected('bottom')}
                                             size="lg"

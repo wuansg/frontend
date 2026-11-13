@@ -1,6 +1,6 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { colorFromId } from '@kastov/uuid-color'
-import { ActionIcon, Group, Stack } from '@mantine/core'
+import { ActionIcon, Group, SimpleGrid, Stack } from '@mantine/core'
 import { DatesRangeValue } from '@mantine/dates'
 import { useDebouncedState } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
@@ -111,7 +111,7 @@ export const InternalSquadsUsageDrawer = NiceModal.create((props: IProps) => {
                 ...modalProps,
                 padding: 'lg',
                 position: 'right',
-                size: '600px'
+                size: '620px'
             }}
             title={
                 <BaseOverlayHeader
@@ -158,30 +158,27 @@ export const InternalSquadsUsageDrawer = NiceModal.create((props: IProps) => {
             }
         >
             <Stack gap="md">
-                <Group gap="xs" justify="flex-end" wrap="nowrap">
+                <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="xs">
                     <TrafficLimitInput
                         hideControls
-                        size="md"
                         leftSection={<TbChartLine size={16} />}
+                        onChange={(value) => setMinUsageThreshold(value ?? 0)}
+                        size="md"
                         styles={{
                             label: { fontWeight: 500 }
                         }}
-                        onChange={(value) => setMinUsageThreshold(value ?? 0)}
                         value={minUsageThreshold}
                     />
-                </Group>
 
-                <Group gap="xs" justify="flex-end" wrap="nowrap">
                     <DatePickerInput
                         allowSingleDateInRange
                         dropdownType="modal"
                         headerControlsOrder={['previous', 'next', 'level']}
                         leftSection={<TbCalendar size="20px" />}
                         locale={i18n.language}
+                        miw={0}
                         onChange={handleDateRangeChange}
                         size="md"
-                        miw={0}
-                        w="100%"
                         styles={{
                             calendarHeaderLevel: {
                                 justifyContent: 'flex-end'
@@ -189,15 +186,15 @@ export const InternalSquadsUsageDrawer = NiceModal.create((props: IProps) => {
                             input: {
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                textAlign: 'center'
+                                textOverflow: 'ellipsis'
                             }
                         }}
                         type="range"
                         value={rawRange}
                         valueFormat="DD MMM, YYYY"
+                        w="100%"
                     />
-                </Group>
+                </SimpleGrid>
 
                 <TopLeaderboardCardShared
                     emptyText={t('node-users-usage-drawer.widget.no-data-available')}
@@ -218,7 +215,9 @@ export const InternalSquadsUsageDrawer = NiceModal.create((props: IProps) => {
                         handleViewUser(user)
                     }}
                     ordered={false}
-                    skeletonCount={11}
+                    searchable
+                    skeletonCount={8}
+                    title={t('traffic-usage.leaderboard-title')}
                     virtualized
                 />
             </Stack>

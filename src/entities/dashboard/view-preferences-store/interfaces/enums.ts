@@ -5,7 +5,7 @@ export enum CONFIG_PROFILES_VIEW_MODE {
 
 export enum NODES_VIEW_MODE {
     CARDS = 'cards',
-    TABLE = 'table'
+    MATRIX = 'matrix'
 }
 
 export enum HOSTS_VIEW_MODE {

@@ -214,7 +214,12 @@
       "graceful-restart": "Graceful restart",
       "graceful-restart-description-1": "will send a request to all nodes to restart sing-box, but the request can be skipped if the node hash is unchanged. This is the default option.",
       "force": "Force",
-      "graceful": "Graceful"
+      "graceful": "Graceful",
+      "view-cards": "Cards",
+      "view-table": "Table",
+      "toggle-view-mode": "Toggle view mode",
+      "view-list": "List",
+      "view-matrix": "Matrix"
     }
   },
   "config-editor": {
@@ -301,7 +306,17 @@
   },
   "node-card": {
     "widget": {
-      "copied": "Copied"
+      "copied": "Copied",
+      "dangling": "Unassigned",
+      "version-drift": "Version drift",
+      "load-average-title": "Load Average ({{count}} cores)",
+      "load-1m": "1 min: {{value}} ({{percent}}%)",
+      "load-5m": "5 min: {{value}} ({{percent}}%)",
+      "load-15m": "15 min: {{value}} ({{percent}}%)",
+      "load-legend": "0–70% normal · 70–100% high · >100% overloaded",
+      "no-data": "No data",
+      "copy-address": "Click to copy node address",
+      "usage-stats": "Traffic statistics"
     }
   },
   "node-status-badge": {
@@ -894,7 +909,19 @@
     "unavailable": "Not recorded",
     "inconsistent": "Directional counters exceed total traffic. Please check the source data.",
     "node-scope": "Node proxy outbound traffic, not host-interface RX/TX. Summary covers the whole period; ranking is Top N.",
-    "proxy-scope": "Upload: client → destination; download: destination → client. Summary covers the whole period; ranking is Top N."
+    "proxy-scope": "Upload: client → destination; download: destination → client. Summary covers the whole period; ranking is Top N.",
+    "days-count": "{{count}}d",
+    "leaderboard-title": "Traffic Ranking",
+    "search-placeholder": "Filter ranking...",
+    "daily-chart-title": "Daily Traffic Breakdown",
+    "daily-chart-hint": "Click any bar to inspect full daily ranking",
+    "chart-column": "Column",
+    "chart-bar": "Horizontal",
+    "share": "Share",
+    "rank": "#",
+    "active-items": "{{count}} active",
+    "download-share": "Download {{percentage}}%",
+    "upload-short": "Upload {{percentage}}%"
   },
   "user-usage-modal": {
     "widget": {
@@ -1975,7 +2002,11 @@
   },
   "multi-select-nodes": {
     "feature": {
-      "profile-and-inbounds": "Profile & Inbounds"
+      "profile-and-inbounds": "Profile & Inbounds",
+      "move-to-top": "Move to top",
+      "move-up": "Move up",
+      "move-down": "Move down",
+      "move-to-bottom": "Move to bottom"
     }
   },
   "use-nodes-table-widget": {
@@ -1991,7 +2022,21 @@
     "provider": "Provider",
     "tags": "Tags",
     "total-ram": "Total RAM",
-    "cpu-model": "CPU Model"
+    "cpu-model": "CPU Model",
+    "status": "Status",
+    "core-uptime": "Core Uptime",
+    "plugin": "Plugin",
+    "cpu-cores": "CPU Cores",
+    "free-ram": "Free RAM",
+    "used-ram": "Used RAM",
+    "server-uptime": "Server Uptime",
+    "network-interfaces": "Network Interfaces",
+    "rx-speed": "RX Speed",
+    "tx-speed": "TX Speed",
+    "rx-total": "RX Total",
+    "tx-total": "TX Total",
+    "os-release": "OS Release",
+    "actions": "Actions"
   },
   "subpage-config-visual-editor": {
     "widget": {
@@ -2545,6 +2590,41 @@
     "country": "Region",
     "unknown": "unknown",
     "expand": "Show Breakdown",
-    "collapse": "Hide Breakdown"
+    "collapse": "Hide Breakdown",
+    "filter-online": "Online ({{count}})",
+    "filter-attention": "Attention ({{count}})",
+    "search-placeholder": "Filter by name, address, provider or region…"
+  },
+  "nodes-metrics-page": {
+    "title": "Node Traffic Metrics",
+    "total-nodes": "Total Nodes",
+    "active-nodes": "Active Nodes",
+    "users-online": "Users Online",
+    "total-inbounds": "Tracked Inbounds",
+    "empty": "No node metrics available",
+    "prometheus-source": "Prometheus Live Metrics",
+    "live-updates": "Auto-refreshes every 30s from /metrics endpoint",
+    "info-title": "Collection Notes",
+    "info-1": "Updates every 30 seconds from /metrics endpoint",
+    "info-2": "Inbound/Outbound counters show cumulative traffic since Panel or Node startup",
+    "info-3": "Toggle the eye icon on any node card to show or hide zero-traffic tags",
+    "search-nodes": "Filter nodes or providers...",
+    "inbound-traffic": "Inbound Traffic",
+    "outbound-traffic": "Outbound Traffic"
+  },
+  "nodes-matrix": {
+    "widget": {
+      "sort-order": "Default",
+      "sort-traffic-rate": "Throughput",
+      "sort-online-users": "Users",
+      "sort-load": "Load",
+      "sort-quota": "Quota %",
+      "select-all": "Select all ({{count}})",
+      "selected-count": "{{selected}} / {{total}} selected",
+      "cpu": "CPU",
+      "ram": "RAM",
+      "ram-detail": "Memory: {{used}} / {{total}} ({{percent}}%)",
+      "select-node": "Select node {{name}}"
+    }
   }
 }

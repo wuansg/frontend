@@ -211,7 +211,12 @@
       "graceful-restart": "Плавный перезапуск",
       "graceful-restart-description-1": "отправит запрос на все ноды для перезапуска sing-box, но запрос может быть невыполнен, если хэш на ноде совпадает с текущим. Это опция по умолчанию.",
       "force": "Принудительный",
-      "graceful": "Плавный"
+      "graceful": "Плавный",
+      "view-cards": "Карточки",
+      "view-table": "Таблица",
+      "toggle-view-mode": "Переключить вид",
+      "view-list": "Список",
+      "view-matrix": "Матрица"
     }
   },
   "config-editor": {
@@ -298,7 +303,17 @@
   },
   "node-card": {
     "widget": {
-      "copied": "Скопировано"
+      "copied": "Скопировано",
+      "dangling": "Без профиля",
+      "version-drift": "Расхождение версий",
+      "load-average-title": "Средняя нагрузка ({{count}} ядер)",
+      "load-1m": "1 мин: {{value}} ({{percent}}%)",
+      "load-5m": "5 мин: {{value}} ({{percent}}%)",
+      "load-15m": "15 мин: {{value}} ({{percent}}%)",
+      "load-legend": "0–70% норма · 70–100% высокая · >100% перегрузка",
+      "no-data": "Нет данных",
+      "copy-address": "Нажмите, чтобы скопировать адрес",
+      "usage-stats": "Статистика трафика"
     }
   },
   "node-status-badge": {
@@ -1940,7 +1955,11 @@
   },
   "multi-select-nodes": {
     "feature": {
-      "profile-and-inbounds": "Профиль и инбаунды"
+      "profile-and-inbounds": "Профиль и инбаунды",
+      "move-to-top": "В начало",
+      "move-up": "Вверх",
+      "move-down": "Вниз",
+      "move-to-bottom": "В конец"
     }
   },
   "use-nodes-table-widget": {
@@ -1956,7 +1975,21 @@
     "provider": "Провайдер",
     "tags": "Теги",
     "total-ram": "Всего памяти",
-    "cpu-model": "Модель CPU"
+    "cpu-model": "Модель CPU",
+    "status": "Статус",
+    "core-uptime": "Аптайм ядра",
+    "plugin": "Плагин",
+    "cpu-cores": "Ядра CPU",
+    "free-ram": "Свободно ОЗУ",
+    "used-ram": "Занято ОЗУ",
+    "server-uptime": "Аптайм сервера",
+    "network-interfaces": "Сетевые интерфейсы",
+    "rx-speed": "Скорость приёма",
+    "tx-speed": "Скорость отдачи",
+    "rx-total": "Всего принято",
+    "tx-total": "Всего отдано",
+    "os-release": "Версия ОС",
+    "actions": "Действия"
   },
   "subpage-config-visual-editor": {
     "widget": {
@@ -2516,6 +2549,67 @@
     "country": "Регион",
     "unknown": "неизвестно",
     "expand": "Показать сводку",
-    "collapse": "Скрыть сводку"
+    "collapse": "Скрыть сводку",
+    "filter-online": "Онлайн ({{count}})",
+    "filter-attention": "Внимание ({{count}})",
+    "search-placeholder": "Фильтр по имени, адресу, провайдеру или региону…"
+  },
+  "traffic-usage": {
+    "direction": "Направление трафика",
+    "total": "Всего",
+    "upload": "Отдача",
+    "download": "Загрузка",
+    "period-label": "{{direction}} за выбранный период",
+    "daily-average": "Среднесуточно",
+    "upload-share": "Отдача составляет {{percentage}}% от общего трафика",
+    "undirected": "{{bytes}} исторического трафика без направления учтены только в общем объёме.",
+    "unavailable": "Не записано",
+    "inconsistent": "Сумма отдачи и загрузки превышает общий трафик. Проверьте данные.",
+    "node-scope": "Учитывается прокси-трафик нод, а не сетевой интерфейс хоста. Сводка за весь период; рейтинг — Top N.",
+    "proxy-scope": "Отдача: клиент → цель; загрузка: цель → клиент. Сводка за весь период; рейтинг — Top N.",
+    "days-count": "{{count}} дн.",
+    "leaderboard-title": "Рейтинг трафика",
+    "search-placeholder": "Поиск по имени…",
+    "daily-chart-title": "Динамика трафика по дням",
+    "daily-chart-hint": "Нажмите на день для просмотра подробного рейтинга",
+    "chart-column": "По дням",
+    "chart-bar": "Горизонт.",
+    "share": "Доля",
+    "rank": "#",
+    "active-items": "{{count}} активн.",
+    "download-share": "Загрузка {{percentage}}%",
+    "upload-short": "Отдача {{percentage}}%"
+  },
+  "nodes-metrics-page": {
+    "title": "Метрики трафика нод",
+    "total-nodes": "Всего нод",
+    "active-nodes": "Активные ноды",
+    "users-online": "Пользователей онлайн",
+    "total-inbounds": "Всего инбаундов",
+    "empty": "Метрики нод недоступны",
+    "prometheus-source": "Живые метрики Prometheus",
+    "live-updates": "Автообновление каждые 30 сек из /metrics",
+    "info-title": "Справка по метрикам",
+    "info-1": "Обновляется каждые 30 секунд из эндпоинта /metrics",
+    "info-2": "Счётчики показывают накопленный трафик с момента запуска ноды или панели",
+    "info-3": "Иконка глаза на карточке переключает отображение нулевых тегов",
+    "search-nodes": "Поиск нод или провайдеров…",
+    "inbound-traffic": "Входящий трафик (Inbound)",
+    "outbound-traffic": "Исходящий трафик (Outbound)"
+  },
+  "nodes-matrix": {
+    "widget": {
+      "sort-order": "По порядку",
+      "sort-traffic-rate": "Скорость",
+      "sort-online-users": "Онлайн",
+      "sort-load": "Нагрузка",
+      "sort-quota": "Квота %",
+      "select-all": "Выбрать все ({{count}})",
+      "selected-count": "Выбрано {{selected}} / {{total}}",
+      "cpu": "CPU",
+      "ram": "ОЗУ",
+      "ram-detail": "Память: {{used}} / {{total}} ({{percent}}%)",
+      "select-node": "Выбрать узел {{name}}"
+    }
   }
 }

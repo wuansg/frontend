@@ -211,7 +211,12 @@
       "graceful-restart": "راه‌اندازی مجدد آرام",
       "graceful-restart-description-1": "با این روش درخواست ری‌استارت هسته به همه نودها ارسال خواهد شد اما درصورت یکسان بودن هش نود با هش فعلی ممکن است درخواست اجرا نشود. این، حالت پیشفرض ری‌استارت است",
       "force": "اجباری",
-      "graceful": "آرام"
+      "graceful": "آرام",
+      "view-cards": "کارت‌ها",
+      "view-table": "جدول",
+      "toggle-view-mode": "تغییر حالت نمایش",
+      "view-list": "فهرست",
+      "view-matrix": "ماتریس"
     }
   },
   "config-editor": {
@@ -298,7 +303,17 @@
   },
   "node-card": {
     "widget": {
-      "copied": "کپی شد"
+      "copied": "کپی شد",
+      "dangling": "بدون پروفایل",
+      "version-drift": "عدم تطابق نسخه",
+      "load-average-title": "میانگین بار ({{count}} هسته)",
+      "load-1m": "۱ دقیقه: {{value}} ({{percent}}٪)",
+      "load-5m": "۵ دقیقه: {{value}} ({{percent}}٪)",
+      "load-15m": "۱۵ دقیقه: {{value}} ({{percent}}٪)",
+      "load-legend": "۰–۷۰٪ عادی · ۷۰–۱۰۰٪ بالا · >۱۰۰٪ سربار",
+      "no-data": "بدون داده",
+      "copy-address": "برای کپی آدرس کلیک کنید",
+      "usage-stats": "آمار مصرف نود"
     }
   },
   "node-status-badge": {
@@ -1940,7 +1955,11 @@
   },
   "multi-select-nodes": {
     "feature": {
-      "profile-and-inbounds": "پروفایل و اینباندها"
+      "profile-and-inbounds": "پروفایل و اینباندها",
+      "move-to-top": "انتقال به ابتدا",
+      "move-up": "انتقال به بالا",
+      "move-down": "انتقال به پایین",
+      "move-to-bottom": "انتقال به انتها"
     }
   },
   "use-nodes-table-widget": {
@@ -1956,7 +1975,21 @@
     "provider": "ارائه‌دهنده",
     "tags": "برچسب‌ها",
     "total-ram": "کل RAM",
-    "cpu-model": "مدل پردازنده"
+    "cpu-model": "مدل پردازنده",
+    "status": "وضعیت",
+    "core-uptime": "آپتایم هسته",
+    "plugin": "افزونه",
+    "cpu-cores": "هسته‌های CPU",
+    "free-ram": "حافظه آزاد",
+    "used-ram": "حافظه مصرفی",
+    "server-uptime": "آپتایم سرور",
+    "network-interfaces": "رابط‌های شبکه",
+    "rx-speed": "سرعت دریافت",
+    "tx-speed": "سرعت ارسال",
+    "rx-total": "مجموع دریافت",
+    "tx-total": "مجموع ارسال",
+    "os-release": "نسخه سیستم‌عامل",
+    "actions": "عملیات"
   },
   "subpage-config-visual-editor": {
     "widget": {
@@ -2516,6 +2549,67 @@
     "country": "منطقه",
     "unknown": "نامشخص",
     "expand": "نمایش جزئیات",
-    "collapse": "بستن جزئیات"
+    "collapse": "بستن جزئیات",
+    "filter-online": "آنلاین ({{count}})",
+    "filter-attention": "نیازمند بررسی ({{count}})",
+    "search-placeholder": "جست‌وجوی نام، آدرس، ارائه‌دهنده یا منطقه…"
+  },
+  "traffic-usage": {
+    "direction": "جهت ترافیک",
+    "total": "کل",
+    "upload": "آپلود",
+    "download": "دانلود",
+    "period-label": "{{direction}} در بازه انتخاب‌شده",
+    "daily-average": "میانگین روزانه",
+    "upload-share": "آپلود {{percentage}}% از کل ترافیک است",
+    "undirected": "{{bytes}} از ترافیک قدیمی فاقد جهت بوده و فقط در کل محاسبه شده است.",
+    "unavailable": "ثبت نشده",
+    "inconsistent": "مجموع آپلود و دانلود از کل ترافیک بیشتر است.",
+    "node-scope": "ترافیک خروجی پروکسی نود (نه کارت شبکه میزبان). خلاصه کل بازه است و رتبه‌بندی Top N را نشان می‌دهد.",
+    "proxy-scope": "آپلود: کاربر ← مقصد؛ دانلود: مقصد ← کاربر. خلاصه کل بازه است و رتبه‌بندی Top N را نشان می‌دهد.",
+    "days-count": "{{count}} روز",
+    "leaderboard-title": "رتبه‌بندی ترافیک",
+    "search-placeholder": "جستجو در نام‌ها…",
+    "daily-chart-title": "روند روزانه ترافیک",
+    "daily-chart-hint": "برای مشاهده جزئیات کامل هر روز روی ستون کلیک کنید",
+    "chart-column": "ستونی",
+    "chart-bar": "افقی",
+    "share": "سهم",
+    "rank": "#",
+    "active-items": "{{count}} فعال",
+    "download-share": "دانلود {{percentage}}%",
+    "upload-short": "آپلود {{percentage}}%"
+  },
+  "nodes-metrics-page": {
+    "title": "متریک‌های لحظه‌ای ترافیک نودها",
+    "total-nodes": "کل نودها",
+    "active-nodes": "نودهای فعال",
+    "users-online": "کاربران آنلاین",
+    "total-inbounds": "کل ورودی‌ها",
+    "empty": "متریکی برای نودها موجود نیست",
+    "prometheus-source": "متریک‌های زنده Prometheus",
+    "live-updates": "به‌روزرسانی خودکار هر ۳۰ ثانیه از /metrics",
+    "info-title": "راهنمای متریک‌ها",
+    "info-1": "هر ۳۰ ثانیه از مسیر /metrics به‌روزرسانی می‌شود",
+    "info-2": "مقادیر ورودی و خروجی، ترافیک تجمعی از زمان راه‌اندازی هستند",
+    "info-3": "با آیکون چشم روی هر کارت می‌توانید تگ‌های بدون ترافیک را مخفی یا ظاهر کنید",
+    "search-nodes": "جستجوی نود یا ارائه‌دهنده…",
+    "inbound-traffic": "ترافیک ورودی (Inbound)",
+    "outbound-traffic": "ترافیک خروجی (Outbound)"
+  },
+  "nodes-matrix": {
+    "widget": {
+      "sort-order": "پیش‌فرض",
+      "sort-traffic-rate": "سرعت لحظه‌ای",
+      "sort-online-users": "کاربران آنلاین",
+      "sort-load": "بار سیستم",
+      "sort-quota": "درصد مصرف",
+      "select-all": "انتخاب همه ({{count}})",
+      "selected-count": "{{selected}} از {{total}} انتخاب شد",
+      "cpu": "CPU",
+      "ram": "حافظه",
+      "ram-detail": "حافظه: {{used}} / {{total}} ({{percent}}٪)",
+      "select-node": "انتخاب نود {{name}}"
+    }
   }
 }

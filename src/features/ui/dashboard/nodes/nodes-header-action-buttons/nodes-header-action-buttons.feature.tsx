@@ -1,16 +1,16 @@
-import { ActionIcon, ActionIconGroup, Group, Stack, Tooltip } from '@mantine/core'
+import { ActionIcon, Button, Group, SegmentedControl, Stack, Tooltip } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { spotlight } from '@mantine/spotlight'
 import { useTranslation } from 'react-i18next'
 import { PiSpiral } from 'react-icons/pi'
 import {
     TbAlertCircle,
-    TbCards,
+    TbLayoutGrid,
+    TbLayoutList,
     TbPlus,
     TbRefresh,
     TbRocket,
-    TbSearch,
-    TbTable
+    TbSearch
 } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
@@ -95,87 +95,86 @@ export const NodesHeaderActionButtonsFeature = (props: IProps) => {
     }
 
     return (
-        <Group grow preventGrowOverflow={false} wrap="wrap">
-            {viewMode === NODES_VIEW_MODE.CARDS && (
-                <ActionIconGroup>
-                    <Tooltip label={t('nodes-header-action-buttons.feature.search-nodes')}>
-                        <ActionIcon
-                            color="gray"
-                            onClick={spotlight.open}
-                            size="input-md"
-                            variant="soft"
-                        >
-                            <TbSearch size="24px" />
-                        </ActionIcon>
-                    </Tooltip>
-                </ActionIconGroup>
-            )}
+        <Group align="center" gap="xs" wrap="wrap">
+            <SegmentedControl
+                aria-label={t('nodes-header-action-buttons.feature.toggle-view-mode')}
+                data={[
+                    {
+                        value: NODES_VIEW_MODE.CARDS,
+                        label: (
+                            <Group gap={6} justify="center" wrap="nowrap">
+                                <TbLayoutList size={16} />
+                                <span>{t('nodes-header-action-buttons.feature.view-list')}</span>
+                            </Group>
+                        )
+                    },
+                    {
+                        value: NODES_VIEW_MODE.MATRIX,
+                        label: (
+                            <Group gap={6} justify="center" wrap="nowrap">
+                                <TbLayoutGrid size={16} />
+                                <span>{t('nodes-header-action-buttons.feature.view-matrix')}</span>
+                            </Group>
+                        )
+                    }
+                ]}
+                onChange={(value) => setViewMode(value as NODES_VIEW_MODE)}
+                size="sm"
+                value={viewMode}
+            />
 
-            <ActionIconGroup>
-                <Tooltip label="Toggle view mode">
+            <ActionIcon.Group>
+                <Tooltip label={t('nodes-header-action-buttons.feature.search-nodes')} withArrow>
                     <ActionIcon
+                        aria-label={t('nodes-header-action-buttons.feature.search-nodes')}
                         color="gray"
-                        onClick={() =>
-                            setViewMode(
-                                viewMode === NODES_VIEW_MODE.TABLE
-                                    ? NODES_VIEW_MODE.CARDS
-                                    : NODES_VIEW_MODE.TABLE
-                            )
-                        }
-                        size="input-md"
-                        variant="soft"
+                        onClick={spotlight.open}
+                        size="input-sm"
+                        variant="default"
                     >
-                        {viewMode === NODES_VIEW_MODE.CARDS ? (
-                            <TbTable size="24px" />
-                        ) : (
-                            <TbCards size="24px" />
-                        )}
+                        <TbSearch size={18} />
                     </ActionIcon>
                 </Tooltip>
-            </ActionIconGroup>
-            <ActionIconGroup>
+
                 <Tooltip
                     label={t('nodes-header-action-buttons.feature.restart-all-nodes')}
                     withArrow
                 >
                     <ActionIcon
+                        aria-label={t('nodes-header-action-buttons.feature.restart-all-nodes')}
                         color="grape"
                         loading={isRestartAllNodesPending}
-                        onClick={() => {
-                            openRestartAllNodesModal()
-                        }}
-                        size="input-md"
-                        variant="soft"
+                        onClick={openRestartAllNodesModal}
+                        size="input-sm"
+                        variant="default"
                     >
-                        <PiSpiral size="24px" />
+                        <PiSpiral size={18} />
                     </ActionIcon>
                 </Tooltip>
-            </ActionIconGroup>
 
-            <ActionIconGroup>
                 <Tooltip label={t('common.update')} withArrow>
                     <ActionIcon
+                        aria-label={t('common.update')}
+                        color="gray"
                         loading={isGetNodesPending || isPending || isRefetching}
                         onClick={() => refetchNodes()}
-                        size="input-md"
-                        variant="soft"
+                        size="input-sm"
+                        variant="default"
                     >
-                        <TbRefresh size="24px" />
+                        <TbRefresh size={18} />
                     </ActionIcon>
                 </Tooltip>
-            </ActionIconGroup>
-            <ActionIconGroup>
-                <Tooltip label={t('nodes-header-action-buttons.feature.create-new-node')} withArrow>
-                    <ActionIcon
-                        color="teal"
-                        onClick={() => showModal('nodes_createNodeModal')}
-                        size="input-md"
-                        variant="soft"
-                    >
-                        <TbPlus size="24px" />
-                    </ActionIcon>
-                </Tooltip>
-            </ActionIconGroup>
+            </ActionIcon.Group>
+
+            <Button
+                color="teal"
+                leftSection={<TbPlus size={16} />}
+                onClick={() => showModal('nodes_createNodeModal')}
+                size="sm"
+                variant="light"
+            >
+                {t('nodes-header-action-buttons.feature.create-new-node')}
+            </Button>
         </Group>
     )
 }

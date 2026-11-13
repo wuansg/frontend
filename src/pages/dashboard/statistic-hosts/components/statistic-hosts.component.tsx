@@ -86,8 +86,8 @@ export const StatisticHostsPage = () => {
 
         if (!dayjs(startDate).isValid() || !dayjs(endDate).isValid()) return
 
-        const startISO = dayjs(startDate).format('YYYY-MM-DD')
-        const endISO = dayjs(endDate).format('YYYY-MM-DD')
+        const startISO = dayjs.utc(startDate).format('YYYY-MM-DD')
+        const endISO = dayjs.utc(endDate).format('YYYY-MM-DD')
 
         setQueryRange({ start: startISO, end: endISO })
     }
@@ -164,7 +164,11 @@ export const StatisticHostsPage = () => {
                                 uuid: host.groupKey
                             })
                         )}
-                        maxHeight={230}
+                        maxHeight={306}
+                        searchable
+                        showRank
+                        showShare
+                        title={t('traffic-usage.leaderboard-title')}
                     />
                 </SimpleGrid>
 

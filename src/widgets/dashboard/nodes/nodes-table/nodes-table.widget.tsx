@@ -7,7 +7,7 @@ import {
     DragOverlay,
     DragStartEvent
 } from '@dnd-kit/react'
-import { Box, Container, Stack } from '@mantine/core'
+import { Box } from '@mantine/core'
 import { useListState } from '@mantine/hooks'
 import { GetNodesCommand } from '@remnawave/backend-contract'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
@@ -32,7 +32,7 @@ import { IProps } from './interfaces'
 import styles from './NodesTable.module.css'
 
 export const NodesTableWidget = memo((props: IProps) => {
-    const { nodes } = props
+    const { disableReordering = false, nodes } = props
 
     const activeTag = useNodesActiveTag()
     const { setNodesActiveTag } = useViewPreferencesStoreActions()
@@ -57,6 +57,8 @@ export const NodesTableWidget = memo((props: IProps) => {
     const dragSnapshotRef = useRef<typeof state | null>(null)
     const activeTagRef = useRef(activeTag)
     activeTagRef.current = activeTag
+    const disableReorderingRef = useRef(disableReordering)
+    disableReorderingRef.current = disableReordering
     const isMobile = useIsMobile()
 
     useGetNodes({
@@ -79,7 +81,7 @@ export const NodesTableWidget = memo((props: IProps) => {
 
     const virtualizer = useWindowVirtualizer({
         count: state.length,
-        estimateSize: () => (isMobile ? 190 : 90),
+        estimateSize: () => (isMobile ? 164 : 96),
         overscan: 7,
         scrollMargin,
         getItemKey: (index) => state[index].uuid
@@ -95,7 +97,7 @@ export const NodesTableWidget = memo((props: IProps) => {
                 return
             }
 
-            if (activeTagRef.current !== null) {
+            if (activeTagRef.current !== null || disableReorderingRef.current) {
                 prevStateRef.current = state
                 return
             }
@@ -187,8 +189,10 @@ export const NodesTableWidget = memo((props: IProps) => {
         return <EmptyPageLayout />
     }
 
+    const isReorderingDisabled = disableReordering || activeTag !== null
+
     return (
-        <>
+        <Box>
             <TagFilterBar activeTag={activeTag} items={nodes} onChange={setNodesActiveTag} />
 
             <DragDropProvider
@@ -205,52 +209,45 @@ export const NodesTableWidget = memo((props: IProps) => {
                             position: 'relative'
                         }}
                     >
-                        <Container fluid>
-                            <Stack gap={0}>
-                                {virtualizer.getVirtualItems().map((virtualItem) => {
-                                    const item = state[virtualItem.index]
-                                    if (!item) return null
+                        {virtualizer.getVirtualItems().map((virtualItem) => {
+                            const item = state[virtualItem.index]
+                            if (!item) return null
 
-                                    return (
-                                        <Box
-                                            data-index={virtualItem.index}
-                                            key={item.uuid}
-                                            // Measure the wrapper, including the card's bottom margin.
-                                            // Captions and responsive layouts can change its height.
-                                            ref={virtualizer.measureElement}
-                                            style={{
-                                                position: 'absolute',
-                                                marginLeft: isMobile ? '0px' : '16px',
-                                                marginRight: isMobile ? '0px' : '16px',
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                transform: `translateY(${
-                                                    virtualItem.start -
-                                                    virtualizer.options.scrollMargin
-                                                }px)`,
-                                                willChange: 'transform'
-                                            }}
-                                        >
-                                            <div className={styles.nodeFadeIn}>
-                                                <NodeCardWidget
-                                                    disableReordering={activeTag !== null}
-                                                    handleViewNode={handleViewNode}
-                                                    index={virtualItem.index}
-                                                    isMobile={isMobile}
-                                                    node={item}
-                                                />
-                                            </div>
-                                        </Box>
-                                    )
-                                })}
-                            </Stack>
-                        </Container>
+                            return (
+                                <Box
+                                    data-index={virtualItem.index}
+                                    key={item.uuid}
+                                    // Measure the wrapper, including the card's bottom margin.
+                                    // Captions and responsive layouts can change its height.
+                                    ref={virtualizer.measureElement}
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        transform: `translateY(${
+                                            virtualItem.start - virtualizer.options.scrollMargin
+                                        }px)`,
+                                        willChange: 'transform'
+                                    }}
+                                >
+                                    <div className={styles.nodeFadeIn}>
+                                        <NodeCardWidget
+                                            disableReordering={isReorderingDisabled}
+                                            handleViewNode={handleViewNode}
+                                            index={virtualItem.index}
+                                            isMobile={isMobile}
+                                            node={item}
+                                        />
+                                    </div>
+                                </Box>
+                            )
+                        })}
                     </div>
                 </div>
                 <DragOverlay>
                     {draggedNode && (
-                        <Container fluid pl={0} pr={0}>
+                        <Box w="100%">
                             <NodeCardWidget
                                 handleViewNode={handleViewNode}
                                 index={0}
@@ -258,11 +255,11 @@ export const NodesTableWidget = memo((props: IProps) => {
                                 isMobile={isMobile}
                                 node={draggedNode}
                             />
-                        </Container>
+                        </Box>
                     )}
                 </DragOverlay>
             </DragDropProvider>
-            {nodes && nodes.length > 0 && <NodesSpotlightSearchWidget nodes={nodes} />}
-        </>
+            {nodes.length > 0 && <NodesSpotlightSearchWidget nodes={nodes} />}
+        </Box>
     )
 })

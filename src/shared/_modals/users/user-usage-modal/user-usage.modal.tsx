@@ -1,5 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
-import { ActionIcon, Group, NativeSelect, SegmentedControl, SimpleGrid, Stack } from '@mantine/core'
+import { ActionIcon, Group, SegmentedControl, Select, SimpleGrid, Stack } from '@mantine/core'
 import { DatesRangeValue } from '@mantine/dates'
 import { HostsStatisticBarchartWidget } from '@widgets/dashboard/hosts-statistic/statistic-barchart'
 import { UserUsageBarchartWidget } from '@widgets/dashboard/users/user-usage-statistic/usage-barchart'
@@ -75,8 +75,8 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
         if (!dayjs(value[0]).isValid() || !dayjs(value[1]).isValid()) return
 
         setQueryRange({
-            start: dayjs(value[0]).format('YYYY-MM-DD'),
-            end: dayjs(value[1]).format('YYYY-MM-DD')
+            start: dayjs.utc(value[0]).format('YYYY-MM-DD'),
+            end: dayjs.utc(value[1]).format('YYYY-MM-DD')
         })
     }
 
@@ -114,7 +114,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
 
     return (
         <CompoundDrawerShared
-            drawerProps={{ ...modalProps, position: 'right', size: '900px' }}
+            drawerProps={{ ...modalProps, position: 'right', size: '920px' }}
             buttons={
                 <ActionIcon
                     loading={activeQuery.isRefetching || activeQuery.isLoading}
@@ -136,42 +136,49 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
         >
             <Stack gap="md">
                 <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
-                <Group gap="xs" justify="space-between" wrap="nowrap">
+                <Group gap="xs" justify="space-between" wrap="wrap">
                     <SegmentedControl
                         data={[
                             { label: t('constants.nodes'), value: 'nodes' },
                             { label: t('constants.hosts'), value: 'hosts' }
                         ]}
                         onChange={(value) => setUsageView(value as UsageView)}
+                        radius="md"
                         value={usageView}
                     />
-                    <NativeSelect
-                        data={TOP_LIMIT_OPTIONS}
-                        leftSection={
-                            usageView === 'nodes' ? (
-                                <TbServer2 size="20px" />
-                            ) : (
-                                <TbWorldWww size="20px" />
-                            )
-                        }
-                        onChange={(event) => setTopLimit(event.currentTarget.value)}
-                        size="md"
-                        value={topLimit}
-                        miw="fit-content"
-                    />
-                    <DatePickerInput
-                        allowSingleDateInRange
-                        dropdownType="modal"
-                        headerControlsOrder={['previous', 'next', 'level']}
-                        leftSection={<TbCalendar size="20px" />}
-                        locale={i18n.language}
-                        onChange={handleDateRangeChange}
-                        size="md"
-                        miw={0}
-                        type="range"
-                        value={rawRange}
-                        valueFormat="DD MMM, YYYY"
-                    />
+                    <Group gap="xs" style={{ flex: 1, justifyContent: 'flex-end' }} wrap="wrap">
+                        <Select
+                            allowDeselect={false}
+                            data={TOP_LIMIT_OPTIONS}
+                            leftSection={
+                                usageView === 'nodes' ? (
+                                    <TbServer2 size="18px" />
+                                ) : (
+                                    <TbWorldWww size="18px" />
+                                )
+                            }
+                            onChange={(value) => {
+                                if (value) setTopLimit(value)
+                            }}
+                            size="sm"
+                            value={topLimit}
+                            w={136}
+                        />
+                        <DatePickerInput
+                            allowSingleDateInRange
+                            dropdownType="modal"
+                            headerControlsOrder={['previous', 'next', 'level']}
+                            leftSection={<TbCalendar size="18px" />}
+                            locale={i18n.language}
+                            miw={190}
+                            onChange={handleDateRangeChange}
+                            size="sm"
+                            style={{ flex: '1 1 210px' }}
+                            type="range"
+                            value={rawRange}
+                            valueFormat="DD MMM, YYYY"
+                        />
+                    </Group>
                 </Group>
 
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
@@ -179,6 +186,7 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                         direction={trafficDirection}
                         downloadSparklineData={activeStats?.downloadSparklineData}
                         isLoading={activeQuery.isLoading}
+                        scope={usageView === 'nodes' ? 'node' : 'proxy'}
                         sparklineData={activeStats?.sparklineData}
                         uploadSparklineData={activeStats?.uploadSparklineData}
                     />
@@ -187,7 +195,6 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                         <TopLeaderboardCardShared
                             emptyText={t('user-usage-modal.widget.no-data-available')}
                             isLoading={userUsageQuery.isLoading}
-                            onItemClick={(node) => handleNodeClick(node.uuid)}
                             items={selectTraffic(
                                 userUsageQuery.data?.topNodes,
                                 trafficDirection
@@ -198,10 +205,17 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                                 total: node.total,
                                 uuid: node.uuid
                             }))}
-                            maxHeight={230}
+                            maxHeight={306}
+                            onItemClick={(node) => {
+                                if (node.uuid) handleNodeClick(node.uuid)
+                            }}
                             renderCountryFlag={(item) => (
                                 <CountryFlag countryCode={item.countryCode} />
                             )}
+                            searchable
+                            showRank
+                            showShare
+                            title={t('traffic-usage.leaderboard-title')}
                         />
                     ) : (
                         <TopLeaderboardCardShared
@@ -218,7 +232,11 @@ export const UserUsageModal = NiceModal.create((props: IProps) => {
                                 total: host.total,
                                 uuid: host.groupKey
                             }))}
-                            maxHeight={230}
+                            maxHeight={306}
+                            searchable
+                            showRank
+                            showShare
+                            title={t('traffic-usage.leaderboard-title')}
                         />
                     )}
                 </SimpleGrid>

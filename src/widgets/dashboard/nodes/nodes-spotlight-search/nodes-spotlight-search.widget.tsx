@@ -22,7 +22,7 @@ export const NodesSpotlightSearchWidget = ({ nodes }: IProps) => {
             return
         }
 
-        const node = nodes.find((node) => node.uuid === value)
+        const node = nodes.find((item) => item.uuid === value)
         if (node) {
             showModal('nodes_editNodeModal', { nodeUuid: node.uuid })
         }
@@ -32,31 +32,36 @@ export const NodesSpotlightSearchWidget = ({ nodes }: IProps) => {
         <Spotlight
             actions={nodes.map((node) => ({
                 label: node.name,
-                description: `${node.address} ${node.provider?.name ? `| ${node.provider.name} | ${node.uuid}` : `| ${node.uuid}`}`,
+                description: `${node.address}${node.port ? `:${node.port}` : ''} ${
+                    node.provider?.name ? `· ${node.provider.name}` : ''
+                }`,
                 id: node.uuid,
                 leftSection:
                     node.countryCode && node.countryCode !== 'XX' ? (
                         <ReactCountryFlag
                             countryCode={node.countryCode}
                             style={{
-                                fontSize: '1.1em',
+                                width: '1.3em',
+                                height: '1em',
                                 borderRadius: '2px'
                             }}
+                            svg
                         />
                     ) : (
                         <TbServer color="var(--mantine-color-gray-5)" size={16} />
                     ),
                 rightSection: (
-                    <Group>
+                    <Group gap={6} wrap="nowrap">
                         <NodeStatusBadgeWidget node={node} withText={false} />
                         <Badge
                             color={(node.usersOnline ?? 0) > 0 ? 'teal' : 'gray'}
-                            leftSection={<PiUsersDuotone size={14} />}
-                            miw="7ch"
-                            size="lg"
-                            variant="outline"
+                            leftSection={<PiUsersDuotone size={13} />}
+                            miw="6ch"
+                            size="md"
+                            style={{ fontVariantNumeric: 'tabular-nums' }}
+                            variant="light"
                         >
-                            {node.usersOnline}
+                            {node.usersOnline ?? 0}
                         </Badge>
                     </Group>
                 ),
@@ -64,9 +69,9 @@ export const NodesSpotlightSearchWidget = ({ nodes }: IProps) => {
             }))}
             centered
             highlightQuery
-            maxHeight={350}
+            maxHeight={380}
             nothingFound={
-                <Center h="230">
+                <Center h="220">
                     <Stack align="center" gap="xs">
                         <PiEmptyDuotone color="var(--mantine-color-gray-5)" size="3rem" />
                         <Text c="dimmed" size="sm">
@@ -75,7 +80,7 @@ export const NodesSpotlightSearchWidget = ({ nodes }: IProps) => {
                     </Stack>
                 </Center>
             }
-            overlayProps={{ backgroundOpacity: 0.6, blur: 0 }}
+            overlayProps={{ backgroundOpacity: 0.6, blur: 2 }}
             scrollable
             searchProps={{
                 leftSection: <TbServer2 size={20} />,

@@ -1,9 +1,27 @@
+.card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(
+        180deg,
+        light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.028)) 0%,
+        light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.012)) 100%
+    );
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+}
+
+.cardHeader {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+}
+
 .itemBackground {
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
-    opacity: 0.15;
+    opacity: 0.14;
     transition: width 0.3s ease;
 }
 
@@ -24,16 +42,31 @@
 }
 
 .item {
-    animation: fadeIn 0.3s ease-out both;
-    outline: 1px solid transparent;
-    outline-offset: -1px;
+    animation: fadeIn 0.22s ease-out both;
+    overflow: hidden;
+    background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.024));
+    border: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+    transition:
+        border-color 0.16s ease,
+        background-color 0.16s ease;
 }
 
 .clickable {
     cursor: pointer;
-    transition: outline 0.2s ease;
 }
+
 .clickable:hover {
-    outline: 1px solid var(--mantine-color-cyan-outline);
-    outline-offset: -1px;
+    border-color: var(--mantine-color-cyan-outline);
+    background: light-dark(var(--mantine-color-cyan-0), rgba(34, 184, 207, 0.06));
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
+
+.rankBadge {
+    font-variant-numeric: tabular-nums;
+    min-width: 28px;
+    justify-content: center;
+    flex-shrink: 0;
 }

@@ -126,7 +126,7 @@ export const HostUsersUsageDrawer = () => {
             overlayProps={{ backgroundOpacity: 0.6, blur: 0 }}
             padding="lg"
             position="right"
-            size="600px"
+            size="620px"
             title={
                 <BaseOverlayHeader
                     iconColor="teal"
@@ -139,25 +139,29 @@ export const HostUsersUsageDrawer = () => {
         >
             <Stack gap="md">
                 <TrafficDirectionControl value={trafficDirection} onChange={setTrafficDirection} />
-                <Group justify="space-between">
+                <Group gap="xs" justify="space-between" wrap="wrap">
                     <Select
                         allowDeselect={false}
                         data={TOP_USERS_LIMIT_OPTIONS}
-                        leftSection={<TbUsers size="20px" />}
-                        onChange={(value) => setTopUsersLimit(Number(value))}
-                        size="md"
+                        leftSection={<TbUsers size="18px" />}
+                        onChange={(value) => {
+                            if (value) setTopUsersLimit(Number(value))
+                        }}
+                        size="sm"
                         value={String(topUsersLimit)}
-                        w={200}
+                        w={140}
                     />
 
                     <DatePickerInput
                         allowSingleDateInRange
                         dropdownType="modal"
                         headerControlsOrder={['previous', 'next', 'level']}
-                        leftSection={<TbCalendar size="20px" />}
+                        leftSection={<TbCalendar size="18px" />}
                         locale={i18n.language}
+                        miw={180}
                         onChange={handleDateRangeChange}
-                        size="md"
+                        size="sm"
+                        style={{ flex: '1 1 200px' }}
                         styles={{
                             calendarHeaderLevel: {
                                 justifyContent: 'flex-end'
@@ -171,19 +175,19 @@ export const HostUsersUsageDrawer = () => {
                     <ActionIcon
                         loading={isRefetching}
                         onClick={() => refetch()}
-                        size="input-md"
+                        size="input-sm"
                         variant="soft"
                     >
-                        <TbRefresh size="24px" />
+                        <TbRefresh size="18px" />
                     </ActionIcon>
                 </Group>
 
                 <HostUsersSparklineCardWidget
                     direction={trafficDirection}
+                    downloadSparklineData={hostUsersStats?.downloadSparklineData}
                     isLoading={isLoading}
                     sparklineData={hostUsersStats?.sparklineData}
                     uploadSparklineData={hostUsersStats?.uploadSparklineData}
-                    downloadSparklineData={hostUsersStats?.downloadSparklineData}
                 />
 
                 <TopLeaderboardCardShared
@@ -196,9 +200,13 @@ export const HostUsersUsageDrawer = () => {
                             total: user.total
                         })
                     )}
-                    maxHeight={500}
+                    maxHeight={460}
                     onItemClick={handleViewUser}
-                    skeletonCount={25}
+                    searchable
+                    showRank
+                    showShare
+                    skeletonCount={8}
+                    title={t('traffic-usage.leaderboard-title')}
                 />
             </Stack>
         </Drawer>

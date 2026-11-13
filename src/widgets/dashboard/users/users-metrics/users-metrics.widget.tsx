@@ -30,28 +30,28 @@ export function UsersMetrics() {
         {
             IconComponent: PiPulseDuotone,
             iconColor: 'teal',
-            title: 'Active',
+            title: t('users-metrics.active-users'),
             value: users?.statusCounts.ACTIVE ?? 0,
             iconVariant: 'soft'
         },
         {
             IconComponent: PiClockUserDuotone,
             iconColor: 'red',
-            title: 'Expired',
+            title: t('users-metrics.expired-users'),
             value: users?.statusCounts.EXPIRED ?? 0,
             iconVariant: 'soft'
         },
         {
             IconComponent: PiClockCountdownDuotone,
             iconColor: 'orange',
-            title: 'Limited',
+            title: t('users-metrics.limited-users'),
             value: users?.statusCounts.LIMITED ?? 0,
             iconVariant: 'soft'
         },
         {
             IconComponent: PiProhibitDuotone,
             iconColor: 'gray',
-            title: 'Disabled',
+            title: t('users-metrics.disabled-users'),
             value: users?.statusCounts.DISABLED ?? 0,
             iconVariant: 'soft'
         }

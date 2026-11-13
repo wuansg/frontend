@@ -4,7 +4,6 @@ import {
     Box,
     Card,
     Center,
-    Grid,
     Group,
     px,
     SimpleGrid,
@@ -25,17 +24,21 @@ import {
     PiTag,
     PiUsersDuotone
 } from 'react-icons/pi'
-import { TbServer2 } from 'react-icons/tb'
+import { TbChartArcs, TbServer2 } from 'react-icons/tb'
 
 import { SectionCard } from '@shared/ui/section-card'
 import { formatInt } from '@shared/utils/misc'
 
+import styles from './NodeDetails.module.css'
+
 export const NodeDetailsCard = memo(
     ({
         node,
-        handleNodeClick
+        handleNodeClick,
+        handleNodeUsageClick
     }: {
         handleNodeClick: (nodeUuid: string) => void
+        handleNodeUsageClick?: (nodeUuid: string) => void
         node: GetNodesMetricsCommand.Response['response']['nodes'][number]
     }) => {
         const [hideZeroValues, setHideZeroValues] = useState(true)
@@ -54,29 +57,15 @@ export const NodeDetailsCard = memo(
                 <SectionCard.Section>
                     <Group align="center" justify="space-between" style={{ minWidth: 0 }}>
                         <Group
-                            gap="md"
+                            gap="sm"
                             grow={false}
+                            onClick={() => handleNodeClick(node.nodeUuid)}
                             preventGrowOverflow={true}
-                            style={{ minWidth: 0, flex: 1 }}
+                            style={{ minWidth: 0, flex: 1, cursor: 'pointer' }}
                             wrap="nowrap"
                         >
-                            <ThemeIcon
-                                color="indigo"
-                                onClick={() => {
-                                    handleNodeClick(node.nodeUuid)
-                                }}
-                                size="xl"
-                                style={{
-                                    cursor: 'pointer'
-                                }}
-                                variant="soft"
-                            >
-                                <TbServer2
-                                    size="24px"
-                                    style={{
-                                        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))'
-                                    }}
-                                />
+                            <ThemeIcon color="indigo" radius="md" size="xl" variant="soft">
+                                <TbServer2 size="22px" />
                             </ThemeIcon>
                             <Box style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                                 <Group
@@ -89,41 +78,33 @@ export const NodeDetailsCard = memo(
                                         {node.countryEmoji}
                                     </Text>
 
-                                    <Text
-                                        c="white"
-                                        fw={600}
-                                        size="md"
-                                        style={{
-                                            minWidth: 0,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
+                                    <Text fw={650} size="md" style={{ minWidth: 0 }} truncate="end">
                                         {node.nodeName}
                                     </Text>
                                 </Group>
-                                {node.providerName !== 'unknown' ? (
-                                    <Text
-                                        c="gray.4"
-                                        size="sm"
-                                        style={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
+                                {node.providerName !== 'unknown' && (
+                                    <Text c="dimmed" size="xs" truncate="end">
                                         {node.providerName}
-                                    </Text>
-                                ) : (
-                                    <Text c="gray.4" size="sm">
-                                        ㅤ
                                     </Text>
                                 )}
                             </Box>
                         </Group>
 
-                        <Group gap="xs" style={{ flexShrink: 0, minWidth: 'fit-content' }}>
+                        <Group gap={6} style={{ flexShrink: 0, minWidth: 'fit-content' }}>
+                            {handleNodeUsageClick && (
+                                <Tooltip label={t('common.usage-stats')}>
+                                    <ActionIcon
+                                        color="cyan"
+                                        onClick={() => handleNodeUsageClick(node.nodeUuid)}
+                                        radius="md"
+                                        size="md"
+                                        variant="light"
+                                    >
+                                        <TbChartArcs size="1rem" />
+                                    </ActionIcon>
+                                </Tooltip>
+                            )}
+
                             <Tooltip
                                 label={
                                     hideZeroValues
@@ -134,6 +115,7 @@ export const NodeDetailsCard = memo(
                                 <ActionIcon
                                     color="indigo"
                                     onClick={() => setHideZeroValues(!hideZeroValues)}
+                                    radius="md"
                                     size="md"
                                     variant="light"
                                 >
@@ -146,8 +128,10 @@ export const NodeDetailsCard = memo(
                             </Tooltip>
 
                             <Badge
+                                className={styles.tabular}
                                 color="teal"
                                 leftSection={<PiUsersDuotone size={px('0.9rem')} />}
+                                radius="md"
                                 size="lg"
                                 style={{ flexShrink: 0 }}
                                 variant="light"
@@ -158,217 +142,227 @@ export const NodeDetailsCard = memo(
                     </Group>
                 </SectionCard.Section>
                 <SectionCard.Section>
-                    <Grid align="flex-start" justify="flex-start">
-                        <Grid.Col span={{ base: 12, lg: 6 }}>
-                            <Card
-                                p="md"
-                                style={{
-                                    background: 'rgba(16, 185, 129, 0.05)',
-                                    border: '1px solid rgba(16, 185, 129, 0.15)'
-                                }}
+                    <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="sm">
+                        <Card className={styles.inboundCard} p="sm" radius="md">
+                            <Group
+                                align="center"
+                                gap="xs"
+                                justify="space-between"
+                                mb="xs"
+                                wrap="nowrap"
                             >
-                                <Group align="center" gap="xs" mb="xs" wrap="nowrap">
+                                <Group align="center" gap={6} style={{ minWidth: 0 }} wrap="nowrap">
                                     <PiArrowDownDuotone
                                         color="var(--mantine-color-teal-4)"
                                         size="16px"
+                                        style={{ flexShrink: 0 }}
                                     />
-                                    <Text
-                                        c="teal.4"
-                                        fw={500}
-                                        size="sm"
-                                        style={{
-                                            minWidth: 0,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
-                                        Inbound Traffic
+                                    <Text c="teal.4" fw={650} size="xs" truncate="end">
+                                        {t('nodes-metrics-page.inbound-traffic')}
                                     </Text>
                                 </Group>
+                                <Badge
+                                    className={styles.tabular}
+                                    color="teal"
+                                    radius="sm"
+                                    size="xs"
+                                    variant="light"
+                                >
+                                    {filteredInboundStats.length}
+                                </Badge>
+                            </Group>
 
-                                {filteredInboundStats.length > 0 ? (
-                                    filteredInboundStats.map((stat) => (
-                                        <Box key={stat.tag} mb="sm">
-                                            <Group align="center" justify="space-between" mb="xs">
-                                                <Badge
-                                                    color="teal"
-                                                    leftSection={<PiTag size={px('0.8rem')} />}
-                                                    size="sm"
-                                                    variant="outline"
-                                                >
-                                                    {stat.tag}
-                                                </Badge>
-                                            </Group>
+                            {filteredInboundStats.length > 0 ? (
+                                <Stack gap={6}>
+                                    {filteredInboundStats.map((stat) => (
+                                        <Box className={styles.tagRow} key={stat.tag}>
+                                            <Badge
+                                                color="teal"
+                                                leftSection={<PiTag size={px('0.75rem')} />}
+                                                mb={6}
+                                                radius="sm"
+                                                size="xs"
+                                                variant="light"
+                                            >
+                                                {stat.tag}
+                                            </Badge>
                                             <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="xs">
-                                                <Group align="flex-start" gap="xs" wrap="nowrap">
+                                                <Group align="center" gap={6} wrap="nowrap">
                                                     <PiArrowUpDuotone
-                                                        color="var(--mantine-color-orange-4)"
-                                                        size="0.75rem"
-                                                        style={{ marginTop: '2px' }}
+                                                        color="var(--mantine-color-blue-4)"
+                                                        size="0.8rem"
+                                                        style={{ flexShrink: 0 }}
                                                     />
-                                                    <Stack gap={1}>
-                                                        <Text
-                                                            c="orange.4"
-                                                            fw={500}
-                                                            lh={1}
-                                                            size="9px"
-                                                            tt="uppercase"
-                                                        >
-                                                            Up
+                                                    <Box style={{ minWidth: 0 }}>
+                                                        <Text c="dimmed" lh={1.1} size="10px">
+                                                            {t('traffic-usage.upload')}
                                                         </Text>
-                                                        <Text c="gray.3" ff="monospace" size="xs">
+                                                        <Text
+                                                            className={styles.tabular}
+                                                            fw={650}
+                                                            size="xs"
+                                                            truncate="end"
+                                                        >
                                                             {stat.upload === '0'
                                                                 ? '0 B'
                                                                 : stat.upload}
                                                         </Text>
-                                                    </Stack>
+                                                    </Box>
                                                 </Group>
-                                                <Group align="flex-start" gap="xs" wrap="nowrap">
+                                                <Group align="center" gap={6} wrap="nowrap">
                                                     <PiArrowDownDuotone
-                                                        color="var(--mantine-color-green-4)"
-                                                        size="0.75rem"
-                                                        style={{ marginTop: '2px' }}
+                                                        color="var(--mantine-color-teal-4)"
+                                                        size="0.8rem"
+                                                        style={{ flexShrink: 0 }}
                                                     />
-                                                    <Stack gap={1}>
-                                                        <Text
-                                                            c="green.4"
-                                                            fw={500}
-                                                            lh={1}
-                                                            size="9px"
-                                                            tt="uppercase"
-                                                        >
-                                                            Down
+                                                    <Box style={{ minWidth: 0 }}>
+                                                        <Text c="dimmed" lh={1.1} size="10px">
+                                                            {t('traffic-usage.download')}
                                                         </Text>
-                                                        <Text c="gray.3" ff="monospace" size="xs">
+                                                        <Text
+                                                            className={styles.tabular}
+                                                            fw={650}
+                                                            size="xs"
+                                                            truncate="end"
+                                                        >
                                                             {stat.download === '0'
                                                                 ? '0 B'
                                                                 : stat.download}
                                                         </Text>
-                                                    </Stack>
+                                                    </Box>
                                                 </Group>
                                             </SimpleGrid>
                                         </Box>
-                                    ))
-                                ) : (
-                                    <Center h="100%">
-                                        <Stack align="center" gap="xs">
-                                            <ThemeIcon color="gray" size="sm" variant="light">
-                                                <PiProhibitDuotone size="1.0rem" />
-                                            </ThemeIcon>
-                                            <Text c="gray.5" size="xs" ta="center">
-                                                {t('node-details-card.no-inbound-traffic-data')}
-                                            </Text>
-                                        </Stack>
-                                    </Center>
-                                )}
-                            </Card>
-                        </Grid.Col>
-                        <Grid.Col span={{ base: 12, lg: 6 }}>
-                            <Card
-                                p="md"
-                                style={{
-                                    background: 'rgba(59, 130, 246, 0.05)',
-                                    border: '1px solid rgba(59, 130, 246, 0.15)'
-                                }}
+                                    ))}
+                                </Stack>
+                            ) : (
+                                <Center py="md">
+                                    <Stack align="center" gap={6}>
+                                        <ThemeIcon
+                                            color="gray"
+                                            radius="xl"
+                                            size="sm"
+                                            variant="light"
+                                        >
+                                            <PiProhibitDuotone size="0.95rem" />
+                                        </ThemeIcon>
+                                        <Text c="dimmed" size="xs" ta="center">
+                                            {t('node-details-card.no-inbound-traffic-data')}
+                                        </Text>
+                                    </Stack>
+                                </Center>
+                            )}
+                        </Card>
+                        <Card className={styles.outboundCard} p="sm" radius="md">
+                            <Group
+                                align="center"
+                                gap="xs"
+                                justify="space-between"
+                                mb="xs"
+                                wrap="nowrap"
                             >
-                                <Group align="center" gap="xs" mb="xs" wrap="nowrap">
+                                <Group align="center" gap={6} style={{ minWidth: 0 }} wrap="nowrap">
                                     <PiArrowUpDuotone
                                         color="var(--mantine-color-blue-4)"
                                         size="16px"
+                                        style={{ flexShrink: 0 }}
                                     />
-                                    <Text
-                                        c="blue.4"
-                                        fw={500}
-                                        size="sm"
-                                        style={{
-                                            minWidth: 0,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
-                                        Outbound Traffic
+                                    <Text c="blue.4" fw={650} size="xs" truncate="end">
+                                        {t('nodes-metrics-page.outbound-traffic')}
                                     </Text>
                                 </Group>
-                                {filteredOutboundStats.length > 0 ? (
-                                    filteredOutboundStats.map((stat) => (
-                                        <Box key={stat.tag} mb="sm">
-                                            <Group align="center" justify="space-between" mb="xs">
-                                                <Badge
-                                                    color="blue"
-                                                    leftSection={<PiTag size={px('0.8rem')} />}
-                                                    size="sm"
-                                                    variant="outline"
-                                                >
-                                                    {stat.tag}
-                                                </Badge>
-                                            </Group>
+                                <Badge
+                                    className={styles.tabular}
+                                    color="blue"
+                                    radius="sm"
+                                    size="xs"
+                                    variant="light"
+                                >
+                                    {filteredOutboundStats.length}
+                                </Badge>
+                            </Group>
+                            {filteredOutboundStats.length > 0 ? (
+                                <Stack gap={6}>
+                                    {filteredOutboundStats.map((stat) => (
+                                        <Box className={styles.tagRow} key={stat.tag}>
+                                            <Badge
+                                                color="blue"
+                                                leftSection={<PiTag size={px('0.75rem')} />}
+                                                mb={6}
+                                                radius="sm"
+                                                size="xs"
+                                                variant="light"
+                                            >
+                                                {stat.tag}
+                                            </Badge>
                                             <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="xs">
-                                                <Group align="flex-start" gap="xs" wrap="nowrap">
+                                                <Group align="center" gap={6} wrap="nowrap">
                                                     <PiArrowUpDuotone
-                                                        color="var(--mantine-color-orange-4)"
-                                                        size="0.75rem"
-                                                        style={{ marginTop: '2px' }}
+                                                        color="var(--mantine-color-blue-4)"
+                                                        size="0.8rem"
+                                                        style={{ flexShrink: 0 }}
                                                     />
-                                                    <Stack gap={1}>
-                                                        <Text
-                                                            c="orange.4"
-                                                            fw={500}
-                                                            lh={1}
-                                                            size="9px"
-                                                            tt="uppercase"
-                                                        >
-                                                            Up
+                                                    <Box style={{ minWidth: 0 }}>
+                                                        <Text c="dimmed" lh={1.1} size="10px">
+                                                            {t('traffic-usage.upload')}
                                                         </Text>
-                                                        <Text c="gray.3" ff="monospace" size="xs">
+                                                        <Text
+                                                            className={styles.tabular}
+                                                            fw={650}
+                                                            size="xs"
+                                                            truncate="end"
+                                                        >
                                                             {stat.upload === '0'
                                                                 ? '0 B'
                                                                 : stat.upload}
                                                         </Text>
-                                                    </Stack>
+                                                    </Box>
                                                 </Group>
-                                                <Group align="flex-start" gap="xs" wrap="nowrap">
+                                                <Group align="center" gap={6} wrap="nowrap">
                                                     <PiArrowDownDuotone
-                                                        color="var(--mantine-color-green-4)"
-                                                        size="0.75rem"
-                                                        style={{ marginTop: '2px' }}
+                                                        color="var(--mantine-color-teal-4)"
+                                                        size="0.8rem"
+                                                        style={{ flexShrink: 0 }}
                                                     />
-                                                    <Stack gap={1}>
-                                                        <Text
-                                                            c="green.4"
-                                                            fw={500}
-                                                            lh={1}
-                                                            size="9px"
-                                                            tt="uppercase"
-                                                        >
-                                                            Down
+                                                    <Box style={{ minWidth: 0 }}>
+                                                        <Text c="dimmed" lh={1.1} size="10px">
+                                                            {t('traffic-usage.download')}
                                                         </Text>
-                                                        <Text c="gray.3" ff="monospace" size="xs">
+                                                        <Text
+                                                            className={styles.tabular}
+                                                            fw={650}
+                                                            size="xs"
+                                                            truncate="end"
+                                                        >
                                                             {stat.download === '0'
                                                                 ? '0 B'
                                                                 : stat.download}
                                                         </Text>
-                                                    </Stack>
+                                                    </Box>
                                                 </Group>
                                             </SimpleGrid>
                                         </Box>
-                                    ))
-                                ) : (
-                                    <Center h="100%">
-                                        <Stack align="center" gap="xs">
-                                            <ThemeIcon color="gray" size="sm" variant="light">
-                                                <PiProhibitDuotone size="1.0rem" />
-                                            </ThemeIcon>
-                                            <Text c="gray.5" size="xs" ta="center">
-                                                {t('node-details-card.no-outbound-traffic-data')}
-                                            </Text>
-                                        </Stack>
-                                    </Center>
-                                )}
-                            </Card>
-                        </Grid.Col>
-                    </Grid>
+                                    ))}
+                                </Stack>
+                            ) : (
+                                <Center py="md">
+                                    <Stack align="center" gap={6}>
+                                        <ThemeIcon
+                                            color="gray"
+                                            radius="xl"
+                                            size="sm"
+                                            variant="light"
+                                        >
+                                            <PiProhibitDuotone size="0.95rem" />
+                                        </ThemeIcon>
+                                        <Text c="dimmed" size="xs" ta="center">
+                                            {t('node-details-card.no-outbound-traffic-data')}
+                                        </Text>
+                                    </Stack>
+                                </Center>
+                            )}
+                        </Card>
+                    </SimpleGrid>
                 </SectionCard.Section>
             </SectionCard.Root>
         )

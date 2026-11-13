@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { HiChartPie } from 'react-icons/hi'
 import { TbCalendar, TbRefresh, TbServer2 } from 'react-icons/tb'
 
+import { showModal } from '@shared/_modals/show-modal'
 import { useGetStatsNodesUsage } from '@shared/api/hooks'
 import { Page, PageHeaderShared } from '@shared/ui'
 import { DatePickerInput } from '@shared/ui/date-time-picker'
@@ -78,10 +79,18 @@ export const StatisticNodesPage = () => {
 
         if (!dayjs(startDate).isValid() || !dayjs(endDate).isValid()) return
 
-        const startISO = dayjs(startDate).format('YYYY-MM-DD')
-        const endISO = dayjs(endDate).format('YYYY-MM-DD')
+        const startISO = dayjs.utc(startDate).format('YYYY-MM-DD')
+        const endISO = dayjs.utc(endDate).format('YYYY-MM-DD')
 
         setQueryRange({ start: startISO, end: endISO })
+    }
+
+    const handleOpenNode = (nodeUuid: string) => {
+        showModal('nodes_nodeUsageStatsDrawer', {
+            nodeUuid,
+            initialRange: queryRange,
+            initialDirection: trafficDirection
+        })
     }
 
     return (
@@ -151,11 +160,19 @@ export const StatisticNodesPage = () => {
                                 color: node.color,
                                 countryCode: node.countryCode,
                                 name: node.name,
-                                total: node.total
+                                total: node.total,
+                                uuid: node.uuid
                             })
                         )}
-                        maxHeight={230}
+                        maxHeight={306}
+                        onItemClick={(node) => {
+                            if (node.uuid) handleOpenNode(node.uuid)
+                        }}
                         renderCountryFlag={(item) => <CountryFlag countryCode={item.countryCode} />}
+                        searchable
+                        showRank
+                        showShare
+                        title={t('traffic-usage.leaderboard-title')}
                     />
                 </SimpleGrid>
 
@@ -163,6 +180,7 @@ export const StatisticNodesPage = () => {
                     direction={trafficDirection}
                     categories={nodesStats?.categories}
                     isLoading={isLoading}
+                    onNodeClick={handleOpenNode}
                     series={selectTrafficSeries(nodesStats?.series, trafficDirection)}
                 />
             </Stack>

@@ -35,12 +35,13 @@ function FilterTab(props: ITabProps) {
                     color={isActive ? 'cyan' : 'gray'}
                     radius="sm"
                     size="sm"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
                     variant={isActive ? 'soft' : 'light'}
                 >
                     {count}
                 </Badge>
             }
-            size="sm"
+            size="xs"
             style={{ flexShrink: 0 }}
             variant={isActive ? 'soft' : 'subtle'}
         >
@@ -91,11 +92,11 @@ export function TagFilterBar(props: IProps) {
             draggable
             mb="xs"
             style={{
-                border: '1px solid rgb(255, 255, 255, 0.08)',
-                background: 'rgb(255, 255, 255, 0.02)'
+                border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
+                background: 'light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.02))'
             }}
         >
-            <Group gap="xs" p="xs" wrap="nowrap">
+            <Group gap={6} p={6} wrap="nowrap">
                 <FilterTab
                     count={items?.length ?? 0}
                     icon={<TbStack2 size={16} />}

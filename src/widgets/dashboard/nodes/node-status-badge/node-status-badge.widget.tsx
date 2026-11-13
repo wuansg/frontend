@@ -23,25 +23,25 @@ export const NodeStatusBadgeWidget = memo(
 
             if (nodeData.isDisabled) {
                 icon = (
-                    <PiProhibitDuotone size={18} style={{ color: 'var(--mantine-color-gray-6)' }} />
+                    <PiProhibitDuotone size={17} style={{ color: 'var(--mantine-color-gray-6)' }} />
                 )
                 color = 'gray'
                 status = t('node-status-badge.widget.disabled')
             } else if (nodeData.isConnecting) {
                 icon = (
                     <PiCloudArrowUpDuotone
-                        size={18}
-                        style={{ color: 'var(--mantine-color-yellow-3)' }}
+                        size={17}
+                        style={{ color: 'var(--mantine-color-yellow-5)' }}
                     />
                 )
-                color = 'var(--mantine-color-yellow-3)'
+                color = 'yellow'
                 status = t('node-status-badge.widget.connecting')
             } else if (nodeData.isConnected) {
                 switch (nodeData.runtimeStatus?.mode) {
                     case 'FORWARDING_ONLY':
                         icon = (
                             <PiCloudArrowUpDuotone
-                                size={18}
+                                size={17}
                                 style={{ color: 'var(--mantine-color-blue-5)' }}
                             />
                         )
@@ -51,7 +51,7 @@ export const NodeStatusBadgeWidget = memo(
                     case 'IDLE':
                         icon = (
                             <PiPulseDuotone
-                                size={18}
+                                size={17}
                                 style={{ color: 'var(--mantine-color-gray-5)' }}
                             />
                         )
@@ -61,7 +61,7 @@ export const NodeStatusBadgeWidget = memo(
                     case 'DEGRADED':
                         icon = (
                             <PiWarningCircle
-                                size={18}
+                                size={17}
                                 style={{ color: 'var(--mantine-color-orange-5)' }}
                             />
                         )
@@ -71,15 +71,15 @@ export const NodeStatusBadgeWidget = memo(
                     default:
                         icon = (
                             <PiPulseDuotone
-                                size={18}
-                                style={{ color: 'var(--mantine-color-teal-6)' }}
+                                size={17}
+                                style={{ color: 'var(--mantine-color-teal-5)' }}
                             />
                         )
                         color = 'teal'
                         status = t('node-status-badge.widget.core-active')
                 }
             } else {
-                icon = <PiWarningCircle size={18} style={{ color: 'var(--mantine-color-red-3)' }} />
+                icon = <PiWarningCircle size={17} style={{ color: 'var(--mantine-color-red-5)' }} />
                 color = 'red'
                 status = t('node-status-badge.widget.disconnected')
             }
@@ -95,14 +95,31 @@ export const NodeStatusBadgeWidget = memo(
 
         if (!withText) {
             return (
-                <ActionIcon color={color} radius="md" size={26} {...rest}>
+                <ActionIcon
+                    aria-label={status}
+                    color={color}
+                    radius="md"
+                    size={26}
+                    style={{ flexShrink: 0 }}
+                    title={status}
+                    variant="light"
+                    {...rest}
+                >
                     {icon}
                 </ActionIcon>
             )
         }
 
         return (
-            <Badge color={color} leftSection={icon} maw="20ch" miw="20ch" size="lg" {...rest}>
+            <Badge
+                color={color}
+                leftSection={icon}
+                maw="20ch"
+                miw="20ch"
+                size="lg"
+                variant="light"
+                {...rest}
+            >
                 {status}
             </Badge>
         )

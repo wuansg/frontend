@@ -1,0 +1,121 @@
+.summaryCard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        165deg,
+        light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.03)) 0%,
+        light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.014)) 100%
+    );
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+    border-top: 3px solid var(--mantine-color-cyan-5);
+}
+
+.summaryCard[data-direction='upload'] {
+    border-top-color: var(--mantine-color-blue-5);
+}
+
+.summaryCard[data-direction='download'] {
+    border-top-color: var(--mantine-color-teal-5);
+}
+
+.heroValue {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.metricTile {
+    padding: 8px 10px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.025));
+    border: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+    transition:
+        border-color 140ms ease,
+        background-color 140ms ease;
+}
+
+.metricTile[data-active='true'] {
+    background: light-dark(var(--mantine-color-cyan-0), rgba(34, 184, 207, 0.09));
+    border-color: light-dark(var(--mantine-color-cyan-3), rgba(34, 184, 207, 0.34));
+}
+
+.metricTile[data-direction='upload'][data-active='true'] {
+    background: light-dark(var(--mantine-color-blue-0), rgba(51, 154, 240, 0.1));
+    border-color: light-dark(var(--mantine-color-blue-3), rgba(51, 154, 240, 0.36));
+}
+
+.metricTile[data-direction='download'][data-active='true'] {
+    background: light-dark(var(--mantine-color-teal-0), rgba(18, 184, 134, 0.1));
+    border-color: light-dark(var(--mantine-color-teal-3), rgba(18, 184, 134, 0.36));
+}
+
+.splitTrack {
+    display: flex;
+    height: 7px;
+    width: 100%;
+    border-radius: 999px;
+    overflow: hidden;
+    background: light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+    gap: 2px;
+}
+
+.splitSegment {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 220ms ease;
+}
+
+.sparklineFrame {
+    margin-top: auto;
+    padding: 8px 10px 4px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-gray-0), rgba(0, 0, 0, 0.18));
+    border: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.05));
+}
+
+.chartCard {
+    background: linear-gradient(
+        180deg,
+        light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.026)) 0%,
+        light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.012)) 100%
+    );
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+}
+
+.chartHeader {
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+}
+
+.toolbarCard {
+    padding: 10px 12px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.024));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+}
+
+.dayShareTrack {
+    height: 5px;
+    width: 100%;
+    max-width: 120px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.07));
+    margin-left: auto;
+    margin-top: 4px;
+}
+
+.dayShareFill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
