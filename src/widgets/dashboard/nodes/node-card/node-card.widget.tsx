@@ -111,7 +111,12 @@ export const NodeCardWidget = memo((props: IProps) => {
     const isConfigMissing = node.configProfile.activeConfigProfileUuid === null
     const statusTone = getNodeStatusTone(node, isConfigMissing)
     const progressColor = getProgressColor(percentage, fallbackProgress)
-    const activeUsersCount = isOnline ? (node.usersOnline ?? 0) : 0
+    // A forwarding-only node has no users to count: show its forwarded clients.
+    const onlineCount =
+        node.runtimeStatus?.mode === 'FORWARDING_ONLY'
+            ? node.runtimeStatus.forwarding?.activeClients
+            : node.usersOnline
+    const activeUsersCount = isOnline ? (onlineCount ?? 0) : 0
 
     const { cpuColor, cpuPercent, cpus, loadAvg, ramColor, ramPercentage, rxSpeed, txSpeed } =
         useMemo(() => {

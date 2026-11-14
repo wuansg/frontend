@@ -231,7 +231,12 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
     }, [node.system])
 
     const addressLabel = node.port ? `${node.address}:${node.port}` : node.address
-    const activeUsersCount = isOnline ? (node.usersOnline ?? 0) : 0
+    // A forwarding-only node has no users to count: show its forwarded clients.
+    const onlineCount =
+        node.runtimeStatus?.mode === 'FORWARDING_ONLY'
+            ? node.runtimeStatus.forwarding?.activeClients
+            : node.usersOnline
+    const activeUsersCount = isOnline ? (onlineCount ?? 0) : 0
     const cpuTextColor = getPercentTextColor(telemetry.cpuPercent, isOnline)
     const ramTextColor = getPercentTextColor(telemetry.ramPercent, isOnline)
 
