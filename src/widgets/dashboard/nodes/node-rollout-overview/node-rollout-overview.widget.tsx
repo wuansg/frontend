@@ -4,13 +4,16 @@ import {
     Button,
     CloseButton,
     Collapse,
+    Divider,
+    Flex,
     Group,
-    Scroller,
+    Paper,
     SegmentedControl,
     SimpleGrid,
     Stack,
     Text,
-    TextInput
+    TextInput,
+    ThemeIcon
 } from '@mantine/core'
 import { GetNodesCommand } from '@remnawave/backend-contract'
 import { ReactNode, useState } from 'react'
@@ -19,8 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { TbChevronDown, TbSearch, TbVersions } from 'react-icons/tb'
 
 import surface from '@shared/ui/node-panel-surface.module.css'
-import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
-import { SectionCard } from '@shared/ui/section-card'
 
 export type NodeRolloutFilter = 'all' | 'attention' | 'drift' | 'missing-sni' | 'online'
 
@@ -92,9 +93,7 @@ export const NodeRolloutOverview = ({
     searchQuery = ''
 }: IProps) => {
     const { t } = useTranslation()
-    const [expanded, setExpanded] = useState(
-        () => typeof window === 'undefined' || window.innerWidth > 768
-    )
+    const [expanded, setExpanded] = useState(false)
 
     const connected = nodes.filter((node) => node.isConnected).length
     const attention = nodes.filter(isNodeAttention).length
@@ -103,6 +102,10 @@ export const NodeRolloutOverview = ({
         (node) => !node.runtimeInventory?.capabilities.includes('node_api_sni_v1')
     ).length
     const unknownLabel = t('node-rollout-overview.unknown')
+
+    if (nodes.length === 0) {
+        return null
+    }
 
     const renderRuntimeBadge = (mode: string, count: number) => {
         let color = 'gray'
@@ -130,68 +133,43 @@ export const NodeRolloutOverview = ({
     }
 
     return (
-        <SectionCard.Root gap="sm">
-            <SectionCard.Section>
-                <Stack gap="xs">
-                    <Group align="center" gap="sm" justify="space-between" wrap="wrap">
-                        <BaseOverlayHeader
-                            iconColor="violet"
-                            IconComponent={TbVersions}
-                            iconSize={20}
-                            iconVariant="soft"
-                            subtitle={t('node-rollout-overview.subtitle', {
-                                connected,
-                                total: nodes.length
-                            })}
-                            title={t('node-rollout-overview.title')}
-                            titleOrder={5}
-                        />
-
-                        <Group gap="xs" wrap="wrap">
-                            {onSearchChange && (
-                                <TextInput
-                                    leftSection={<TbSearch size={14} />}
-                                    onChange={(event) => onSearchChange(event.currentTarget.value)}
-                                    placeholder={t('node-rollout-overview.search-placeholder')}
-                                    rightSection={
-                                        searchQuery ? (
-                                            <CloseButton
-                                                onClick={() => onSearchChange('')}
-                                                size="sm"
-                                            />
-                                        ) : null
-                                    }
-                                    size="xs"
-                                    style={{ flex: '1 1 220px', maxWidth: '100%' }}
-                                    value={searchQuery}
-                                    w={260}
-                                />
-                            )}
-                            <Button
-                                color="gray"
-                                onClick={() => setExpanded((prev) => !prev)}
-                                rightSection={
-                                    <TbChevronDown
-                                        size={14}
-                                        style={{
-                                            transform: expanded ? 'rotate(180deg)' : undefined,
-                                            transition: 'transform 160ms ease'
-                                        }}
-                                    />
-                                }
+        <Paper
+            p="sm"
+            radius="md"
+            style={{
+                background: 'light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02))',
+                border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))'
+            }}
+        >
+            <Flex
+                align={{ base: 'stretch', xl: 'center' }}
+                direction={{ base: 'column', xl: 'row' }}
+                gap="sm"
+                justify="space-between"
+            >
+                <Group gap="sm" miw={0} wrap="wrap">
+                    <Group gap="xs" wrap="nowrap">
+                        <ThemeIcon color="violet" radius="md" size={34} variant="light">
+                            <TbVersions size={18} />
+                        </ThemeIcon>
+                        <div>
+                            <Text fw={600} size="sm">
+                                {t('node-rollout-overview.title')}
+                            </Text>
+                            <Text
+                                c="dimmed"
                                 size="xs"
-                                variant="subtle"
+                                style={{ fontVariantNumeric: 'tabular-nums' }}
                             >
-                                {t(
-                                    expanded
-                                        ? 'node-rollout-overview.collapse'
-                                        : 'node-rollout-overview.expand'
-                                )}
-                            </Button>
-                        </Group>
+                                {t('node-rollout-overview.short-subtitle', {
+                                    connected,
+                                    total: nodes.length
+                                })}
+                            </Text>
+                        </div>
                     </Group>
 
-                    <Scroller draggable>
+                    <Box style={{ overflowX: 'auto', maxWidth: '100%' }}>
                         <SegmentedControl
                             data={[
                                 {
@@ -227,87 +205,137 @@ export const NodeRolloutOverview = ({
                             ]}
                             onChange={(value) => onFilterChange(value as NodeRolloutFilter)}
                             size="xs"
-                            style={{ flexShrink: 0 }}
+                            style={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
                             value={filter}
                         />
-                    </Scroller>
-                </Stack>
-            </SectionCard.Section>
+                    </Box>
+                </Group>
+
+                <Group gap="xs" wrap="nowrap">
+                    {onSearchChange && (
+                        <TextInput
+                            leftSection={<TbSearch size={14} />}
+                            onChange={(event) => onSearchChange(event.currentTarget.value)}
+                            placeholder={t('node-rollout-overview.search-placeholder')}
+                            rightSection={
+                                searchQuery ? (
+                                    <CloseButton
+                                        aria-label={t('common.clear')}
+                                        onClick={() => onSearchChange('')}
+                                        size="sm"
+                                    />
+                                ) : null
+                            }
+                            size="xs"
+                            style={{ flex: '1 1 220px', minWidth: 0 }}
+                            value={searchQuery}
+                            w={{ base: 'auto', xl: 250 }}
+                        />
+                    )}
+                    <Button
+                        color="gray"
+                        onClick={() => setExpanded((prev) => !prev)}
+                        rightSection={
+                            <TbChevronDown
+                                size={14}
+                                style={{
+                                    transform: expanded ? 'rotate(180deg)' : undefined,
+                                    transition: 'transform 160ms ease'
+                                }}
+                            />
+                        }
+                        size="xs"
+                        style={{ flexShrink: 0 }}
+                        variant="default"
+                    >
+                        {t(
+                            expanded
+                                ? 'node-rollout-overview.collapse'
+                                : 'node-rollout-overview.expand'
+                        )}
+                    </Button>
+                </Group>
+            </Flex>
 
             <Collapse expanded={expanded}>
-                <SectionCard.Section>
-                    <SimpleGrid cols={{ base: 1, sm: 2, xl: 4 }} spacing="xs">
-                        <Distribution
-                            renderItem={(label, count) => (
-                                <Badge
-                                    className={surface.tabular}
-                                    color={label === unknownLabel ? 'gray' : 'cyan'}
-                                    key={label}
-                                    size="xs"
-                                    variant="light"
-                                >
-                                    {label} · {count}
-                                </Badge>
-                            )}
-                            title={t('node-rollout-overview.agent-version')}
-                            values={countBy(
-                                nodes,
-                                (node) => node.runtimeInventory?.agentVersion ?? unknownLabel
-                            )}
-                        />
-                        <Distribution
-                            renderItem={(label, count) => (
-                                <Badge
-                                    className={surface.tabular}
-                                    color={label === unknownLabel ? 'gray' : 'violet'}
-                                    key={label}
-                                    size="xs"
-                                    variant="light"
-                                >
-                                    {label} · {count}
-                                </Badge>
-                            )}
-                            title={t('node-rollout-overview.architecture')}
-                            values={countBy(
-                                nodes,
-                                (node) => node.runtimeInventory?.architecture ?? unknownLabel
-                            )}
-                        />
-                        <Distribution
-                            renderItem={renderRuntimeBadge}
-                            title={t('node-rollout-overview.runtime-mode')}
-                            values={countBy(
-                                nodes,
-                                (node) => node.runtimeInventory?.runtimeMode ?? unknownLabel
-                            )}
-                        />
-                        <Distribution
-                            renderItem={(code, count) => (
-                                <Badge
-                                    className={surface.tabular}
-                                    color="gray"
-                                    key={code}
-                                    leftSection={
-                                        code !== 'XX' ? (
-                                            <ReactCountryFlag
-                                                countryCode={code}
-                                                style={{ fontSize: '1.05em' }}
-                                                svg
-                                            />
-                                        ) : undefined
-                                    }
-                                    size="xs"
-                                    variant="light"
-                                >
-                                    {code} · {count}
-                                </Badge>
-                            )}
-                            title={t('node-rollout-overview.country')}
-                            values={countBy(nodes, (node) => node.countryCode || 'XX')}
-                        />
-                    </SimpleGrid>
-                </SectionCard.Section>
+                <Divider
+                    my="sm"
+                    style={{
+                        borderColor:
+                            'light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06))'
+                    }}
+                />
+                <SimpleGrid cols={{ base: 1, sm: 2, xl: 4 }} spacing="xs">
+                    <Distribution
+                        renderItem={(label, count) => (
+                            <Badge
+                                className={surface.tabular}
+                                color={label === unknownLabel ? 'gray' : 'cyan'}
+                                key={label}
+                                size="xs"
+                                variant="light"
+                            >
+                                {label} · {count}
+                            </Badge>
+                        )}
+                        title={t('node-rollout-overview.agent-version')}
+                        values={countBy(
+                            nodes,
+                            (node) => node.runtimeInventory?.agentVersion ?? unknownLabel
+                        )}
+                    />
+                    <Distribution
+                        renderItem={(label, count) => (
+                            <Badge
+                                className={surface.tabular}
+                                color={label === unknownLabel ? 'gray' : 'violet'}
+                                key={label}
+                                size="xs"
+                                variant="light"
+                            >
+                                {label} · {count}
+                            </Badge>
+                        )}
+                        title={t('node-rollout-overview.architecture')}
+                        values={countBy(
+                            nodes,
+                            (node) => node.runtimeInventory?.architecture ?? unknownLabel
+                        )}
+                    />
+                    <Distribution
+                        renderItem={renderRuntimeBadge}
+                        title={t('node-rollout-overview.runtime-mode')}
+                        values={countBy(
+                            nodes,
+                            (node) => node.runtimeInventory?.runtimeMode ?? unknownLabel
+                        )}
+                    />
+                    <Distribution
+                        renderItem={(code, count) => (
+                            <Badge
+                                className={surface.tabular}
+                                color="gray"
+                                key={code}
+                                leftSection={
+                                    code !== 'XX' ? (
+                                        <ReactCountryFlag
+                                            countryCode={code}
+                                            style={{ fontSize: '1.05em' }}
+                                            svg
+                                        />
+                                    ) : undefined
+                                }
+                                size="xs"
+                                variant="light"
+                            >
+                                {code} · {count}
+                            </Badge>
+                        )}
+                        title={t('node-rollout-overview.country')}
+                        values={countBy(nodes, (node) => node.countryCode || 'XX')}
+                    />
+                </SimpleGrid>
             </Collapse>
-        </SectionCard.Root>
+        </Paper>
     )
 }

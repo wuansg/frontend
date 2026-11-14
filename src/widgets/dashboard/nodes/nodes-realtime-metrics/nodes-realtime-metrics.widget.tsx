@@ -9,6 +9,8 @@ import { TbUsers } from 'react-icons/tb'
 import { IMetricCardProps, MetricCardShared } from '@shared/ui/metrics/metric-card'
 import { prettySiRealtimeBytesUtil } from '@shared/utils/bytes'
 
+import { isNodeAttention } from '../node-rollout-overview'
+
 interface IProps {
     isLoading: boolean
     nodes: GetNodesCommand.Response['response'] | undefined
@@ -19,17 +21,42 @@ export function NodesRealtimeUsageMetrics(props: IProps) {
 
     const { t } = useTranslation()
 
-    const aggregated = useMemo(() => {
-        if (!nodes?.length) return null
+    const { aggregated, attentionCount, onlineCount } = useMemo(() => {
+        if (!nodes?.length) {
+            return {
+                aggregated: null,
+                attentionCount: 0,
+                onlineCount: 0
+            }
+        }
 
-        return nodes.reduce(
-            (acc, curr) => ({
-                rxSpeed: acc.rxSpeed + (curr.system?.stats.interface?.rxBytesPerSec ?? 0),
-                txSpeed: acc.txSpeed + (curr.system?.stats.interface?.txBytesPerSec ?? 0)
-            }),
-            { rxSpeed: 0, txSpeed: 0 }
-        )
+        let rxSpeed = 0
+        let txSpeed = 0
+        let online = 0
+        let attention = 0
+
+        for (const curr of nodes) {
+            rxSpeed += curr.system?.stats.interface?.rxBytesPerSec ?? 0
+            txSpeed += curr.system?.stats.interface?.txBytesPerSec ?? 0
+            if (curr.isConnected) online += 1
+            if (isNodeAttention(curr)) attention += 1
+        }
+
+        return {
+            aggregated: { rxSpeed, txSpeed },
+            attentionCount: attention,
+            onlineCount: online
+        }
     }, [nodes])
+
+    let onlineNodesColor: IMetricCardProps['iconColor'] = 'teal'
+    if (nodes?.length) {
+        if (onlineCount === 0) {
+            onlineNodesColor = 'red'
+        } else if (attentionCount > 0) {
+            onlineNodesColor = 'orange'
+        }
+    }
 
     const cards: IMetricCardProps[] = [
         {
@@ -57,11 +84,9 @@ export function NodesRealtimeUsageMetrics(props: IProps) {
         {
             IconComponent: PiPulse,
             title: t('nodes-quick-stats.widget.online-nodes'),
-            value: nodes?.length
-                ? `${nodes.filter((node) => node.isConnected).length} / ${nodes.length}`
-                : 0,
+            value: nodes?.length ? `${onlineCount} / ${nodes.length}` : 0,
             iconVariant: 'soft',
-            iconColor: 'teal'
+            iconColor: onlineNodesColor
         }
     ]
     return (

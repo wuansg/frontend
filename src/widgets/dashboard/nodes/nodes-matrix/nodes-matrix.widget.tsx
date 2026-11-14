@@ -1,4 +1,4 @@
-import { Box, Checkbox, Scroller, SegmentedControl } from '@mantine/core'
+import { Box, Checkbox, SegmentedControl } from '@mantine/core'
 import { GetNodesCommand } from '@remnawave/backend-contract'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -194,7 +194,7 @@ export const NodesMatrixWidget = memo((props: IProps) => {
                     }}
                 />
 
-                <Scroller draggable style={{ maxWidth: '100%' }}>
+                <Box style={{ overflowX: 'auto', maxWidth: '100%' }}>
                     <SegmentedControl
                         data={[
                             {
@@ -223,7 +223,7 @@ export const NodesMatrixWidget = memo((props: IProps) => {
                         style={{ flexShrink: 0 }}
                         value={sortMode}
                     />
-                </Scroller>
+                </Box>
             </div>
 
             {sortedNodes.length === 0 ? (

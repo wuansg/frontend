@@ -15,7 +15,9 @@ import {
     PiDotsSixVertical,
     PiGlobeSimple,
     PiMemoryDuotone,
-    PiUsersDuotone
+    PiProhibitDuotone,
+    PiUsersDuotone,
+    PiWarningCircleDuotone
 } from 'react-icons/pi'
 import { TbAlertCircle, TbChartArcs } from 'react-icons/tb'
 
@@ -54,6 +56,13 @@ const getProgressColor = (percentage: number, fallback: boolean) => {
     return 'teal.6'
 }
 
+const getPercentTextColor = (percent: number | null, isOnline: boolean) => {
+    if (!isOnline || percent === null) return 'dimmed'
+    if (percent > 90) return 'red'
+    if (percent > 70) return 'orange'
+    return 'dimmed'
+}
+
 export const NodeCardWidget = memo((props: IProps) => {
     const { t } = useTranslation()
     const {
@@ -86,6 +95,7 @@ export const NodeCardWidget = memo((props: IProps) => {
     const maxData = node.isTrafficTrackingActive
         ? prettifyBytesUtil(node.trafficLimitBytes || 0) || '∞'
         : '∞'
+    const hasFiniteQuota = node.isTrafficTrackingActive && (node.trafficLimitBytes ?? 0) > 0
 
     const calcPercentage = () => {
         if (!node.isTrafficTrackingActive) return 0
@@ -101,54 +111,70 @@ export const NodeCardWidget = memo((props: IProps) => {
     const isConfigMissing = node.configProfile.activeConfigProfileUuid === null
     const statusTone = getNodeStatusTone(node, isConfigMissing)
     const progressColor = getProgressColor(percentage, fallbackProgress)
+    const activeUsersCount = isOnline ? (node.usersOnline ?? 0) : 0
 
-    const { ramPercentage, ramColor, rxSpeed, txSpeed, loadAvg, cpus } = useMemo(() => {
-        if (!node.system) {
-            return {
-                ramPercentage: null,
-                ramColor: 'teal',
-                rxSpeed: null,
-                txSpeed: null,
-                loadAvg: null,
-                cpus: 1
+    const { cpuColor, cpuPercent, cpus, loadAvg, ramColor, ramPercentage, rxSpeed, txSpeed } =
+        useMemo(() => {
+            if (!node.system) {
+                return {
+                    ramPercentage: null,
+                    ramColor: 'teal',
+                    cpuPercent: null as number | null,
+                    cpuColor: 'teal',
+                    rxSpeed: null,
+                    txSpeed: null,
+                    loadAvg: null,
+                    cpus: 1
+                }
             }
-        }
-        const { memoryTotal, cpus } = node.system.info
-        const { memoryUsed, loadAvg } = node.system.stats
+            const { memoryTotal, cpus: rawCpus } = node.system.info
+            const { memoryUsed, loadAvg } = node.system.stats
+            const safeCpus = Math.max(1, rawCpus)
 
-        const ramPercentage = memoryTotal > 0 ? Math.round((memoryUsed / memoryTotal) * 100) : 0
+            const cpuPercent = loadAvg ? Math.round((loadAvg[0] / safeCpus) * 100) : null
+            let cpuColor = 'teal'
+            if (cpuPercent !== null) {
+                if (cpuPercent > 100) cpuColor = 'red'
+                else if (cpuPercent > 70) cpuColor = 'orange'
+            }
 
-        let ramColor = 'teal'
-        if (ramPercentage > 90) ramColor = 'red'
-        else if (ramPercentage > 70) ramColor = 'yellow'
+            const ramPercentage = memoryTotal > 0 ? Math.round((memoryUsed / memoryTotal) * 100) : 0
 
-        if (!node.system.stats.interface) {
+            let ramColor = 'teal'
+            if (ramPercentage > 90) ramColor = 'red'
+            else if (ramPercentage > 70) ramColor = 'orange'
+
+            if (!node.system.stats.interface) {
+                return {
+                    ramPercentage,
+                    ramColor,
+                    cpuPercent,
+                    cpuColor,
+                    rxSpeed: null,
+                    txSpeed: null,
+                    loadAvg,
+                    cpus: safeCpus
+                }
+            }
             return {
                 ramPercentage,
                 ramColor,
-                rxSpeed: null,
-                txSpeed: null,
+                cpuPercent,
+                cpuColor,
+                rxSpeed: prettySiRealtimeBytesUtil(
+                    node.system.stats.interface.rxBytesPerSec,
+                    true,
+                    true
+                ),
+                txSpeed: prettySiRealtimeBytesUtil(
+                    node.system.stats.interface.txBytesPerSec,
+                    true,
+                    true
+                ),
                 loadAvg,
-                cpus
+                cpus: safeCpus
             }
-        }
-        return {
-            ramPercentage,
-            ramColor,
-            rxSpeed: prettySiRealtimeBytesUtil(
-                node.system.stats.interface.rxBytesPerSec,
-                true,
-                true
-            ),
-            txSpeed: prettySiRealtimeBytesUtil(
-                node.system.stats.interface.txBytesPerSec,
-                true,
-                true
-            ),
-            loadAvg,
-            cpus
-        }
-    }, [node.system])
+        }, [node.system])
 
     const handleCopy = (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -165,33 +191,80 @@ export const NodeCardWidget = memo((props: IProps) => {
         showModal('nodes_nodeUsageStatsDrawer', { nodeUuid: node.uuid })
     }
 
-    const getLoadColor = (load: number, cpuCount: number) => {
-        const ratio = load / cpuCount
-        if (ratio > 1) return 'red'
-        if (ratio > 0.7) return 'yellow'
-        return 'dimmed'
-    }
-
     const addressLabel = node.port ? `${node.address}:${node.port}` : node.address
+    const cpuTextColor = getPercentTextColor(cpuPercent, isOnline)
+    const ramTextColor = getPercentTextColor(ramPercentage, isOnline)
 
-    const runtimeModeBadge = useMemo(() => {
-        if (!node.isConnected || node.isDisabled) return null
-        if (runtimeMode === 'FORWARDING_ONLY') {
+    let quotaBadgeColor = 'gray'
+    if (percentage > 95) quotaBadgeColor = 'red'
+    else if (percentage > 80) quotaBadgeColor = 'orange'
+
+    const statusPill = useMemo(() => {
+        if (isConfigMissing) return null
+        if (node.isDisabled) {
             return (
-                <Badge color="blue" size="xs" style={{ flexShrink: 0 }} variant="light">
-                    {t('node-status-badge.widget.forwarding-only')}
+                <Badge color="gray" fw={700} size="xs" style={{ flexShrink: 0 }} variant="light">
+                    {t('node-status-badge.widget.disabled')}
+                </Badge>
+            )
+        }
+        if (!node.isConnected) {
+            if (node.isConnecting) {
+                return (
+                    <Badge
+                        color="yellow"
+                        fw={700}
+                        size="xs"
+                        style={{ flexShrink: 0 }}
+                        variant="light"
+                    >
+                        {t('node-status-badge.widget.connecting')}
+                    </Badge>
+                )
+            }
+            return (
+                <Badge color="red" fw={700} size="xs" style={{ flexShrink: 0 }} variant="filled">
+                    {t('node-status-badge.widget.disconnected')}
                 </Badge>
             )
         }
         if (runtimeMode === 'DEGRADED') {
             return (
-                <Badge color="orange" size="xs" style={{ flexShrink: 0 }} variant="light">
+                <Badge color="orange" fw={700} size="xs" style={{ flexShrink: 0 }} variant="filled">
                     {t('node-status-badge.widget.degraded')}
                 </Badge>
             )
         }
+        if (runtimeMode === 'FORWARDING_ONLY') {
+            return (
+                <Badge color="blue" fw={700} size="xs" style={{ flexShrink: 0 }} variant="light">
+                    {t('node-status-badge.widget.forwarding-only')}
+                </Badge>
+            )
+        }
+        if (runtimeMode === 'IDLE') {
+            return (
+                <Badge color="gray" fw={700} size="xs" style={{ flexShrink: 0 }} variant="light">
+                    {t('node-status-badge.widget.idle')}
+                </Badge>
+            )
+        }
         return null
-    }, [node.isConnected, node.isDisabled, runtimeMode, t])
+    }, [isConfigMissing, node.isConnected, node.isConnecting, node.isDisabled, runtimeMode, t])
+
+    const multiplierBadge =
+        node.consumptionMultiplier !== 1 ? (
+            <Badge
+                className={classes.tabular}
+                color="violet"
+                fw={700}
+                size="xs"
+                style={{ flexShrink: 0 }}
+                variant="light"
+            >
+                {node.consumptionMultiplier.toFixed(1)}×
+            </Badge>
+        ) : null
 
     const providerBadge = node.provider ? (
         <Badge
@@ -212,13 +285,13 @@ export const NodeCardWidget = memo((props: IProps) => {
                         }
                     }}
                     radius="sm"
-                    size={14}
+                    size={13}
                     src={faviconResolver(node.provider.faviconLink)}
                 />
             }
-            size="sm"
+            size="xs"
             style={{
-                maxWidth: '18ch',
+                maxWidth: '16ch',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -230,12 +303,32 @@ export const NodeCardWidget = memo((props: IProps) => {
         </Badge>
     ) : null
 
+    const flagElement = (
+        <span className={classes.flagFrame}>
+            {node.countryCode && node.countryCode !== 'XX' ? (
+                <ReactCountryFlag
+                    countryCode={node.countryCode}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                    }}
+                    svg
+                />
+            ) : (
+                <PiGlobeSimple className={classes.icon} size={13} />
+            )}
+        </span>
+    )
+
     return (
         <Box
             className={clsx(classes.nodeRow, {
                 [classes.nodeRowDragging]: isDragging,
                 [classes.nodeRowNoReorder]: disableReordering
             })}
+            data-disabled={node.isDisabled}
             data-drag-overlay={isDragOverlay}
             data-status-tone={statusTone}
             onClick={() => handleViewNode(node.uuid)}
@@ -257,100 +350,174 @@ export const NodeCardWidget = memo((props: IProps) => {
             {!isMobile && (
                 <>
                     <div className={classes.desktopGrid}>
+                        {/* Col 1: Status + Framed Flag + Bold Name + Alert/Mode/Multiplier/Provider Pills */}
                         <Flex align="center" gap="xs" miw={0}>
                             {isConfigMissing ? (
                                 <Badge
                                     color="red"
+                                    fw={700}
                                     leftSection={<TbAlertCircle size={13} />}
-                                    size="md"
+                                    size="sm"
                                     style={{ flexShrink: 0 }}
-                                    variant="light"
+                                    variant="filled"
                                 >
                                     {t('node-card.widget.dangling')}
                                 </Badge>
                             ) : (
-                                <>
-                                    <NodeStatusBadgeWidget node={node} withText={false} />
-                                    <Badge
-                                        className={classes.tabular}
-                                        color={(node.usersOnline ?? 0) > 0 ? 'teal' : 'gray'}
-                                        leftSection={<PiUsersDuotone size={13} />}
-                                        miw="6.2ch"
-                                        size="md"
-                                        style={{ flexShrink: 0 }}
-                                        variant="light"
-                                    >
-                                        {node.usersOnline ?? 0}
-                                    </Badge>
-                                </>
+                                <NodeStatusBadgeWidget node={node} withText={false} />
                             )}
 
                             <Flex align="center" className={classes.nameContainer} gap={8}>
-                                {node.countryCode && node.countryCode !== 'XX' && (
-                                    <ReactCountryFlag
-                                        countryCode={node.countryCode}
-                                        style={{
-                                            width: '1.35em',
-                                            height: '1em',
-                                            borderRadius: '2px',
-                                            flexShrink: 0
-                                        }}
-                                        svg
-                                    />
-                                )}
-                                <Text className={classes.nodeName} fw={600} size="sm">
+                                {flagElement}
+                                <Text className={classes.nodeName} fw={700}>
                                     {node.name}
                                 </Text>
                             </Flex>
 
-                            <Flex align="center" gap={6} style={{ flexShrink: 0 }}>
-                                {runtimeModeBadge}
+                            <Flex align="center" gap={5} style={{ flexShrink: 0 }}>
+                                {statusPill}
                                 {node.versionDrift && (
-                                    <Badge color="orange" size="xs" variant="light">
+                                    <Badge color="orange" fw={700} size="xs" variant="light">
                                         {t('node-card.widget.version-drift')}
                                     </Badge>
                                 )}
+                                {multiplierBadge}
                                 {providerBadge}
                             </Flex>
                         </Flex>
 
-                        <Flex align="center" gap={6} justify="space-between" miw={0}>
-                            <Flex align="center" gap={6} miw={0} style={{ flex: 1 }}>
-                                <PiGlobeSimple className={classes.icon} size={14} />
-                                <Text
-                                    c="dimmed"
-                                    className={classes.addressText}
-                                    onClick={handleCopy}
-                                    size="xs"
-                                    title={t('node-card.widget.copy-address')}
-                                >
-                                    {addressLabel}
-                                </Text>
-                            </Flex>
-
-                            <ActionIcon
-                                aria-label={t('node-card.widget.usage-stats')}
-                                color="cyan"
-                                onClick={handleOpenUsageStats}
-                                size="sm"
+                        {/* Col 2: Online Users + Primary Live Throughput */}
+                        <Flex align="center" gap={8} miw={0}>
+                            <Badge
+                                className={classes.tabular}
+                                color={activeUsersCount > 0 ? 'teal' : 'gray'}
+                                fw={700}
+                                leftSection={<PiUsersDuotone size={13} />}
+                                miw="6ch"
+                                size="md"
                                 style={{ flexShrink: 0 }}
-                                title={t('node-card.widget.usage-stats')}
-                                variant="subtle"
+                                variant="light"
                             >
-                                <TbChartArcs size={15} />
-                            </ActionIcon>
+                                {activeUsersCount}
+                            </Badge>
+
+                            <div
+                                className={clsx(
+                                    classes.liveSpeedBox,
+                                    !isOnline && classes.liveSpeedBoxOffline
+                                )}
+                            >
+                                {isOnline ? (
+                                    <>
+                                        <Flex align="center" gap={4} miw={0}>
+                                            <PiArrowDownDuotone
+                                                color="var(--mantine-color-teal-5)"
+                                                size={13}
+                                                style={{ flexShrink: 0 }}
+                                            />
+                                            <Text
+                                                className={classes.tabular}
+                                                fw={700}
+                                                size="xs"
+                                                truncate
+                                            >
+                                                {rxSpeed ?? '—'}
+                                            </Text>
+                                        </Flex>
+                                        <Flex align="center" gap={4} miw={0}>
+                                            <PiArrowUpDuotone
+                                                color="var(--mantine-color-cyan-5)"
+                                                size={13}
+                                                style={{ flexShrink: 0 }}
+                                            />
+                                            <Text
+                                                c="dimmed"
+                                                className={classes.tabular}
+                                                fw={600}
+                                                size="xs"
+                                                truncate
+                                            >
+                                                {txSpeed ?? '—'}
+                                            </Text>
+                                        </Flex>
+                                    </>
+                                ) : (
+                                    <Flex align="center" gap={5} miw={0}>
+                                        {node.isDisabled ? (
+                                            <PiProhibitDuotone
+                                                color="var(--mantine-color-gray-5)"
+                                                size={13}
+                                                style={{ flexShrink: 0 }}
+                                            />
+                                        ) : (
+                                            <PiWarningCircleDuotone
+                                                color="var(--mantine-color-red-5)"
+                                                size={13}
+                                                style={{ flexShrink: 0 }}
+                                            />
+                                        )}
+                                        <Text
+                                            c={node.isDisabled ? 'dimmed' : 'red'}
+                                            fw={600}
+                                            size="xs"
+                                            truncate
+                                        >
+                                            {node.isDisabled
+                                                ? t('node-card.widget.disabled-telemetry')
+                                                : t('node-card.widget.offline-telemetry')}
+                                        </Text>
+                                    </Flex>
+                                )}
+                            </div>
                         </Flex>
 
+                        {/* Col 3: Traffic Quota + % + Reset + Budget Progress (Drives dynamic height!) */}
                         <Box miw={0}>
                             <Flex direction="column" gap={4}>
-                                <Flex align="baseline" gap={6} justify="space-between">
-                                    <Text className={classes.tabular} fw={600} size="xs" truncate>
-                                        {prettyUsedData}
-                                    </Text>
-                                    <Text c="dimmed" className={classes.tabular} size="xs" truncate>
-                                        {maxData}
-                                    </Text>
+                                <Flex align="center" gap={6} justify="space-between">
+                                    <Flex align="baseline" gap={4} miw={0}>
+                                        <Text
+                                            className={classes.tabular}
+                                            fw={700}
+                                            size="xs"
+                                            truncate
+                                        >
+                                            {prettyUsedData}
+                                        </Text>
+                                        <Text c="dimmed" className={classes.tabular} size="11px">
+                                            {`/ ${maxData}`}
+                                        </Text>
+                                        {hasFiniteQuota && (
+                                            <Badge
+                                                className={classes.tabular}
+                                                color={quotaBadgeColor}
+                                                fw={700}
+                                                ml={2}
+                                                size="xs"
+                                                variant={percentage > 80 ? 'filled' : 'light'}
+                                            >
+                                                {`${percentage}%`}
+                                            </Badge>
+                                        )}
+                                    </Flex>
+
+                                    {node.isTrafficTrackingActive && (
+                                        <Flex align="center" gap={3} style={{ flexShrink: 0 }}>
+                                            <PiArrowsCounterClockwise
+                                                className={classes.icon}
+                                                size={11}
+                                            />
+                                            <Text
+                                                c="dimmed"
+                                                className={classes.tabular}
+                                                size="11px"
+                                            >
+                                                {getNodeResetDaysUtil(node.trafficResetDay ?? 1)}
+                                            </Text>
+                                        </Flex>
+                                    )}
                                 </Flex>
+
                                 <NodeTrafficProgress
                                     color={node.isTrafficTrackingActive ? progressColor : 'teal'}
                                     compact
@@ -361,144 +528,162 @@ export const NodeCardWidget = memo((props: IProps) => {
                             </Flex>
                         </Box>
 
-                        <Flex align="center" gap="xs" justify="space-between" miw={0}>
-                            {node.isTrafficTrackingActive ? (
-                                <Flex align="center" gap={4} miw={0}>
-                                    <PiArrowsCounterClockwise className={classes.icon} size={13} />
-                                    <Text c="dimmed" className={classes.tabular} size="xs" truncate>
-                                        {getNodeResetDaysUtil(node.trafficResetDay ?? 1)}
-                                    </Text>
-                                </Flex>
-                            ) : (
-                                <Box />
-                            )}
-
+                        {/* Col 4: Core Uptime + Quick Stats Drawer Trigger */}
+                        <Flex align="center" gap={8} justify="flex-end" style={{ flexShrink: 0 }}>
                             {isCoreActive && (
-                                <Flex align="center" gap={4} miw={0}>
+                                <Flex align="center" gap={4}>
                                     <PiCpuDuotone
                                         color="var(--mantine-color-teal-5)"
                                         size={13}
                                         style={{ flexShrink: 0 }}
                                     />
-                                    <Text
-                                        c="teal"
-                                        className={classes.tabular}
-                                        fw={600}
-                                        size="xs"
-                                        truncate
-                                    >
+                                    <Text c="teal" className={classes.tabular} fw={700} size="xs">
                                         {getCoreUptimeUtil(node.coreUptime)}
                                     </Text>
                                 </Flex>
                             )}
+
+                            <ActionIcon
+                                aria-label={t('node-card.widget.usage-stats')}
+                                color="cyan"
+                                onClick={handleOpenUsageStats}
+                                size="sm"
+                                style={{ flexShrink: 0 }}
+                                title={t('node-card.widget.usage-stats')}
+                                variant="light"
+                            >
+                                <TbChartArcs size={15} />
+                            </ActionIcon>
                         </Flex>
                     </div>
 
+                    {/* Band 2: Address + Tags | CPU & RAM Gauges + Versions */}
                     <div className={classes.telemetryRow}>
-                        <Flex align="center" gap={6} style={{ flex: '1 1 130px', maxWidth: 190 }}>
-                            <PiMemoryDuotone className={classes.icon} size={13} />
-                            <Progress
-                                color={ramColor}
-                                radius="sm"
-                                size="xs"
-                                style={{ flex: 1 }}
-                                value={ramPercentage ?? 0}
-                            />
-                            <Text c="dimmed" className={classes.tabular} size="xs">
-                                {ramPercentage !== null ? `${ramPercentage}%` : '—'}
-                            </Text>
+                        <Flex align="center" gap={8} miw={0} style={{ flex: '1 1 220px' }}>
+                            <Flex align="center" gap={5} miw={0}>
+                                <PiGlobeSimple className={classes.icon} size={13} />
+                                <Text
+                                    c="dimmed"
+                                    className={classes.addressText}
+                                    onClick={handleCopy}
+                                    title={t('node-card.widget.copy-address')}
+                                >
+                                    {addressLabel}
+                                </Text>
+                            </Flex>
+
+                            <Flex align="center" gap={4} style={{ flexShrink: 0 }}>
+                                {(node.tags ?? []).slice(0, 3).map((tag) => (
+                                    <Badge color="gray" key={tag} size="xs" variant="light">
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </Flex>
                         </Flex>
 
-                        <Tooltip
-                            label={
-                                loadAvg ? (
-                                    <Stack gap={2}>
-                                        <Text fw={600} size="xs">
-                                            {t('node-card.widget.load-average-title', {
-                                                count: cpus
-                                            })}
-                                        </Text>
-                                        <Text className={classes.tabular} size="xs">
-                                            {t('node-card.widget.load-1m', {
-                                                value: loadAvg[0].toFixed(2),
-                                                percent: Math.round((loadAvg[0] / cpus) * 100)
-                                            })}
-                                        </Text>
-                                        <Text className={classes.tabular} size="xs">
-                                            {t('node-card.widget.load-5m', {
-                                                value: loadAvg[1].toFixed(2),
-                                                percent: Math.round((loadAvg[1] / cpus) * 100)
-                                            })}
-                                        </Text>
-                                        <Text className={classes.tabular} size="xs">
-                                            {t('node-card.widget.load-15m', {
-                                                value: loadAvg[2].toFixed(2),
-                                                percent: Math.round((loadAvg[2] / cpus) * 100)
-                                            })}
-                                        </Text>
-                                        <Text c="dimmed" mt={2} size="xs">
-                                            {t('node-card.widget.load-legend')}
-                                        </Text>
-                                    </Stack>
-                                ) : (
-                                    t('node-card.widget.no-data')
-                                )
-                            }
-                            multiline
-                            radius="md"
-                            w={260}
+                        <Flex
+                            align="center"
+                            className={clsx(!isOnline && classes.telemetryGaugesOffline)}
+                            gap="md"
+                            ml="auto"
+                            wrap="wrap"
                         >
-                            <Flex align="center" gap={4}>
-                                <PiCpuDuotone className={classes.icon} size={12} />
-                                {loadAvg ? (
-                                    <Text className={classes.tabular} size="xs">
-                                        {loadAvg.map((load, i) => (
-                                            <Text
-                                                c={getLoadColor(load, cpus)}
-                                                className={classes.tabular}
-                                                component="span"
-                                                key={i}
-                                                size="xs"
-                                            >
-                                                {i > 0 && ' / '}
-                                                {load.toFixed(2)}
+                            <Tooltip
+                                label={
+                                    loadAvg ? (
+                                        <Stack gap={2}>
+                                            <Text fw={600} size="xs">
+                                                {t('node-card.widget.load-average-title', {
+                                                    count: cpus
+                                                })}
                                             </Text>
-                                        ))}
+                                            <Text className={classes.tabular} size="xs">
+                                                {t('node-card.widget.load-1m', {
+                                                    value: loadAvg[0].toFixed(2),
+                                                    percent: Math.round((loadAvg[0] / cpus) * 100)
+                                                })}
+                                            </Text>
+                                            <Text className={classes.tabular} size="xs">
+                                                {t('node-card.widget.load-5m', {
+                                                    value: loadAvg[1].toFixed(2),
+                                                    percent: Math.round((loadAvg[1] / cpus) * 100)
+                                                })}
+                                            </Text>
+                                            <Text className={classes.tabular} size="xs">
+                                                {t('node-card.widget.load-15m', {
+                                                    value: loadAvg[2].toFixed(2),
+                                                    percent: Math.round((loadAvg[2] / cpus) * 100)
+                                                })}
+                                            </Text>
+                                            <Text c="dimmed" mt={2} size="xs">
+                                                {t('node-card.widget.load-legend')}
+                                            </Text>
+                                        </Stack>
+                                    ) : (
+                                        t('node-card.widget.no-data')
+                                    )
+                                }
+                                multiline
+                                radius="md"
+                                w={260}
+                            >
+                                <Flex align="center" gap={6}>
+                                    <PiCpuDuotone className={classes.icon} size={13} />
+                                    <Text c="dimmed" className={classes.tabular} size="11px">
+                                        {`${cpus}C`}
                                     </Text>
-                                ) : (
+                                    <Progress
+                                        color={isOnline ? cpuColor : 'gray'}
+                                        radius="xl"
+                                        size={5}
+                                        style={{ width: 54 }}
+                                        value={Math.min(100, cpuPercent ?? 0)}
+                                    />
+                                    <Text
+                                        c={cpuTextColor}
+                                        className={classes.tabular}
+                                        fw={cpuTextColor !== 'dimmed' ? 700 : 500}
+                                        size="xs"
+                                    >
+                                        {loadAvg
+                                            ? `${loadAvg[0].toFixed(2)} (${cpuPercent}%)`
+                                            : '—'}
+                                    </Text>
+                                </Flex>
+                            </Tooltip>
+
+                            <Flex align="center" gap={6}>
+                                <PiMemoryDuotone className={classes.icon} size={13} />
+                                <Progress
+                                    color={isOnline ? ramColor : 'gray'}
+                                    radius="xl"
+                                    size={5}
+                                    style={{ width: 54 }}
+                                    value={ramPercentage ?? 0}
+                                />
+                                <Text
+                                    c={ramTextColor}
+                                    className={classes.tabular}
+                                    fw={ramTextColor !== 'dimmed' ? 700 : 500}
+                                    size="xs"
+                                >
+                                    {ramPercentage !== null ? `${ramPercentage}%` : '—'}
+                                </Text>
+                            </Flex>
+
+                            <Flex align="center" gap="xs" justify="flex-end" miw={144}>
+                                <Flex align="center" gap={4}>
+                                    <PiCpuDuotone color="var(--mantine-color-dimmed)" size={12} />
                                     <Text c="dimmed" className={classes.tabular} size="xs">
-                                        {'—'}
+                                        {node.versions ? getNodeCoreDisplay(node.versions) : '—'}
                                     </Text>
-                                )}
-                            </Flex>
-                        </Tooltip>
-
-                        <Flex align="center" gap={4}>
-                            <PiArrowDownDuotone color="var(--mantine-color-teal-5)" size={12} />
-                            <Text c="dimmed" className={classes.tabular} size="xs">
-                                {rxSpeed ?? '—'}
-                            </Text>
-                        </Flex>
-
-                        <Flex align="center" gap={4}>
-                            <PiArrowUpDuotone color="var(--mantine-color-cyan-5)" size={12} />
-                            <Text c="dimmed" className={classes.tabular} size="xs">
-                                {txSpeed ?? '—'}
-                            </Text>
-                        </Flex>
-
-                        <Flex align="center" gap="sm" ml="auto">
-                            <Flex align="center" gap={4}>
-                                <PiCpuDuotone color="var(--mantine-color-dimmed)" size={12} />
-                                <Text c="dimmed" className={classes.tabular} size="xs">
-                                    {node.versions ? getNodeCoreDisplay(node.versions) : '—'}
-                                </Text>
-                            </Flex>
-                            <Flex align="center" gap={4}>
-                                <Logo color="var(--mantine-color-dimmed)" size={12} />
-                                <Text c="dimmed" className={classes.tabular} size="xs">
-                                    {node.versions ? node.versions.node : '—'}
-                                </Text>
+                                </Flex>
+                                <Flex align="center" gap={4}>
+                                    <Logo color="var(--mantine-color-dimmed)" size={12} />
+                                    <Text c="dimmed" className={classes.tabular} size="xs">
+                                        {node.versions ? node.versions.node : '—'}
+                                    </Text>
+                                </Flex>
                             </Flex>
                         </Flex>
                     </div>
@@ -507,51 +692,30 @@ export const NodeCardWidget = memo((props: IProps) => {
 
             {isMobile && (
                 <Box>
-                    <Flex align="center" gap={6} mb={6} miw={0}>
+                    <Flex align="center" gap={7} mb={6} miw={0}>
                         {isConfigMissing ? (
                             <Badge
                                 color="red"
+                                fw={700}
                                 leftSection={<TbAlertCircle size={12} />}
-                                size="sm"
+                                size="xs"
                                 style={{ flexShrink: 0 }}
-                                variant="light"
+                                variant="filled"
                             >
                                 {t('node-card.widget.dangling')}
                             </Badge>
                         ) : (
-                            <>
-                                <NodeStatusBadgeWidget node={node} withText={false} />
-                                <Badge
-                                    className={classes.tabular}
-                                    color={(node.usersOnline ?? 0) > 0 ? 'teal' : 'gray'}
-                                    leftSection={<PiUsersDuotone size={12} />}
-                                    miw="5.5ch"
-                                    size="sm"
-                                    style={{ flexShrink: 0 }}
-                                    variant="light"
-                                >
-                                    {node.usersOnline ?? 0}
-                                </Badge>
-                            </>
+                            <NodeStatusBadgeWidget node={node} withText={false} />
                         )}
 
-                        <Flex align="center" gap={6} style={{ flex: 1, minWidth: 0 }}>
-                            {node.countryCode && node.countryCode !== 'XX' && (
-                                <ReactCountryFlag
-                                    countryCode={node.countryCode}
-                                    style={{
-                                        width: '1.3em',
-                                        height: '0.98em',
-                                        borderRadius: '2px',
-                                        flexShrink: 0
-                                    }}
-                                    svg
-                                />
-                            )}
-                            <Text className={classes.nodeName} fw={600} size="sm">
+                        <Flex align="center" gap={7} style={{ flex: 1, minWidth: 0 }}>
+                            {flagElement}
+                            <Text className={classes.nodeName} fw={700}>
                                 {node.name}
                             </Text>
                         </Flex>
+
+                        {statusPill}
 
                         <ActionIcon
                             aria-label={t('node-card.widget.usage-stats')}
@@ -559,41 +723,152 @@ export const NodeCardWidget = memo((props: IProps) => {
                             onClick={handleOpenUsageStats}
                             size="sm"
                             style={{ flexShrink: 0 }}
-                            variant="subtle"
+                            variant="light"
                         >
                             <TbChartArcs size={14} />
                         </ActionIcon>
                     </Flex>
 
-                    <Flex align="center" gap={6} mb={6} miw={0} wrap="wrap">
+                    <Flex align="center" gap={6} mb={8} miw={0} wrap="wrap">
                         <Flex align="center" gap={4} miw={0} style={{ flex: '1 1 120px' }}>
                             <PiGlobeSimple className={classes.icon} size={12} />
-                            <Text
-                                c="dimmed"
-                                className={classes.addressText}
-                                onClick={handleCopy}
-                                size="xs"
-                            >
+                            <Text c="dimmed" className={classes.addressText} onClick={handleCopy}>
                                 {addressLabel}
                             </Text>
                         </Flex>
 
-                        {runtimeModeBadge}
                         {node.versionDrift && (
-                            <Badge color="orange" size="xs" variant="light">
+                            <Badge color="orange" fw={700} size="xs" variant="light">
                                 {t('node-card.widget.version-drift')}
                             </Badge>
                         )}
+                        {multiplierBadge}
                         {providerBadge}
                     </Flex>
 
-                    <Flex align="baseline" gap={6} justify="space-between" mb={4}>
-                        <Text className={classes.tabular} fw={600} size="xs" truncate>
-                            {prettyUsedData}
-                        </Text>
-                        <Text c="dimmed" className={classes.tabular} size="xs">
-                            {maxData}
-                        </Text>
+                    <div className={classes.mobileKpiStrip}>
+                        <div className={classes.mobileKpiCell}>
+                            {isOnline ? (
+                                <>
+                                    <Flex align="center" gap={4} miw={0}>
+                                        <PiArrowDownDuotone
+                                            color="var(--mantine-color-teal-5)"
+                                            size={12}
+                                        />
+                                        <Text
+                                            className={classes.tabular}
+                                            fw={700}
+                                            size="xs"
+                                            truncate
+                                        >
+                                            {rxSpeed ?? '—'}
+                                        </Text>
+                                    </Flex>
+                                    <Flex align="center" gap={4} miw={0}>
+                                        <PiArrowUpDuotone
+                                            color="var(--mantine-color-cyan-5)"
+                                            size={11}
+                                        />
+                                        <Text
+                                            c="dimmed"
+                                            className={classes.tabular}
+                                            fw={600}
+                                            size="11px"
+                                            truncate
+                                        >
+                                            {txSpeed ?? '—'}
+                                        </Text>
+                                    </Flex>
+                                </>
+                            ) : (
+                                <Text
+                                    c={node.isDisabled ? 'dimmed' : 'red'}
+                                    fw={600}
+                                    size="xs"
+                                    truncate
+                                >
+                                    {node.isDisabled
+                                        ? t('node-card.widget.disabled-telemetry')
+                                        : t('node-card.widget.offline-telemetry')}
+                                </Text>
+                            )}
+                        </div>
+
+                        <div className={classes.mobileKpiCell}>
+                            <Flex align="center" gap={5} justify="space-between" miw={0}>
+                                <Flex align="center" gap={4}>
+                                    <PiUsersDuotone
+                                        color={
+                                            activeUsersCount > 0
+                                                ? 'var(--mantine-color-teal-5)'
+                                                : 'var(--mantine-color-dimmed)'
+                                        }
+                                        size={13}
+                                    />
+                                    <Text
+                                        c={activeUsersCount > 0 ? 'teal' : 'dimmed'}
+                                        className={classes.tabular}
+                                        fw={800}
+                                        size="sm"
+                                    >
+                                        {activeUsersCount}
+                                    </Text>
+                                </Flex>
+                                <Text c="dimmed" size="10px">
+                                    {t('use-nodes-table-widget.online')}
+                                </Text>
+                            </Flex>
+
+                            <Flex align="center" gap={4}>
+                                <PiCpuDuotone
+                                    color={
+                                        isCoreActive
+                                            ? 'var(--mantine-color-teal-5)'
+                                            : 'var(--mantine-color-dimmed)'
+                                    }
+                                    size={11}
+                                />
+                                <Text
+                                    c={isCoreActive ? 'teal' : 'dimmed'}
+                                    className={classes.tabular}
+                                    fw={isCoreActive ? 600 : 500}
+                                    size="11px"
+                                >
+                                    {isCoreActive ? getCoreUptimeUtil(node.coreUptime) : '—'}
+                                </Text>
+                            </Flex>
+                        </div>
+                    </div>
+
+                    <Flex align="center" gap={6} justify="space-between" mb={4}>
+                        <Flex align="baseline" gap={4} miw={0}>
+                            <Text className={classes.tabular} fw={700} size="xs" truncate>
+                                {prettyUsedData}
+                            </Text>
+                            <Text c="dimmed" className={classes.tabular} size="11px">
+                                {`/ ${maxData}`}
+                            </Text>
+                            {hasFiniteQuota && (
+                                <Badge
+                                    className={classes.tabular}
+                                    color={quotaBadgeColor}
+                                    fw={700}
+                                    size="xs"
+                                    variant={percentage > 80 ? 'filled' : 'light'}
+                                >
+                                    {`${percentage}%`}
+                                </Badge>
+                            )}
+                        </Flex>
+
+                        {node.isTrafficTrackingActive && (
+                            <Flex align="center" gap={3}>
+                                <PiArrowsCounterClockwise className={classes.icon} size={11} />
+                                <Text c="dimmed" className={classes.tabular} size="11px">
+                                    {getNodeResetDaysUtil(node.trafficResetDay ?? 1)}
+                                </Text>
+                            </Flex>
+                        )}
                     </Flex>
 
                     <NodeTrafficProgress
@@ -606,62 +881,48 @@ export const NodeCardWidget = memo((props: IProps) => {
                         value={node.isTrafficTrackingActive && percentage >= 0 ? percentage : 100}
                     />
 
-                    <div className={classes.mobileTelemetryRow}>
-                        {node.isTrafficTrackingActive && (
-                            <Flex align="center" gap={4}>
-                                <PiArrowsCounterClockwise className={classes.icon} size={11} />
-                                <Text c="dimmed" className={classes.tabular} size="xs">
-                                    {getNodeResetDaysUtil(node.trafficResetDay ?? 1)}
-                                </Text>
-                            </Flex>
+                    <div
+                        className={clsx(
+                            classes.mobileTelemetryRow,
+                            !isOnline && classes.telemetryGaugesOffline
                         )}
-
-                        <Flex align="center" gap={4}>
-                            <PiCpuDuotone
-                                color={
-                                    isCoreActive
-                                        ? 'var(--mantine-color-teal-5)'
-                                        : 'var(--mantine-color-dimmed)'
-                                }
-                                size={11}
+                    >
+                        <Flex align="center" gap={5} style={{ flex: '1 1 110px' }}>
+                            <PiCpuDuotone className={classes.icon} size={11} />
+                            <Progress
+                                color={isOnline ? cpuColor : 'gray'}
+                                radius="xl"
+                                size={4}
+                                style={{ flex: 1 }}
+                                value={Math.min(100, cpuPercent ?? 0)}
                             />
                             <Text
-                                c={isCoreActive ? 'teal' : 'dimmed'}
+                                c={cpuTextColor}
                                 className={classes.tabular}
-                                fw={isCoreActive ? 600 : 500}
-                                size="xs"
+                                fw={cpuTextColor !== 'dimmed' ? 700 : 500}
+                                size="11px"
                             >
-                                {isCoreActive ? getCoreUptimeUtil(node.coreUptime) : '—'}
+                                {cpuPercent !== null ? `${cpuPercent}%` : '—'}
                             </Text>
                         </Flex>
 
-                        <Flex align="center" gap={5} style={{ flex: '1 1 90px', maxWidth: 140 }}>
+                        <Flex align="center" gap={5} style={{ flex: '1 1 110px' }}>
                             <PiMemoryDuotone className={classes.icon} size={11} />
                             <Progress
-                                color={ramColor}
-                                radius="sm"
-                                size="xs"
+                                color={isOnline ? ramColor : 'gray'}
+                                radius="xl"
+                                size={4}
                                 style={{ flex: 1 }}
                                 value={ramPercentage ?? 0}
                             />
-                            <Text c="dimmed" className={classes.tabular} size="xs">
+                            <Text
+                                c={ramTextColor}
+                                className={classes.tabular}
+                                fw={ramTextColor !== 'dimmed' ? 700 : 500}
+                                size="11px"
+                            >
                                 {ramPercentage !== null ? `${ramPercentage}%` : '—'}
                             </Text>
-                        </Flex>
-
-                        <Flex align="center" gap={8} ml="auto">
-                            <Flex align="center" gap={3}>
-                                <PiArrowDownDuotone color="var(--mantine-color-teal-5)" size={10} />
-                                <Text c="dimmed" className={classes.tabular} size="xs">
-                                    {rxSpeed ?? '—'}
-                                </Text>
-                            </Flex>
-                            <Flex align="center" gap={3}>
-                                <PiArrowUpDuotone color="var(--mantine-color-cyan-5)" size={10} />
-                                <Text c="dimmed" className={classes.tabular} size="xs">
-                                    {txSpeed ?? '—'}
-                                </Text>
-                            </Flex>
                         </Flex>
                     </div>
                 </Box>

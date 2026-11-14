@@ -319,7 +319,9 @@
       "load-legend": "0–70% 正常 · 70–100% 较高 · >100% 过载",
       "no-data": "暂无数据",
       "copy-address": "点击复制节点地址",
-      "usage-stats": "节点流量统计"
+      "usage-stats": "节点流量统计",
+      "offline-telemetry": "离线 · 无实时速率",
+      "disabled-telemetry": "节点已停用"
     }
   },
   "node-status-badge": {
@@ -2623,7 +2625,8 @@
     "collapse": "收起分布",
     "filter-online": "在线 ({{count}})",
     "filter-attention": "异常 / 离线 ({{count}})",
-    "search-placeholder": "搜索节点名称、地址、服务商或地区…"
+    "search-placeholder": "搜索节点名称、地址、服务商或地区…",
+    "short-subtitle": "在线 {{connected}} / {{total}} 台"
   },
   "nodes-metrics-page": {
     "title": "节点实时流量指标",
@@ -2654,7 +2657,9 @@
       "cpu": "CPU",
       "ram": "内存",
       "ram-detail": "内存占用：{{used}} / {{total}} ({{percent}}%)",
-      "select-node": "选择节点 {{name}}"
+      "select-node": "选择节点 {{name}}",
+      "live-rate": "实时吞吐",
+      "active-users": "在线会话"
     }
   },
   "hosts-overview": {

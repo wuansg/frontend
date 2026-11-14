@@ -316,7 +316,9 @@
       "load-legend": "0–70% норма · 70–100% высокая · >100% перегрузка",
       "no-data": "Нет данных",
       "copy-address": "Нажмите, чтобы скопировать адрес",
-      "usage-stats": "Статистика трафика"
+      "usage-stats": "Статистика трафика",
+      "offline-telemetry": "Офлайн · нет скорости",
+      "disabled-telemetry": "Нода отключена"
     }
   },
   "node-status-badge": {
@@ -2579,7 +2581,8 @@
     "collapse": "Скрыть сводку",
     "filter-online": "Онлайн ({{count}})",
     "filter-attention": "Внимание ({{count}})",
-    "search-placeholder": "Фильтр по имени, адресу, провайдеру или региону…"
+    "search-placeholder": "Фильтр по имени, адресу, провайдеру или региону…",
+    "short-subtitle": "{{connected}} / {{total}} онлайн"
   },
   "traffic-usage": {
     "direction": "Направление трафика",
@@ -2636,7 +2639,9 @@
       "cpu": "CPU",
       "ram": "ОЗУ",
       "ram-detail": "Память: {{used}} / {{total}} ({{percent}}%)",
-      "select-node": "Выбрать узел {{name}}"
+      "select-node": "Выбрать узел {{name}}",
+      "live-rate": "Скорость",
+      "active-users": "Сессии"
     }
   },
   "hosts-overview": {

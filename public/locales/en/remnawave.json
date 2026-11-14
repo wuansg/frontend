@@ -319,7 +319,9 @@
       "load-legend": "0–70% normal · 70–100% high · >100% overloaded",
       "no-data": "No data",
       "copy-address": "Click to copy node address",
-      "usage-stats": "Traffic statistics"
+      "usage-stats": "Traffic statistics",
+      "offline-telemetry": "Offline · no live rate",
+      "disabled-telemetry": "Node disabled"
     }
   },
   "node-status-badge": {
@@ -2620,7 +2622,8 @@
     "collapse": "Hide Breakdown",
     "filter-online": "Online ({{count}})",
     "filter-attention": "Attention ({{count}})",
-    "search-placeholder": "Filter by name, address, provider or region…"
+    "search-placeholder": "Filter by name, address, provider or region…",
+    "short-subtitle": "{{connected}} / {{total}} online"
   },
   "nodes-metrics-page": {
     "title": "Node Traffic Metrics",
@@ -2651,7 +2654,9 @@
       "cpu": "CPU",
       "ram": "RAM",
       "ram-detail": "Memory: {{used}} / {{total}} ({{percent}}%)",
-      "select-node": "Select node {{name}}"
+      "select-node": "Select node {{name}}",
+      "live-rate": "Throughput",
+      "active-users": "Sessions"
     }
   },
   "hosts-overview": {

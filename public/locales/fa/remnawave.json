@@ -316,7 +316,9 @@
       "load-legend": "۰–۷۰٪ عادی · ۷۰–۱۰۰٪ بالا · >۱۰۰٪ سربار",
       "no-data": "بدون داده",
       "copy-address": "برای کپی آدرس کلیک کنید",
-      "usage-stats": "آمار مصرف نود"
+      "usage-stats": "آمار مصرف نود",
+      "offline-telemetry": "آفلاین · بدون نرخ زنده",
+      "disabled-telemetry": "نود غیرفعال"
     }
   },
   "node-status-badge": {
@@ -2579,7 +2581,8 @@
     "collapse": "بستن جزئیات",
     "filter-online": "آنلاین ({{count}})",
     "filter-attention": "نیازمند بررسی ({{count}})",
-    "search-placeholder": "جست‌وجوی نام، آدرس، ارائه‌دهنده یا منطقه…"
+    "search-placeholder": "جست‌وجوی نام، آدرس، ارائه‌دهنده یا منطقه…",
+    "short-subtitle": "{{connected}} / {{total}} آنلاین"
   },
   "traffic-usage": {
     "direction": "جهت ترافیک",
@@ -2636,7 +2639,9 @@
       "cpu": "CPU",
       "ram": "حافظه",
       "ram-detail": "حافظه: {{used}} / {{total}} ({{percent}}٪)",
-      "select-node": "انتخاب نود {{name}}"
+      "select-node": "انتخاب نود {{name}}",
+      "live-rate": "نرخ عبوری",
+      "active-users": "نشست‌ها"
     }
   },
   "hosts-overview": {

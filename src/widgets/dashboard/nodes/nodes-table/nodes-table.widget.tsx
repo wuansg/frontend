@@ -81,7 +81,7 @@ export const NodesTableWidget = memo((props: IProps) => {
 
     const virtualizer = useWindowVirtualizer({
         count: state.length,
-        estimateSize: () => (isMobile ? 164 : 96),
+        estimateSize: () => (isMobile ? 210 : 104),
         overscan: 7,
         scrollMargin,
         getItemKey: (index) => state[index].uuid

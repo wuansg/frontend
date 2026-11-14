@@ -13,6 +13,7 @@ import {
 import { useClipboard } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { GetNodesCommand } from '@remnawave/backend-contract'
+import clsx from 'clsx'
 import { TFunction } from 'i18next'
 import { memo, useMemo } from 'react'
 import ReactCountryFlag from 'react-country-flag'
@@ -23,7 +24,9 @@ import {
     PiArrowUpDuotone,
     PiCpuDuotone,
     PiGlobeSimple,
-    PiUsersDuotone
+    PiProhibitDuotone,
+    PiUsersDuotone,
+    PiWarningCircleDuotone
 } from 'react-icons/pi'
 import { TbAlertCircle, TbChartArcs } from 'react-icons/tb'
 
@@ -53,12 +56,21 @@ const getStatusInfo = (
     node: MatrixNodeType,
     isConfigMissing: boolean,
     t: TFunction
-): { color: string; dotColor: string; label: string; tone: NodeStatusTone } => {
+): {
+    color: string
+    dotColor: string
+    isAlert: boolean
+    isLive: boolean
+    label: string
+    tone: NodeStatusTone
+} => {
     if (isConfigMissing) {
         return {
             tone: 'red',
             color: 'red',
-            dotColor: 'var(--mantine-color-red-5)',
+            dotColor: 'var(--mantine-color-white)',
+            isAlert: true,
+            isLive: false,
             label: t('node-card.widget.dangling')
         }
     }
@@ -67,6 +79,8 @@ const getStatusInfo = (
             tone: 'gray',
             color: 'gray',
             dotColor: 'var(--mantine-color-gray-5)',
+            isAlert: false,
+            isLive: false,
             label: t('node-status-badge.widget.disabled')
         }
     }
@@ -75,7 +89,9 @@ const getStatusInfo = (
             return {
                 tone: 'orange',
                 color: 'orange',
-                dotColor: 'var(--mantine-color-orange-5)',
+                dotColor: 'var(--mantine-color-white)',
+                isAlert: true,
+                isLive: true,
                 label: t('node-status-badge.widget.degraded')
             }
         }
@@ -84,6 +100,8 @@ const getStatusInfo = (
                 tone: 'blue',
                 color: 'blue',
                 dotColor: 'var(--mantine-color-blue-5)',
+                isAlert: false,
+                isLive: true,
                 label: t('node-status-badge.widget.forwarding-only')
             }
         }
@@ -92,6 +110,8 @@ const getStatusInfo = (
                 tone: 'gray',
                 color: 'gray',
                 dotColor: 'var(--mantine-color-gray-5)',
+                isAlert: false,
+                isLive: true,
                 label: t('node-status-badge.widget.idle')
             }
         }
@@ -99,6 +119,8 @@ const getStatusInfo = (
             tone: 'teal',
             color: 'teal',
             dotColor: 'var(--mantine-color-teal-5)',
+            isAlert: false,
+            isLive: true,
             label: t('node-status-badge.widget.core-active')
         }
     }
@@ -107,13 +129,17 @@ const getStatusInfo = (
             tone: 'yellow',
             color: 'yellow',
             dotColor: 'var(--mantine-color-yellow-5)',
+            isAlert: false,
+            isLive: false,
             label: t('node-status-badge.widget.connecting')
         }
     }
     return {
         tone: 'red',
         color: 'red',
-        dotColor: 'var(--mantine-color-red-5)',
+        dotColor: 'var(--mantine-color-white)',
+        isAlert: true,
+        isLive: false,
         label: t('node-status-badge.widget.disconnected')
     }
 }
@@ -123,6 +149,13 @@ const getProgressColor = (percentage: number, fallback: boolean) => {
     if (percentage > 95) return 'red.6'
     if (percentage > 80) return 'yellow.6'
     return 'teal.6'
+}
+
+const getPercentTextColor = (percent: number | null, isOnline: boolean) => {
+    if (!isOnline || percent === null) return 'dimmed'
+    if (percent > 90) return 'red'
+    if (percent > 70) return 'orange'
+    return undefined
 }
 
 export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
@@ -144,6 +177,7 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
     const maxData = node.isTrafficTrackingActive
         ? prettifyBytesUtil(node.trafficLimitBytes || 0) || '∞'
         : '∞'
+    const hasFiniteQuota = node.isTrafficTrackingActive && (node.trafficLimitBytes ?? 0) > 0
     const percentage = useMemo(() => {
         if (!node.isTrafficTrackingActive) return 0
         if (node.trafficLimitBytes === 0) return 100
@@ -174,13 +208,13 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
         let cpuColor = 'teal'
         if (cpuPercent !== null) {
             if (cpuPercent > 100) cpuColor = 'red'
-            else if (cpuPercent > 70) cpuColor = 'yellow'
+            else if (cpuPercent > 70) cpuColor = 'orange'
         }
 
         const ramPercent = memoryTotal > 0 ? Math.round((memoryUsed / memoryTotal) * 100) : 0
         let ramColor = 'teal'
         if (ramPercent > 90) ramColor = 'red'
-        else if (ramPercent > 70) ramColor = 'yellow'
+        else if (ramPercent > 70) ramColor = 'orange'
 
         return {
             cpus: safeCpus,
@@ -197,6 +231,9 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
     }, [node.system])
 
     const addressLabel = node.port ? `${node.address}:${node.port}` : node.address
+    const activeUsersCount = isOnline ? (node.usersOnline ?? 0) : 0
+    const cpuTextColor = getPercentTextColor(telemetry.cpuPercent, isOnline)
+    const ramTextColor = getPercentTextColor(telemetry.ramPercent, isOnline)
 
     const handleCopy = (event: React.MouseEvent) => {
         event.stopPropagation()
@@ -213,16 +250,21 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
         showModal('nodes_nodeUsageStatsDrawer', { nodeUuid: node.uuid })
     }
 
+    let quotaBadgeColor = 'gray'
+    if (percentage > 95) quotaBadgeColor = 'red'
+    else if (percentage > 80) quotaBadgeColor = 'orange'
+
     return (
         <Box
             className={classes.tile}
+            data-disabled={node.isDisabled}
             data-selected={isSelected}
             data-status-tone={statusInfo.tone}
             onClick={() => onViewNode(node.uuid)}
         >
-            {/* Header Row: Checkbox + Flag + Name | Status Pill + Quick Stats */}
+            {/* Header Row: Checkbox + Framed Flag + Bold Name | High-Contrast Status Pill + Stats */}
             <Flex align="center" gap={8} justify="space-between" miw={0}>
-                <Flex align="center" gap={7} miw={0} style={{ flex: 1 }}>
+                <Flex align="center" gap={8} miw={0} style={{ flex: 1 }}>
                     <Box
                         onClick={(event) => {
                             event.stopPropagation()
@@ -241,39 +283,49 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                         />
                     </Box>
 
-                    {node.countryCode && node.countryCode !== 'XX' && (
-                        <ReactCountryFlag
-                            countryCode={node.countryCode}
-                            style={{
-                                width: '1.3em',
-                                height: '0.96em',
-                                borderRadius: '2px',
-                                flexShrink: 0
-                            }}
-                            svg
-                        />
-                    )}
+                    <span className={classes.flagFrame}>
+                        {node.countryCode && node.countryCode !== 'XX' ? (
+                            <ReactCountryFlag
+                                countryCode={node.countryCode}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    display: 'block'
+                                }}
+                                svg
+                            />
+                        ) : (
+                            <PiGlobeSimple className={classes.icon} size={13} />
+                        )}
+                    </span>
 
-                    <Text className={classes.nodeName} fw={600} size="sm" title={node.name}>
+                    <Text className={classes.nodeName} fw={700} title={node.name}>
                         {node.name}
                     </Text>
                 </Flex>
 
-                <Flex align="center" gap={4} style={{ flexShrink: 0 }}>
+                <Flex align="center" gap={5} style={{ flexShrink: 0 }}>
                     <Badge
                         color={statusInfo.color}
+                        fw={700}
                         leftSection={
                             isConfigMissing ? (
                                 <TbAlertCircle size={11} />
                             ) : (
                                 <span
-                                    className={classes.statusDot}
-                                    style={{ backgroundColor: statusInfo.dotColor }}
+                                    className={clsx(classes.statusDot, {
+                                        [classes.statusDotLive]: statusInfo.isLive
+                                    })}
+                                    style={{
+                                        backgroundColor: statusInfo.dotColor,
+                                        color: statusInfo.dotColor
+                                    }}
                                 />
                             )
                         }
                         size="xs"
-                        variant="light"
+                        variant={statusInfo.isAlert ? 'filled' : 'light'}
                     >
                         {statusInfo.label}
                     </Badge>
@@ -284,14 +336,14 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                         onClick={handleOpenUsageStats}
                         size="sm"
                         title={t('node-card.widget.usage-stats')}
-                        variant="subtle"
+                        variant="light"
                     >
                         <TbChartArcs size={14} />
                     </ActionIcon>
                 </Flex>
             </Flex>
 
-            {/* Sub-header Row: Address:Port | Provider + Drift + Multiplier */}
+            {/* Sub-header Row: Monospace Address:Port | Multiplier + Drift + Provider */}
             <Flex align="center" gap={6} justify="space-between" miw={0}>
                 <Flex align="center" gap={5} miw={0} style={{ flex: 1 }}>
                     <PiGlobeSimple className={classes.icon} size={12} />
@@ -299,7 +351,6 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                         c="dimmed"
                         className={classes.addressText}
                         onClick={handleCopy}
-                        size="xs"
                         title={t('node-card.widget.copy-address')}
                     >
                         {addressLabel}
@@ -308,12 +359,18 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
 
                 <Flex align="center" gap={4} style={{ flexShrink: 0 }}>
                     {node.versionDrift && (
-                        <Badge color="orange" size="xs" variant="light">
+                        <Badge color="orange" fw={700} size="xs" variant="light">
                             {t('node-card.widget.version-drift')}
                         </Badge>
                     )}
                     {node.consumptionMultiplier !== 1 && (
-                        <Badge className={classes.tabular} color="violet" size="xs" variant="light">
+                        <Badge
+                            className={classes.tabular}
+                            color="violet"
+                            fw={700}
+                            size="xs"
+                            variant="light"
+                        >
                             {node.consumptionMultiplier.toFixed(1)}×
                         </Badge>
                     )}
@@ -352,76 +409,125 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                 </Flex>
             </Flex>
 
-            {/* 2-Column Live KPI Strip: Throughput | Online Users & Uptime */}
+            {/* 2-Column Live KPI Strip: Throughput | Active Sessions & Uptime */}
             <div className={classes.kpiStrip}>
-                <div className={classes.kpiCell}>
-                    <Flex align="center" gap={5} miw={0}>
-                        <PiArrowDownDuotone
-                            color="var(--mantine-color-teal-5)"
-                            size={12}
-                            style={{ flexShrink: 0 }}
-                        />
-                        <Text className={classes.tabular} fw={600} size="xs" truncate>
-                            {telemetry.rxSpeed}
-                        </Text>
-                    </Flex>
-                    <Flex align="center" gap={5} miw={0}>
-                        <PiArrowUpDuotone
-                            color="var(--mantine-color-cyan-5)"
-                            size={12}
-                            style={{ flexShrink: 0 }}
-                        />
-                        <Text c="dimmed" className={classes.tabular} fw={500} size="xs" truncate>
-                            {telemetry.txSpeed}
-                        </Text>
-                    </Flex>
-                </div>
+                <div className={clsx(classes.kpiCell, !isOnline && classes.kpiCellOffline)}>
+                    <Text c="dimmed" className={classes.kpiLabel}>
+                        {t('nodes-matrix.widget.live-rate')}
+                    </Text>
 
-                <div className={classes.kpiCell}>
-                    <Flex align="center" gap={5} justify="space-between" miw={0}>
-                        <Flex align="center" gap={4}>
-                            <PiUsersDuotone
-                                color={
-                                    (node.usersOnline ?? 0) > 0
-                                        ? 'var(--mantine-color-teal-5)'
-                                        : 'var(--mantine-color-dimmed)'
-                                }
-                                size={13}
-                            />
-                            <Text className={classes.tabular} fw={600} size="xs">
-                                {node.usersOnline ?? 0}
+                    {isOnline ? (
+                        <Stack gap={2}>
+                            <Flex align="center" gap={5} miw={0}>
+                                <PiArrowDownDuotone
+                                    color="var(--mantine-color-teal-5)"
+                                    size={13}
+                                    style={{ flexShrink: 0 }}
+                                />
+                                <Text className={classes.tabular} fw={700} size="sm" truncate>
+                                    {telemetry.rxSpeed}
+                                </Text>
+                            </Flex>
+                            <Flex align="center" gap={5} miw={0}>
+                                <PiArrowUpDuotone
+                                    color="var(--mantine-color-cyan-5)"
+                                    size={12}
+                                    style={{ flexShrink: 0 }}
+                                />
+                                <Text
+                                    c="dimmed"
+                                    className={classes.tabular}
+                                    fw={600}
+                                    size="xs"
+                                    truncate
+                                >
+                                    {telemetry.txSpeed}
+                                </Text>
+                            </Flex>
+                        </Stack>
+                    ) : (
+                        <Flex align="center" gap={5} py={4}>
+                            {node.isDisabled ? (
+                                <PiProhibitDuotone
+                                    color="var(--mantine-color-gray-5)"
+                                    size={14}
+                                    style={{ flexShrink: 0 }}
+                                />
+                            ) : (
+                                <PiWarningCircleDuotone
+                                    color="var(--mantine-color-red-5)"
+                                    size={14}
+                                    style={{ flexShrink: 0 }}
+                                />
+                            )}
+                            <Text
+                                c={node.isDisabled ? 'dimmed' : 'red'}
+                                fw={600}
+                                size="xs"
+                                truncate
+                            >
+                                {node.isDisabled
+                                    ? t('node-card.widget.disabled-telemetry')
+                                    : t('node-card.widget.offline-telemetry')}
                             </Text>
                         </Flex>
-                        <Text c="dimmed" size="10px">
-                            {t('use-nodes-table-widget.online')}
+                    )}
+                </div>
+
+                <div className={clsx(classes.kpiCell, !isOnline && classes.kpiCellOffline)}>
+                    <Flex align="center" gap={4} justify="space-between" miw={0}>
+                        <Text c="dimmed" className={classes.kpiLabel}>
+                            {t('nodes-matrix.widget.active-users')}
                         </Text>
+
+                        {isCoreActive && (
+                            <Flex align="center" gap={3} miw={0}>
+                                <PiCpuDuotone
+                                    color="var(--mantine-color-teal-5)"
+                                    size={11}
+                                    style={{ flexShrink: 0 }}
+                                />
+                                <Text
+                                    c="teal"
+                                    className={classes.tabular}
+                                    fw={700}
+                                    size="11px"
+                                    truncate
+                                >
+                                    {getCoreUptimeUtil(node.coreUptime)}
+                                </Text>
+                            </Flex>
+                        )}
                     </Flex>
 
-                    <Flex align="center" gap={4} miw={0}>
-                        <PiCpuDuotone
+                    <Flex align="baseline" gap={6} miw={0} pt={2}>
+                        <PiUsersDuotone
                             color={
-                                isCoreActive
+                                activeUsersCount > 0
                                     ? 'var(--mantine-color-teal-5)'
                                     : 'var(--mantine-color-dimmed)'
                             }
-                            size={12}
-                            style={{ flexShrink: 0 }}
+                            size={15}
+                            style={{ flexShrink: 0, alignSelf: 'center' }}
                         />
                         <Text
-                            c={isCoreActive ? 'teal' : 'dimmed'}
+                            c={activeUsersCount > 0 ? 'teal' : 'dimmed'}
                             className={classes.tabular}
-                            fw={isCoreActive ? 600 : 400}
-                            size="xs"
-                            truncate
+                            fw={800}
+                            lh={1.15}
+                            size="lg"
                         >
-                            {isCoreActive ? getCoreUptimeUtil(node.coreUptime) : '—'}
+                            {activeUsersCount}
+                        </Text>
+                        <Text c="dimmed" size="11px">
+                            {t('use-nodes-table-widget.online')}
                         </Text>
                     </Flex>
                 </div>
             </div>
 
             {/* Dual System Gauges: CPU Load | RAM */}
-            <div className={classes.gaugeGrid}>
+            <div className={clsx(classes.gaugeGrid, !isOnline && classes.gaugeGridOffline)}>
                 <Tooltip
                     label={
                         telemetry.loadAvg ? (
@@ -467,21 +573,26 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                     radius="md"
                     w={250}
                 >
-                    <Stack gap={4} miw={0}>
+                    <Stack gap={5} miw={0}>
                         <Flex align="center" justify="space-between">
-                            <Text c="dimmed" className={classes.tabular} size="11px">
+                            <Text c="dimmed" className={classes.tabular} fw={500} size="11px">
                                 {`${t('nodes-matrix.widget.cpu')} · ${telemetry.cpus}C`}
                             </Text>
-                            <Text className={classes.tabular} fw={500} size="11px">
+                            <Text
+                                c={cpuTextColor}
+                                className={classes.tabular}
+                                fw={cpuTextColor && cpuTextColor !== 'dimmed' ? 700 : 600}
+                                size="11px"
+                            >
                                 {telemetry.loadAvg
                                     ? `${telemetry.loadAvg[0].toFixed(2)} (${telemetry.cpuPercent}%)`
                                     : '—'}
                             </Text>
                         </Flex>
                         <Progress
-                            color={telemetry.cpuColor}
-                            radius="sm"
-                            size={4}
+                            color={isOnline ? telemetry.cpuColor : 'gray'}
+                            radius="xl"
+                            size={6}
                             value={Math.min(100, telemetry.cpuPercent ?? 0)}
                         />
                     </Stack>
@@ -499,19 +610,24 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                     }
                     radius="md"
                 >
-                    <Stack gap={4} miw={0}>
+                    <Stack gap={5} miw={0}>
                         <Flex align="center" justify="space-between">
-                            <Text c="dimmed" size="11px">
+                            <Text c="dimmed" fw={500} size="11px">
                                 {t('nodes-matrix.widget.ram')}
                             </Text>
-                            <Text className={classes.tabular} fw={500} size="11px">
+                            <Text
+                                c={ramTextColor}
+                                className={classes.tabular}
+                                fw={ramTextColor && ramTextColor !== 'dimmed' ? 700 : 600}
+                                size="11px"
+                            >
                                 {telemetry.ramPercent !== null ? `${telemetry.ramPercent}%` : '—'}
                             </Text>
                         </Flex>
                         <Progress
-                            color={telemetry.ramColor}
-                            radius="sm"
-                            size={4}
+                            color={isOnline ? telemetry.ramColor : 'gray'}
+                            radius="xl"
+                            size={6}
                             value={telemetry.ramPercent ?? 0}
                         />
                     </Stack>
@@ -520,14 +636,26 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
 
             {/* Traffic Quota & Budget Progress */}
             <div className={classes.quotaBlock}>
-                <Flex align="baseline" gap={6} justify="space-between">
+                <Flex align="center" gap={6} justify="space-between">
                     <Flex align="baseline" gap={4} miw={0}>
-                        <Text className={classes.tabular} fw={600} size="xs" truncate>
+                        <Text className={classes.tabular} fw={700} size="xs" truncate>
                             {prettyUsedData}
                         </Text>
                         <Text c="dimmed" className={classes.tabular} size="11px">
                             {`/ ${maxData}`}
                         </Text>
+                        {hasFiniteQuota && (
+                            <Badge
+                                className={classes.tabular}
+                                color={quotaBadgeColor}
+                                fw={700}
+                                ml={2}
+                                size="xs"
+                                variant={percentage > 80 ? 'filled' : 'light'}
+                            >
+                                {`${percentage}%`}
+                            </Badge>
+                        )}
                     </Flex>
 
                     {node.isTrafficTrackingActive && (
@@ -544,7 +672,7 @@ export const NodeMatrixTile = memo((props: NodeMatrixTileProps) => {
                     color={node.isTrafficTrackingActive && percentage >= 0 ? progressColor : 'teal'}
                     compact
                     node={node}
-                    size="xs"
+                    size="sm"
                     value={node.isTrafficTrackingActive && percentage >= 0 ? percentage : 100}
                 />
 
