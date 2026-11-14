@@ -3,14 +3,13 @@ import { getTimeRange } from '@mantine/dates'
 import { UseFormReturnType } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { BulkUpdateUsersCommand, GetExternalSquadsCommand } from '@remnawave/backend-contract'
-import dayjs from 'dayjs'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiCalendarDuotone } from 'react-icons/pi'
 import { TbShield, TbStatusChange, TbWebhook } from 'react-icons/tb'
 
-import { userStatusValues } from '@shared/constants/forms'
+import { getUserStatusOptions } from '@shared/constants/forms/user-status.constants'
 import { DateTimePicker } from '@shared/ui/date-time-picker'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
@@ -54,7 +53,7 @@ export const BulkAccessSettingsCard = (props: IProps) => {
                         <Select
                             allowDeselect={true}
                             clearable
-                            data={userStatusValues.filter(
+                            data={getUserStatusOptions(t).filter(
                                 (status) => status.value !== 'EXPIRED' && status.value !== 'LIMITED'
                             )}
                             description={t(

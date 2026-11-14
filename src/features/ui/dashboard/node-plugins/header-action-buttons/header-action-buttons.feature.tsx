@@ -49,7 +49,7 @@ export const NodePluginsHeaderActionButtonsFeature = () => {
             </ActionIconGroup>
 
             <ActionIconGroup>
-                <Tooltip label="Executor" withArrow>
+                <Tooltip label={t('node-plugin-executor.title')} withArrow>
                     <ActionIcon
                         color="grape"
                         onClick={() => showModal('nodePlugins_nodePluginExecutorDrawer')}

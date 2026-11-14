@@ -57,7 +57,7 @@ export function UsersMetrics() {
         }
     ]
     return (
-        <SimpleGrid cols={{ base: 1, xs: 2, xl: 5 }} spacing="xs">
+        <SimpleGrid cols={{ base: 2, sm: 3, lg: 5 }} spacing="xs">
             {cards.map((card, index) => (
                 <motion.div
                     animate={{ opacity: 1, y: 0 }}

@@ -362,7 +362,9 @@ export const NodePluginExecutorContent = (props: IProps) => {
                             iconColor="violet"
                             IconComponent={TbServer2}
                             iconVariant="soft"
-                            subtitle={`${selectedNodeUuids.size} selected`}
+                            subtitle={t('node-plugin-executor.content.selected-count', {
+                                count: selectedNodeUuids.size
+                            })}
                             title={t('constants.nodes')}
                             titleOrder={5}
                         />
@@ -388,10 +390,10 @@ export const NodePluginExecutorContent = (props: IProps) => {
                                             style={{
                                                 border: isSelected
                                                     ? '1px solid var(--mantine-color-cyan-6)'
-                                                    : '1px solid rgba(255,255,255,0.06)',
+                                                    : '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
                                                 background: isSelected
                                                     ? 'var(--mantine-color-cyan-light)'
-                                                    : 'transparent',
+                                                    : 'light-dark(var(--mantine-color-gray-0), transparent)',
                                                 transition: 'all 0.15s ease'
                                             }}
                                         >
@@ -412,9 +414,11 @@ export const NodePluginExecutorContent = (props: IProps) => {
                                                     {node.address && (
                                                         <Text
                                                             c="dimmed"
-                                                            ff="monospace"
                                                             lineClamp={1}
                                                             size="xs"
+                                                            style={{
+                                                                fontVariantNumeric: 'tabular-nums'
+                                                            }}
                                                         >
                                                             {node.address}
                                                         </Text>

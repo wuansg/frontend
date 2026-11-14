@@ -133,7 +133,7 @@ export function SessionsExplorerWidget() {
     const renderCompletedState = () => (
         <Stack gap="md">
             {stats && (
-                <SimpleGrid cols={{ xs: 2, sm: 2, md: 4 }} spacing="xs">
+                <SimpleGrid cols={{ base: 2, md: 4 }} spacing="xs">
                     <MetricCardShared
                         iconColor="blue"
                         IconComponent={TbNetwork}

@@ -1,6 +1,6 @@
-import { ActionIcon, ActionIconGroup, Group, Tooltip } from '@mantine/core'
+import { ActionIcon, Button, Group, SegmentedControl, Tooltip } from '@mantine/core'
 import { useTranslation } from 'react-i18next'
-import { TbCards, TbPlus, TbRefresh, TbTable } from 'react-icons/tb'
+import { TbLayoutGrid, TbLayoutList, TbPlus, TbRefresh } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
 import { HelpActionIconShared } from '@shared/_modals/universal'
@@ -10,10 +10,7 @@ import { UniversalSpotlightActionIconShared } from '@shared/ui/universal-spotlig
 
 import { HOSTS_VIEW_MODE } from '@entities/dashboard/view-preferences-store'
 
-interface IProps {
-    setViewMode: (viewMode: HOSTS_VIEW_MODE) => void
-    viewMode: HOSTS_VIEW_MODE
-}
+import { IProps } from './interfaces'
 
 export const HeaderActionButtonsFeature = (props: IProps) => {
     const { setViewMode, viewMode } = props
@@ -33,54 +30,60 @@ export const HeaderActionButtonsFeature = (props: IProps) => {
     }
 
     return (
-        <Group grow preventGrowOverflow={false} wrap="wrap">
-            <HelpActionIconShared hidden={false} screen="PAGE_HOSTS" />
+        <Group align="center" gap="xs" wrap="wrap">
+            <SegmentedControl
+                aria-label={t('nodes-header-action-buttons.feature.toggle-view-mode')}
+                data={[
+                    {
+                        value: HOSTS_VIEW_MODE.CARDS,
+                        label: (
+                            <Group gap={6} justify="center" wrap="nowrap">
+                                <TbLayoutList size={16} />
+                                <span>{t('nodes-header-action-buttons.feature.view-list')}</span>
+                            </Group>
+                        )
+                    },
+                    {
+                        value: HOSTS_VIEW_MODE.MATRIX,
+                        label: (
+                            <Group gap={6} justify="center" wrap="nowrap">
+                                <TbLayoutGrid size={16} />
+                                <span>{t('nodes-header-action-buttons.feature.view-matrix')}</span>
+                            </Group>
+                        )
+                    }
+                ]}
+                onChange={(value) => setViewMode(value as HOSTS_VIEW_MODE)}
+                size="sm"
+                value={viewMode}
+            />
 
-            <UniversalSpotlightActionIconShared />
-
-            <ActionIconGroup>
-                <Tooltip label="Toggle view mode">
-                    <ActionIcon
-                        color="gray"
-                        onClick={() =>
-                            setViewMode(
-                                viewMode === HOSTS_VIEW_MODE.TABLE
-                                    ? HOSTS_VIEW_MODE.CARDS
-                                    : HOSTS_VIEW_MODE.TABLE
-                            )
-                        }
-                        size="input-md"
-                        variant="soft"
-                    >
-                        {viewMode === HOSTS_VIEW_MODE.CARDS ? (
-                            <TbTable size="24px" />
-                        ) : (
-                            <TbCards size="24px" />
-                        )}
-                    </ActionIcon>
-                </Tooltip>
-            </ActionIconGroup>
-
-            <ActionIconGroup>
+            <Group gap={4} wrap="nowrap">
+                <HelpActionIconShared hidden={false} screen="PAGE_HOSTS" />
+                <UniversalSpotlightActionIconShared />
                 <Tooltip label={t('common.update')} withArrow>
                     <ActionIcon
+                        aria-label={t('common.update')}
+                        color="gray"
                         loading={isFetching}
                         onClick={handleUpdate}
-                        size="input-md"
-                        variant="soft"
+                        size="input-sm"
+                        variant="default"
                     >
-                        <TbRefresh size="24px" />
+                        <TbRefresh size={18} />
                     </ActionIcon>
                 </Tooltip>
-            </ActionIconGroup>
+            </Group>
 
-            <ActionIconGroup>
-                <Tooltip label={t('header-action-buttons.feature.create-new-host')} withArrow>
-                    <ActionIcon color="teal" onClick={handleCreate} size="input-md" variant="soft">
-                        <TbPlus size="24px" />
-                    </ActionIcon>
-                </Tooltip>
-            </ActionIconGroup>
+            <Button
+                color="teal"
+                leftSection={<TbPlus size={16} />}
+                onClick={handleCreate}
+                size="sm"
+                variant="light"
+            >
+                {t('header-action-buttons.feature.create-new-host')}
+            </Button>
         </Group>
     )
 }

@@ -37,8 +37,15 @@ export function SvgLibraryBlockComponent(props: IProps) {
                             title={t('svg-library-modal.component.svg-library')}
                             titleOrder={5}
                         />
-                        <Badge color="violet" size="sm" variant="light">
-                            {iconCount} icons
+                        <Badge
+                            color="violet"
+                            size="sm"
+                            style={{ fontVariantNumeric: 'tabular-nums' }}
+                            variant="light"
+                        >
+                            {t('subpage-config-visual-editor.widget.icons-count', {
+                                count: iconCount
+                            })}
                         </Badge>
                     </Group>
 

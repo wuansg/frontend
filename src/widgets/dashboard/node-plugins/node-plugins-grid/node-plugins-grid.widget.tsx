@@ -2,14 +2,7 @@ import { Badge, Center, Group, Stack, Text, ThemeIcon } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { GetNodesCommand, GetNodePluginsCommand } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
-import {
-    TbAlertTriangle,
-    TbFlame,
-    TbLogin,
-    TbLogout,
-    TbPackage,
-    TbPlugConnectedX
-} from 'react-icons/tb'
+import { TbAlertTriangle, TbLogin, TbLogout, TbPackage } from 'react-icons/tb'
 
 import {
     QueryKeys,
@@ -165,7 +158,7 @@ export function NodePluginsGridWidget(props: IProps) {
                                     size="lg"
                                     variant="light"
                                 >
-                                    Ingress Filter
+                                    {t('node-plugins-grid.widget.ingress-filter')}
                                 </Badge>
                                 <Badge
                                     color="orange"
@@ -174,7 +167,7 @@ export function NodePluginsGridWidget(props: IProps) {
                                     size="lg"
                                     variant="light"
                                 >
-                                    Egress Filter
+                                    {t('node-plugins-grid.widget.egress-filter')}
                                 </Badge>
                             </Group>
                         </Stack>

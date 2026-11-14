@@ -1,5 +1,6 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Box, Center, DataList, Drawer, Group, Stack } from '@mantine/core'
+import { RESET_PERIODS } from '@remnawave/backend-contract'
 import { UserStatusBadge } from '@widgets/dashboard/users/user-status-badge'
 import { useTranslation } from 'react-i18next'
 import {
@@ -174,13 +175,25 @@ export const DetailedUserInfoDrawer = NiceModal.create((props: IProps) => {
                                 />
                                 <CopyableDataListItem
                                     label={t('detailed-user-info-drawer.widget.traffic-limit')}
-                                    value={prettifyBytesUtil(user.trafficLimitBytes)}
+                                    value={
+                                        user.trafficLimitBytes === 0
+                                            ? '∞'
+                                            : prettifyBytesUtil(user.trafficLimitBytes)
+                                    }
                                 />
                                 <CopyableDataListItem
                                     label={t(
                                         'detailed-user-info-drawer.widget.traffic-limit-strategy'
                                     )}
-                                    value={user.trafficLimitStrategy}
+                                    value={
+                                        {
+                                            [RESET_PERIODS.MONTH]: t('data-usage.column.monthly'),
+                                            [RESET_PERIODS.WEEK]: t('data-usage.column.weekly'),
+                                            [RESET_PERIODS.DAY]: t('data-usage.column.daily'),
+                                            [RESET_PERIODS.MONTH_ROLLING]: `${t('data-usage.column.monthly')} ↻`,
+                                            [RESET_PERIODS.NO_RESET]: '∞'
+                                        }[user.trafficLimitStrategy] ?? user.trafficLimitStrategy
+                                    }
                                 />
                                 <CopyableDataListItem
                                     label={t('detailed-user-info-drawer.widget.last-traffic-reset')}

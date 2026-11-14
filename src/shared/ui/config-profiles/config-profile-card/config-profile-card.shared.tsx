@@ -30,8 +30,8 @@ export const ConfigProfileCardShared = memo((props: IProps) => {
     return (
         <Accordion.Item
             style={{
-                border: '1px solid rgb(255, 255, 255, 0.08)',
-                background: 'rgb(255, 255, 255, 0.02)'
+                border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
+                background: 'light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02))'
             }}
             value={profile.uuid}
         >
@@ -43,7 +43,7 @@ export const ConfigProfileCardShared = memo((props: IProps) => {
                 value={profile.uuid}
             >
                 <Group mb="xs">
-                    <Text ff="monospace" fw={700} size="md">
+                    <Text fw={700} size="md">
                         {profile.name}
                     </Text>
                 </Group>
@@ -54,9 +54,9 @@ export const ConfigProfileCardShared = memo((props: IProps) => {
                                 ? 'teal'
                                 : 'cyan'
                         }
-                        ff="monospace"
                         leftSection={<PiCheckBold />}
                         size="md"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
                         variant="soft"
                     >
                         {selectedInboundsFromProfile} / {profile.inbounds.length}
@@ -65,7 +65,6 @@ export const ConfigProfileCardShared = memo((props: IProps) => {
                     <Tooltip label={t('config-profile-card.shared.active-on-nodes')}>
                         <Badge
                             color={profile.nodes.length > 0 ? 'teal' : 'cyan'}
-                            ff="monospace"
                             leftSection={<PiCpu />}
                             onClick={(e) => {
                                 e.preventDefault()
@@ -78,7 +77,7 @@ export const ConfigProfileCardShared = memo((props: IProps) => {
                                 })
                             }}
                             size="md"
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}
                             variant="soft"
                         >
                             {profile.nodes.length}

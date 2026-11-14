@@ -89,7 +89,7 @@ export const RemarksManager = ({
     }
 
     return (
-        <Card>
+        <Card withBorder>
             <Stack gap="md">
                 <Group align="center" gap="xs" justify="space-between" wrap="nowrap">
                     <Group align="center" gap="xs" wrap="nowrap">

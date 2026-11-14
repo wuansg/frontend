@@ -6,10 +6,11 @@ import {
     MRT_ColumnFilterFnsState,
     MRT_ShowHideColumnsButton,
     MRT_ToggleDensePaddingButton,
+    MRT_ToggleFiltersButton,
     MRT_ToggleFullScreenButton,
     useMantineReactTable
 } from '@kastov/mantine-react-table-open'
-import { ActionIcon, ActionIconGroup, Badge, Tooltip } from '@mantine/core'
+import { ActionIcon, ActionIconGroup, Badge, Text, Tooltip } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +28,7 @@ import {
 } from '@shared/api/hooks'
 import { SEARCH_PARAMS } from '@shared/constants/search-params'
 import { usePreventTableBackScroll } from '@shared/hooks'
+import { useIsMobile } from '@shared/hooks/use-is-mobile'
 import { DEFAULT_PAGINATION_STATE, useMrtTableBinding } from '@shared/lib/mrt-table-store'
 import { DataTableShared } from '@shared/ui/table'
 import { sToMs } from '@shared/utils/time-utils'
@@ -37,8 +39,15 @@ import {
 } from '@entities/dashboard/users/users-table-selection'
 import { useUsersTableStore } from '@entities/dashboard/users/users-table-store'
 
+import { UsersMobileList } from './users-mobile-list'
+
+const MRT_TOOLBAR_BG_STYLE = {
+    '--mrt-base-background-color': 'light-dark(var(--mantine-color-white), #1b2027)'
+}
+
 export function UserTableWidget() {
     const { t, i18n } = useTranslation()
+    const isMobile = useIsMobile()
 
     const { data: internalSquads } = useGetInternalSquads()
     const { data: externalSquads } = useGetExternalSquads()
@@ -91,7 +100,6 @@ export function UserTableWidget() {
     } = useGetUsers({
         query: params,
         rQueryParams: {
-            // enabled: bulkUsersActionsStoreActions.getUuidLength() === 0,
             refetchInterval:
                 usersTableSelectionStoreActions.getIdsLength() === 0 ? sToMs(25) : false
         }
@@ -113,6 +121,8 @@ export function UserTableWidget() {
             { replace: true }
         )
     }, [isLoading, searchParams, setSearchParams])
+
+    const selectedCount = Object.keys(tableSelection).length
 
     const table = useMantineReactTable({
         columns: tableColumns,
@@ -149,7 +159,6 @@ export function UserTableWidget() {
                 })
             }
         },
-        // mantineTableBodyCellProps: { style: { padding: '2px 6px' } },
         enableFullScreenToggle: true,
         enableSortingRemoval: true,
         enableGlobalFilter: false,
@@ -163,22 +172,16 @@ export function UserTableWidget() {
             sorting: [{ id: 'id', desc: true }]
         },
         mantineFilterTextInputProps: () => ({
-            placeholder: 'Filter by...'
+            placeholder: t('common.filter-by')
         }),
         mantineTopToolbarProps: {
-            style: {
-                '--mrt-base-background-color': '#1b2027'
-            }
+            style: MRT_TOOLBAR_BG_STYLE
         },
         mantineTableHeadProps: {
-            style: {
-                '--mrt-base-background-color': '#1b2027'
-            }
+            style: MRT_TOOLBAR_BG_STYLE
         },
         mantineBottomToolbarProps: {
-            style: {
-                '--mrt-base-background-color': '#1b2027'
-            }
+            style: MRT_TOOLBAR_BG_STYLE
         },
         mantinePaperProps: {
             style: {
@@ -214,6 +217,9 @@ export function UserTableWidget() {
         enableColumnPinning: true,
         positionToolbarAlertBanner: 'top',
         renderToolbarAlertBannerContent: () => {
+            if (isError && selectedCount === 0) {
+                return <Text size="sm">{t('user-table.widget.error-loading-data')}</Text>
+            }
             return (
                 <UsersTableSelectionFeature
                     resetRowSelection={table.resetRowSelection}
@@ -230,8 +236,8 @@ export function UserTableWidget() {
                         withArrow
                     >
                         <ActionIcon
-                            color="indigo"
                             aria-label="Access audit"
+                            color="indigo"
                             onClick={() => showModal('users_accessAuditModal', {})}
                             size="lg"
                             variant="soft"
@@ -261,6 +267,7 @@ export function UserTableWidget() {
                     </Tooltip>
                 </ActionIconGroup>
                 <ActionIconGroup>
+                    <MRT_ToggleFiltersButton table={tableInstance} />
                     <MRT_ToggleDensePaddingButton table={tableInstance} />
                     <MRT_ToggleFullScreenButton table={tableInstance} />
                     <MRT_ShowHideColumnsButton table={tableInstance} />
@@ -271,8 +278,7 @@ export function UserTableWidget() {
             ...persistedTableState,
             columnFilterFns,
             isLoading,
-            showAlertBanner: isError,
-            showColumnFilters: true,
+            showAlertBanner: isError || selectedCount > 0,
             showProgressBars: isFetching,
             rowSelection: tableSelection
         },
@@ -288,9 +294,6 @@ export function UserTableWidget() {
                 }
 
                 showModal('users_viewUserModal', { userId: row.original.id })
-
-                // await userModalActions.setUserUuid(row.original.uuid)
-                // userModalActions.changeModalState(true)
             },
             style: {
                 cursor: 'pointer'
@@ -306,12 +309,35 @@ export function UserTableWidget() {
                 actions={
                     <UserActionGroupFeature isLoading={isLoading} refetch={refetch} table={table} />
                 }
+                description={
+                    usersResponse?.total !== undefined
+                        ? t('users-mobile.total-count', { count: usersResponse.total })
+                        : undefined
+                }
                 icon={<PiUsersDuotone size={24} />}
-                title={t('user-table.widget.table-title')}
+                title={t('user-table.widget.directory-title')}
             />
 
             <DataTableShared.Content>
-                <MantineReactTable table={table} />
+                {isMobile ? (
+                    <UsersMobileList
+                        columnFilters={persistedTableState.columnFilters}
+                        isError={isError}
+                        isLoading={isLoading}
+                        nodes={nodes}
+                        onColumnFiltersChange={persistedTableHandlers.onColumnFiltersChange}
+                        onPaginationChange={persistedTableHandlers.onPaginationChange}
+                        onSortingChange={persistedTableHandlers.onSortingChange}
+                        pagination={persistedTableState.pagination}
+                        sorting={persistedTableState.sorting}
+                        table={table}
+                        tableSelection={tableSelection}
+                        total={usersResponse?.total ?? 0}
+                        users={usersResponse?.users ?? []}
+                    />
+                ) : (
+                    <MantineReactTable table={table} />
+                )}
             </DataTableShared.Content>
         </DataTableShared.Container>
     )

@@ -10,10 +10,9 @@ import { IMetricCardProps, MetricCardShared } from '@shared/ui/metrics/metric-ca
 import { formatCurrency } from '@shared/utils/misc'
 
 export function StatsWidget() {
-    const currentMonthOnly = dayjs().format('MMMM')
-
     const { data: nodes, isLoading } = useGetInfraBillingNodes()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const currentMonthOnly = dayjs().locale(i18n.language).format('MMMM')
 
     const today = dayjs().startOf('day')
     const billingNodes = nodes?.billingNodes ?? []
@@ -61,7 +60,7 @@ export function StatsWidget() {
     ]
 
     return (
-        <Grid mb="md">
+        <Grid>
             {stats.map((stat, index) => (
                 <Grid.Col key={index} span={{ base: 12, xs: 6, md: 6, sm: 6, lg: 3 }}>
                     <MetricCardShared isLoading={isLoading} key={index} {...stat} />

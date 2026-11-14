@@ -170,7 +170,11 @@ export function MobileNodesListWidget(props: IProps) {
                                 >
                                     <SectionCard.Section>
                                         <Group justify="space-between" wrap="nowrap">
-                                            <Group gap="sm" wrap="nowrap">
+                                            <Group
+                                                gap="sm"
+                                                style={{ flex: 1, minWidth: 0 }}
+                                                wrap="nowrap"
+                                            >
                                                 {selectMode && (
                                                     <Checkbox
                                                         checked={isSelected}
@@ -188,6 +192,7 @@ export function MobileNodesListWidget(props: IProps) {
                                                         iconVariant="soft"
                                                         subtitle={node.provider.name}
                                                         title={node.node.name}
+                                                        truncateTitle
                                                     />
                                                 )}
 
@@ -198,12 +203,17 @@ export function MobileNodesListWidget(props: IProps) {
                                                         iconVariant="soft"
                                                         subtitle={node.provider.name}
                                                         title={node.name!}
+                                                        truncateTitle
                                                     />
                                                 )}
                                             </Group>
 
                                             {!selectMode && (
-                                                <Group gap={4} wrap="nowrap">
+                                                <Group
+                                                    gap={4}
+                                                    style={{ flexShrink: 0 }}
+                                                    wrap="nowrap"
+                                                >
                                                     {node.node && (
                                                         <ActionIcon
                                                             color="blue"
@@ -263,7 +273,12 @@ export function MobileNodesListWidget(props: IProps) {
                                                     color={`var(--mantine-color-${status.color}-5)`}
                                                     size={16}
                                                 />
-                                                <Text c={status.color} fw={600} size="sm">
+                                                <Text
+                                                    c={status.color}
+                                                    fw={600}
+                                                    size="sm"
+                                                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                                                >
                                                     {formatTimeUtil({
                                                         time: node.nextBillingAt,
                                                         template: 'FULL_DATE',

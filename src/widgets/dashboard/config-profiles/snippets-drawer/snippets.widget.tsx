@@ -44,7 +44,7 @@ export const SnippetsWidget = (props: IProps) => {
         refetch
     } = useGetSnippets({
         rQueryParams: {
-            enabled: !!isOpen
+            enabled: Boolean(fromMainView || isOpen)
         }
     })
 
@@ -99,7 +99,7 @@ export const SnippetsWidget = (props: IProps) => {
                             <Text c="dimmed" mb={6} size="xs">
                                 {t('snippets.drawer.widget.snippets-help-line-4')}
                             </Text>
-                            <Code block color="dark.8">
+                            <Code block>
                                 {JSON.stringify(
                                     {
                                         outbounds: [
@@ -121,7 +121,7 @@ export const SnippetsWidget = (props: IProps) => {
                             <Text c="dimmed" mb={6} size="xs">
                                 {t('snippets.drawer.widget.snippets-help-line-5')}
                             </Text>
-                            <Code block color="dark.8">
+                            <Code block>
                                 {JSON.stringify(
                                     {
                                         routing: {
@@ -146,7 +146,7 @@ export const SnippetsWidget = (props: IProps) => {
     return (
         <SectionCard.Root>
             <SectionCard.Section>
-                <Group align="flex-center" justify="space-between">
+                <Group align="center" justify="space-between">
                     <BaseOverlayHeader
                         iconColor="teal"
                         IconComponent={TbCode}

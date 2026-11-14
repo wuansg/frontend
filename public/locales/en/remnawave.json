@@ -100,7 +100,8 @@
     "shared-lists": "Shared lists",
     "try-again": "Try again",
     "interface": "Interface",
-    "ip-address": "IP address"
+    "ip-address": "IP address",
+    "filter-by": "Filter by..."
   },
   "bandwidth-metrics": {
     "current-year": "Current year",
@@ -188,7 +189,9 @@
     "first-connected-at": "First connected at",
     "sub-last-opened-at": "Sub last opened at",
     "tag": "Tag",
-    "used-traffic": "Used Traffic (%)"
+    "used-traffic": "Used Traffic (%)",
+    "vless-uuid": "VLESS UUID",
+    "hwid-device-limit": "HWID Device Limit"
   },
   "header-buttons": {
     "feature": {}
@@ -375,7 +378,8 @@
     "widget": {
       "list-of-all-users": "List of all users",
       "error-loading-data": "Error loading data",
-      "table-title": "Users"
+      "table-title": "Users",
+      "directory-title": "User Directory"
     }
   },
   "view-user-modal": {
@@ -1639,7 +1643,8 @@
     "user-agent": "User Agent",
     "user-uuid": "User UUID",
     "created-at": "Created At",
-    "updated-at": "Updated At"
+    "updated-at": "Updated At",
+    "user-id": "User ID"
   },
   "hwid-inspector-table": {
     "widget": {
@@ -1862,6 +1867,17 @@
       "keycloakDomain": {
         "label": "Keycloak Domain",
         "description": "Keycloak server domain without protocol (e.g., keycloak.docs.rw)"
+      },
+      "authorizationUrl": {
+        "label": "Authorization URL",
+        "description": "Authorization URL for the OAuth2 provider"
+      },
+      "tokenUrl": {
+        "label": "Token URL",
+        "description": "Token URL for the OAuth2 provider"
+      },
+      "withPkce": {
+        "label": "Enable PKCE"
       }
     }
   },
@@ -1914,7 +1930,9 @@
       "expired": "Expired",
       "expires-in-days": "Expires in (days)",
       "expires-in": "Expires",
-      "one-time-notice": "For security reasons, the token is shown <emphasis>only once</emphasis> right after creation. Make sure to copy and store it somewhere safe — you won't be able to see it again."
+      "one-time-notice": "For security reasons, the token is shown <emphasis>only once</emphasis> right after creation. Make sure to copy and store it somewhere safe — you won't be able to see it again.",
+      "scope-read": "Read",
+      "scope-write": "Write"
     }
   },
   "external-squads-hosts": {
@@ -2071,7 +2089,10 @@
       "accordion": "Accordion",
       "minimal": "Minimal",
       "timeline": "Timeline",
-      "installation-guides-design": "Installation Guides Design"
+      "installation-guides-design": "Installation Guides Design",
+      "active-locales-count": "{{count}} active",
+      "icons-count": "{{count}} icons",
+      "configure": "Configure"
     },
     "subpage-config-saved-line-1": "To apply the changes, please restart the Remnawave Subscription-page Docker container.",
     "subpage-config-saved-line-2": "For example, you can use the following command in your terminal:"
@@ -2125,7 +2146,8 @@
       "apps": "Apps",
       "add-app": "Add App",
       "unnamed-app": "Unnamed App",
-      "edit-app": "Edit App"
+      "edit-app": "Edit App",
+      "apps-configured": "{{count}} app(s) configured"
     }
   },
   "svg-icon-input": {
@@ -2276,7 +2298,8 @@
   },
   "node-plugin-card": {
     "widget": {
-      "active-on-nodes": "Active on Nodes"
+      "active-on-nodes": "Active on Nodes",
+      "subtitle": "PLUGIN"
     }
   },
   "adtive-on-nodes": {
@@ -2291,7 +2314,9 @@
       "node-plugins-are-an-advanced-feature-please-review-the-documentation-before-use": "Node Plugins are an advanced feature. Please review the documentation before use.",
       "warning": "Warning",
       "no-node-plugins-yet": "No node plugins yet",
-      "create-a-plugin-to-extend-node-capabilities-with": "Create a plugin to extend node capabilities with"
+      "create-a-plugin-to-extend-node-capabilities-with": "Create a plugin to extend node capabilities with",
+      "ingress-filter": "Ingress Filter",
+      "egress-filter": "Egress Filter"
     }
   },
   "node-plugin-executor": {
@@ -2313,8 +2338,10 @@
       "no-connected-nodes-available": "No connected nodes available.",
       "deselect-all": "Deselect all",
       "select-all": "Select all",
-      "execute": "Execute"
-    }
+      "execute": "Execute",
+      "selected-count": "{{count}} selected"
+    },
+    "title": "Command Executor"
   },
   "node-active-session": {
     "item": {
@@ -2626,5 +2653,83 @@
       "ram-detail": "Memory: {{used}} / {{total}} ({{percent}}%)",
       "select-node": "Select node {{name}}"
     }
+  },
+  "hosts-overview": {
+    "widget": {
+      "title": "Entry Hosts",
+      "subtitle": "{{active}} enabled of {{total}} total",
+      "filter-all": "All",
+      "search-placeholder": "Search remark, address, SNI, tag..."
+    }
+  },
+  "hosts-matrix": {
+    "widget": {
+      "linked-nodes": "{{count}} nodes",
+      "no-linked-nodes": "All profile nodes",
+      "security-default": "Inherit",
+      "select-host": "Select {{name}}",
+      "sni-blank": "Blank SNI",
+      "sort-remark": "Remark",
+      "sort-address": "Address",
+      "sort-profile": "Profile",
+      "sort-nodes": "Nodes"
+    }
+  },
+  "host-card": {
+    "widget": {
+      "dangling": "Unlinked",
+      "unknown-inbound": "Missing inbound",
+      "mux-params": "Mux Parameters",
+      "final-mask": "Final Mask"
+    }
+  },
+  "user-status": {
+    "active": "Active",
+    "limited": "Limited",
+    "disabled": "Disabled",
+    "expired": "Expired"
+  },
+  "users-mobile": {
+    "total-count": "{{count}} users",
+    "search-placeholder": "Search username...",
+    "sort": {
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "traffic-desc": "Highest traffic",
+      "expire-asc": "Expiring soon",
+      "online-desc": "Recently online"
+    }
+  },
+  "hwid-inspector-leaderboard": {
+    "widget": {
+      "top-users-title": "Top Users by HWID Devices"
+    }
+  },
+  "node-plugin-editor": {
+    "loading": "Loading editor..."
+  },
+  "node-plugin-dry-run": {
+    "button": "Dry-run",
+    "modal-title": "Node Plugin Dry-run",
+    "failed-title": "Dry-run failed",
+    "validation-failed": "Plugin validation failed",
+    "validation": "Validation",
+    "valid-message": "Schema and Shared List reference types are valid.",
+    "invalid-message": "The plugin configuration is not valid.",
+    "changes": "Changes",
+    "affected-nodes": "Affected nodes",
+    "domains": "Domains",
+    "saved-hash-matches": "Saved hash matches",
+    "unsaved-changes": "Unsaved changes",
+    "dependency-graph": "Dependency graph",
+    "no-shared-lists": "No Shared Lists referenced",
+    "affected-nodes-dns": "Affected nodes and DNS",
+    "deployment-state": "Deployment state",
+    "no-deployments": "No node has reported an applied state for this plugin yet.",
+    "applied": "Applied",
+    "rolled-back": "Rolled back",
+    "stale-dns": "{{count}} stale DNS",
+    "checked-at": "Checked {{time}}",
+    "structured-diff": "Structured diff / Agent compile"
   }
 }

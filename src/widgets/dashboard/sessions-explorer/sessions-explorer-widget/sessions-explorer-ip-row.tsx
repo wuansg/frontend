@@ -44,20 +44,24 @@ export const SessionsExplorerIpRow = memo(({ ip, isMatch }: IProps) => {
                         <TbExternalLink size={18} />
                     </ActionIcon>
 
-                    <Box style={{ flex: 1 }}>
+                    <Box style={{ flex: 1, minWidth: 0 }}>
                         <CopyableFieldShared
                             leftSection={
                                 <Tooltip
                                     label={
                                         <Stack gap={2} p={4}>
-                                            <Text c="white" fw={600} size="xs">
+                                            <Text fw={600} size="xs">
                                                 {formatRelativeDateUtil(
                                                     ip.lastSeen,
                                                     t,
                                                     i18n.language
                                                 )}
                                             </Text>
-                                            <Text c="dimmed" ff="monospace" size="xs">
+                                            <Text
+                                                c="dimmed"
+                                                size="xs"
+                                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                                            >
                                                 {formatTimeUtil({
                                                     time: ip.lastSeen,
                                                     template: 'TIME_FIRST_DATETIME',

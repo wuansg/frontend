@@ -3,8 +3,8 @@
 }
 
 .indicator {
-    background: color-mix(in srgb, var(--mantine-primary-color-6) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--mantine-primary-color-6) 30%, transparent);
+    background: color-mix(in srgb, var(--mantine-primary-color-6) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mantine-primary-color-6) 32%, transparent);
     box-shadow: none;
 }
 
@@ -20,5 +20,5 @@
 
 .label[data-active],
 .label[data-active]:hover {
-    color: var(--mantine-primary-color-4);
+    color: light-dark(var(--mantine-primary-color-7), var(--mantine-primary-color-4));
 }

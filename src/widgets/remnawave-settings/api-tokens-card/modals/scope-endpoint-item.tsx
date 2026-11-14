@@ -1,5 +1,6 @@
 import { Badge, Box, Checkbox, Group, Stack, Text } from '@mantine/core'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import classes from '../api-token-card.module.css'
 import { getMethodColor, ScopeEndpoint } from './scopes.utils'
@@ -12,6 +13,7 @@ interface IProps {
 }
 
 export const ScopeEndpointItem = memo(({ checked, endpoint, onToggle, readOnly }: IProps) => {
+    const { t } = useTranslation()
     const isWrite = endpoint.kind === 'write'
 
     return (
@@ -27,7 +29,6 @@ export const ScopeEndpointItem = memo(({ checked, endpoint, onToggle, readOnly }
                 <Badge
                     className={classes.methodBadge}
                     color={getMethodColor(endpoint.method)}
-                    ff="monospace"
                     radius="sm"
                     variant="soft"
                 >
@@ -43,13 +44,10 @@ export const ScopeEndpointItem = memo(({ checked, endpoint, onToggle, readOnly }
                     </Text>
                 </Stack>
 
-                <Badge
-                    color={isWrite ? 'orange' : 'blue'}
-                    ff="monospace"
-                    radius="sm"
-                    variant="soft"
-                >
-                    {isWrite ? 'Write' : 'Read'}
+                <Badge color={isWrite ? 'orange' : 'blue'} radius="sm" variant="soft">
+                    {isWrite
+                        ? t('api-tokens-card.widget.scope-write')
+                        : t('api-tokens-card.widget.scope-read')}
                 </Badge>
             </Group>
         </Box>

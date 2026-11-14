@@ -2,6 +2,7 @@
     display: flex;
     flex-wrap: wrap;
     container-type: inline-size;
+    margin: calc(var(--mantine-spacing-md) / -2);
 }
 
 .item {

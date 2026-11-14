@@ -14,7 +14,6 @@ import {
     TbCirclesRelation,
     TbCreditCard,
     TbDeviceAnalytics,
-    TbFlame,
     TbFolder,
     TbHexagon,
     TbPackage,
@@ -240,7 +239,7 @@ export const useMobileMenuSections = (): MenuItem[] => {
                     id: 'response-rules'
                 },
                 {
-                    name: 'Subscription Page',
+                    name: t('constants.subscription-page'),
                     href: ROUTES.DASHBOARD.SUBPAGE_CONFIGS.ROOT,
                     icon: PiArrowsInCardinalFill,
                     id: 'subscription-page'

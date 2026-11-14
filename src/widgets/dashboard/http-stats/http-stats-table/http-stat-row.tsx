@@ -39,7 +39,12 @@ function HttpStatRowBase({ route, percentOfTotal }: HttpStatRowProps) {
                     </Text>
                 </Group>
 
-                <Group align="baseline" gap="xs" wrap="nowrap">
+                <Group
+                    align="baseline"
+                    gap="xs"
+                    style={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
+                    wrap="nowrap"
+                >
                     <Text className={classes.percent} c="dimmed" size="xs">
                         {percentOfTotal.toFixed(1)}%
                     </Text>

@@ -8,6 +8,7 @@ import {
     TSubscriptionPageRawConfig
 } from '@remnawave/subscription-page-types'
 import { IconLanguage } from '@tabler/icons-react'
+import { useTranslation } from 'react-i18next'
 
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
@@ -23,6 +24,7 @@ interface IProps {
 }
 
 export function BaseTranslationsBlockComponent({ form }: IProps) {
+    const { t } = useTranslation()
     const values = form.getValues()
 
     const [drawerOpened, { close: closeDrawer, open: openDrawer }] = useDisclosure(false)
@@ -52,12 +54,13 @@ export function BaseTranslationsBlockComponent({ form }: IProps) {
                             IconComponent={IconLanguage}
                             iconSize={20}
                             iconVariant="soft"
-                            title="Base Translations"
+                            title={t('base-translations-drawer.component.base-translations')}
                             titleOrder={5}
                         />
                         <Badge
                             color={filledCount === totalKeys ? 'green' : 'yellow'}
                             size="sm"
+                            style={{ fontVariantNumeric: 'tabular-nums' }}
                             variant="light"
                         >
                             {filledCount}/{totalKeys}
@@ -69,7 +72,7 @@ export function BaseTranslationsBlockComponent({ form }: IProps) {
                         leftSection={<IconLanguage size={16} />}
                         onClick={openDrawer}
                     >
-                        Configure
+                        {t('subpage-config-visual-editor.widget.configure')}
                     </Button>
                 </Group>
             </Card>

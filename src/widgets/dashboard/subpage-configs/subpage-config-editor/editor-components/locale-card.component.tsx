@@ -31,7 +31,12 @@ export function LocaleCard(props: IProps) {
                         {localeInfo.emoji}
                     </Text>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                        <Text c={isActive ? 'white' : 'dimmed'} fw={500} size="xs" truncate>
+                        <Text
+                            c={isActive ? undefined : 'dimmed'}
+                            fw={isActive ? 600 : 500}
+                            size="xs"
+                            truncate
+                        >
                             {localeInfo.name}
                         </Text>
                         <Text c="dimmed" size="xs" truncate>

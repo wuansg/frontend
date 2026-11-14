@@ -112,7 +112,7 @@ export const CreateSnippetModal = () => {
                     style={{
                         border: createSnippetForm.getInputProps('snippet').error
                             ? '1px solid var(--mantine-color-red-5)'
-                            : '1px solid var(--mantine-color-dark-4)'
+                            : '1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4))'
                     }}
                     withBorder
                 >

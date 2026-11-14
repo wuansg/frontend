@@ -80,7 +80,7 @@ export function RuntimeDetailCard({ metric }: RuntimeDetailCardProps) {
                             <config.Icon size={18} />
                         </ThemeIcon>
                         <Stack gap={2}>
-                            <Text c="white" className={classes.numeric} fw={700} lh={1} size="sm">
+                            <Text className={classes.numeric} fw={700} lh={1} size="sm">
                                 {config.name}-{metric.instanceId}
                             </Text>
                             <Badge

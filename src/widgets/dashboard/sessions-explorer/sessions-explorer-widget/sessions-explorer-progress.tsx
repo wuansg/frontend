@@ -37,10 +37,10 @@ export function SessionsExplorerProgress({ progress }: IProps) {
                     </div>
 
                     <Stack align="center" gap="xs" w="100%">
-                        <Text c="white" fw={600} size="lg">
+                        <Text fw={600} size="lg">
                             {t('sessions-explorer-progress.exploring-nodes')}
                         </Text>
-                        <Text c="dimmed" size="sm">
+                        <Text c="dimmed" size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                             {t('sessions-explorer-progress.nodes-processed', {
                                 completed: progress.completed + progress.failed,
                                 total: progress.total

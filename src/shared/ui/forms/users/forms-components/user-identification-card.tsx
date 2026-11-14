@@ -10,13 +10,14 @@ import {
     SimpleGrid,
     Stack,
     Text,
-    Tooltip
+    Tooltip,
+    useComputedColorScheme
 } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { GetUserByIdCommand, USERS_STATUS } from '@remnawave/backend-contract'
 import { UserStatusBadge } from '@widgets/dashboard/users/user-status-badge'
 import dayjs from 'dayjs'
-import { githubDarkTheme, JsonEditor } from 'json-edit-react'
+import { githubDarkTheme, githubLightTheme, JsonEditor } from 'json-edit-react'
 import { ForwardRefComponent, HTMLMotionProps, Variants } from 'motion/react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +27,6 @@ import {
     TbCalendar,
     TbChartArcs,
     TbDevices,
-    TbFlame,
     TbJson,
     TbQrcode,
     TbRadar,
@@ -71,6 +71,7 @@ const getLastSeenIndicatorColor = (lastSeen: Date | string) => {
 
 export const UserIdentificationCard = memo((props: IProps) => {
     const { t, i18n } = useTranslation()
+    const colorScheme = useComputedColorScheme('dark', { getInitialValueInEffect: false })
 
     const { cardVariants, lastConnectedNode, motionWrapper, user } = props
 
@@ -95,7 +96,7 @@ export const UserIdentificationCard = memo((props: IProps) => {
     const getProgressColor = () => {
         if (isUnlimited) return 'teal'
         if (percentage > 95) return 'red'
-        if (percentage > 80) return 'yellow.4'
+        if (percentage > 80) return 'yellow.6'
         return 'teal'
     }
 
@@ -115,10 +116,10 @@ export const UserIdentificationCard = memo((props: IProps) => {
         }
         if (daysLeft !== null && daysLeft <= 7) {
             return {
-                bg: 'rgba(251, 191, 36, 0.10)',
-                border: 'rgba(251, 191, 36, 0.2)',
-                color: 'yellow.4',
-                iconColor: 'var(--mantine-color-yellow-4)'
+                bg: 'rgba(245, 158, 11, 0.10)',
+                border: 'rgba(245, 158, 11, 0.24)',
+                color: 'yellow.6',
+                iconColor: 'var(--mantine-color-yellow-6)'
             }
         }
         return {
@@ -219,7 +220,11 @@ export const UserIdentificationCard = memo((props: IProps) => {
                                                         indent={4}
                                                         maxWidth="100%"
                                                         rootName=""
-                                                        theme={githubDarkTheme}
+                                                        theme={
+                                                            colorScheme === 'light'
+                                                                ? githubLightTheme
+                                                                : githubDarkTheme
+                                                        }
                                                         viewOnly
                                                     />
                                                 </Box>
@@ -358,11 +363,11 @@ export const UserIdentificationCard = memo((props: IProps) => {
                 <SectionCard.Section>
                     <Group gap="xs" justify="space-between" mb={6}>
                         <Group gap={6}>
-                            <Text c="gray.3" ff="monospace" fw={600} size="sm">
+                            <Text fw={600} size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                                 {prettyUsedData}
                             </Text>
                         </Group>
-                        <Text c="dimmed" size="xs">
+                        <Text c="dimmed" size="xs" style={{ fontVariantNumeric: 'tabular-nums' }}>
                             {maxData}
                         </Text>
                     </Group>

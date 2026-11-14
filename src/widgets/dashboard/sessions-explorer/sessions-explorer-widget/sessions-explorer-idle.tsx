@@ -11,7 +11,7 @@ const DOCKER_SNIPPET = `
       - NET_ADMIN
 `
 
-const HIGHLIGHT_SPAN = <Text c="white" component="span" fw={600} size="sm" />
+const HIGHLIGHT_SPAN = <Text c="bright" component="span" fw={600} size="sm" />
 
 interface IProps {
     onlineNodesCount: number
@@ -46,12 +46,13 @@ export function SessionsExplorerIdle({ onlineNodesCount, onStart }: IProps) {
                         </Text>
                     </Group>
                     <CodeHighlight
-                        background="rgba(22, 27, 35)"
                         code={DOCKER_SNIPPET}
                         language="yaml"
                         radius="md"
                         style={{
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            background:
+                                'light-dark(var(--mantine-color-gray-0), rgba(22, 27, 35, 0.9))',
+                            border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
                             borderRadius: 'var(--mantine-radius-md)'
                         }}
                     />

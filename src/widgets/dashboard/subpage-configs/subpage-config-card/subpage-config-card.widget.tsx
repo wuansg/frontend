@@ -52,7 +52,7 @@ export function SubpageConfigCardWidget(props: IProps) {
                     </EntityCardShared.Icon>
 
                     <EntityCardShared.Content
-                        subtitle="Subpage Config"
+                        subtitle={t('constants.subscription-page')}
                         title={subpageConfig.name}
                     />
                 </EntityCardShared.Header>

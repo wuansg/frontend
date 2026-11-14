@@ -21,7 +21,7 @@ export const ProcessCard = (props: IProps) => {
                 <ThemeIcon color={color} radius="md" size="md" variant="soft">
                     <Icon size={16} />
                 </ThemeIcon>
-                <Text c="white" ff="monospace" fw={700} size="sm">
+                <Text fw={700} size="sm">
                     {title}
                 </Text>
             </Group>

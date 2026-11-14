@@ -149,7 +149,14 @@ export const ExternalSquadsHwidSettingsTabWidget = (props: IProps) => {
                     </Stack>
                 </Group>
 
-                <Paper bg="dark.7" p="md" withBorder>
+                <Paper
+                    p="md"
+                    style={{
+                        backgroundColor:
+                            'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))'
+                    }}
+                    withBorder
+                >
                     <Group justify="space-between" wrap="nowrap">
                         <Group gap="xs" justify="start" wrap="nowrap">
                             <Text fw={500} size="sm">
@@ -172,7 +179,14 @@ export const ExternalSquadsHwidSettingsTabWidget = (props: IProps) => {
                 >
                     {(styles) => (
                         <Stack gap="md" style={styles}>
-                            <Paper bg="dark.7" p="md" withBorder>
+                            <Paper
+                                p="md"
+                                style={{
+                                    backgroundColor:
+                                        'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))'
+                                }}
+                                withBorder
+                            >
                                 <Group justify="space-between" wrap="nowrap">
                                     <Group gap="xs" justify="start" wrap="nowrap">
                                         <Text fw={500} size="sm">
@@ -189,7 +203,14 @@ export const ExternalSquadsHwidSettingsTabWidget = (props: IProps) => {
                                 </Group>
                             </Paper>
 
-                            <Paper bg="dark.7" p="md" withBorder>
+                            <Paper
+                                p="md"
+                                style={{
+                                    backgroundColor:
+                                        'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))'
+                                }}
+                                withBorder
+                            >
                                 <Box style={{ flex: 1 }}>
                                     <NumberInput
                                         error={errors.fallbackDeviceLimit}
@@ -215,7 +236,14 @@ export const ExternalSquadsHwidSettingsTabWidget = (props: IProps) => {
                                 </Box>
                             </Paper>
 
-                            <Paper bg="dark.7" p="md" withBorder>
+                            <Paper
+                                p="md"
+                                style={{
+                                    backgroundColor:
+                                        'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))'
+                                }}
+                                withBorder
+                            >
                                 <Box style={{ flex: 1 }}>
                                     <Textarea
                                         error={errors.maxDevicesAnnounce}

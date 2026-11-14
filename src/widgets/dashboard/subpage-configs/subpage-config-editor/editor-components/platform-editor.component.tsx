@@ -105,7 +105,9 @@ export function PlatformEditor(props: IProps) {
                                 iconColor="violet"
                                 IconComponent={PLATFORM_ICONS[platformKey]}
                                 iconVariant="soft"
-                                subtitle={`${platform.apps.length} app(s) configured`}
+                                subtitle={t('platform-editor.component.apps-configured', {
+                                    count: platform.apps.length
+                                })}
                                 title={PLATFORM_LABELS[platformKey]}
                                 titleOrder={5}
                             />

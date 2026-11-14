@@ -1,6 +1,7 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Modal } from '@mantine/core'
 import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { TbTerminal } from 'react-icons/tb'
 
 import { useNiceMantineModal } from '@shared/_modals/use-nice-modal'
@@ -11,6 +12,7 @@ import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { NodePluginExecutorContent } from './node-plugin-executor.content'
 
 export const NodePluginExecutorDrawer = NiceModal.create(() => {
+    const { t } = useTranslation()
     const modal = useModal()
     const { modalProps, hide } = useNiceMantineModal({ modal })
 
@@ -25,7 +27,7 @@ export const NodePluginExecutorDrawer = NiceModal.create(() => {
                     iconColor="cyan"
                     IconComponent={TbTerminal}
                     iconVariant="soft"
-                    title="Executor"
+                    title={t('node-plugin-executor.title')}
                 />
             }
         >

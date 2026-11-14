@@ -19,12 +19,11 @@
 }
 
 .label {
-    font-family: var(--mantine-font-family-monospace);
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--mantine-font-size-md);
     line-height: 1.2;
     color: var(--mantine-color-bright);
-    max-width: 13ch;
+    max-width: 18ch;
 }
 
 .compactRoot {
@@ -36,10 +35,7 @@
 
     &[data-checked] {
         border-color: var(--mantine-primary-color-filled);
-        background-color: light-dark(
-            var(--mantine-primary-color-light),
-            var(--mantine-primary-color-dark-color)
-        );
+        background-color: var(--mantine-primary-color-light);
     }
 
     @mixin hover {
@@ -56,7 +52,6 @@
 }
 
 .compactLabel {
-    font-family: var(--mantine-font-family-monospace);
     font-weight: 600;
     color: var(--mantine-color-bright);
     min-width: 0;

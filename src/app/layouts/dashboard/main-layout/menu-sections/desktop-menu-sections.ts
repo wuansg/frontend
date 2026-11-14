@@ -7,7 +7,6 @@ import {
     TbCirclesRelation,
     TbCreditCard,
     TbDeviceAnalytics,
-    TbFlame,
     TbFolder,
     TbHexagon,
     TbPackage,
@@ -228,7 +227,7 @@ export const useDesktopMenuSections = (): MenuItem[] => {
                     id: 'response-rules'
                 },
                 {
-                    name: 'Subscription Page',
+                    name: t('constants.subscription-page'),
                     href: ROUTES.DASHBOARD.SUBPAGE_CONFIGS.ROOT,
                     icon: PiArrowsInCardinalFill,
                     id: 'subscription-page'
@@ -267,7 +266,7 @@ export const useDesktopMenuSections = (): MenuItem[] => {
             ]
         },
         {
-            header: t('constants.subscription-settings'),
+            header: t('constants.remnawave-settings'),
             id: 'settings',
             icon: Logo,
             section: [

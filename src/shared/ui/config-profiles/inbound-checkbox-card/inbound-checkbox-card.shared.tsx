@@ -1,9 +1,9 @@
 import type { IProps } from './interfaces/props.interface'
 
-import { ActionIcon, Badge, Checkbox, Group, Text } from '@mantine/core'
+import { ActionIcon, Badge, Checkbox, Group, Text, useComputedColorScheme } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { GetConfigProfilesCommand } from '@remnawave/backend-contract'
-import { githubDarkTheme, JsonEditor } from 'json-edit-react'
+import { githubDarkTheme, githubLightTheme, JsonEditor } from 'json-edit-react'
 import { useTranslation } from 'react-i18next'
 import { TbCode } from 'react-icons/tb'
 
@@ -15,6 +15,7 @@ export const InboundCheckboxCardShared = (props: IProps) => {
     const { inbound, isSelected, onInboundToggle } = props
 
     const { t } = useTranslation()
+    const colorScheme = useComputedColorScheme('dark', { getInitialValueInEffect: false })
 
     const handleShowInboundJson = (
         inbound: GetConfigProfilesCommand.Response['response']['configProfiles'][number]['inbounds'][number]
@@ -27,7 +28,7 @@ export const InboundCheckboxCardShared = (props: IProps) => {
                     indent={4}
                     maxWidth="100%"
                     rootName=""
-                    theme={githubDarkTheme}
+                    theme={colorScheme === 'light' ? githubLightTheme : githubDarkTheme}
                     viewOnly
                 />
             ),
@@ -64,11 +65,16 @@ export const InboundCheckboxCardShared = (props: IProps) => {
                 </Group>
 
                 <Group gap="xs" wrap="nowrap">
-                    <Badge color="gray" ff="monospace" size="xs" variant="soft">
+                    <Badge color="gray" size="xs" variant="soft">
                         {inbound.type}
                     </Badge>
                     {inbound.port && (
-                        <Badge color="teal" ff="monospace" size="xs" variant="soft">
+                        <Badge
+                            color="teal"
+                            size="xs"
+                            style={{ fontVariantNumeric: 'tabular-nums' }}
+                            variant="soft"
+                        >
                             {inbound.port}
                         </Badge>
                     )}

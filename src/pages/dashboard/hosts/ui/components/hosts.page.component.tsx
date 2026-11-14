@@ -1,13 +1,19 @@
 import { MultiSelectHostsFeature } from '@features/dashboard/hosts/multi-select-hosts/multi-select-hosts.feature'
 import { HeaderActionButtonsFeature } from '@features/ui/dashboard/hosts/header-action-buttons'
+import { Stack } from '@mantine/core'
 import { useListState } from '@mantine/hooks'
 import { HostUsersUsageDrawer } from '@widgets/dashboard/hosts/host-users-usage-statistic'
-import { HostsDataTableWidget } from '@widgets/dashboard/hosts/hosts-datatable/hosts-datatable.widget'
+import { HostsMatrixWidget } from '@widgets/dashboard/hosts/hosts-matrix'
+import {
+    HostFilterMode,
+    HostsOverviewWidget,
+    isHostDangling
+} from '@widgets/dashboard/hosts/hosts-overview'
 import { HostsSpotlightWidget } from '@widgets/dashboard/hosts/hosts-spotlight'
 import { HostsTableWidget } from '@widgets/dashboard/hosts/hosts-table'
 import { motion } from 'motion/react'
 /* eslint-disable no-nested-ternary */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbListCheck } from 'react-icons/tb'
 import { useSearchParams } from 'react-router'
@@ -28,8 +34,10 @@ import { IProps } from './interfaces'
 
 export default function HostsPageComponent(props: IProps) {
     const { t } = useTranslation()
-    const { configProfiles, hosts, hostTags, isLoading } = props
+    const { configProfiles, hosts, isLoading } = props
     const [selectedHosts, setSelectedHosts] = useState<string[]>([])
+    const [filterMode, setFilterMode] = useState<HostFilterMode>('all')
+    const [searchQuery, setSearchQuery] = useState('')
     const [state, handlers] = useListState(hosts || [])
     const isDraggingRef = useRef(false)
 
@@ -46,9 +54,54 @@ export default function HostsPageComponent(props: IProps) {
 
     const { setHostsViewMode } = useViewPreferencesStoreActions()
 
+    const profilesByUuid = useMemo(
+        () => new Map((configProfiles ?? []).map((p) => [p.uuid, p] as const)),
+        [configProfiles]
+    )
+
+    const isFilterOrSearchActive = filterMode !== 'all' || searchQuery.trim() !== ''
+
+    const filteredState = useMemo(() => {
+        let result = state
+        if (filterMode === 'active') {
+            result = result.filter(
+                (host) =>
+                    !host.isDisabled && !host.isHidden && !isHostDangling(host, profilesByUuid)
+            )
+        } else if (filterMode === 'hidden') {
+            result = result.filter((host) => !host.isDisabled && host.isHidden)
+        } else if (filterMode === 'disabled') {
+            result = result.filter((host) => host.isDisabled)
+        } else if (filterMode === 'dangling') {
+            result = result.filter((host) => isHostDangling(host, profilesByUuid))
+        }
+
+        const needle = searchQuery.trim().toLowerCase()
+        if (needle) {
+            result = result.filter((host) => {
+                const profile = profilesByUuid.get(host.inbound.configProfileUuid ?? '')
+                const inbound = profile?.inbounds.find(
+                    (i) => i.uuid === host.inbound.configProfileInboundUuid
+                )
+                return (
+                    host.remark.toLowerCase().includes(needle) ||
+                    host.address.toLowerCase().includes(needle) ||
+                    String(host.port ?? '').includes(needle) ||
+                    (host.sni ?? '').toLowerCase().includes(needle) ||
+                    (host.host ?? '').toLowerCase().includes(needle) ||
+                    (profile?.name ?? '').toLowerCase().includes(needle) ||
+                    (inbound?.tag ?? '').toLowerCase().includes(needle) ||
+                    (host.tags ?? []).some((tag) => tag.toLowerCase().includes(needle))
+                )
+            })
+        }
+
+        return result
+    }, [filterMode, profilesByUuid, searchQuery, state])
+
     useEffect(() => {
         ;(async () => {
-            if (!hosts || !state) {
+            if (!hosts || !state || hosts.length !== state.length) {
                 return
             }
 
@@ -63,11 +116,11 @@ export default function HostsPageComponent(props: IProps) {
                 viewPosition: state.findIndex((stateItem) => stateItem.uuid === host.uuid)
             }))
 
-            const hasOrderChanged = hostsToReorder?.some(
-                (host, index) => host.uuid !== state[index].uuid
+            const hasOrderChanged = hostsToReorder.some(
+                (host, index) => host.uuid !== state[index]?.uuid
             )
 
-            if (hasOrderChanged) {
+            if (hasOrderChanged && updatedHosts.every((item) => item.viewPosition !== -1)) {
                 reorderHosts({ variables: { hosts: updatedHosts } })
                 queryClient.setQueryData(hostsQueryKeys.getAllHosts.queryKey, state)
             }
@@ -84,11 +137,11 @@ export default function HostsPageComponent(props: IProps) {
         const hostUuid = searchParams.get(SEARCH_PARAMS.HOST)
         if (!hostUuid) return
 
-        const host = hosts.find((host) => host.uuid === hostUuid)
+        const host = hosts.find((entry) => entry.uuid === hostUuid)
         if (!host) return
 
         showModal('hosts_editHostDrawer', {
-            host: host
+            host
         })
 
         setSearchParams(
@@ -133,51 +186,73 @@ export default function HostsPageComponent(props: IProps) {
 
     return (
         <Page title={t('constants.hosts')}>
-            <PageHeaderShared
-                actions={
-                    <HeaderActionButtonsFeature
-                        setViewMode={setHostsViewMode}
-                        viewMode={viewMode}
+            <Stack gap="sm">
+                <PageHeaderShared
+                    actions={
+                        <HeaderActionButtonsFeature
+                            setViewMode={setHostsViewMode}
+                            viewMode={viewMode}
+                        />
+                    }
+                    icon={<TbListCheck size={24} />}
+                    mb={0}
+                    title={t('constants.hosts')}
+                    wrapActions
+                />
+
+                {!isLoading && (
+                    <HostsOverviewWidget
+                        configProfiles={configProfiles}
+                        filter={filterMode}
+                        hosts={state}
+                        onFilterChange={(next) => {
+                            setSelectedHosts([])
+                            setFilterMode(next)
+                        }}
+                        onSearchChange={(next) => {
+                            setSelectedHosts([])
+                            setSearchQuery(next)
+                        }}
+                        searchQuery={searchQuery}
                     />
-                }
-                icon={<TbListCheck size={24} />}
-                title={t('constants.hosts')}
-            />
-            {isLoading ? (
-                <LoadingScreen />
-            ) : viewMode === HOSTS_VIEW_MODE.CARDS ? (
-                <motion.div
-                    animate={{ opacity: 1 }}
-                    initial={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
+                )}
+
+                {isLoading ? (
+                    <LoadingScreen height="60vh" />
+                ) : viewMode === HOSTS_VIEW_MODE.MATRIX ? (
+                    <motion.div
+                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <HostsMatrixWidget
+                            allHosts={hosts}
+                            configProfiles={configProfiles}
+                            hosts={filteredState}
+                            selectedHosts={selectedHosts}
+                            setSelectedHosts={setSelectedHosts}
+                        />
+                    </motion.div>
+                ) : (
                     <HostsTableWidget
                         configProfiles={configProfiles}
+                        disableReordering={isFilterOrSearchActive}
                         handlers={handlers}
                         hosts={hosts}
                         isDraggingRef={isDraggingRef}
                         selectedHosts={selectedHosts}
                         setSelectedHosts={setSelectedHosts}
-                        state={state}
+                        state={filteredState}
                     />
-                </motion.div>
-            ) : (
-                <HostsDataTableWidget
-                    configProfiles={configProfiles}
-                    hosts={hosts}
-                    hostTags={hostTags}
-                    selectedHosts={selectedHosts}
-                    setSelectedHosts={setSelectedHosts}
-                    state={state}
-                />
-            )}
+                )}
+            </Stack>
 
             <HostsSpotlightWidget configProfiles={configProfiles ?? []} hosts={hosts ?? []} />
 
             <HostUsersUsageDrawer key="host-users-usage-drawer" />
             <MultiSelectHostsFeature
                 configProfiles={configProfiles}
-                hosts={hosts}
+                hosts={filteredState}
                 moveSelected={moveSelected}
                 selectedHosts={selectedHosts}
                 setSelectedHosts={setSelectedHosts}

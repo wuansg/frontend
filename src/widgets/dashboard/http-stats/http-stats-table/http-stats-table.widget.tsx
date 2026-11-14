@@ -25,7 +25,7 @@ export const HttpStatsTableWidget = ({ httpStats }: IProps) => {
 
     return (
         <Stack gap="md">
-            <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
+            <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">
                 <MetricCardShared
                     iconColor="cyan"
                     IconComponent={TbTrendingUp}

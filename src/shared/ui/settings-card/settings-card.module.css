@@ -1,17 +1,7 @@
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 .container {
-    background: linear-gradient(
-        135deg,
-        var(--mantine-color-dark-6) 0%,
-        var(--mantine-color-dark-7) 100%
+    background: light-dark(
+        var(--mantine-color-white),
+        linear-gradient(135deg, var(--mantine-color-dark-6) 0%, var(--mantine-color-dark-7) 100%)
     );
-    animation: fadeIn 200ms linear both;
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
 }

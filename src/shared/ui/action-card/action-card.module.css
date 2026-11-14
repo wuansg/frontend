@@ -3,11 +3,11 @@
     transition:
         background-color 150ms ease,
         border-color 150ms ease;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
 
     &:hover {
-        background-color: var(--mantine-color-dark-6);
+        background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
     }
 }
 
@@ -24,7 +24,7 @@
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.06) 50%,
+        light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.06)) 50%,
         transparent 100%
     );
     animation: shimmer 1.5s infinite;

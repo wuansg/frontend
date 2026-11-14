@@ -1,21 +1,22 @@
 import { Stack } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
 import { SrhInspectorMetrics } from '@widgets/dashboard/srh-inspector/srh-inspector-metrics'
 import { SrhInspectorTableWidget } from '@widgets/dashboard/srh-inspector/srh-inspector-table'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { TbReportAnalytics } from 'react-icons/tb'
 
-import { Page } from '@shared/ui'
-import { MobileWarningOverlay } from '@shared/ui/mobile-warning-overlay/mobile-warning-overlay'
+import { Page, PageHeaderShared } from '@shared/ui'
 
 export default function SrhInspectorPageComponent() {
     const { t } = useTranslation()
-    const isMobile = useMediaQuery('(max-width: 500px)')
 
     return (
         <Page title={t('constants.srh-inspector')}>
-            <Stack>
-                {isMobile && <MobileWarningOverlay />}
+            <PageHeaderShared
+                icon={<TbReportAnalytics size={24} />}
+                title={t('constants.srh-inspector')}
+            />
+            <Stack gap="md">
                 <SrhInspectorMetrics />
 
                 <motion.div

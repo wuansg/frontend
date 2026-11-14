@@ -7,11 +7,11 @@ import {
     DragOverlay,
     DragStartEvent
 } from '@dnd-kit/react'
-import { Box, Container, Stack } from '@mantine/core'
+import { Box } from '@mantine/core'
 import { GetHostsCommand } from '@remnawave/backend-contract'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { HostCardWidget } from '@widgets/dashboard/hosts/host-card'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { useGetNodes } from '@shared/api/hooks'
 import { useIsMobile } from '@shared/hooks'
@@ -29,6 +29,7 @@ import { IProps } from './interfaces'
 export const HostsTableWidget = memo((props: IProps) => {
     const {
         configProfiles,
+        disableReordering = false,
         handlers,
         hosts,
         isDraggingRef,
@@ -56,15 +57,15 @@ export const HostsTableWidget = memo((props: IProps) => {
         return state.filter((host) => (host.tags ?? []).includes(activeTag))
     }, [state, activeTag])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (listRef.current) {
             setScrollMargin(listRef.current.offsetTop)
         }
-    }, [])
+    }, [visibleState.length])
 
     const virtualizer = useWindowVirtualizer({
         count: visibleState.length,
-        estimateSize: () => (isMobile ? 202 : 88),
+        estimateSize: () => (isMobile ? 168 : 88),
         overscan: 7,
         scrollMargin,
         getItemKey: (index) => visibleState[index].uuid
@@ -74,6 +75,8 @@ export const HostsTableWidget = memo((props: IProps) => {
         () => new Map((nodes ?? []).map((node) => [node.uuid, node] as const)),
         [nodes]
     )
+
+    const isReorderDisabled = disableReordering || activeTag !== null
 
     const handleDragStart = useCallback(
         (event: DragStartEvent) => {
@@ -130,13 +133,17 @@ export const HostsTableWidget = memo((props: IProps) => {
         return null
     }
 
-    return (
-        <Stack gap="md">
-            {hosts.length === 0 && <EmptyPageLayout />}
+    if (hosts.length === 0) {
+        return <EmptyPageLayout />
+    }
 
+    return (
+        <Box>
             <TagFilterBar activeTag={activeTag} items={hosts} onChange={setHostsActiveTag} />
 
-            {hosts.length > 0 && (
+            {visibleState.length === 0 ? (
+                <EmptyPageLayout />
+            ) : (
                 <DragDropProvider
                     modifiers={[RestrictToVerticalAxis]}
                     onDragEnd={handleDragEnd}
@@ -151,56 +158,45 @@ export const HostsTableWidget = memo((props: IProps) => {
                                 position: 'relative'
                             }}
                         >
-                            <Container fluid>
-                                <Stack gap={0}>
-                                    {virtualizer.getVirtualItems().map((virtualItem) => {
-                                        const item = visibleState[virtualItem.index]
-                                        if (!item) return null
+                            {virtualizer.getVirtualItems().map((virtualItem) => {
+                                const item = visibleState[virtualItem.index]
+                                if (!item) return null
 
-                                        return (
-                                            <Box
-                                                data-index={virtualItem.index}
-                                                key={item.uuid}
-                                                style={{
-                                                    position: 'absolute',
-                                                    marginLeft: isMobile ? '0px' : '16px',
-                                                    marginRight: isMobile ? '0px' : '16px',
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    transform: `translateY(${
-                                                        virtualItem.start -
-                                                        virtualizer.options.scrollMargin
-                                                    }px)`,
-                                                    willChange: 'transform'
-                                                }}
-                                            >
-                                                <div className={classes.hostFadeIn}>
-                                                    <HostCardWidget
-                                                        disableReordering={activeTag !== null}
-                                                        configProfiles={configProfiles}
-                                                        index={virtualItem.index}
-                                                        isSelected={selectedHosts.includes(
-                                                            item.uuid
-                                                        )}
-                                                        item={item}
-                                                        nodesByUuid={nodesByUuid}
-                                                        onSelect={() =>
-                                                            toggleHostSelection(item.uuid)
-                                                        }
-                                                    />
-                                                </div>
-                                            </Box>
-                                        )
-                                    })}
-                                </Stack>
-                            </Container>
+                                return (
+                                    <Box
+                                        data-index={virtualItem.index}
+                                        key={item.uuid}
+                                        ref={virtualizer.measureElement}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            transform: `translateY(${
+                                                virtualItem.start - virtualizer.options.scrollMargin
+                                            }px)`
+                                        }}
+                                    >
+                                        <div className={classes.hostFadeIn}>
+                                            <HostCardWidget
+                                                configProfiles={configProfiles}
+                                                disableReordering={isReorderDisabled}
+                                                index={virtualItem.index}
+                                                isSelected={selectedHosts.includes(item.uuid)}
+                                                item={item}
+                                                nodesByUuid={nodesByUuid}
+                                                onSelect={() => toggleHostSelection(item.uuid)}
+                                            />
+                                        </div>
+                                    </Box>
+                                )
+                            })}
                         </div>
                     </div>
 
                     <DragOverlay>
                         {draggedHost && (
-                            <Container fluid pl={0} pr={0}>
+                            <Box w="100%">
                                 <HostCardWidget
                                     configProfiles={configProfiles}
                                     index={0}
@@ -210,11 +206,11 @@ export const HostsTableWidget = memo((props: IProps) => {
                                     nodesByUuid={nodesByUuid}
                                     onSelect={() => toggleHostSelection(draggedHost.uuid)}
                                 />
-                            </Container>
+                            </Box>
                         )}
                     </DragOverlay>
                 </DragDropProvider>
             )}
-        </Stack>
+        </Box>
     )
 })

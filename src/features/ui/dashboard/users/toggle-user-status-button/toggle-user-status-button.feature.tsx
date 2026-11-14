@@ -1,7 +1,7 @@
 import { Loader, Menu } from '@mantine/core'
 import { GetUserByIdCommand, USERS_STATUS } from '@remnawave/backend-contract'
 import { useTranslation } from 'react-i18next'
-import { PiCellSignalFullDuotone, PiCellSignalSlashDuotone, PiTrashDuotone } from 'react-icons/pi'
+import { PiCellSignalFullDuotone, PiCellSignalSlashDuotone } from 'react-icons/pi'
 
 import { queryClient } from '@shared/api'
 import { useDisableUser, useEnableUser, usersQueryKeys } from '@shared/api/hooks'
@@ -32,19 +32,14 @@ export function ToggleUserStatusButtonFeature(props: IProps) {
         }
     })
 
-    let buttonLabel = ''
-    let color = 'blue'
-    let icon = <PiTrashDuotone size="16px" />
-
-    if (user.status === USERS_STATUS.DISABLED) {
-        color = 'teal'
-        buttonLabel = t('common.enable')
-        icon = <PiCellSignalFullDuotone size="16px" />
-    } else {
-        color = 'var(--mantine-color-red-5)'
-        buttonLabel = t('common.disable')
-        icon = <PiCellSignalSlashDuotone size="16px" />
-    }
+    const isDisabled = user.status === USERS_STATUS.DISABLED
+    const color = isDisabled ? 'teal' : 'red'
+    const buttonLabel = isDisabled ? t('common.enable') : t('common.disable')
+    const icon = isDisabled ? (
+        <PiCellSignalFullDuotone size="16px" />
+    ) : (
+        <PiCellSignalSlashDuotone size="16px" />
+    )
 
     const handleToggleUserStatus = async () => {
         if (user.status !== USERS_STATUS.DISABLED) {

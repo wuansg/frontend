@@ -99,7 +99,8 @@
     "shared-lists": "Shared lists",
     "try-again": "Try again",
     "interface": "Interface",
-    "ip-address": "IP address"
+    "ip-address": "IP address",
+    "filter-by": "فیلتر بر اساس..."
   },
   "bandwidth-metrics": {
     "current-year": "امسال",
@@ -185,7 +186,9 @@
     "first-connected-at": "اولین اتصال",
     "sub-last-opened-at": "آخرین دریافت اشتراک",
     "tag": "برچسب",
-    "used-traffic": "Used Traffic (%)"
+    "used-traffic": "Used Traffic (%)",
+    "vless-uuid": "VLESS UUID",
+    "hwid-device-limit": "محدودیت دستگاه HWID"
   },
   "header-buttons": {
     "feature": {}
@@ -372,7 +375,8 @@
     "widget": {
       "list-of-all-users": "فهرست تمامی کاربران",
       "error-loading-data": "خطا در لود کردن اطلاعات",
-      "table-title": "کاربرها"
+      "table-title": "کاربرها",
+      "directory-title": "فهرست کاربران"
     }
   },
   "view-user-modal": {
@@ -1592,7 +1596,8 @@
     "user-agent": "عامل کاربر",
     "user-uuid": "UUID کاربر",
     "created-at": "ایجاد شده در",
-    "updated-at": "به‌روز شده در"
+    "updated-at": "به‌روز شده در",
+    "user-id": "شناسه کاربر"
   },
   "hwid-inspector-table": {
     "widget": {
@@ -1815,6 +1820,17 @@
       "keycloakDomain": {
         "label": "دامنه Keycloak",
         "description": "دامنه سرور Keycloak بدون پروتکل (مثلا keycloak.docs.rw)"
+      },
+      "authorizationUrl": {
+        "label": "آدرس مجوزدهی",
+        "description": "آدرس مجوزدهی ارائه‌دهنده OAuth2"
+      },
+      "tokenUrl": {
+        "label": "آدرس توکن",
+        "description": "آدرس دریافت توکن OAuth2"
+      },
+      "withPkce": {
+        "label": "فعال‌سازی PKCE"
       }
     }
   },
@@ -1867,7 +1883,9 @@
       "expired": "Expired",
       "expires-in-days": "Expires in (days)",
       "expires-in": "Expires",
-      "one-time-notice": "For security reasons, the token is shown <emphasis>only once</emphasis> right after creation. Make sure to copy and store it somewhere safe — you won't be able to see it again."
+      "one-time-notice": "For security reasons, the token is shown <emphasis>only once</emphasis> right after creation. Make sure to copy and store it somewhere safe — you won't be able to see it again.",
+      "scope-read": "خواندن",
+      "scope-write": "نوشتن"
     }
   },
   "external-squads-hosts": {
@@ -2024,7 +2042,10 @@
       "accordion": "آکوردئون",
       "minimal": "کمینه",
       "timeline": "خط زمانی",
-      "installation-guides-design": "طراحی آموزش‌های نصب"
+      "installation-guides-design": "طراحی آموزش‌های نصب",
+      "active-locales-count": "{{count}} فعال",
+      "icons-count": "{{count}} آیکون",
+      "configure": "پیکربندی"
     },
     "subpage-config-saved-line-1": "برای اعمال تغییرات لطفا مخزن",
     "subpage-config-saved-line-2": "برای مثال می‌توانید این دستور را در ترمینال استفاده کنید:"
@@ -2078,7 +2099,8 @@
       "apps": "نرم‌افزارها",
       "add-app": "افزودن برنامه",
       "unnamed-app": "نرم‌افزار بدون اسم",
-      "edit-app": "ویرایش برنامه"
+      "edit-app": "ویرایش برنامه",
+      "apps-configured": "{{count}} برنامه پیکربندی شده"
     }
   },
   "svg-icon-input": {
@@ -2229,7 +2251,8 @@
   },
   "node-plugin-card": {
     "widget": {
-      "active-on-nodes": "Active on Nodes"
+      "active-on-nodes": "Active on Nodes",
+      "subtitle": "افزونه"
     }
   },
   "adtive-on-nodes": {
@@ -2244,7 +2267,9 @@
       "node-plugins-are-an-advanced-feature-please-review-the-documentation-before-use": "Node Plugins are an advanced feature. Please review the documentation before use.",
       "warning": "Warning",
       "no-node-plugins-yet": "No node plugins yet",
-      "create-a-plugin-to-extend-node-capabilities-with": "Create a plugin to extend node capabilities with"
+      "create-a-plugin-to-extend-node-capabilities-with": "Create a plugin to extend node capabilities with",
+      "ingress-filter": "فیلتر ورودی",
+      "egress-filter": "فیلتر خروجی"
     }
   },
   "node-plugin-executor": {
@@ -2266,8 +2291,10 @@
       "no-connected-nodes-available": "No connected nodes available.",
       "deselect-all": "Deselect all",
       "select-all": "Select all",
-      "execute": "Execute"
-    }
+      "execute": "Execute",
+      "selected-count": "{{count}} انتخاب شده"
+    },
+    "title": "اجراکننده دستور"
   },
   "node-active-session": {
     "item": {
@@ -2611,5 +2638,83 @@
       "ram-detail": "حافظه: {{used}} / {{total}} ({{percent}}٪)",
       "select-node": "انتخاب نود {{name}}"
     }
+  },
+  "hosts-overview": {
+    "widget": {
+      "title": "نمای کلی هاست‌ها",
+      "subtitle": "{{active}} فعال از {{total}}",
+      "filter-all": "همه",
+      "search-placeholder": "جستجوی یادداشت، آدرس، SNI، برچسب..."
+    }
+  },
+  "hosts-matrix": {
+    "widget": {
+      "linked-nodes": "{{count}} نود",
+      "no-linked-nodes": "همه نودهای پروفایل",
+      "security-default": "پیش‌فرض",
+      "select-host": "انتخاب {{name}}",
+      "sni-blank": "SNI خالی",
+      "sort-remark": "یادداشت",
+      "sort-address": "آدرس",
+      "sort-profile": "پروفایل",
+      "sort-nodes": "نودها"
+    }
+  },
+  "host-card": {
+    "widget": {
+      "dangling": "متصل‌نشده",
+      "unknown-inbound": "ورودی نامشخص",
+      "mux-params": "پارامترهای Mux",
+      "final-mask": "ماسک نهایی"
+    }
+  },
+  "user-status": {
+    "active": "فعال",
+    "limited": "محدود شده",
+    "disabled": "غیرفعال",
+    "expired": "منقضی شده"
+  },
+  "users-mobile": {
+    "total-count": "{{count}} کاربر",
+    "search-placeholder": "جستجوی نام کاربری...",
+    "sort": {
+      "newest": "جدیدترین",
+      "oldest": "قدیمی‌ترین",
+      "traffic-desc": "بیشترین مصرف",
+      "expire-asc": "نزدیک به انقضا",
+      "online-desc": "آخرین فعالیت"
+    }
+  },
+  "hwid-inspector-leaderboard": {
+    "widget": {
+      "top-users-title": "کاربران برتر بر اساس دستگاه‌های HWID"
+    }
+  },
+  "node-plugin-editor": {
+    "loading": "در حال بارگذاری ویرایشگر..."
+  },
+  "node-plugin-dry-run": {
+    "button": "آزمایشی (Dry-run)",
+    "modal-title": "بررسی آزمایشی افزونه نود",
+    "failed-title": "بررسی آزمایشی ناموفق بود",
+    "validation-failed": "اعتبارسنجی افزونه ناموفق بود",
+    "validation": "اعتبارسنجی",
+    "valid-message": "ساختار و ارجاعات فهرست مشترک معتبر هستند.",
+    "invalid-message": "پیکربندی افزونه معتبر نیست.",
+    "changes": "تغییرات",
+    "affected-nodes": "نودهای متأثر",
+    "domains": "دامنه‌ها",
+    "saved-hash-matches": "هش ذخیره‌شده یکسان است",
+    "unsaved-changes": "تغییرات ذخیره‌نشده",
+    "dependency-graph": "گراف وابستگی",
+    "no-shared-lists": "هیچ فهرست مشترکی ارجاع نشده است",
+    "affected-nodes-dns": "نودهای متأثر و DNS",
+    "deployment-state": "وضعیت استقرار",
+    "no-deployments": "هنوز هیچ نودی وضعیت اعمال این افزونه را گزارش نکرده است.",
+    "applied": "اعمال شده",
+    "rolled-back": "بازگردانی شده",
+    "stale-dns": "{{count}} DNS قدیمی",
+    "checked-at": "بررسی شده در {{time}}",
+    "structured-diff": "تفاوت ساختاری / کامپایل عامل"
   }
 }

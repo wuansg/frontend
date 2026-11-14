@@ -151,7 +151,7 @@ export const SubscriptionUserRemarksCardWidget = (props: IProps) => {
 
     return (
         <form onSubmit={handleSubmit} style={{ display: 'contents' }}>
-            <SettingsCardShared.Container maw="1500px">
+            <SettingsCardShared.Container>
                 <SettingsCardShared.Header
                     description={
                         <>
@@ -197,7 +197,7 @@ export const SubscriptionUserRemarksCardWidget = (props: IProps) => {
                                     iconColor="red"
                                     initialRemarks={remarks.expired}
                                     onChange={updateExpiredRemarks}
-                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: EXPIRED`}
+                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: ${t('user-status.expired')}`}
                                 />
 
                                 <RemarksManager
@@ -205,7 +205,7 @@ export const SubscriptionUserRemarksCardWidget = (props: IProps) => {
                                     iconColor="orange"
                                     initialRemarks={remarks.limited}
                                     onChange={updateLimitedRemarks}
-                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: LIMITED`}
+                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: ${t('user-status.limited')}`}
                                 />
 
                                 <RemarksManager
@@ -213,7 +213,7 @@ export const SubscriptionUserRemarksCardWidget = (props: IProps) => {
                                     iconColor="gray"
                                     initialRemarks={remarks.disabled}
                                     onChange={updateDisabledRemarks}
-                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: DISABLED`}
+                                    title={`${t('subscription-user-remarks-card.widget.user-status')}: ${t('user-status.disabled')}`}
                                 />
 
                                 <RemarksManager

@@ -87,17 +87,22 @@ export const BackendToolsCardWidget = () => {
                 {backendTools.map((tool) => (
                     <Card key={tool.key} radius="md" withBorder>
                         <Group justify="space-between" wrap="nowrap">
-                            <Group gap="md" wrap="nowrap">
-                                <ThemeIcon color={tool.color} size="lg" variant="soft">
+                            <Group gap="md" miw={0} wrap="nowrap">
+                                <ThemeIcon
+                                    color={tool.color}
+                                    size="lg"
+                                    style={{ flexShrink: 0 }}
+                                    variant="soft"
+                                >
                                     {tool.icon}
                                 </ThemeIcon>
 
-                                <Stack gap={2}>
-                                    <Group gap="xs">
+                                <Stack gap={2} miw={0}>
+                                    <Group gap="xs" wrap="wrap">
                                         <Text fw={600} size="sm">
                                             {tool.title}
                                         </Text>
-                                        <Code c="dimmed" fz="xs" color="gray">
+                                        <Code c="dimmed" fz="xs">
                                             {tool.path}
                                         </Code>
                                     </Group>
@@ -112,6 +117,7 @@ export const BackendToolsCardWidget = () => {
                                 onClick={() => handleLogin(tool)}
                                 rightSection={<TbExternalLink size={16} />}
                                 size="xs"
+                                style={{ flexShrink: 0 }}
                                 variant="soft"
                             >
                                 {t('backend-tools-card.widget.login')}

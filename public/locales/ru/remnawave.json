@@ -32,7 +32,7 @@
     "happ-routing-builder": "Happ-роутинг",
     "templates": "Шаблоны",
     "subscription": "Подписка",
-    "subscription-page": "Subscription Page",
+    "subscription-page": "Страница подписки",
     "config-profiles": "Профили",
     "internal-squads": "Внутренние сквады",
     "external-squads": "Внешние сквады",
@@ -99,7 +99,8 @@
     "shared-lists": "Общие списки",
     "try-again": "Попробовать снова",
     "interface": "Интерфейс",
-    "ip-address": "IP-адрес"
+    "ip-address": "IP-адрес",
+    "filter-by": "Фильтр..."
   },
   "bandwidth-metrics": {
     "current-year": "Текущий год",
@@ -185,7 +186,9 @@
     "first-connected-at": "Первое подключение",
     "sub-last-opened-at": "Последний запрос подписки",
     "tag": "Tag",
-    "used-traffic": "Использованный трафик (%)"
+    "used-traffic": "Использованный трафик (%)",
+    "vless-uuid": "VLESS UUID",
+    "hwid-device-limit": "Лимит устройств HWID"
   },
   "header-buttons": {
     "feature": {}
@@ -372,7 +375,8 @@
     "widget": {
       "list-of-all-users": "Список всех пользователей",
       "error-loading-data": "Ошибка загрузки данных",
-      "table-title": "Пользователи"
+      "table-title": "Пользователи",
+      "directory-title": "Список пользователей"
     }
   },
   "view-user-modal": {
@@ -1592,7 +1596,8 @@
     "user-agent": "User Agent",
     "user-uuid": "UUID польз.",
     "created-at": "Дата создания",
-    "updated-at": "Дата обновления"
+    "updated-at": "Дата обновления",
+    "user-id": "ID пользователя"
   },
   "hwid-inspector-table": {
     "widget": {
@@ -1815,6 +1820,17 @@
       "keycloakDomain": {
         "label": "Keycloak домен",
         "description": "Домен сервера Keycloak без протокола (пр. keycloak.docs.rw)"
+      },
+      "authorizationUrl": {
+        "label": "URL авторизации",
+        "description": "URL авторизации провайдера OAuth2"
+      },
+      "tokenUrl": {
+        "label": "URL токена",
+        "description": "URL получения токена OAuth2"
+      },
+      "withPkce": {
+        "label": "Использовать PKCE"
       }
     }
   },
@@ -1867,7 +1883,9 @@
       "expired": "Истек",
       "expires-in-days": "Срок жизни (дней)",
       "expires-in": "Истекает",
-      "one-time-notice": "Из соображений безопасности токен отображается <emphasis>только один раз</emphasis> сразу после создания. Обязательно скопируйте и сохраните его в надежном месте — вы больше не сможете его увидеть."
+      "one-time-notice": "Из соображений безопасности токен отображается <emphasis>только один раз</emphasis> сразу после создания. Обязательно скопируйте и сохраните его в надежном месте — вы больше не сможете его увидеть.",
+      "scope-read": "Чтение",
+      "scope-write": "Запись"
     }
   },
   "external-squads-hosts": {
@@ -2024,7 +2042,10 @@
       "accordion": "Аккордеон",
       "minimal": "Минимальная",
       "timeline": "Хронология",
-      "installation-guides-design": "Внешний вид блока: Installation Guides"
+      "installation-guides-design": "Внешний вид блока: Installation Guides",
+      "active-locales-count": "{{count}} активно",
+      "icons-count": "{{count}} иконок",
+      "configure": "Настроить"
     },
     "subpage-config-saved-line-1": "Чтобы применить изменения, пожалуйста, перезапустите Docker-контейнер Susbcription-Page.",
     "subpage-config-saved-line-2": "Например, вы можете использовать следующую команду в терминале:"
@@ -2078,7 +2099,8 @@
       "apps": "Приложения",
       "add-app": "Добавить приложение",
       "unnamed-app": "Приложение без имени",
-      "edit-app": "Редактировать приложение"
+      "edit-app": "Редактировать приложение",
+      "apps-configured": "Настроено приложений: {{count}}"
     }
   },
   "svg-icon-input": {
@@ -2229,7 +2251,8 @@
   },
   "node-plugin-card": {
     "widget": {
-      "active-on-nodes": "Активен на нодах"
+      "active-on-nodes": "Активен на нодах",
+      "subtitle": "ПЛАГИН"
     }
   },
   "adtive-on-nodes": {
@@ -2244,7 +2267,9 @@
       "node-plugins-are-an-advanced-feature-please-review-the-documentation-before-use": "Плагины нод являются расширенной функцией. Пожалуйста, ознакомьтесь с документацией перед использованием.",
       "warning": "Предупреждение",
       "no-node-plugins-yet": "Плагины для нод отсутствуют",
-      "create-a-plugin-to-extend-node-capabilities-with": "Создайте плагин для расширения возможностей узла с"
+      "create-a-plugin-to-extend-node-capabilities-with": "Создайте плагин для расширения возможностей узла с",
+      "ingress-filter": "Входящий фильтр",
+      "egress-filter": "Исходящий фильтр"
     }
   },
   "node-plugin-executor": {
@@ -2266,8 +2291,10 @@
       "no-connected-nodes-available": "Нет доступных подключенных нод.",
       "deselect-all": "Снять все",
       "select-all": "Выделить все",
-      "execute": "Выполнить"
-    }
+      "execute": "Выполнить",
+      "selected-count": "Выбрано: {{count}}"
+    },
+    "title": "Исполнитель команд"
   },
   "node-active-session": {
     "item": {
@@ -2611,5 +2638,83 @@
       "ram-detail": "Память: {{used}} / {{total}} ({{percent}}%)",
       "select-node": "Выбрать узел {{name}}"
     }
+  },
+  "hosts-overview": {
+    "widget": {
+      "title": "Обзор хостов",
+      "subtitle": "Активно {{active}} из {{total}}",
+      "filter-all": "Все",
+      "search-placeholder": "Поиск по примечанию, адресу, SNI, тегу..."
+    }
+  },
+  "hosts-matrix": {
+    "widget": {
+      "linked-nodes": "{{count}} узлов",
+      "no-linked-nodes": "Все узлы профиля",
+      "security-default": "По умолч.",
+      "select-host": "Выбрать {{name}}",
+      "sni-blank": "Пустой SNI",
+      "sort-remark": "Имя",
+      "sort-address": "Адрес",
+      "sort-profile": "Профиль",
+      "sort-nodes": "Узлы"
+    }
+  },
+  "host-card": {
+    "widget": {
+      "dangling": "Не привязан",
+      "unknown-inbound": "Нет инбаунда",
+      "mux-params": "Параметры Mux",
+      "final-mask": "Финальная маска"
+    }
+  },
+  "user-status": {
+    "active": "Активен",
+    "limited": "Лимит",
+    "disabled": "Отключён",
+    "expired": "Истёк"
+  },
+  "users-mobile": {
+    "total-count": "Всего: {{count}}",
+    "search-placeholder": "Поиск по имени...",
+    "sort": {
+      "newest": "Сначала новые",
+      "oldest": "Сначала старые",
+      "traffic-desc": "По трафику",
+      "expire-asc": "Скоро истекают",
+      "online-desc": "Недавно онлайн"
+    }
+  },
+  "hwid-inspector-leaderboard": {
+    "widget": {
+      "top-users-title": "Топ пользователей по устройствам HWID"
+    }
+  },
+  "node-plugin-editor": {
+    "loading": "Загрузка редактора..."
+  },
+  "node-plugin-dry-run": {
+    "button": "Проверка (Dry-run)",
+    "modal-title": "Предварительная проверка плагина",
+    "failed-title": "Ошибка проверки",
+    "validation-failed": "Проверка плагина не пройдена",
+    "validation": "Проверка",
+    "valid-message": "Схема и ссылки на общие списки корректны.",
+    "invalid-message": "Конфигурация плагина некорректна.",
+    "changes": "Изменения",
+    "affected-nodes": "Затронутые узлы",
+    "domains": "Домены",
+    "saved-hash-matches": "Хеш совпадает с сохранённым",
+    "unsaved-changes": "Есть несохранённые изменения",
+    "dependency-graph": "Граф зависимостей",
+    "no-shared-lists": "Общие списки не используются",
+    "affected-nodes-dns": "Затронутые узлы и DNS",
+    "deployment-state": "Состояние развёртывания",
+    "no-deployments": "Ни один узел ещё не сообщил о применении этого плагина.",
+    "applied": "Применено",
+    "rolled-back": "Откат",
+    "stale-dns": "{{count}} устаревших DNS",
+    "checked-at": "Проверено {{time}}",
+    "structured-diff": "Структурный diff / компиляция агента"
   }
 }

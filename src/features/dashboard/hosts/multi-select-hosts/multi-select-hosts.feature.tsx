@@ -226,7 +226,7 @@ export const MultiSelectHostsFeature = (props: IProps) => {
                             p="md"
                             style={{
                                 borderRadius: 'calc(var(--mantine-radius-default) - 4px)',
-                                border: '1px solid var(--mantine-color-dark-5)'
+                                border: '1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5))'
                             }}
                         >
                             <Stack>
@@ -253,7 +253,10 @@ export const MultiSelectHostsFeature = (props: IProps) => {
 
                                 {activeTag === null && (
                                     <ActionIcon.Group style={{ width: '100%' }}>
-                                        <Tooltip label="Move to top" withArrow>
+                                        <Tooltip
+                                            label={t('multi-select-nodes.feature.move-to-top')}
+                                            withArrow
+                                        >
                                             <ActionIcon
                                                 color="gray"
                                                 onClick={() => moveSelected('top')}
@@ -265,7 +268,10 @@ export const MultiSelectHostsFeature = (props: IProps) => {
                                             </ActionIcon>
                                         </Tooltip>
 
-                                        <Tooltip label="Move up" withArrow>
+                                        <Tooltip
+                                            label={t('multi-select-nodes.feature.move-up')}
+                                            withArrow
+                                        >
                                             <ActionIcon
                                                 color="gray"
                                                 onClick={() => moveSelected('up')}
@@ -277,7 +283,10 @@ export const MultiSelectHostsFeature = (props: IProps) => {
                                             </ActionIcon>
                                         </Tooltip>
 
-                                        <Tooltip label="Move down" withArrow>
+                                        <Tooltip
+                                            label={t('multi-select-nodes.feature.move-down')}
+                                            withArrow
+                                        >
                                             <ActionIcon
                                                 color="gray"
                                                 onClick={() => moveSelected('down')}
@@ -289,7 +298,10 @@ export const MultiSelectHostsFeature = (props: IProps) => {
                                             </ActionIcon>
                                         </Tooltip>
 
-                                        <Tooltip label="Move to bottom" withArrow>
+                                        <Tooltip
+                                            label={t('multi-select-nodes.feature.move-to-bottom')}
+                                            withArrow
+                                        >
                                             <ActionIcon
                                                 color="gray"
                                                 onClick={() => moveSelected('bottom')}

@@ -34,11 +34,11 @@ export function PlatformRow({
                         {platform.name}
                     </Text>
                 </Group>
-                <Group align="baseline" gap={6} wrap="nowrap">
-                    <Text fw={700} size="sm">
+                <Group align="baseline" gap={6} style={{ flexShrink: 0 }} wrap="nowrap">
+                    <Text fw={700} size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                         {formatCount(platform.value)}
                     </Text>
-                    <Text c="dimmed" size="xs">
+                    <Text c="dimmed" size="xs" style={{ fontVariantNumeric: 'tabular-nums' }}>
                         {formatShare(platform.value, total)}
                     </Text>
                 </Group>

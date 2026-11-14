@@ -45,6 +45,7 @@ export const NodePluginEditorPageComponent = (props: Props) => {
                 description={plugin.uuid}
                 icon={<TbPackage size={24} />}
                 title={plugin.name}
+                wrapActions
             />
             <Flex gap="md">
                 <Box style={{ flex: 1, minWidth: 0 }}>

@@ -24,9 +24,7 @@ export const SectionShell = (props: IProps) => {
                     <Icon size={20} />
                 </ThemeIcon>
                 <Stack gap={2} style={{ flex: 1 }}>
-                    <Title c="white" order={5}>
-                        {title}
-                    </Title>
+                    <Title order={5}>{title}</Title>
                     <Text c="dimmed" size="xs">
                         {description}
                     </Text>

@@ -186,7 +186,7 @@ export const SubscriptionResponseHeadersCardWidget = (props: IProps) => {
 
     return (
         <form onSubmit={handleSubmit} style={{ display: 'contents' }}>
-            <SettingsCardShared.Container maw="1500px">
+            <SettingsCardShared.Container>
                 <SettingsCardShared.Header
                     description={t(
                         'subscription-tabs.widget.headers-that-will-be-sent-with-subscription-content'

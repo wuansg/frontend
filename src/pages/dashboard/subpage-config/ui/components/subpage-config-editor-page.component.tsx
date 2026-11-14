@@ -347,6 +347,7 @@ export const SubpageConfigEditorPageComponent = (props: Props) => {
                     'subpage-config-visual-editor.widget.edit-your-subscription-page-configuration'
                 )}
                 title={t('subpage-config-visual-editor.widget.subpage-editor')}
+                wrapActions
             />
 
             <Stack gap="lg">

@@ -32,15 +32,15 @@ export function DataUsageColumnEntity(props: IProps) {
     const getProgressColor = () => {
         if (isUnlimited) return 'teal'
         if (percentage > 95) return 'red'
-        if (percentage > 80) return 'yellow.4'
+        if (percentage > 80) return 'yellow.6'
         return 'teal'
     }
 
     return (
-        <Box miw={300}>
-            <Group justify="space-between">
+        <Box miw={185} style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <Group gap="xs" justify="space-between" wrap="nowrap">
                 <Text c="red.5" fw={700} fz="xs">
-                    {percentage.toFixed(2)}%
+                    {percentage.toFixed(1)}%
                     <Text c="dimmed" component="span" fz="xs">
                         {' '}
                         {strategy}
@@ -50,17 +50,17 @@ export function DataUsageColumnEntity(props: IProps) {
                     <Text c="dimmed" component="span" fw={550} fz="xs" size="xs">
                         Σ {prettyLifetimeData}
                     </Text>{' '}
-                    {(100 - percentage).toFixed(2)}%
+                    {Math.max(0, 100 - percentage).toFixed(1)}%
                 </Text>
             </Group>
             <Progress
                 color={getProgressColor()}
                 radius="xs"
                 size="md"
-                value={isUnlimited ? 100 : percentage}
+                value={isUnlimited ? 100 : Math.min(100, percentage)}
             />
 
-            <Group gap="xs" justify="space-between" mt={2}>
+            <Group gap="xs" justify="space-between" mt={2} wrap="nowrap">
                 <Text c="dimmed" fw={550} size="xs">
                     {prettyUsedData}
                 </Text>

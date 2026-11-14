@@ -159,19 +159,19 @@ const getFieldConfig = (t: TFunction) =>
             type: 'text' as const
         },
         authorizationUrl: {
-            label: 'Authorization URL',
-            description: 'Authorization URL for the OAuth2 provider',
+            label: t('auth-settings.fields.authorizationUrl.label'),
+            description: t('auth-settings.fields.authorizationUrl.description'),
             placeholder: 'https://example.com/oauth2/authorize',
             type: 'text' as const
         },
         tokenUrl: {
-            label: 'Token URL',
-            description: 'Token URL for the OAuth2 provider',
+            label: t('auth-settings.fields.tokenUrl.label'),
+            description: t('auth-settings.fields.tokenUrl.description'),
             placeholder: 'https://example.com/oauth2/token',
             type: 'text' as const
         },
         withPkce: {
-            label: 'With PKCE',
+            label: t('auth-settings.fields.withPkce.label'),
             description: '',
             placeholder: 'false',
             type: 'checkbox' as const
@@ -252,8 +252,8 @@ export const AuthentificationSettingsCardWidget = (props: IProps) => {
                             <Text c="dimmed" size="sm">
                                 {t('auth-settings.error-modal.description')}
                             </Text>
-                            <Code p="md">
-                                <Text c="red.1" fw={500} size="sm">
+                            <Code block color="red" p="md">
+                                <Text c="red" fw={500} size="sm">
                                     {error instanceof Error
                                         ? error.message
                                         : t('auth-settings.error-modal.unknown-error')}
@@ -463,7 +463,7 @@ export const AuthentificationSettingsCardWidget = (props: IProps) => {
                             </Center>
 
                             <Accordion.Panel>
-                                <Group justify="right">
+                                <Group justify="flex-end" mb="md">
                                     <Button
                                         color="gray"
                                         disabled={!form.getValues().passkeySettings!.enabled}

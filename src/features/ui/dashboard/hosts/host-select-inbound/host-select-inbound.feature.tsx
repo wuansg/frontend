@@ -57,7 +57,7 @@ export function HostSelectInboundFeature(props: IProps) {
                                 </Box>
 
                                 <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
-                                    <Text ff="monospace" fw={600} size="md" truncate>
+                                    <Text fw={600} size="md" truncate>
                                         {activeProfile.name}
                                     </Text>
 

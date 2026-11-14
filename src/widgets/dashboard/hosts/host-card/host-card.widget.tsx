@@ -11,18 +11,21 @@ import {
     Stack,
     Text,
     ThemeIcon,
-    Tooltip
+    Tooltip,
+    useComputedColorScheme
 } from '@mantine/core'
+import { useClipboard } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
+import { notifications } from '@mantine/notifications'
 import {
+    GetConfigProfilesCommand,
     GetHostsCommand,
-    GetNodesCommand,
-    GetConfigProfilesCommand
+    GetNodesCommand
 } from '@remnawave/backend-contract'
 import cx from 'clsx'
 import ColorHash from 'color-hash'
-import { githubDarkTheme, JsonEditor } from 'json-edit-react'
-import { CSSProperties, useState } from 'react'
+import { githubDarkTheme, githubLightTheme, JsonEditor } from 'json-edit-react'
+import { CSSProperties, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiProhibit, PiPulse } from 'react-icons/pi'
 import { RiDraggable } from 'react-icons/ri'
@@ -35,8 +38,11 @@ import {
     TbMask,
     TbStar
 } from 'react-icons/tb'
+import { useNavigate } from 'react-router'
 
 import { showModal } from '@shared/_modals/show-modal'
+import { ROUTES } from '@shared/constants'
+import { SEARCH_PARAMS } from '@shared/constants/search-params'
 import { useIsMobile } from '@shared/hooks'
 import { Base64Logo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
@@ -44,12 +50,11 @@ import { SingleRowOverflowList } from '@shared/ui/single-row-overflow-list'
 import { resolveCountryCode } from '@shared/utils/misc/resolve-country-code'
 import { openOrNavigate } from '@shared/utils/open-or-navigate'
 
-import { MODALS, useModalsStoreOpenWithData } from '@entities/dashboard/modal-store'
-
 import classes from './HostCard.module.css'
 
 export interface IProps {
     configProfiles: GetConfigProfilesCommand.Response['response']['configProfiles'] | undefined
+    disableReordering?: boolean
     index?: number
     isDragOverlay?: boolean
     isSelected?: boolean
@@ -57,7 +62,6 @@ export interface IProps {
     nodesByUuid: Map<string, GetNodesCommand.Response['response'][number]>
     onSelect?: () => void
     viewOnly?: boolean
-    disableReordering?: boolean
 }
 
 export function HostCardWidget(props: IProps) {
@@ -70,22 +74,26 @@ export function HostCardWidget(props: IProps) {
         onSelect,
         isDragOverlay = false,
         viewOnly = false,
-
         disableReordering = false
     } = props
 
     const { t } = useTranslation()
+    const navigate = useNavigate()
+    const clipboard = useClipboard({ timeout: 500 })
+    const colorScheme = useComputedColorScheme('dark')
 
     const [isHovered, setIsHovered] = useState(false)
     const isMobile = useIsMobile()
 
     const configProfile = configProfiles?.find(
-        (configProfile) => configProfile.uuid === item.inbound.configProfileUuid
+        (profile) => profile.uuid === item.inbound.configProfileUuid
     )
 
     const inboundTag = configProfile?.inbounds.find(
         (inbound) => inbound.uuid === item.inbound.configProfileInboundUuid
     )?.tag
+
+    const isDangling = !configProfile?.uuid || !inboundTag
 
     const sortable = useSortable({
         id: item.uuid,
@@ -103,9 +111,35 @@ export function HostCardWidget(props: IProps) {
         position: 'relative'
     }
 
+    const sortedTags = useMemo(
+        () => [...(item.tags ?? [])].sort((a, b) => a.localeCompare(b)),
+        [item.tags]
+    )
+
+    const linkedNodes = useMemo(
+        () =>
+            item.nodes
+                .map((nodeId) => nodesByUuid.get(nodeId))
+                .filter((n): n is NonNullable<typeof n> => Boolean(n)),
+        [item.nodes, nodesByUuid]
+    )
+
     const handleEdit = () => {
+        if (viewOnly) return
         showModal('hosts_editHostDrawer', {
             host: item
+        })
+    }
+
+    const addressLabel = item.port ? `${item.address}:${item.port}` : item.address
+
+    const handleCopyAddress = (event: React.MouseEvent) => {
+        event.stopPropagation()
+        clipboard.copy(addressLabel)
+        notifications.show({
+            message: addressLabel,
+            title: t('node-card.widget.copied'),
+            color: 'teal'
         })
     }
 
@@ -114,8 +148,17 @@ export function HostCardWidget(props: IProps) {
     }
 
     const isHostActive = !item.isDisabled
+    const statusTone = isDangling
+        ? 'red'
+        : !isHostActive
+          ? 'gray'
+          : item.isHidden
+            ? 'violet'
+            : 'teal'
 
-    const ch = new ColorHash({ lightness: [0.65, 0.65, 0.65] })
+    const ch = new ColorHash({
+        lightness: colorScheme === 'dark' ? [0.68, 0.68, 0.68] : [0.38, 0.38, 0.38]
+    })
 
     const isParamSet = (value: unknown): boolean => {
         if (value == null) return false
@@ -129,84 +172,84 @@ export function HostCardWidget(props: IProps) {
     const hasMuxParams = isParamSet(item.muxParams)
     const serverDescription = item.serverDescription?.trim() || ''
     const hasExcludedSquads = item.excludedInternalSquads.length > 0
+    const jsonTheme = colorScheme === 'dark' ? githubDarkTheme : githubLightTheme
+
+    const statusBadgeNode = !isHostActive ? (
+        <Tooltip label={t('use-hosts-table-widget.disabled')}>
+            <ThemeIcon color="gray" size="md" style={{ flexShrink: 0 }} variant="light">
+                <PiProhibit size={15} />
+            </ThemeIcon>
+        </Tooltip>
+    ) : item.isHidden ? (
+        <Tooltip label={t('use-hosts-table-widget.hidden')}>
+            <ThemeIcon color="violet" size="md" style={{ flexShrink: 0 }} variant="light">
+                <TbEyeOff size={15} />
+            </ThemeIcon>
+        </Tooltip>
+    ) : (
+        <Tooltip label={t('use-hosts-table-widget.enabled')}>
+            <ThemeIcon color="teal" size="md" style={{ flexShrink: 0 }} variant="light">
+                <PiPulse size={15} />
+            </ThemeIcon>
+        </Tooltip>
+    )
 
     if (isMobile) {
         return (
             <Box
                 className={cx(classes.item, classes.mobileItem, {
                     [classes.itemDragging]: isDragging || isHovered,
-                    [classes.selectedItem]: isSelected,
-                    [classes.danglingItem]: !configProfile?.uuid
+                    [classes.selectedItem]: isSelected
                 })}
                 data-drag-overlay={isDragOverlay}
+                data-status-tone={statusTone}
                 ref={isDragOverlay ? undefined : ref}
                 style={style}
             >
-                <Stack gap="sm">
+                <Stack gap={8}>
                     <Group justify="space-between" wrap="nowrap">
-                        {!viewOnly && (
-                            <Group gap="sm" wrap="nowrap">
+                        <Group gap="xs" miw={0} style={{ flex: 1 }} wrap="nowrap">
+                            {!viewOnly && (
                                 <Checkbox
                                     checked={isSelected}
+                                    color="cyan"
                                     onChange={(e) => {
                                         e.stopPropagation()
                                         onSelect?.()
                                     }}
-                                    size="md"
+                                    size="sm"
                                     styles={{
                                         input: { cursor: 'pointer' }
                                     }}
                                 />
-                                {!disableReordering && (
-                                    <Box
-                                        className={classes.mobileDragHandle}
-                                        onClick={(e) => e.stopPropagation()}
-                                        ref={isDragOverlay ? undefined : handleRef}
-                                    >
-                                        <RiDraggable size={px('1.2rem')} />
-                                    </Box>
-                                )}
-                            </Group>
-                        )}
+                            )}
+                            {!viewOnly && !disableReordering && (
+                                <Box
+                                    className={classes.mobileDragHandle}
+                                    onClick={(e) => e.stopPropagation()}
+                                    ref={isDragOverlay ? undefined : handleRef}
+                                >
+                                    <RiDraggable size={px('1.1rem')} />
+                                </Box>
+                            )}
+                            {statusBadgeNode}
+                            <Text className={classes.hostName} fw={600} size="sm">
+                                {item.remark}
+                            </Text>
+                        </Group>
 
-                        <GetHostUsersUsageFeature hostRemark={item.remark} hostUuid={item.uuid} />
-
-                        {!isHostActive && (
-                            <ActionIcon
-                                color="gray"
-                                size="lg"
-                                style={{ flexShrink: 0 }}
-                                variant="soft"
-                            >
-                                <PiProhibit size={16} />
-                            </ActionIcon>
-                        )}
-
-                        {isHostActive && item.isHidden && (
-                            <ActionIcon
-                                color="violet"
-                                size="lg"
-                                style={{ flexShrink: 0 }}
-                                variant="soft"
-                            >
-                                <TbEyeOff size={16} />
-                            </ActionIcon>
-                        )}
-
-                        {isHostActive && !item.isHidden && (
-                            <ActionIcon
-                                color="teal"
-                                size="lg"
-                                style={{ flexShrink: 0 }}
-                                variant="soft"
-                            >
-                                <PiPulse size={16} />
-                            </ActionIcon>
-                        )}
+                        <Group gap={4} onClick={(e) => e.stopPropagation()} wrap="nowrap">
+                            <GetHostUsersUsageFeature
+                                hostRemark={item.remark}
+                                hostUuid={item.uuid}
+                            />
+                        </Group>
                     </Group>
 
                     <Box
-                        className={classes.contentArea}
+                        className={cx(classes.contentArea, {
+                            [classes.contentAreaReadOnly]: viewOnly
+                        })}
                         onClick={(e) => {
                             e.stopPropagation()
                             handleEdit()
@@ -214,17 +257,18 @@ export function HostCardWidget(props: IProps) {
                         onTouchEnd={() => setIsHovered(false)}
                         onTouchStart={() => setIsHovered(true)}
                     >
-                        <Stack gap="xs">
-                            <Text className={classes.hostName} fw={600} size="lg">
-                                {item.remark}
+                        <Stack gap={6}>
+                            <Text
+                                c="dimmed"
+                                className={classes.mobileAddress}
+                                onClick={handleCopyAddress}
+                                size="xs"
+                                title={t('node-card.widget.copy-address')}
+                            >
+                                {addressLabel}
                             </Text>
 
-                            <Text c="dimmed" className={classes.mobileAddress} size="sm">
-                                {item.address}
-                                {item.port ? `:${item.port}` : ''}
-                            </Text>
-
-                            <Stack gap="xs">
+                            <Group gap={6} justify="space-between" wrap="wrap">
                                 <Badge
                                     autoContrast
                                     color={configProfile?.uuid ? ch.hex(configProfile.uuid) : 'red'}
@@ -235,70 +279,61 @@ export function HostCardWidget(props: IProps) {
                                             <TbAlertCircle size={12} />
                                         )
                                     }
-                                    size="md"
-                                    style={{
-                                        paddingLeft: 0
-                                    }}
+                                    size="sm"
+                                    style={{ paddingLeft: 0 }}
                                     variant="transparent"
                                 >
-                                    {configProfile?.name || 'DANGLING'}
+                                    {configProfile?.name || t('host-card.widget.dangling')}
                                     {item.inbound.configProfileInboundUuid && (
                                         <>
-                                            <span style={{ margin: '0 6px', opacity: 0.5 }}>›</span>
-                                            <span style={{ opacity: 0.75 }}>
-                                                {inboundTag || 'UNKNOWN'}
+                                            <span style={{ margin: '0 5px', opacity: 0.5 }}>›</span>
+                                            <span style={{ opacity: 0.8 }}>
+                                                {inboundTag ||
+                                                    t('host-card.widget.unknown-inbound')}
                                             </span>
                                         </>
                                     )}
                                 </Badge>
 
+                                {linkedNodes.length > 0 && (
+                                    <Group gap={3} wrap="nowrap">
+                                        {linkedNodes.slice(0, 3).map((node) => (
+                                            <span
+                                                key={node.uuid}
+                                                style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                {resolveCountryCode(node.countryCode, 14)}
+                                            </span>
+                                        ))}
+                                        {linkedNodes.length > 3 && (
+                                            <Text c="dimmed" size="xs">
+                                                +{linkedNodes.length - 3}
+                                            </Text>
+                                        )}
+                                    </Group>
+                                )}
+                            </Group>
+
+                            {sortedTags.length > 0 && (
                                 <SingleRowOverflowList
-                                    data={item.tags.sort((a, b) => a.localeCompare(b))}
-                                    gap={0}
-                                    maxVisibleItems={2}
+                                    data={sortedTags}
+                                    gap={4}
+                                    maxVisibleItems={3}
                                     renderItem={(tag) => (
-                                        <Badge
-                                            autoContrast
-                                            color={ch.hex(tag)}
-                                            key={tag}
-                                            leftSection={<TbStar size={12} />}
-                                            size="md"
-                                            style={{
-                                                paddingLeft: 0
-                                            }}
-                                            variant="transparent"
-                                        >
+                                        <Badge color="gray" key={tag} size="xs" variant="light">
                                             {tag}
                                         </Badge>
                                     )}
                                     renderOverflow={(items) => (
-                                        <Tooltip
-                                            label={
-                                                <Stack gap="xs">
-                                                    {items.map((tag) => (
-                                                        <Badge
-                                                            color={ch.hex(tag)}
-                                                            fullWidth
-                                                            key={tag}
-                                                            leftSection={<TbStar size={12} />}
-                                                            size="md"
-                                                            variant="transparent"
-                                                        >
-                                                            {tag}
-                                                        </Badge>
-                                                    ))}
-                                                </Stack>
-                                            }
-                                            multiline
-                                            position="top"
-                                        >
-                                            <Badge color="gray" size="md" variant="transparent">
-                                                +{items.length}
-                                            </Badge>
-                                        </Tooltip>
+                                        <Badge color="gray" size="xs" variant="light">
+                                            +{items.length}
+                                        </Badge>
                                     )}
                                 />
-                            </Stack>
+                            )}
                         </Stack>
                     </Box>
                 </Stack>
@@ -310,30 +345,38 @@ export function HostCardWidget(props: IProps) {
         <Box
             className={cx(classes.item, {
                 [classes.itemDragging]: isDragging || isHovered,
-                [classes.selectedItem]: isSelected,
-                [classes.danglingItem]: !configProfile?.uuid
+                [classes.selectedItem]: isSelected
             })}
             data-drag-overlay={isDragOverlay}
+            data-status-tone={statusTone}
             ref={isDragOverlay ? undefined : ref}
             style={style}
         >
             <Group gap="md" w="100%" wrap="nowrap">
                 {!viewOnly && (
                     <Group gap="xs" wrap="nowrap">
-                        <Checkbox checked={isSelected} onChange={onSelect} size="md" />
+                        <Checkbox
+                            checked={isSelected}
+                            color="cyan"
+                            onChange={onSelect}
+                            size="sm"
+                            styles={{ input: { cursor: 'pointer' } }}
+                        />
                         {!disableReordering && (
                             <Box
                                 className={classes.dragHandle}
                                 ref={isDragOverlay ? undefined : handleRef}
                             >
-                                <RiDraggable color="white" size="24px" />
+                                <RiDraggable size="20px" />
                             </Box>
                         )}
                     </Group>
                 )}
 
                 <Stack
-                    className={classes.contentArea}
+                    className={cx(classes.contentArea, {
+                        [classes.contentAreaReadOnly]: viewOnly
+                    })}
                     flex={1}
                     gap={6}
                     miw={0}
@@ -354,54 +397,29 @@ export function HostCardWidget(props: IProps) {
                             style={{ flexShrink: 1, overflow: 'hidden' }}
                             wrap="nowrap"
                         >
-                            {!isHostActive && (
-                                <ActionIcon
-                                    color="gray"
-                                    size="md"
-                                    style={{ flexShrink: 0 }}
-                                    variant="soft"
-                                >
-                                    <PiProhibit size={16} />
-                                </ActionIcon>
-                            )}
+                            {statusBadgeNode}
 
-                            {isHostActive && item.isHidden && (
-                                <ActionIcon
-                                    color="violet"
-                                    size="md"
-                                    style={{ flexShrink: 0 }}
-                                    variant="soft"
-                                >
-                                    <TbEyeOff size={16} />
-                                </ActionIcon>
-                            )}
-
-                            {isHostActive && !item.isHidden && (
-                                <ActionIcon
-                                    color="teal"
-                                    size="md"
-                                    style={{ flexShrink: 0 }}
-                                    variant="soft"
-                                >
-                                    <PiPulse size={16} />
-                                </ActionIcon>
-                            )}
-
-                            <Text fw={600} style={{ flexShrink: 0 }} truncate>
+                            <Text fw={600} size="sm" style={{ flexShrink: 0 }} truncate>
                                 {item.remark}
                             </Text>
                             <Text
                                 c="dimmed"
                                 className={classes.hostAddress}
+                                onClick={handleCopyAddress}
                                 style={{ flexShrink: 1, minWidth: 0 }}
+                                title={t('node-card.widget.copy-address')}
                                 truncate
                             >
-                                {item.address}
-                                {item.port ? `:${item.port}` : ''}
+                                {addressLabel}
                             </Text>
                         </Group>
 
-                        <Group gap={6} style={{ flexShrink: 0 }} wrap="nowrap">
+                        <Group
+                            gap={6}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ flexShrink: 0 }}
+                            wrap="nowrap"
+                        >
                             <GetHostUsersUsageFeature
                                 hostRemark={item.remark}
                                 hostUuid={item.uuid}
@@ -409,87 +427,89 @@ export function HostCardWidget(props: IProps) {
 
                             {hasExcludedSquads && (
                                 <Tooltip label={t('base-host-form.excluded-internal-squads')}>
-                                    <ThemeIcon color="yellow" size={28} variant="soft">
+                                    <ThemeIcon color="yellow" size={28} variant="light">
                                         <TbCirclesRelation size={16} />
                                     </ThemeIcon>
                                 </Tooltip>
                             )}
 
-                            <Tooltip label="Mux">
-                                <ActionIcon
-                                    color={hasMuxParams ? 'teal' : 'gray'}
-                                    size={28}
-                                    variant="soft"
-                                    onClick={(e) => {
-                                        if (!item.muxParams) return
-                                        e.stopPropagation()
-                                        modals.open({
-                                            children: (
-                                                <JsonEditor
-                                                    collapse={3}
-                                                    data={JSON.parse(
-                                                        JSON.stringify(item.muxParams)
-                                                    )}
-                                                    indent={2}
-                                                    maxWidth="100%"
-                                                    rootName=""
-                                                    theme={githubDarkTheme}
-                                                    viewOnly
-                                                />
-                                            ),
-                                            title: (
-                                                <BaseOverlayHeader
-                                                    iconColor="shaded-gray"
-                                                    IconComponent={TbCloudNetwork}
-                                                    iconVariant="soft"
-                                                    title="Mux Params"
-                                                />
-                                            ),
-                                            size: 'xl'
-                                        })
-                                    }}
-                                >
-                                    <TbCloudNetwork size={16} />
-                                </ActionIcon>
-                            </Tooltip>
+                            {hasMuxParams && (
+                                <Tooltip label={t('host-card.widget.mux-params')}>
+                                    <ActionIcon
+                                        color="teal"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            modals.open({
+                                                children: (
+                                                    <JsonEditor
+                                                        collapse={3}
+                                                        data={JSON.parse(
+                                                            JSON.stringify(item.muxParams)
+                                                        )}
+                                                        indent={2}
+                                                        maxWidth="100%"
+                                                        rootName=""
+                                                        theme={jsonTheme}
+                                                        viewOnly
+                                                    />
+                                                ),
+                                                title: (
+                                                    <BaseOverlayHeader
+                                                        iconColor="teal"
+                                                        IconComponent={TbCloudNetwork}
+                                                        iconVariant="soft"
+                                                        title={t('host-card.widget.mux-params')}
+                                                    />
+                                                ),
+                                                size: 'xl'
+                                            })
+                                        }}
+                                        size={28}
+                                        variant="light"
+                                    >
+                                        <TbCloudNetwork size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                            )}
 
-                            <Tooltip label="Final Mask">
-                                <ActionIcon
-                                    color={hasFinalMask ? 'teal' : 'gray'}
-                                    size={28}
-                                    variant="soft"
-                                    onClick={(e) => {
-                                        if (!item.finalMask) return
-                                        e.stopPropagation()
-                                        modals.open({
-                                            children: (
-                                                <JsonEditor
-                                                    collapse={3}
-                                                    data={JSON.parse(
-                                                        JSON.stringify(item.finalMask)
-                                                    )}
-                                                    indent={2}
-                                                    maxWidth="100%"
-                                                    rootName=""
-                                                    theme={githubDarkTheme}
-                                                    viewOnly
-                                                />
-                                            ),
-                                            title: (
-                                                <BaseOverlayHeader
-                                                    iconColor="shaded-gray"
-                                                    IconComponent={TbMask}
-                                                    iconVariant="soft"
-                                                    title="Final Mask"
-                                                />
-                                            ),
-                                            size: 'xl'
-                                        })
-                                    }}
-                                >
-                                    <TbMask size={16} />
-                                </ActionIcon>
-                            </Tooltip>
+                            {hasFinalMask && (
+                                <Tooltip label={t('host-card.widget.final-mask')}>
+                                    <ActionIcon
+                                        color="cyan"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            modals.open({
+                                                children: (
+                                                    <JsonEditor
+                                                        collapse={3}
+                                                        data={JSON.parse(
+                                                            JSON.stringify(item.finalMask)
+                                                        )}
+                                                        indent={2}
+                                                        maxWidth="100%"
+                                                        rootName=""
+                                                        theme={jsonTheme}
+                                                        viewOnly
+                                                    />
+                                                ),
+                                                title: (
+                                                    <BaseOverlayHeader
+                                                        iconColor="cyan"
+                                                        IconComponent={TbMask}
+                                                        iconVariant="soft"
+                                                        title={t('host-card.widget.final-mask')}
+                                                    />
+                                                ),
+                                                size: 'xl'
+                                            })
+                                        }}
+                                        size={28}
+                                        variant="light"
+                                    >
+                                        <TbMask size={16} />
+                                    </ActionIcon>
+                                </Tooltip>
+                            )}
                         </Group>
                     </Group>
 
@@ -501,7 +521,7 @@ export function HostCardWidget(props: IProps) {
                         wrap="nowrap"
                     >
                         <Group
-                            gap={0}
+                            gap={4}
                             miw={0}
                             style={{ flexShrink: 1, overflow: 'hidden' }}
                             wrap="nowrap"
@@ -522,28 +542,28 @@ export function HostCardWidget(props: IProps) {
                                 }}
                                 variant="transparent"
                             >
-                                {configProfile?.name || 'DANGLING'}
+                                {configProfile?.name || t('host-card.widget.dangling')}
                                 {item.inbound.configProfileInboundUuid && (
                                     <>
                                         <span style={{ margin: '0 6px', opacity: 0.5 }}>›</span>
-                                        <span style={{ opacity: 0.75 }}>
-                                            {inboundTag || 'UNKNOWN'}
+                                        <span style={{ opacity: 0.8 }}>
+                                            {inboundTag || t('host-card.widget.unknown-inbound')}
                                         </span>
                                     </>
                                 )}
                             </Badge>
 
                             <SingleRowOverflowList
-                                data={item.tags.sort((a, b) => a.localeCompare(b))}
-                                gap={0}
-                                maxVisibleItems={2}
+                                data={sortedTags}
+                                gap={4}
+                                maxVisibleItems={3}
                                 renderItem={(tag) => (
                                     <Badge
                                         autoContrast
                                         color={ch.hex(tag)}
                                         key={tag}
-                                        leftSection={<TbStar size={12} />}
-                                        size="md"
+                                        leftSection={<TbStar size={11} />}
+                                        size="sm"
                                         variant="transparent"
                                     >
                                         {tag}
@@ -552,14 +572,14 @@ export function HostCardWidget(props: IProps) {
                                 renderOverflow={(items) => (
                                     <Tooltip
                                         label={
-                                            <Stack gap="xs">
+                                            <Stack gap={4}>
                                                 {items.map((tag) => (
                                                     <Badge
                                                         color={ch.hex(tag)}
                                                         fullWidth
                                                         key={tag}
-                                                        leftSection={<TbStar size={12} />}
-                                                        size="md"
+                                                        leftSection={<TbStar size={11} />}
+                                                        size="sm"
                                                         variant="transparent"
                                                     >
                                                         {tag}
@@ -570,7 +590,7 @@ export function HostCardWidget(props: IProps) {
                                         multiline
                                         position="top"
                                     >
-                                        <Badge color="gray" size="md" variant="transparent">
+                                        <Badge color="gray" size="sm" variant="transparent">
                                             +{items.length}
                                         </Badge>
                                     </Tooltip>
@@ -579,13 +599,12 @@ export function HostCardWidget(props: IProps) {
 
                             {serverDescription && (
                                 <Badge
-                                    color="dark.3"
+                                    color="gray"
                                     leftSection={<TbFileDescription size={12} />}
-                                    size="md"
+                                    size="sm"
                                     style={{
                                         fontStyle: 'italic',
-                                        fontWeight: 500,
-                                        letterSpacing: '1px'
+                                        fontWeight: 500
                                     }}
                                     variant="transparent"
                                 >
@@ -596,20 +615,24 @@ export function HostCardWidget(props: IProps) {
 
                         <Group gap="xs" style={{ flexShrink: 0 }} wrap="nowrap">
                             <SingleRowOverflowList
-                                data={item.nodes
-                                    .map((nodeId) => nodesByUuid.get(nodeId))
-                                    .filter((n): n is NonNullable<typeof n> => Boolean(n))}
+                                data={linkedNodes}
                                 gap={4}
                                 maxVisibleItems={3}
                                 renderItem={(node) => (
                                     <Badge
-                                        autoContrast
                                         color="gray"
                                         key={`${node.uuid}|${item.uuid}`}
-                                        leftSection={resolveCountryCode(node.countryCode, 18)}
-                                        size="md"
+                                        leftSection={resolveCountryCode(node.countryCode, 16)}
+                                        onClick={(event) => {
+                                            event.stopPropagation()
+                                            openOrNavigate(
+                                                `${ROUTES.DASHBOARD.MANAGEMENT.NODES}?${SEARCH_PARAMS.NODE}=${node.uuid}`,
+                                                navigate
+                                            )
+                                        }}
+                                        size="sm"
                                         style={{ cursor: 'pointer' }}
-                                        variant="soft"
+                                        variant="light"
                                     >
                                         {node.name}
                                     </Badge>
@@ -617,7 +640,7 @@ export function HostCardWidget(props: IProps) {
                                 renderOverflow={(items) => (
                                     <Tooltip
                                         label={
-                                            <Stack gap="xs">
+                                            <Stack gap={4}>
                                                 {items.map((node) => (
                                                     <Badge
                                                         color="gray"
@@ -625,9 +648,9 @@ export function HostCardWidget(props: IProps) {
                                                         key={`${node.uuid}|${item.uuid}`}
                                                         leftSection={resolveCountryCode(
                                                             node.countryCode,
-                                                            18
+                                                            16
                                                         )}
-                                                        variant="soft"
+                                                        variant="light"
                                                     >
                                                         {node.name}
                                                     </Badge>
@@ -637,7 +660,7 @@ export function HostCardWidget(props: IProps) {
                                         multiline
                                         position="top"
                                     >
-                                        <Badge color="gray" size="md" variant="soft">
+                                        <Badge color="gray" size="sm" variant="light">
                                             +{items.length}
                                         </Badge>
                                     </Tooltip>

@@ -167,7 +167,11 @@ export const UserHwidDevicesContentModal = (props: IProps) => {
                                         {isLoading ? (
                                             <Loader color="cyan" size="sm" type="oval" />
                                         ) : (
-                                            <Text c="white" fw={700} size="xl">
+                                            <Text
+                                                fw={700}
+                                                size="xl"
+                                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                                            >
                                                 {devices?.devices.length ?? 0}
                                             </Text>
                                         )}

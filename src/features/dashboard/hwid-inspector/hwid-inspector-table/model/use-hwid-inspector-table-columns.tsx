@@ -13,14 +13,21 @@ export const useHwidInspectorTableColumns = () => {
         () => [
             {
                 accessorKey: 'userId',
-                header: 'User ID',
+                header: t('use-hwid-inspector-table-columns.user-id'),
                 accessorFn: (originalRow) => originalRow.userId,
-                size: 130
+                size: 110,
+                mantineTableBodyCellProps: {
+                    style: { fontVariantNumeric: 'tabular-nums' }
+                }
             },
             {
                 accessorKey: 'requestIp',
                 header: t('use-srh-inspector-table-columns.request-ip'),
-                accessorFn: (originalRow) => originalRow.requestIp || '–'
+                accessorFn: (originalRow) => originalRow.requestIp || '–',
+                size: 150,
+                mantineTableBodyCellProps: {
+                    style: { fontVariantNumeric: 'tabular-nums' }
+                }
             },
             {
                 accessorKey: 'hwid',
@@ -31,24 +38,26 @@ export const useHwidInspectorTableColumns = () => {
             {
                 accessorKey: 'platform',
                 header: t('use-hwid-inspector-table-columns.platform'),
-                accessorFn: (originalRow) => originalRow.platform || '–'
+                accessorFn: (originalRow) => originalRow.platform || '–',
+                size: 130
             },
             {
                 accessorKey: 'osVersion',
                 header: t('use-hwid-inspector-table-columns.os-version'),
                 accessorFn: (originalRow) => originalRow.osVersion || '–',
-                size: 100
+                size: 110
             },
             {
                 accessorKey: 'deviceModel',
                 header: t('use-hwid-inspector-table-columns.device-model'),
-                accessorFn: (originalRow) => originalRow.deviceModel || '–'
+                accessorFn: (originalRow) => originalRow.deviceModel || '–',
+                size: 160
             },
             {
                 accessorKey: 'userAgent',
                 header: t('use-hwid-inspector-table-columns.user-agent'),
                 accessorFn: (originalRow) => originalRow.userAgent || '–',
-                size: 500
+                size: 320
             },
 
             {
@@ -61,12 +70,12 @@ export const useHwidInspectorTableColumns = () => {
                         language: i18n.language
                     }),
 
-                minSize: 250,
+                minSize: 190,
                 enableColumnFilter: false,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: { fontVariantNumeric: 'tabular-nums' }
                 }
             },
             {
@@ -78,12 +87,12 @@ export const useHwidInspectorTableColumns = () => {
                         template: 'TIME_FIRST_DATETIME',
                         language: i18n.language
                     }),
-                minSize: 250,
+                minSize: 190,
                 enableColumnFilter: false,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: { fontVariantNumeric: 'tabular-nums' }
                 }
             }
         ],

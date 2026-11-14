@@ -104,12 +104,12 @@ export const PasskeysDrawer = NiceModal.create(() => {
 
             if (isError) {
                 modals.open({
-                    title: 'Request Failed',
+                    title: t('auth-settings.error-modal.title'),
                     centered: true,
                     children: (
                         <Stack gap="md">
-                            <Code p="md">
-                                <Text c="red.1" fw={500} size="sm">
+                            <Code block color="red" p="md">
+                                <Text c="red" fw={500} size="sm">
                                     {error.message}
                                 </Text>
                             </Code>
@@ -289,11 +289,10 @@ export const PasskeysDrawer = NiceModal.create(() => {
                                 </Group>
                             </SectionCard.Section>
                             <SectionCard.Section>
-                                <DataList withDivider orientation="vertical" size="xs">
+                                <DataList orientation="vertical" size="xs" withDivider>
                                     <CopyableDataListItem label="ID" monospace value={passkey.id} />
                                     <CopyableDataListItem
                                         label={t('passkeys-drawer.component.last-used-at')}
-                                        monospace
                                         value={formatTimeUtil({
                                             time: passkey.lastUsedAt,
                                             template: 'TIME_FIRST_DATETIME',
@@ -302,7 +301,6 @@ export const PasskeysDrawer = NiceModal.create(() => {
                                     />
                                     <CopyableDataListItem
                                         label={t('passkeys-drawer.component.created-at')}
-                                        monospace
                                         value={formatTimeUtil({
                                             time: passkey.createdAt,
                                             template: 'TIME_FIRST_DATETIME',

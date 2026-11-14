@@ -15,23 +15,27 @@ const DEFAULT_VISIBILITY: MRT_VisibilityState = {
     trojanPassword: false,
     hwidDeviceLimit: false,
     usedTrafficPercentage: false,
-    trafficLimitBytes: false
+    trafficLimitBytes: false,
+    'userTraffic.firstConnectedAt': false,
+    lastTrafficResetAt: false,
+    'userTraffic.lifetimeUsedTrafficBytes': false
 }
 
 const DEFAULT_COLUMN_SIZE: MRT_ColumnSizingState = {
-    shortUuid: 100,
-    createdAt: 100,
-    subRevokedAt: 100,
-    totalUsedBytes: 100,
-    onlineAt: 100
+    shortUuid: 160,
+    createdAt: 165,
+    subRevokedAt: 165,
+    usedTrafficBytes: 215,
+    'userTraffic.onlineAt': 165
 }
 
 export const useUsersTableStore = createMrtTableStore({
     name: 'x-rmnw-users-table',
-    version: 13,
+    version: 14,
     defaults: {
         columnVisibility: DEFAULT_VISIBILITY,
         columnSize: DEFAULT_COLUMN_SIZE,
+        showColumnFilters: true,
         sorting: [{ id: 'id', desc: true }]
     }
 })

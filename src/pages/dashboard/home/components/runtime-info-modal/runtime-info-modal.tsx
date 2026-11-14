@@ -80,7 +80,7 @@ export function RuntimeInfoModalContent() {
                 color="teal"
                 description={t('home.runtime-info.memory-description')}
                 Icon={TbServer}
-                title="Memory"
+                title={t('home.runtime-card.memory')}
             >
                 <Stack gap="md">
                     <MetricEntry
@@ -92,7 +92,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbStack3}
-                        title="Heap"
+                        title={t('home.runtime-card.heap')}
                     />
                     <MetricEntry
                         color="cyan"
@@ -103,7 +103,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbServer}
-                        title="RSS"
+                        title={t('home.runtime-card.rss')}
                     />
                     <MetricEntry
                         color="lime"
@@ -114,7 +114,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbPackage}
-                        title="External"
+                        title={t('home.runtime-card.external')}
                     />
                     <MetricEntry
                         color="green"
@@ -125,7 +125,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbBraces}
-                        title="Array Buffers"
+                        title={t('home.runtime-card.array-buffers')}
                     />
                 </Stack>
             </SectionShell>
@@ -135,7 +135,7 @@ export function RuntimeInfoModalContent() {
                 color="violet"
                 description={t('home.runtime-info.event-loop-description')}
                 Icon={TbBolt}
-                title="Event Loop"
+                title={t('home.runtime-card.event-loop')}
             >
                 <Stack gap="md">
                     <MetricEntry
@@ -147,7 +147,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbStopwatch}
-                        title="Delay"
+                        title={t('home.runtime-card.delay')}
                     />
                     <MetricEntry
                         color="grape"
@@ -158,7 +158,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbGauge}
-                        title="P99"
+                        title={t('home.runtime-card.p99')}
                     />
                     <MetricEntry
                         color="indigo"
@@ -169,7 +169,7 @@ export function RuntimeInfoModalContent() {
                             />
                         }
                         Icon={TbPlug}
-                        title="Active Handles"
+                        title={t('home.runtime-card.active-handles')}
                     />
                 </Stack>
             </SectionShell>

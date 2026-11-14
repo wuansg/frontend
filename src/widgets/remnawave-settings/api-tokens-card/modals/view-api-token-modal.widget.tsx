@@ -67,7 +67,7 @@ export const ViewApiTokenContentWidget = ({ isMobile, token }: IProps) => {
                         <Text className={classes.tokenColLabel}>
                             {t('api-tokens-card.widget.col-created')}
                         </Text>
-                        <Text c="gray.2" className={classes.metaValue}>
+                        <Text className={classes.metaValue}>
                             {formatTimeUtil({
                                 time: token.createdAt,
                                 template: 'TIME_FIRST_DATETIME',
@@ -79,7 +79,7 @@ export const ViewApiTokenContentWidget = ({ isMobile, token }: IProps) => {
                         <Text className={classes.tokenColLabel}>
                             {t('api-tokens-card.widget.col-expires')}
                         </Text>
-                        <Text c={isExpired ? 'red.5' : 'gray.2'} className={classes.metaValue}>
+                        <Text c={isExpired ? 'red.5' : undefined} className={classes.metaValue}>
                             {formatTimeUtil({
                                 time: token.expireAt,
                                 template: 'TIME_FIRST_DATETIME',

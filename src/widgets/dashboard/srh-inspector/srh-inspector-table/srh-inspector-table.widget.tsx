@@ -4,6 +4,7 @@ import {
     MRT_ColumnFilterFnsState,
     MRT_ShowHideColumnsButton,
     MRT_ToggleDensePaddingButton,
+    MRT_ToggleFiltersButton,
     MRT_ToggleFullScreenButton,
     useMantineReactTable
 } from '@kastov/mantine-react-table-open'
@@ -103,27 +104,26 @@ export function SrhInspectorTableWidget() {
             ...persistedTableState,
             columnFilterFns,
             isLoading,
-            showColumnFilters: true,
             showAlertBanner: isError,
             showProgressBars: isFetching
         },
         enableRowActions: true,
         mantineFilterTextInputProps: () => ({
-            placeholder: 'Filter by...'
+            placeholder: t('common.filter-by')
         }),
         mantineTopToolbarProps: {
             style: {
-                '--mrt-base-background-color': '#1b2027'
+                '--mrt-base-background-color': 'light-dark(var(--mantine-color-white), #1b2027)'
             }
         },
         mantineTableHeadProps: {
             style: {
-                '--mrt-base-background-color': '#1b2027'
+                '--mrt-base-background-color': 'light-dark(var(--mantine-color-white), #1b2027)'
             }
         },
         mantineBottomToolbarProps: {
             style: {
-                '--mrt-base-background-color': '#1b2027'
+                '--mrt-base-background-color': 'light-dark(var(--mantine-color-white), #1b2027)'
             }
         },
         mantinePaperProps: {
@@ -154,6 +154,7 @@ export function SrhInspectorTableWidget() {
         },
         renderToolbarInternalActions: ({ table: tableInstance }) => (
             <>
+                <MRT_ToggleFiltersButton table={tableInstance} />
                 <MRT_ToggleDensePaddingButton table={tableInstance} />
                 <MRT_ToggleFullScreenButton table={tableInstance} />
                 <MRT_ShowHideColumnsButton table={tableInstance} />

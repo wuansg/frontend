@@ -15,7 +15,7 @@
   },
   "constants": {
     "forwarding-topology": "转发拓扑",
-    "dashboard": "仪表",
+    "dashboard": "仪表盘",
     "config": "sing-box 配置",
     "home": "首页",
     "hosts": "主机",
@@ -34,17 +34,17 @@
     "templates": "模板",
     "subscription": "订阅",
     "subscription-page": "订阅页面",
-    "config-profiles": "配置文件",
+    "config-profiles": "配置方案",
     "internal-squads": "内部分组",
     "external-squads": "外部分组",
-    "infra-billing": "网络供应商计费",
-    "hwid-inspector": "HWID 视图",
+    "infra-billing": "基础设施账单",
+    "hwid-inspector": "HWID 检查器",
     "tools": "工具",
-    "srh-inspector": "SRH 检查",
-    "response-rules": "请求订阅的应用",
+    "srh-inspector": "订阅请求记录",
+    "response-rules": "响应规则",
     "remnawave-settings": "Remnawave 设置",
-    "node-plugins": "插件",
-    "sessions-explorer": "会话管理器",
+    "node-plugins": "节点插件",
+    "sessions-explorer": "在线会话探测",
     "http-stats": "HTTP 统计"
   },
   "common": {
@@ -100,7 +100,8 @@
     "shared-lists": "共享列表",
     "try-again": "重试",
     "interface": "接口",
-    "ip-address": "IP 地址"
+    "ip-address": "IP 地址",
+    "filter-by": "筛选..."
   },
   "bandwidth-metrics": {
     "current-year": "今年",
@@ -122,7 +123,7 @@
   },
   "simple-metrics": {
     "system-uptime": "系统运行时间",
-    "ram-usage": "内存使用率",
+    "ram-usage": "内存占用",
     "total-traffic": "总流量",
     "total-online-on-nodes": "所有节点在线用户总数",
     "total-ram": "总内存"
@@ -187,8 +188,10 @@
     "internal-squads": "内部分组",
     "first-connected-at": "首次连接于",
     "sub-last-opened-at": "上次订阅时间",
-    "tag": "Tag",
-    "used-traffic": "已使用的流量(%)"
+    "tag": "标签",
+    "used-traffic": "已用流量 (%)",
+    "vless-uuid": "VLESS UUID",
+    "hwid-device-limit": "HWID 设备上限"
   },
   "header-buttons": {
     "feature": {}
@@ -249,7 +252,7 @@
   "edit-host-modal": {
     "widget": {
       "edit-host": "编辑主机",
-      "dangling-host-cannot-be-cloned": "同名主机不能被克隆",
+      "dangling-host-cannot-be-cloned": "未关联入站的主机无法克隆",
       "error": "错误"
     }
   },
@@ -375,7 +378,8 @@
     "widget": {
       "list-of-all-users": "所有用户列表",
       "error-loading-data": "数据加载错误",
-      "table-title": "用户"
+      "table-title": "用户",
+      "directory-title": "用户列表"
     }
   },
   "view-user-modal": {
@@ -495,7 +499,7 @@
     "select-one-or-more-subscription-types-description": "选择一个或多个订阅类型，从该订阅类型中排除主机。",
     "exclude-from-subscription-type": "从订阅类型中排除",
     "hidden-host-description": "默认情况下，Remnawave 将不会在订阅中包含隐藏主机。隐藏主机可以在 Mihomo 和 Xray-Json Advant, Raw 中使用",
-    "server-description-1": "在支持的客户端中，协议名称(例如无)将被此处指定的描述所取代。",
+    "server-description-1": "在受支持的客户端中，协议名称（如 vless）将替换为此处的描述。",
     "server-description-2": "并非所有客户端应用程序都支持此功能。欲了解更多详情，请参阅下面列出的应用程序的文档。",
     "supported-clients": "支持的客户端"
   },
@@ -703,8 +707,8 @@
   },
   "get-expiration-text": {
     "util": {
-      "expires-in": "{{expiration}} 后过期",
-      "expired": "{{expiration}} 前已过期",
+      "expires-in": "{{expiration}}后过期",
+      "expired": "已于 {{expiration}}过期",
       "unknown": "未知"
     }
   },
@@ -941,7 +945,10 @@
       "filter-nodes": "筛选节点",
       "bar-chart": "条形图",
       "show-nodes": "显示节点",
-      "click-to-see-all": "点击查看全部"
+      "click-to-see-all": "点击查看全部",
+      "upload-traffic": "上行流量",
+      "download-traffic": "下行流量",
+      "directional-data-after-upgrade": "上行/下行分项流量仅对该功能启用后记录的流量可用。"
     }
   },
   "active-sessions-drawer": {
@@ -1002,7 +1009,7 @@
       "updated-at": "更新于",
       "tag": "标签",
       "first-connected-at": "首次连接于",
-      "active-internal-squads": "激活的的内部分组"
+      "active-internal-squads": "已启用的内部分组"
     }
   },
   "subscription-tabs": {
@@ -1044,7 +1051,7 @@
       "no-data-available": "无可用数据",
       "click-to-show-all-users": "点击显示所有用户",
       "click-to-highlight-only-this-user": "点击仅高亮此用户",
-      "users-accordeon": "用户 (显示 {{displayedUserCount}} 个活跃用户中的前 {{significantUserCount}} 个 / 总用户数 {{userCount}})",
+      "users-accordeon": "用户（显示 {{significantUserCount}} 位活跃用户中的前 {{displayedUserCount}} 位 / 共 {{userCount}} 位）",
       "usage-by-period": "时段用量",
       "7-days": "7 天",
       "14-days": "14 天",
@@ -1067,25 +1074,25 @@
       "total-traffic-prettybytestoanyutil": "总流量: {{totalTraffic}}",
       "user": "用户",
       "traffic": "流量",
-      "no-users-with-traffic-100-kb": "流量 ≥ 100 KiB 的用户",
+      "no-users-with-traffic-100-kb": "暂无流量 ≥ 100 KiB 的用户",
       "users-hidden-with-less-than-100-kb": "{{usersCount}} 个流量小于 100 KiB 的用户已隐藏 (总计 {{totalTraffic}})"
     }
   },
   "internal-squads-usage-drawer": {
     "info": {
       "title": "如何计算使用量",
-      "summary": "返回所选时间范围内，总流量达到或超过指定阈值的内部组成员，并列出每位成员的</b>总流量</b>",
+      "summary": "返回所选时间范围内总流量达到指定阈值的内部分组成员，并列出每位成员的<b>总流量</b>。",
       "nodes-title": "哪些节点被计算",
-      "nodes-intro": "一个分组没有直接绑定到节点 — 链接是通过输入而产生的：",
-      "nodes-step-1": "已包含内部分组中的所有入站配置",
-      "nodes-step-2": "对于每个嵌入符，它所属的配置配置文件已被解析。",
-      "nodes-step-3": "仅当节点使用了该配置文件且其状态为</b>启用</b>，并且该节点上的对应入站（Inbound）也已启用时，该节点才会被计入统计",
+      "nodes-intro": "内部分组不直接绑定节点，而是通过入站（Inbound）建立关联：",
+      "nodes-step-1": "获取归属于该内部分组的所有入站配置。",
+      "nodes-step-2": "解析每个入站所属的配置方案。",
+      "nodes-step-3": "当节点将该配置方案设为<b>生效中</b>且启用了对应入站时，该节点才会被计入。",
       "nodes-outro": "因此，仅统计小组成员<hl>当前实际能够连接</hl>的节点。如果该小组在任何节点上都没有可用的入站，则返回的列表为空。",
       "traffic-title": "流量计算方式",
       "traffic-granularity": "统计数据按<b>天</b>存储：一条记录 = 用户 + 节点 + 日期。节点数据大约每 <hl>2 分钟</hl> 刷新一次到数据库，因此当天的数据接近实时，最多可能延迟几分钟。",
       "traffic-sum": "对于每位成员，会汇总其从 <code>start</code> 开始到 <code>end</code> 结束（包含这两个日期，UTC）的所有按天、按节点统计的记录。",
       "traffic-threshold": "仅返回总流量 <b>≥ minTotalBytes</b> 的用户。流量以<hl>原始字节数（Raw Bytes）</hl>返回，不进行任何四舍五入。",
-      "caveats-title": "要牢记的内容",
+      "caveats-title": "注意事项",
       "caveats-per-node": "流量按<b>整个节点</b>统计，而不是按入站 统计。如果某个节点被多个小组共享（即其活动配置文件同时服务于其他入站），则用户的总流量会包含其在该节点上的全部流量——包括通过其他小组 入站 产生的流量。因此，该统计值只是一个<hl>上限估计</hl>，而不是精确的小组流量归属。",
       "caveats-membership": "小组成员关系和节点集合均以<b>请求发起时</b>的状态为准，而非历史状态。已退出小组的用户不会出现在返回结果中（即使其在统计期间产生过流量）；新加入小组的用户则会显示整个统计期间的全部流量，包括加入小组之前的流量。节点活动配置文件的变更也遵循相同规则。",
       "caveats-sorting": "返回列表按<b>用户 ID</b> 排序，而不是按流量排序。由于流量数据会实时变化，分页之间的数据可能发生漂移。若需排查流量滥用者，建议设置 <code>minTotalBytes</code> 阈值，而不是遍历所有用户。"
@@ -1245,7 +1252,7 @@
       "infra-billing-nodes": "网络计费节点",
       "no-nodes-found": "未找到任何节点。",
       "add-a-node": "添加一个节点",
-      "update-multiple-nodes": "升级多个节点"
+      "update-multiple-nodes": "批量更新账期"
     }
   },
   "use-infra-billing-nodes-columns": {
@@ -1419,15 +1426,15 @@
   "stats": {
     "widget": {
       "current-date": "当前日期",
-      "upcoming-in": "{{month}} 即将到账",
+      "upcoming-in": "{{month}} 待续费",
       "nodes-pending-payment": "待付款节点",
-      "payments-in": "{{month}} 的付款",
+      "payments-in": "{{month}} 已付账单",
       "total-payments-made": "已完成付款总数",
       "total-spent": "总支出",
       "lifetime-spending": "累计支出",
-      "overdue": "已过期",
-      "payment-overdue": "付款已过期",
-      "all-up-to-date": "全部已更新",
+      "overdue": "已逾期",
+      "payment-overdue": "账单已逾期",
+      "all-up-to-date": "账单均已结清",
       "next-payment": "下次付款日期",
       "no-upcoming-payments": "没有即将进行的付款"
     }
@@ -1633,7 +1640,8 @@
     "user-agent": "User Agent",
     "user-uuid": "用户 UUID",
     "created-at": "创建于",
-    "updated-at": "更新于"
+    "updated-at": "更新于",
+    "user-id": "用户 ID"
   },
   "hwid-inspector-table": {
     "widget": {
@@ -1693,18 +1701,18 @@
         "fetching-snippets": "正在获取代码块...",
         "no-snippets-yet": "尚无代码块",
         "more-items": "更多项目...",
-        "create-snippet": "创建代码块",
-        "snippet-name": "代码块名称",
+        "create-snippet": "创建配置片段",
+        "snippet-name": "片段名称",
         "enter-snippet-name-cannot-be-changed-later": "输入代码块名称 (稍后不能更改)",
         "snippet-is-valid": "代码块有效",
-        "edit-snippet": "编辑代码块",
-        "snippets": "代码块",
-        "new-snippet": "新建代码块",
+        "edit-snippet": "编辑配置片段",
+        "snippets": "配置片段",
+        "new-snippet": "新建片段",
         "snippets-help-line-1": "它们用于预定义您的一些配置。",
         "snippets-help-line-2": "代码块必须包含一个出站或规则对象数组，而且至少需要一个项目。",
-        "snippets-help-line-3": "自动完成是可用的代码块名称。此外，您可以快速预览代码块，在编辑器的名称上悬停。",
-        "snippets-help-line-4": "在出站内[]，你可以引用的代码块名称。",
-        "snippets-help-line-5": "在路由规则[]中，你可以引用的代码块名称。"
+        "snippets-help-line-3": "支持片段名称自动补全；在编辑器中悬停片段名称即可快速预览内容。",
+        "snippets-help-line-4": "可在 outbounds[] 中按名称引用配置片段。",
+        "snippets-help-line-5": "可在 routing.rules[] 中按名称引用配置片段。"
       }
     }
   },
@@ -1790,11 +1798,11 @@
   },
   "srr-advanced-warning-overlay": {
     "warning": "警告",
-    "warning-line-1": "这个功能是为了解潜在风险和影响的高级用户设计的。",
+    "warning-line-1": "此功能面向了解潜在风险与配置影响的高级用户。",
     "incorrect-configuration-line-1": "配置错误",
     "incorrect-configuration-line-2": "可能导致异常行为",
-    "review-settings-carefully-line-1": "谨慎审查设置",
-    "review-settings-carefully-line-2": "应用更改前"
+    "review-settings-carefully-line-1": "请仔细核对配置",
+    "review-settings-carefully-line-2": "确认无误后再保存更改"
   },
   "auth-settings": {
     "header": {
@@ -1856,6 +1864,17 @@
       "keycloakDomain": {
         "label": "Keycloak 域",
         "description": "无协议头的 Keycloak 服务器域 (例如keycloak.docs.rw)"
+      },
+      "authorizationUrl": {
+        "label": "授权地址 (Authorization URL)",
+        "description": "OAuth2 提供商的授权端点地址"
+      },
+      "tokenUrl": {
+        "label": "令牌地址 (Token URL)",
+        "description": "OAuth2 提供商的令牌交换端点地址"
+      },
+      "withPkce": {
+        "label": "启用 PKCE 校验"
       }
     }
   },
@@ -1896,19 +1915,21 @@
   },
   "api-tokens-card": {
     "widget": {
-      "api-tokens-description": "管理您的 API Token用于程序访问。",
-      "api-tokens": "API Tokens",
-      "no-api-tokens-found": "未找到 API Tokens",
-      "token-name": "API Tokens 名称",
-      "create-api-token": "创建新 API 密钥",
+      "api-tokens-description": "管理用于程序化接口访问的 API 令牌。",
+      "api-tokens": "API 令牌",
+      "no-api-tokens-found": "暂无 API 令牌",
+      "token-name": "令牌名称",
+      "create-api-token": "创建 API 令牌",
       "full-access": "完全访问权限",
-      "col-scopes": "范围",
-      "col-created": "创建日期",
-      "col-expires": "过期",
+      "col-scopes": "权限范围",
+      "col-created": "创建时间",
+      "col-expires": "过期时间",
       "expired": "已过期",
       "expires-in-days": "过期时间 (天)",
       "expires-in": "过期",
-      "one-time-notice": "出于安全原因，令牌会在创建后立即显示 <emphasis>仅此一次</emphasis>。请务必复制并将其妥善保存在安全的地方——之后你将无法再次查看它。"
+      "one-time-notice": "出于安全原因，令牌会在创建后立即显示 <emphasis>仅此一次</emphasis>。请务必复制并将其妥善保存在安全的地方——之后你将无法再次查看它。",
+      "scope-read": "只读",
+      "scope-write": "读写"
     }
   },
   "external-squads-hosts": {
@@ -1948,13 +1969,13 @@
   },
   "external-squads-response-headers": {
     "widget": {
-      "response-headers": "请求头",
-      "headers-inherited-description": "默认情况下，headers 是从主要订阅设置继承的。",
-      "add-headers": "添加 headers",
-      "add-headers-description": "此处列出的 header 被添加到继承的标题中。 如果在主设定中已经存在具有相同键的标题，它将被覆盖。",
-      "remove-headers": "删除 header",
-      "remove-headers-description": "此处列出的header 值 将从响应中删除，即使它们是由主要设置提供的。",
-      "enter-header-key": "输入 header 值"
+      "response-headers": "响应头",
+      "headers-inherited-description": "默认情况下，响应头继承自全局订阅设置。",
+      "add-headers": "附加响应头",
+      "add-headers-description": "此处列出的响应头将附加到继承列表中；若键名与全局设置相同，将覆盖全局值。",
+      "remove-headers": "移除响应头",
+      "remove-headers-description": "此处列出的响应头键名将从响应中移除，即使全局设置已提供。",
+      "enter-header-key": "输入响应头键名"
     }
   },
   "subscription-hwid-settings": {
@@ -1988,7 +2009,7 @@
   "subscription-user-remarks-card": {
     "widget": {
       "user-status": "用户状态",
-      "empty-hosts": "清空主机",
+      "empty-hosts": "无可用主机提示",
       "empty-internal-squads": "清空内部小队",
       "hwid-max-devices-exceeded": "HWID：超过最大设备数量",
       "hwid-not-supported": "HWID：不支持"
@@ -2038,10 +2059,10 @@
       "edit-your-subscription-page-configuration": "编辑您的订阅页面配置",
       "subpage-editor": "订阅页面编辑器",
       "load-from-github": "从 GitHub 加载",
-      "brand-appearance": "商标外观",
-      "branding": "商标",
-      "brand-title": "商标标题",
-      "your-brand-name": "您的商标名称",
+      "brand-appearance": "品牌外观",
+      "branding": "品牌设置",
+      "brand-title": "品牌标题",
+      "your-brand-name": "您的品牌名称",
       "logo-url": "Logo 网址链接",
       "support-url": "支持 URL",
       "additional-languages": "其它语言",
@@ -2049,7 +2070,7 @@
       "ui-configuration": "界面配置",
       "collapsed": "收起",
       "expanded": "展开",
-      "subscription-info-block-design": "订阅信息块设计",
+      "subscription-info-block-design": "订阅信息区块样式",
       "installation-guides-header": "安装指南标题",
       "connection-keys-header": "连接密钥标题",
       "configure-apps-for-each-platform": "配置各个平台的应用程序",
@@ -2065,7 +2086,10 @@
       "accordion": "可折叠",
       "minimal": "极简",
       "timeline": "时间轴",
-      "installation-guides-design": "安装指南标题"
+      "installation-guides-design": "安装指南区块样式",
+      "active-locales-count": "已启用 {{count}} 种",
+      "icons-count": "{{count}} 个图标",
+      "configure": "配置"
     },
     "subpage-config-saved-line-1": "若要应用更改，请重启Remnawave 订阅页面容器。",
     "subpage-config-saved-line-2": "例如，您可以在终端中使用以下命令："
@@ -2119,7 +2143,8 @@
       "apps": "应用程序",
       "add-app": "添加应用程序",
       "unnamed-app": "未命名应用",
-      "edit-app": "编辑应用程序"
+      "edit-app": "编辑应用程序",
+      "apps-configured": "已配置 {{count}} 个客户端"
     }
   },
   "svg-icon-input": {
@@ -2246,7 +2271,7 @@
     }
   },
   "contact-information-card": {
-    "contact-information": "连接信息"
+    "contact-information": "联系信息"
   },
   "traffic-limits-card": {
     "traffic-and-limits": "流量限制",
@@ -2270,7 +2295,8 @@
   },
   "node-plugin-card": {
     "widget": {
-      "active-on-nodes": "已在节点上激活"
+      "active-on-nodes": "已在节点上激活",
+      "subtitle": "节点插件"
     }
   },
   "adtive-on-nodes": {
@@ -2285,30 +2311,34 @@
       "node-plugins-are-an-advanced-feature-please-review-the-documentation-before-use": "节点插件属于进阶功能。请在使用前查看文档。",
       "warning": "警告",
       "no-node-plugins-yet": "尚无节点插件",
-      "create-a-plugin-to-extend-node-capabilities-with": "创建插件以扩展功能"
+      "create-a-plugin-to-extend-node-capabilities-with": "创建插件以扩展功能",
+      "ingress-filter": "入站过滤",
+      "egress-filter": "出站过滤"
     }
   },
   "node-plugin-executor": {
     "content": {
-      "enter-at-least-one-ip-address": "请输入至少一个IP地址。",
-      "block-specific-ip-addresses-on-selected-nodes": "屏蔽选中节点上的特定IP地址",
-      "block-ips": "禁止的 IP地址",
-      "remove-ip-blocks-on-selected-nodes": "删除选中节点的 IP 块",
-      "unblock-ips": "解除屏蔽IP",
-      "executor-description": "IP 块是暂时的 — — 它们只能持续到节点或其核心重启。如果插件配置发生变化，IP块也可能被重置。",
-      "recreate-nftables-rules-on-selected-nodes": "在选定的节点重新创建nftables 规则",
-      "recreate-tables": "重新创建数据表",
-      "block-ips-decription": "每行一个条目。超时为 0 = 块直到重启一直有效。",
+      "enter-at-least-one-ip-address": "请至少输入一个 IP 地址。",
+      "block-specific-ip-addresses-on-selected-nodes": "在所选节点上封禁指定 IP 地址",
+      "block-ips": "封禁 IP",
+      "remove-ip-blocks-on-selected-nodes": "移除所选节点上的 IP 封禁规则",
+      "unblock-ips": "解封 IP",
+      "executor-description": "IP 封禁为临时规则，仅在节点或内核重启前有效；修改插件配置也可能重置封禁。",
+      "recreate-nftables-rules-on-selected-nodes": "在所选节点上重建 nftables 防火墙规则",
+      "recreate-tables": "重建防火墙规则表",
+      "block-ips-decription": "每行一条记录，超时设为 0 表示封禁至重启。",
       "unblock-ips-decription": "每行一个 IP 地址。",
-      "ips-to-block": "要屏蔽的 IP 地址",
-      "ips-to-unblock": "要解除屏蔽的 IP 地址",
-      "format-one-per-line": "格式(单行)：",
+      "ips-to-block": "待封禁 IP 列表",
+      "ips-to-unblock": "待解封 IP 列表",
+      "format-one-per-line": "格式（每行一条）：",
       "next": "下一步",
       "no-connected-nodes-available": "无可用的已连接节点。",
       "deselect-all": "取消全选",
       "select-all": "全选",
-      "execute": "启动"
-    }
+      "execute": "执行指令",
+      "selected-count": "已选 {{count}} 个节点"
+    },
+    "title": "指令执行器"
   },
   "node-active-session": {
     "item": {
@@ -2465,9 +2495,9 @@
   "http-stats-table": {
     "widget": {
       "total-requests": "总请求数",
-      "tracked-routes": "路由追踪",
+      "tracked-routes": "已追踪路由",
       "peak-requests": "峰值请求",
-      "avg-route": "平均／路由"
+      "avg-route": "平均请求 / 路由"
     }
   },
   "get-node-inbounds-hosts": {
@@ -2626,5 +2656,83 @@
       "ram-detail": "内存占用：{{used}} / {{total}} ({{percent}}%)",
       "select-node": "选择节点 {{name}}"
     }
+  },
+  "hosts-overview": {
+    "widget": {
+      "title": "订阅入口总览",
+      "subtitle": "已启用 {{active}} / 共 {{total}} 个",
+      "filter-all": "全部",
+      "search-placeholder": "搜索备注、地址、SNI、标签..."
+    }
+  },
+  "hosts-matrix": {
+    "widget": {
+      "linked-nodes": "{{count}} 个关联节点",
+      "no-linked-nodes": "跟随方案全部节点",
+      "security-default": "继承入站",
+      "select-host": "选择 {{name}}",
+      "sni-blank": "留空 SNI",
+      "sort-remark": "按备注",
+      "sort-address": "按地址",
+      "sort-profile": "按方案",
+      "sort-nodes": "按节点"
+    }
+  },
+  "host-card": {
+    "widget": {
+      "dangling": "未关联入站",
+      "unknown-inbound": "入站缺失",
+      "mux-params": "多路复用参数 (Mux)",
+      "final-mask": "协议伪装掩码"
+    }
+  },
+  "user-status": {
+    "active": "正常",
+    "limited": "流量超限",
+    "disabled": "已禁用",
+    "expired": "已过期"
+  },
+  "users-mobile": {
+    "total-count": "共 {{count}} 位用户",
+    "search-placeholder": "搜索用户名...",
+    "sort": {
+      "newest": "最新创建",
+      "oldest": "最早创建",
+      "traffic-desc": "流量用量从高到低",
+      "expire-asc": "即将到期优先",
+      "online-desc": "最近在线优先"
+    }
+  },
+  "hwid-inspector-leaderboard": {
+    "widget": {
+      "top-users-title": "设备数排行"
+    }
+  },
+  "node-plugin-editor": {
+    "loading": "正在加载编辑器..."
+  },
+  "node-plugin-dry-run": {
+    "button": "预检演练",
+    "modal-title": "节点插件预检演练",
+    "failed-title": "预检失败",
+    "validation-failed": "插件配置校验未通过",
+    "validation": "配置校验",
+    "valid-message": "配置结构与共享列表引用类型校验通过。",
+    "invalid-message": "插件配置无效。",
+    "changes": "变更项",
+    "affected-nodes": "受影响节点",
+    "domains": "待解析域名",
+    "saved-hash-matches": "与已保存哈希一致",
+    "unsaved-changes": "含未保存更改",
+    "dependency-graph": "共享列表依赖",
+    "no-shared-lists": "未引用任何共享列表",
+    "affected-nodes-dns": "受影响节点与域名解析",
+    "deployment-state": "节点下发状态",
+    "no-deployments": "暂无节点上报此插件的应用状态。",
+    "applied": "已应用",
+    "rolled-back": "已回滚",
+    "stale-dns": "{{count}} 个过期 DNS",
+    "checked-at": "检查于 {{time}}",
+    "structured-diff": "结构化差异与代理编译结果"
   }
 }

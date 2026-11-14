@@ -220,11 +220,12 @@ export const BulkManyUsersActionsModal = NiceModal.create((props: IProps) => {
                     withConfirmation
                 />
                 <Paper
-                    bg="rgba(255, 255, 255, 0.02)"
                     p="md"
                     shadow="sm"
                     style={{
-                        border: '1px solid rgba(255, 255, 255, 0.08)'
+                        backgroundColor:
+                            'light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.02))',
+                        border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))'
                     }}
                     withBorder
                 >

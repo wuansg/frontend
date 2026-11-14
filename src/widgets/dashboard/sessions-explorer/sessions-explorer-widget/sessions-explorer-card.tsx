@@ -111,6 +111,7 @@ export const SessionsExplorerCard = memo(
                                     )}
                                     leftSection={<TbFingerprint size={16} />}
                                     size="lg"
+                                    style={{ fontVariantNumeric: 'tabular-nums' }}
                                     variant="soft"
                                 >
                                     {user.uniqueIps}
@@ -121,6 +122,7 @@ export const SessionsExplorerCard = memo(
                                 <Badge
                                     leftSection={<TbSum size={16} />}
                                     size="lg"
+                                    style={{ fontVariantNumeric: 'tabular-nums' }}
                                     variant="default"
                                 >
                                     {user.totalIps}
@@ -153,9 +155,18 @@ export const SessionsExplorerCard = memo(
                                             iconVariant="soft"
                                             title={node.nodeName}
                                             titleOrder={6}
+                                            truncateTitle
                                         />
 
-                                        <Badge color="teal" size="lg" variant="default">
+                                        <Badge
+                                            color="teal"
+                                            size="lg"
+                                            style={{
+                                                flexShrink: 0,
+                                                fontVariantNumeric: 'tabular-nums'
+                                            }}
+                                            variant="default"
+                                        >
                                             {node.ips.length}
                                         </Badge>
                                     </Group>

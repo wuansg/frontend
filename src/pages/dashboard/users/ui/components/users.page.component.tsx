@@ -1,49 +1,41 @@
-import { Stack } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
+import { Button, Stack } from '@mantine/core'
 import { UsersMetrics } from '@widgets/dashboard/users/users-metrics'
 import { UserTableWidget } from '@widgets/dashboard/users/users-table'
-import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PiUsersDuotone } from 'react-icons/pi'
+import { TbPlus } from 'react-icons/tb'
 
-import { LoadingScreen } from '@shared/ui'
-import { MobileWarningOverlay } from '@shared/ui/mobile-warning-overlay/mobile-warning-overlay'
+import { showModal } from '@shared/_modals/show-modal'
 import { Page } from '@shared/ui/page'
-
-const DeferredUserTableWidget = () => {
-    const [shouldRender, setShouldRender] = useState(false)
-
-    useEffect(() => {
-        const timer = setTimeout(() => setShouldRender(true), 300)
-        return () => clearTimeout(timer)
-    }, [])
-
-    if (!shouldRender) {
-        return <LoadingScreen height="80vh" />
-    }
-
-    return (
-        <motion.div
-            animate={{ opacity: 1 }}
-            initial={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-        >
-            <UserTableWidget />
-        </motion.div>
-    )
-}
+import { PageHeaderShared } from '@shared/ui/page-header'
 
 export default function UsersPageComponent() {
     const { t } = useTranslation()
-    const isMobile = useMediaQuery('(max-width: 500px)')
 
     return (
         <Page title={t('constants.users')}>
-            <Stack>
-                {isMobile && <MobileWarningOverlay />}
+            <Stack gap="sm">
+                <PageHeaderShared
+                    actions={
+                        <Button
+                            color="teal"
+                            leftSection={<TbPlus size={18} />}
+                            onClick={() => showModal('users_createUserModal')}
+                            size="sm"
+                            variant="filled"
+                        >
+                            {t('action-group.feature.new-user')}
+                        </Button>
+                    }
+                    icon={<PiUsersDuotone size={24} />}
+                    mb={0}
+                    title={t('constants.users')}
+                    wrapActions
+                />
+
                 <UsersMetrics />
 
-                <DeferredUserTableWidget />
+                <UserTableWidget />
             </Stack>
         </Page>
     )

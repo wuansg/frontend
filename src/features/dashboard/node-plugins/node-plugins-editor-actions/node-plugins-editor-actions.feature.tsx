@@ -38,6 +38,7 @@ import { instance, queryClient } from '@shared/api'
 import { QueryKeys, useUpdateNodePlugin } from '@shared/api/hooks'
 import { useIsMobile } from '@shared/hooks'
 import { useDownloadTemplate } from '@shared/ui/load-templates/use-download-template'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 
 interface Props {
     editorRef: RefObject<editor.IStandaloneCodeEditor | null>
@@ -158,14 +159,24 @@ export function NodePluginsEditorActionsFeature(props: Props) {
             )
             modals.open({
                 size: 'min(920px, 95vw)',
-                title: 'Node Plugin dry-run',
+                title: (
+                    <BaseOverlayHeader
+                        iconColor="cyan"
+                        IconComponent={TbFlask}
+                        iconVariant="soft"
+                        title={t('node-plugin-dry-run.modal-title')}
+                    />
+                ),
                 children: <NodePluginPreviewContent preview={response.data.response} />
             })
         } catch (error) {
             notifications.show({
                 color: 'red',
-                message: error instanceof Error ? error.message : 'Plugin validation failed',
-                title: 'Dry-run failed'
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : t('node-plugin-dry-run.validation-failed'),
+                title: t('node-plugin-dry-run.failed-title')
             })
         } finally {
             setIsPreviewing(false)
@@ -252,7 +263,7 @@ export function NodePluginsEditorActionsFeature(props: Props) {
                 onClick={handlePreview}
                 variant="light"
             >
-                Dry-run
+                {t('node-plugin-dry-run.button')}
             </Button>
 
             <Group gap={0} wrap="nowrap">
@@ -356,35 +367,47 @@ interface NodePluginPreview {
 }
 
 function NodePluginPreviewContent({ preview }: { preview: NodePluginPreview }) {
+    const { t } = useTranslation()
     const hashMatches =
         preview.currentSavedHash !== null && preview.currentSavedHash === preview.desiredHash
 
     return (
         <Stack gap="md">
-            <Alert color={preview.valid ? 'teal' : 'red'} title="Validation">
+            <Alert
+                color={preview.valid ? 'teal' : 'red'}
+                title={t('node-plugin-dry-run.validation')}
+            >
                 {preview.valid
-                    ? 'Schema and Shared List reference types are valid.'
-                    : 'The plugin is not valid.'}
+                    ? t('node-plugin-dry-run.valid-message')
+                    : t('node-plugin-dry-run.invalid-message')}
             </Alert>
 
             <SimpleGrid cols={{ base: 1, sm: 3 }}>
-                <PreviewStat label="Changes" value={preview.diff.length} />
-                <PreviewStat label="Affected nodes" value={preview.affectedNodes.length} />
-                <PreviewStat label="Domains" value={preview.domainsToResolve.length} />
+                <PreviewStat label={t('node-plugin-dry-run.changes')} value={preview.diff.length} />
+                <PreviewStat
+                    label={t('node-plugin-dry-run.affected-nodes')}
+                    value={preview.affectedNodes.length}
+                />
+                <PreviewStat
+                    label={t('node-plugin-dry-run.domains')}
+                    value={preview.domainsToResolve.length}
+                />
             </SimpleGrid>
 
             <Group gap="xs">
                 <Badge color={hashMatches ? 'teal' : 'yellow'} variant="light">
-                    {hashMatches ? 'Saved hash matches' : 'Unsaved changes'}
+                    {hashMatches
+                        ? t('node-plugin-dry-run.saved-hash-matches')
+                        : t('node-plugin-dry-run.unsaved-changes')}
                 </Badge>
                 <Code>{preview.desiredHash}</Code>
             </Group>
 
-            <Divider label="Dependency graph" labelPosition="left" />
+            <Divider label={t('node-plugin-dry-run.dependency-graph')} labelPosition="left" />
             <Group gap="xs">
                 {preview.referencedLists.length === 0 && (
                     <Text c="dimmed" size="sm">
-                        No Shared Lists referenced
+                        {t('node-plugin-dry-run.no-shared-lists')}
                     </Text>
                 )}
                 {preview.referencedLists.map((list) => (
@@ -394,7 +417,7 @@ function NodePluginPreviewContent({ preview }: { preview: NodePluginPreview }) {
                 ))}
             </Group>
 
-            <Divider label="Affected nodes and DNS" labelPosition="left" />
+            <Divider label={t('node-plugin-dry-run.affected-nodes-dns')} labelPosition="left" />
             <Group gap="xs">
                 {preview.affectedNodes.map((node) => (
                     <Badge color={node.connected ? 'teal' : 'gray'} key={node.uuid} variant="light">
@@ -408,10 +431,10 @@ function NodePluginPreviewContent({ preview }: { preview: NodePluginPreview }) {
                 ))}
             </Group>
 
-            <Divider label="Deployment state" labelPosition="left" />
+            <Divider label={t('node-plugin-dry-run.deployment-state')} labelPosition="left" />
             {preview.deployments.length === 0 && (
                 <Text c="dimmed" size="sm">
-                    No node has reported an applied state for this plugin yet.
+                    {t('node-plugin-dry-run.no-deployments')}
                 </Text>
             )}
             {preview.deployments.map((deployment) => {
@@ -429,15 +452,31 @@ function NodePluginPreviewContent({ preview }: { preview: NodePluginPreview }) {
                                     {deployment.node.name}
                                 </Text>
                                 <Badge color={isApplied ? 'teal' : 'yellow'} variant="light">
-                                    {isApplied ? 'Applied' : deployment.state}
+                                    {isApplied
+                                        ? t('node-plugin-dry-run.applied')
+                                        : deployment.state}
                                 </Badge>
-                                {deployment.rolledBack && <Badge color="red">Rolled back</Badge>}
+                                {deployment.rolledBack && (
+                                    <Badge color="red">
+                                        {t('node-plugin-dry-run.rolled-back')}
+                                    </Badge>
+                                )}
                                 {staleDomains > 0 && (
-                                    <Badge color="orange">{staleDomains} stale DNS</Badge>
+                                    <Badge color="orange">
+                                        {t('node-plugin-dry-run.stale-dns', {
+                                            count: staleDomains
+                                        })}
+                                    </Badge>
                                 )}
                             </Group>
-                            <Text c="dimmed" size="xs">
-                                checked {new Date(deployment.checkedAt).toLocaleString()}
+                            <Text
+                                c="dimmed"
+                                size="xs"
+                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                            >
+                                {t('node-plugin-dry-run.checked-at', {
+                                    time: new Date(deployment.checkedAt).toLocaleString()
+                                })}
                             </Text>
                         </Group>
                         {deployment.lastError && (
@@ -449,7 +488,7 @@ function NodePluginPreviewContent({ preview }: { preview: NodePluginPreview }) {
                 )
             })}
 
-            <Divider label="Structured diff / Agent compile" labelPosition="left" />
+            <Divider label={t('node-plugin-dry-run.structured-diff')} labelPosition="left" />
             <ScrollArea.Autosize mah={360} type="auto">
                 <Code block>
                     {JSON.stringify({ diff: preview.diff, compile: preview.compile }, null, 2)}
@@ -465,7 +504,7 @@ function PreviewStat({ label, value }: { label: string; value: number }) {
             <Text c="dimmed" size="xs">
                 {label}
             </Text>
-            <Text fw={700} size="xl">
+            <Text fw={700} size="xl" style={{ fontVariantNumeric: 'tabular-nums' }}>
                 {value}
             </Text>
         </Paper>

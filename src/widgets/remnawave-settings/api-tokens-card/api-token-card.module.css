@@ -1,8 +1,8 @@
 .tokenTable {
-    border: 1px solid rgb(255, 255, 255, 0.08);
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.08));
     border-radius: var(--mantine-radius-md);
     overflow: hidden;
-    background: rgb(255, 255, 255, 0.02);
+    background: light-dark(var(--mantine-color-gray-0), rgb(255, 255, 255, 0.02));
 }
 
 .tokenHeaderRow,
@@ -23,19 +23,19 @@
 }
 
 .tokenHeaderRow {
-    border-bottom: 1px solid rgb(255, 255, 255, 0.06);
+    border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.06));
 }
 
 .tokenColLabel {
     font-size: 11px;
-    font-family: var(--mantine-font-family-monospace);
+    font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--mantine-color-dark-2);
+    color: var(--mantine-color-dimmed);
 }
 
 .tokenRow {
-    border-bottom: 1px solid rgb(255, 255, 255, 0.04);
+    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), rgb(255, 255, 255, 0.04));
     transition: background-color 120ms ease;
 }
 
@@ -44,15 +44,15 @@
 }
 
 .tokenRow:hover {
-    background-color: rgb(255, 255, 255, 0.02);
+    background-color: light-dark(var(--mantine-color-gray-1), rgb(255, 255, 255, 0.02));
 }
 
 .resourceRow {
     border-radius: var(--mantine-radius-md);
     overflow: hidden;
 
-    background: rgb(255, 255, 255, 0.02);
-    border: 1px solid rgb(255, 255, 255, 0.08);
+    background: light-dark(var(--mantine-color-gray-0), rgb(255, 255, 255, 0.02));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.08));
 
     transition:
         border-color 150ms ease,
@@ -71,7 +71,7 @@
 
 .chevron {
     flex: none;
-    color: var(--mantine-color-dark-2);
+    color: var(--mantine-color-dimmed);
     transition: transform 150ms ease;
 }
 
@@ -81,14 +81,13 @@
 
 .resourceName {
     font-size: var(--mantine-font-size-sm);
-    font-weight: 500;
-    font-family: var(--mantine-font-family-monospace);
-    color: var(--mantine-color-gray-2);
+    font-weight: 600;
+    color: var(--mantine-color-text);
 }
 
 .endpointList {
     padding: 2px 4px 4px;
-    border-top: 1px solid var(--mantine-color-dark-5);
+    border-top: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
 }
 
 .endpointRow {
@@ -100,7 +99,7 @@
 }
 
 .endpointRow:hover {
-    background-color: rgb(255, 255, 255, 0.025);
+    background-color: light-dark(var(--mantine-color-gray-1), rgb(255, 255, 255, 0.025));
 }
 
 .endpointRow[data-readonly] {
@@ -119,13 +118,14 @@
     flex: none;
     width: 60px;
     font-size: 9.5px;
+    font-weight: 700;
     letter-spacing: 0.04em;
 }
 
 .endpointPath {
     font-size: 12.5px;
     font-family: var(--mantine-font-family-monospace);
-    color: var(--mantine-color-gray-3);
+    color: var(--mantine-color-text);
 }
 
 .kindPill {
@@ -135,21 +135,20 @@
     height: 24px;
     padding: 0 9px;
     border-radius: var(--mantine-radius-md);
-    border: 1px solid var(--mantine-color-dark-4);
-    background: rgb(255, 255, 255, 0.02);
-    color: var(--mantine-color-dark-1);
+    border: 1px solid light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+    background: light-dark(var(--mantine-color-white), rgb(255, 255, 255, 0.02));
+    color: var(--mantine-color-dimmed);
     font-size: 11px;
-    font-weight: 500;
-    font-family: var(--mantine-font-family-monospace);
+    font-weight: 600;
     white-space: nowrap;
     user-select: none;
     transition: all 120ms ease;
 }
 
 .kindPillActive {
-    background: rgb(45, 212, 168, 0.05);
-    border-color: var(--mantine-color-teal-9);
-    color: var(--mantine-color-teal-4);
+    background: light-dark(var(--mantine-color-teal-0), rgb(45, 212, 168, 0.05));
+    border-color: light-dark(var(--mantine-color-teal-5), var(--mantine-color-teal-9));
+    color: light-dark(var(--mantine-color-teal-8), var(--mantine-color-teal-4));
 }
 
 .oneTimeNotice {
@@ -158,8 +157,8 @@
     align-items: flex-start;
     padding: 12px 14px;
     border-radius: var(--mantine-radius-md);
-    border: 1px solid rgb(245, 159, 11, 0.22);
-    background: linear-gradient(135deg, rgb(245, 159, 11, 0.1) 0%, rgb(245, 159, 11, 0.02) 100%);
+    border: 1px solid rgb(245, 159, 11, 0.28);
+    background: linear-gradient(135deg, rgb(245, 159, 11, 0.12) 0%, rgb(245, 159, 11, 0.03) 100%);
     transition:
         border-color 150ms ease,
         background-color 150ms ease;
@@ -168,27 +167,27 @@
 .oneTimeNoticeIcon {
     flex: none;
     margin-top: 1px;
-    color: var(--mantine-color-yellow-5);
+    color: light-dark(var(--mantine-color-yellow-7), var(--mantine-color-yellow-5));
 }
 
 .oneTimeNoticeText {
     font-size: var(--mantine-font-size-sm);
     line-height: 1.45;
-    color: var(--mantine-color-gray-3);
+    color: var(--mantine-color-text);
 }
 
 .oneTimeNoticeEmphasis {
     font-weight: 700;
-    color: var(--mantine-color-yellow-4);
+    color: light-dark(var(--mantine-color-yellow-8), var(--mantine-color-yellow-4));
 }
 
 .metaGrid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
-    border: 1px solid rgb(255, 255, 255, 0.08);
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.08));
     border-radius: var(--mantine-radius-md);
     overflow: hidden;
-    background: rgb(255, 255, 255, 0.02);
+    background: light-dark(var(--mantine-color-gray-0), rgb(255, 255, 255, 0.02));
 }
 
 @media (max-width: 48em) {
@@ -203,7 +202,7 @@
     gap: 5px;
     min-width: 0;
     padding: 10px 14px;
-    border-right: 1px solid rgb(255, 255, 255, 0.06);
+    border-right: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.06));
 }
 
 .metaCell:last-child {
@@ -213,7 +212,7 @@
 @media (max-width: 48em) {
     .metaCell {
         border-right: none;
-        border-bottom: 1px solid rgb(255, 255, 255, 0.06);
+        border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.06));
     }
 
     .metaCell:last-child {
@@ -223,6 +222,7 @@
 
 .metaValue {
     font-size: var(--mantine-font-size-sm);
+    font-variant-numeric: tabular-nums;
 }
 
 .metaUuid {
@@ -235,5 +235,5 @@
 .metaUuidText {
     font-size: 12.5px;
     font-family: var(--mantine-font-family-monospace);
-    color: var(--mantine-color-gray-3);
+    color: var(--mantine-color-dimmed);
 }

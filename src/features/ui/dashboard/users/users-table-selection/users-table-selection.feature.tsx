@@ -35,9 +35,14 @@ export const UsersTableSelectionFeature = (props: IProps) => {
     }
 
     return (
-        <Group justify="apart" px="xs">
-            <Group justify="space-between">
-                <Badge color="gray" size="lg" variant="light">
+        <Group gap="xs" justify="space-between" px="xs" wrap="wrap">
+            <Group gap="xs" justify="space-between">
+                <Badge
+                    color="gray"
+                    size="lg"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                    variant="light"
+                >
                     {t('common.selected', { count: usersToUpdate })}
                 </Badge>
                 <Group gap={0} justify="flex-end">

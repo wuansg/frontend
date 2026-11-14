@@ -2,8 +2,8 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--mantine-radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.06));
+    background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02));
     padding: 10px 14px;
     transition:
         background 150ms ease,
@@ -11,7 +11,7 @@
 }
 
 .row:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.04));
     transform: translateX(2px);
 }
 
@@ -39,7 +39,7 @@
 .methodBadge {
     flex: 0 0 auto;
     min-width: 72px;
-    font-family: var(--mantine-font-family-monospace);
+    font-weight: 700;
     letter-spacing: 0.02em;
 }
 

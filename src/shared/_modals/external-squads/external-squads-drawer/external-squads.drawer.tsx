@@ -33,6 +33,7 @@ import {
     useGetSubscriptionTemplates
 } from '@shared/api/hooks'
 import { LoaderModalShared } from '@shared/ui/loader-modal'
+import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { formatInt } from '@shared/utils/misc'
 
 import classes from './external-squads.module.css'
@@ -66,7 +67,7 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
     const { uuid } = props
 
     const modal = useModal()
-    const { modalProps } = useNiceMantineModal({ modal })
+    const { modalProps } = useNiceMantineModal({ modal, drawer: true })
 
     const { t } = useTranslation()
 
@@ -97,11 +98,10 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
                             <Group gap="md" wrap="nowrap">
                                 <Box className={classes.iconWrapper}>
                                     <ActionIcon
-                                        bg={isActive ? '' : 'dark.6'}
                                         className={classes.icon}
                                         color={isActive ? 'teal' : 'gray'}
                                         size="xl"
-                                        variant={isActive ? 'light' : 'subtle'}
+                                        variant={isActive ? 'light' : 'soft'}
                                     >
                                         <TbWebhook size={28} />
                                     </ActionIcon>
@@ -110,7 +110,6 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
                                 <Stack gap={6} style={{ flex: 1, minWidth: 0 }}>
                                     <Text
                                         className={classes.title}
-                                        ff="monospace"
                                         fw={700}
                                         lineClamp={1}
                                         size="lg"
@@ -124,6 +123,7 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
                                                 color={isActive ? 'teal' : 'gray'}
                                                 leftSection={<PiUsers size={12} />}
                                                 size="lg"
+                                                style={{ fontVariantNumeric: 'tabular-nums' }}
                                                 variant="light"
                                             >
                                                 {formatInt(externalSquad.info.membersCount, {
@@ -166,7 +166,7 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
                     }}
                     value={activeTab}
                 >
-                    <Tabs.List>
+                    <Tabs.List style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
                         <Tabs.Tab
                             leftSection={<TbFolder size={px('1.2rem')} />}
                             value={TAB_TYPE.templates}
@@ -341,8 +341,15 @@ export const ExternalSquadsDrawer = NiceModal.create((props: IProps) => {
             {...modalProps}
             padding="md"
             position="right"
-            size="600px"
-            title={t('external-squads.drawer.widget.edit-external-squad')}
+            size="640px"
+            title={
+                <BaseOverlayHeader
+                    iconColor="teal"
+                    IconComponent={TbWebhook}
+                    iconVariant="soft"
+                    title={t('external-squads.drawer.widget.edit-external-squad')}
+                />
+            }
         >
             <Transition
                 duration={300}

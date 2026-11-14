@@ -1,5 +1,6 @@
 import { modals } from '@mantine/modals'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PiBracketsAngle } from 'react-icons/pi'
 
 import {
@@ -20,6 +21,7 @@ import { IProps } from './interfaces'
 
 export function TemplatesGridWidget(props: IProps) {
     const { templates, templateTitle, type } = props
+    const { t } = useTranslation()
 
     const { mutate: deleteTemplate } = useDeleteSubscriptionTemplate({
         mutationFns: {
@@ -43,14 +45,14 @@ export function TemplatesGridWidget(props: IProps) {
 
     const handleDeleteTemplate = (templateUuid: string) => {
         modals.openConfirmModal({
-            title: 'Confirm deletion',
-            children: 'Are you sure you want to perform this action? This action cannot be undone.',
+            title: t('common.confirm-action'),
+            children: t('common.confirm-action-description'),
             labels: {
-                confirm: 'Delete',
-                cancel: 'Cancel'
+                confirm: t('common.delete'),
+                cancel: t('common.cancel')
             },
             cancelProps: { variant: 'subtle', color: 'gray' },
-            confirmProps: { color: 'red' },
+            confirmProps: { color: 'red', variant: 'soft' },
             centered: true,
             onConfirm: () => {
                 deleteTemplate({

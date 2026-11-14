@@ -9,6 +9,7 @@ import {
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { getUserStatusOptions } from '@shared/constants/forms/user-status.constants'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
 import { formatInt } from '@shared/utils/misc'
 import { formatTimeUtil } from '@shared/utils/time-utils'
@@ -21,6 +22,8 @@ import { UsernameColumnEntity } from '@entities/dashboard/users/ui/table-columns
 import { NodeSelectItem, NodeSelectItemProps } from './node-select-item'
 import { TrafficLimitRangeFilter } from './traffic-limit-range-filter'
 
+const TABULAR_CELL_STYLE = { fontVariantNumeric: 'tabular-nums' } as const
+
 const renderSelectOption: SelectProps['renderOption'] = ({ option }) => {
     const item = option as ComboboxItem & { membersCount: number }
     return (
@@ -28,7 +31,13 @@ const renderSelectOption: SelectProps['renderOption'] = ({ option }) => {
             <Text size="sm" truncate="end">
                 {item.label}
             </Text>
-            <Badge color="gray" ml="auto" size="sm" style={{ flexShrink: 0 }} variant="light">
+            <Badge
+                color="gray"
+                ml="auto"
+                size="sm"
+                style={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
+                variant="light"
+            >
                 {formatInt(item?.membersCount ?? 0)}
             </Badge>
         </Group>
@@ -52,8 +61,8 @@ export const useUserTableColumns = (
                     align: 'left'
                 },
                 minSize: 150,
-                maxSize: 300,
-                size: 220,
+                maxSize: 280,
+                size: 195,
                 columnFilterModeOptions: ['contains', 'equals', 'startsWith', 'endsWith'],
                 enableColumnFilterModes: true,
                 enableColumnFilter: true
@@ -63,15 +72,22 @@ export const useUserTableColumns = (
                 header: 'ID',
                 enableColumnFilterModes: false,
                 accessorFn: (originalRow) => originalRow.id,
-                size: 80
+                mantineTableBodyCellProps: {
+                    style: TABULAR_CELL_STYLE
+                },
+                size: 72
             },
             {
                 accessorKey: 'status',
                 header: t('use-table-columns.status'),
                 Cell: ({ cell }) => <StatusColumnEntity need="badge" user={cell.row.original} />,
                 filterVariant: 'select',
+                mantineFilterSelectProps: {
+                    data: getUserStatusOptions(t)
+                },
                 enableColumnFilterModes: false,
                 enableSorting: false,
+                size: 120,
                 mantineTableBodyCellProps: {
                     align: 'center'
                 }
@@ -111,6 +127,7 @@ export const useUserTableColumns = (
                 },
                 enableSorting: false,
                 enableColumnFilterModes: false,
+                size: 150,
                 mantineTableBodyCellProps: {
                     align: 'center'
                 }
@@ -122,8 +139,10 @@ export const useUserTableColumns = (
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 enableClickToCopy: false,
+                size: 140,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    style: TABULAR_CELL_STYLE
                 }
             },
             {
@@ -133,11 +152,11 @@ export const useUserTableColumns = (
                 mantineTableBodyCellProps: {
                     align: 'center'
                 },
-                minSize: 150,
+                minSize: 190,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
-                maxSize: 700,
-                size: 300
+                maxSize: 500,
+                size: 220
             },
             {
                 accessorKey: 'usedTrafficPercentage',
@@ -151,7 +170,11 @@ export const useUserTableColumns = (
                         percentage = (usedTrafficBytes * 100) / limit
                     }
 
-                    return <Text fw={600}>{percentage.toFixed(2)}%</Text>
+                    return (
+                        <Text fw={600} style={TABULAR_CELL_STYLE}>
+                            {percentage.toFixed(2)}%
+                        </Text>
+                    )
                 },
                 mantineTableBodyCellProps: {
                     align: 'center'
@@ -159,8 +182,8 @@ export const useUserTableColumns = (
                 minSize: 80,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
-                maxSize: 700,
-                size: 180
+                maxSize: 400,
+                size: 130
             },
             {
                 accessorKey: 'trafficLimitBytes',
@@ -170,25 +193,28 @@ export const useUserTableColumns = (
                     return limitBytes === 0 ? '∞' : prettifyBytesUtil(limitBytes) || '0 B'
                 },
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    style: TABULAR_CELL_STYLE
                 },
                 filterVariant: 'range',
                 Filter: ({ column, rangeFilterIndex }) =>
                     rangeFilterIndex === 0 ? <TrafficLimitRangeFilter column={column} /> : null,
-                minSize: 230,
+                minSize: 180,
                 enableColumnFilterModes: false,
                 enableColumnFilter: true,
-                size: 230
+                size: 190
             },
             {
                 accessorKey: 'shortUuid',
                 header: t('use-table-columns.sub-link'),
                 accessorFn: (originalRow) => originalRow.shortUuid,
-                minSize: 400,
-                maxSize: 800,
+                minSize: 150,
+                size: 170,
+                maxSize: 400,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    ff: 'monospace'
                 }
             },
 
@@ -196,8 +222,8 @@ export const useUserTableColumns = (
                 accessorKey: 'description',
                 header: t('use-table-columns.description'),
                 accessorFn: (originalRow) => originalRow.description || '–',
-                minSize: 250,
-                size: 400,
+                minSize: 180,
+                size: 260,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
                     align: 'center',
@@ -207,13 +233,14 @@ export const useUserTableColumns = (
 
             {
                 accessorKey: 'telegramId',
-                header: 'Telegram ID',
+                header: t('detailed-user-info-drawer.widget.telegram-id'),
                 accessorFn: (originalRow) => originalRow.telegramId || '–',
                 minSize: 100,
-                size: 200,
+                size: 140,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    style: TABULAR_CELL_STYLE
                 }
             },
 
@@ -221,7 +248,7 @@ export const useUserTableColumns = (
                 accessorKey: 'tag',
                 header: t('use-table-columns.tag'),
                 Cell: ({ cell }) => (
-                    <Text ff="monospace" fw={500} size="md">
+                    <Text fw={500} size="sm">
                         {cell.row.original.tag || '–'}
                     </Text>
                 ),
@@ -229,7 +256,7 @@ export const useUserTableColumns = (
                 mantineTableBodyCellProps: {
                     align: 'center'
                 },
-
+                size: 120,
                 columnFilterModeOptions: ['equals'],
                 enableColumnFilterModes: false,
                 enableColumnFilter: true,
@@ -248,6 +275,7 @@ export const useUserTableColumns = (
                 filterVariant: 'select',
                 enableColumnFilterModes: false,
                 enableSorting: false,
+                size: 155,
                 mantineFilterSelectProps: {
                     clearSectionMode: 'clear',
                     comboboxProps: {
@@ -293,7 +321,11 @@ export const useUserTableColumns = (
                                     multiline
                                     position="top"
                                 >
-                                    <Badge color="violet" style={{ cursor: 'help' }} variant="soft">
+                                    <Badge
+                                        color="violet"
+                                        style={{ cursor: 'help', ...TABULAR_CELL_STYLE }}
+                                        variant="soft"
+                                    >
                                         +{hiddenSquads.length}
                                     </Badge>
                                 </Tooltip>
@@ -309,6 +341,7 @@ export const useUserTableColumns = (
                 filterVariant: 'select',
                 enableColumnFilterModes: false,
                 enableSorting: false,
+                size: 145,
                 mantineFilterSelectProps: {
                     limit: 100,
                     data:
@@ -334,10 +367,10 @@ export const useUserTableColumns = (
 
             {
                 accessorKey: 'email',
-                header: 'Email',
+                header: t('detailed-user-info-drawer.widget.email'),
                 accessorFn: (originalRow) => originalRow.email || '–',
                 minSize: 100,
-                size: 200,
+                size: 170,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
                     align: 'center'
@@ -357,14 +390,13 @@ export const useUserTableColumns = (
                     }
                     return '–'
                 },
-                minSize: 250,
-                size: 250,
+                minSize: 160,
+                size: 170,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
-
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: TABULAR_CELL_STYLE
                 }
             },
 
@@ -379,14 +411,14 @@ export const useUserTableColumns = (
                               language: i18n.language
                           })
                         : t('use-table-columns.never'),
-                minSize: 250,
-                size: 250,
+                minSize: 160,
+                size: 170,
                 enableClickToCopy: false,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: TABULAR_CELL_STYLE
                 }
             },
             {
@@ -400,13 +432,13 @@ export const useUserTableColumns = (
                               language: i18n.language
                           })
                         : t('use-table-columns.never'),
-                minSize: 250,
-                size: 250,
+                minSize: 160,
+                size: 170,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: TABULAR_CELL_STYLE
                 }
             },
 
@@ -417,13 +449,14 @@ export const useUserTableColumns = (
                     originalRow.userTraffic && originalRow.userTraffic.lifetimeUsedTrafficBytes
                         ? prettifyBytesUtil(originalRow.userTraffic.lifetimeUsedTrafficBytes)
                         : '–',
-                minSize: 170,
-                maxSize: 300,
-                size: 170,
+                minSize: 130,
+                maxSize: 260,
+                size: 145,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    style: TABULAR_CELL_STYLE
                 }
             },
             {
@@ -437,13 +470,13 @@ export const useUserTableColumns = (
                               language: i18n.language
                           })
                         : t('use-table-columns.never'),
-                minSize: 250,
-                size: 250,
+                minSize: 160,
+                size: 170,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: TABULAR_CELL_STYLE
                 }
             },
             {
@@ -455,41 +488,50 @@ export const useUserTableColumns = (
                         template: 'TIME_FIRST_DATETIME',
                         language: i18n.language
                     }),
-                minSize: 250,
-                size: 250,
+                minSize: 160,
+                size: 170,
                 enableColumnFilterModes: false,
                 enableColumnFilter: false,
                 mantineTableBodyCellProps: {
                     align: 'left',
-                    ff: 'monospace'
+                    style: TABULAR_CELL_STYLE
                 }
             },
             {
                 accessorKey: 'vlessUuid',
-                header: 'Vless UUID',
+                header: t('use-table-columns.vless-uuid'),
                 accessorFn: (originalRow) => originalRow.vlessUuid,
-                minSize: 400,
+                minSize: 160,
+                size: 260,
                 enableColumnFilterModes: false,
-                maxSize: 800,
+                maxSize: 500,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    ff: 'monospace'
                 }
             },
             {
                 accessorKey: 'trojanPassword',
-                header: 'Trojan Password',
+                header: t('detailed-user-info-drawer.widget.trojan-password'),
                 accessorFn: (originalRow) => originalRow.trojanPassword,
-                minSize: 400,
-                maxSize: 800,
+                minSize: 160,
+                size: 220,
+                maxSize: 500,
                 enableColumnFilterModes: false,
                 mantineTableBodyCellProps: {
-                    align: 'center'
+                    align: 'center',
+                    ff: 'monospace'
                 }
             },
             {
                 accessorKey: 'hwidDeviceLimit',
-                header: 'HWID Device Limit',
+                header: t('use-table-columns.hwid-device-limit'),
                 accessorFn: (originalRow) => originalRow.hwidDeviceLimit ?? '–',
+                size: 140,
+                mantineTableBodyCellProps: {
+                    align: 'center',
+                    style: TABULAR_CELL_STYLE
+                },
                 columnFilterModeOptions: [
                     'equals',
                     'greaterThan',

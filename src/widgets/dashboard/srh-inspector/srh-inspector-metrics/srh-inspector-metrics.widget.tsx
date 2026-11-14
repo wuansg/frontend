@@ -48,8 +48,8 @@ export function SrhInspectorMetrics() {
                         color: 'var(--mantine-color-text)'
                     }
                 },
-                gridLineColor: 'var(--mantine-color-gray-6)',
-                lineColor: 'var(--mantine-color-gray-6)'
+                gridLineColor: 'var(--mantine-color-default-border)',
+                lineColor: 'var(--mantine-color-default-border)'
             },
             yAxis: {
                 title: {
@@ -63,20 +63,20 @@ export function SrhInspectorMetrics() {
                         color: 'var(--mantine-color-text)'
                     }
                 },
-                gridLineColor: 'var(--mantine-color-gray-6)',
-                lineColor: 'var(--mantine-color-gray-6)'
+                gridLineColor: 'var(--mantine-color-default-border)',
+                lineColor: 'var(--mantine-color-default-border)'
             },
 
             tooltip: {
                 shared: true,
                 backgroundColor: 'var(--mantine-color-body)',
-                borderColor: 'var(--mantine-color-gray-4)',
+                borderColor: 'var(--mantine-color-default-border)',
                 headerFormat: '',
                 style: {
                     color: 'var(--mantine-color-text)'
                 },
                 pointFormatter(this: { x: number; y: number }): string {
-                    return `<b>${dayjs(this.x).format('DD.MM.YYYY, HH:mm')}</b> </br> Requests: <b>${this.y}<b>`
+                    return `<b>${dayjs(this.x).format('DD.MM.YYYY, HH:mm')}</b><br/>${t('srh-inspector-metrics.widget.requests')}: <b>${this.y}</b>`
                 }
             },
             plotOptions: {
@@ -132,17 +132,20 @@ export function SrhInspectorMetrics() {
     )
 
     return (
-        <Stack gap="xl">
-            <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
+        <Stack gap="md">
+            <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md">
                 <Card
                     p="lg"
+                    radius="md"
                     style={{
+                        border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
                         background:
-                            'linear-gradient(135deg, var(--mantine-color-dark-6) 0%, var(--mantine-color-dark-7) 100%)'
+                            'light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02))'
                     }}
+                    withBorder
                 >
                     <Group align="center" gap="sm" mb="lg" wrap="nowrap">
-                        <ThemeIcon color="teal" size="lg" variant="outline">
+                        <ThemeIcon color="teal" size="lg" variant="soft">
                             <PiAppWindowDuotone size="20px" />
                         </ThemeIcon>
 
@@ -174,13 +177,16 @@ export function SrhInspectorMetrics() {
 
                 <Card
                     p="lg"
+                    radius="md"
                     style={{
+                        border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
                         background:
-                            'linear-gradient(135deg, var(--mantine-color-dark-6) 0%, var(--mantine-color-dark-7) 100%)'
+                            'light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02))'
                     }}
+                    withBorder
                 >
                     <Group align="center" gap="sm" mb="lg" wrap="nowrap">
-                        <ThemeIcon color="blue" size="lg" variant="outline">
+                        <ThemeIcon color="blue" size="lg" variant="soft">
                             <PiChartBar size="20px" />
                         </ThemeIcon>
 

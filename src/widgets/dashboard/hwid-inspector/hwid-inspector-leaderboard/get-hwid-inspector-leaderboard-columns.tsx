@@ -15,11 +15,13 @@ export function getHwidInspectorLeaderboardColumns(
             draggable: false,
 
             titleStyle: {
-                backgroundColor: 'var(--mantine-color-dark-7)'
+                backgroundColor:
+                    'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))'
             },
             cellsStyle: () => {
                 return {
-                    backgroundColor: 'var(--mantine-color-dark-7)'
+                    backgroundColor:
+                        'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))'
                 }
             },
             title: (
@@ -45,13 +47,17 @@ export function getHwidInspectorLeaderboardColumns(
         {
             accessor: 'id',
             title: 'ID',
-            render: ({ id }) => id
+            render: ({ id }) => (
+                <Text size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {id}
+                </Text>
+            )
         },
         {
             accessor: 'devicesCount',
             title: <TbSum size={18} />,
             render: ({ devicesCount }) => (
-                <Text c="white" fw={600} size="sm">
+                <Text fw={600} size="sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
                     {devicesCount}
                 </Text>
             )

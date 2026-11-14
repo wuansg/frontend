@@ -26,7 +26,7 @@ export const UserSubscriptionRequestsModal = NiceModal.create((props: IProps) =>
     return (
         <Modal
             {...modalProps}
-            size="min(1000px, 70vw)"
+            size="min(1200px, 92vw)"
             styles={{
                 body: {
                     height: 'calc(100% - 60px)',

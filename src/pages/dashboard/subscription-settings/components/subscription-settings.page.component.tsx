@@ -1,4 +1,3 @@
-import { Container } from '@mantine/core'
 import { SubscriptionSettingsTabsWidget } from '@widgets/dashboard/subscription-settings/settings/subscription-tabs.widget'
 import { useTranslation } from 'react-i18next'
 import { TbHexagon } from 'react-icons/tb'
@@ -23,9 +22,7 @@ export const SubscriptionSettingsPageComponent = (props: IProps) => {
                 title={t('constants.subscription-settings')}
             />
 
-            <Container fluid p={0} size="xl">
-                <SubscriptionSettingsTabsWidget subscriptionSettings={subscriptionSettings} />
-            </Container>
+            <SubscriptionSettingsTabsWidget subscriptionSettings={subscriptionSettings} />
         </Page>
     )
 }

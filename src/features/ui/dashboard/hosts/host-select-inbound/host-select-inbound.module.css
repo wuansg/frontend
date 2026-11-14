@@ -6,15 +6,18 @@
 .card {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(
-        135deg,
-        var(--mantine-color-dark-6) 0%,
-        var(--mantine-color-dark-7) 50%,
-        var(--mantine-color-dark-8) 100%
+    background: light-dark(
+        linear-gradient(135deg, var(--mantine-color-white) 0%, var(--mantine-color-gray-0) 100%),
+        linear-gradient(
+            135deg,
+            var(--mantine-color-dark-6) 0%,
+            var(--mantine-color-dark-7) 50%,
+            var(--mantine-color-dark-8) 100%
+        )
     );
-    border: 1px solid var(--mantine-color-dark-4);
+    border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
     border-radius: var(--mantine-radius-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     padding: var(--mantine-spacing-sm);
 }
 

@@ -79,7 +79,7 @@ export const ConfigProfileByUuidPageComponent = (props: Props) => {
                         </Drawer>
                     </>
                 ) : (
-                    <Flex gap="md">
+                    <Flex gap={isOpen ? 'md' : 0}>
                         <Box style={{ flex: 1, minWidth: 0 }}>
                             <ConfigEditorWidget configProfile={configProfile} snippets={snippets} />
                         </Box>

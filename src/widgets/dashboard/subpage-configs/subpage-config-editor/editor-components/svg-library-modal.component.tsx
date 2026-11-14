@@ -215,7 +215,7 @@ export function SvgLibraryModal(props: IProps) {
                                                 )}
                                             </div>
                                             <div style={{ minWidth: 0 }}>
-                                                <Text c="white" fw={500} size="sm" truncate="end">
+                                                <Text fw={500} size="sm" truncate="end">
                                                     {key}
                                                 </Text>
                                                 <Badge color="violet" size="xs" variant="light">

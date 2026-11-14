@@ -1,7 +1,7 @@
-import remnawave from '../public/locales/en/remnawave.json'
+import remnawave from '../public/locales/en/remnawave.json';
 
 const resources = {
-    remnawave
-} as const
+  remnawave
+} as const;
 
-export default resources
+export default resources;

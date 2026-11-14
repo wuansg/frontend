@@ -155,8 +155,9 @@ export const HostsConfigProfilesDrawer = NiceModal.create((props: IProps) => {
                     bdrs="md"
                     p="md"
                     style={{
-                        border: '1px solid rgb(255, 255, 255, 0.08)',
-                        background: 'rgb(255, 255, 255, 0.02)'
+                        border: '1px solid light-dark(var(--mantine-color-gray-3), rgb(255, 255, 255, 0.08))',
+                        background:
+                            'light-dark(var(--mantine-color-gray-0), rgb(255, 255, 255, 0.02))'
                     }}
                 >
                     <Group align="center" justify="space-between" wrap="nowrap">

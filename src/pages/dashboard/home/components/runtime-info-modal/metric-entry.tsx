@@ -16,7 +16,7 @@ export const MetricEntry = (props: IProps) => {
                 <Icon size={16} />
             </ThemeIcon>
             <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-                <Text c="white" ff="monospace" fw={700} lh={1} size="sm">
+                <Text fw={700} lh={1} size="sm">
                     {title}
                 </Text>
                 <Text c="dimmed" lh={1.55} size="sm">

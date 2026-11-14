@@ -25,7 +25,7 @@ export function ConnectedNodeColumnEntity(props: IProps) {
                     }}
                 />
             )}
-            <Text ff="monospace" fw={500} size="md">
+            <Text fw={500} size="sm" truncate="end">
                 {node?.name || '–'}
             </Text>
         </Group>

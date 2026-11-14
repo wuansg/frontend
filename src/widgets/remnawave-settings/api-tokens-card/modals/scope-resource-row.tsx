@@ -1,5 +1,6 @@
 import { Box, Collapse, Group, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core'
 import clsx from 'clsx'
+import { useTranslation } from 'react-i18next'
 import { TbChevronRight } from 'react-icons/tb'
 
 import classes from '../api-token-card.module.css'
@@ -38,6 +39,7 @@ export const ScopeResourceRow = (props: IProps) => {
         resource,
         selectedEndpoints
     } = props
+    const { t } = useTranslation()
 
     const total = resource.endpoints.length
     const selectedCount = countSelected(resource.endpoints, selectedEndpoints)
@@ -64,7 +66,11 @@ export const ScopeResourceRow = (props: IProps) => {
                             <Text className={classes.resourceName} truncate="end">
                                 {humanizeResource(resource.resource)}
                             </Text>
-                            <Text c="dimmed" ff="monospace" size="xs">
+                            <Text
+                                c="dimmed"
+                                size="xs"
+                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                            >
                                 {selectedCount}/{total}
                             </Text>
                         </Stack>
@@ -73,7 +79,7 @@ export const ScopeResourceRow = (props: IProps) => {
 
                 {getReadKeys(resource).length > 0 && (
                     <KindPill
-                        label="Read"
+                        label={t('api-tokens-card.widget.scope-read')}
                         onClick={() => onToggleKind?.('read')}
                         readOnly={readOnly}
                         state={readState}
@@ -81,7 +87,7 @@ export const ScopeResourceRow = (props: IProps) => {
                 )}
                 {getWriteKeys(resource).length > 0 && (
                     <KindPill
-                        label="Write"
+                        label={t('api-tokens-card.widget.scope-write')}
                         onClick={() => onToggleKind?.('write')}
                         readOnly={readOnly}
                         state={writeState}

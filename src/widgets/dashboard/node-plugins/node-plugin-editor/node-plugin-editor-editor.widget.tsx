@@ -158,7 +158,7 @@ export function NodePluginEditorWidget(props: IProps) {
                     beforeMount={handleEditorDidMount}
                     className={styles.monacoEditor}
                     defaultLanguage="json"
-                    loading="Editor is loading..."
+                    loading={t('node-plugin-editor.loading')}
                     onChange={() => {
                         checkForChanges()
                     }}

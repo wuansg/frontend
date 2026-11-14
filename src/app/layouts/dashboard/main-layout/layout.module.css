@@ -7,11 +7,11 @@
         100dvh - 1.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
     );
 
-    background: linear-gradient(
-        135deg,
-        var(--mantine-color-dark-8) 0%,
-        var(--mantine-color-dark-7) 100%
+    background: light-dark(
+        linear-gradient(135deg, var(--mantine-color-white) 0%, var(--mantine-color-gray-0) 100%),
+        linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-7) 100%)
     );
+    border: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
 
     box-shadow:
         0 1px 1px hsl(0deg 0% 0% / 0.075),
@@ -55,7 +55,8 @@
 }
 
 .header {
-    background-color: var(--mantine-color-dark-7);
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
 
     @supports (padding: env(safe-area-inset-top)) {
         top: 0;

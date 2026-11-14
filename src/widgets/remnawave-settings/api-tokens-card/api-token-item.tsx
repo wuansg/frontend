@@ -39,7 +39,7 @@ export const ApiTokenItem = ({ apiToken }: IProps) => {
     const getDotColor = () => {
         if (isFull) return 'var(--mantine-color-teal-5)'
         if (hasScopes) return 'var(--mantine-color-cyan-5)'
-        return 'var(--mantine-color-dark-3)'
+        return 'var(--mantine-color-gray-5)'
     }
     const dotColor = getDotColor()
 
@@ -60,16 +60,22 @@ export const ApiTokenItem = ({ apiToken }: IProps) => {
                 </Text>
             </Group>
 
-            <Text c="dimmed" ff="monospace" size="xs" truncate="end">
+            <Text
+                c="dimmed"
+                size="xs"
+                style={{ fontVariantNumeric: 'tabular-nums' }}
+                truncate="end"
+            >
                 {isFull ? t('api-tokens-card.widget.full-access') : apiToken.scopes.length}{' '}
             </Text>
 
             <Text
                 c={isExpired ? 'red.5' : 'dimmed'}
+                fw={isExpired ? 600 : 400}
                 size="xs"
+                style={{ fontVariantNumeric: 'tabular-nums' }}
                 truncate="end"
                 visibleFrom="sm"
-                fw={isExpired ? 600 : 400}
             >
                 {isExpired
                     ? t('api-tokens-card.widget.expired')

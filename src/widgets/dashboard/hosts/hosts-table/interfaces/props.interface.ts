@@ -1,9 +1,10 @@
 import { UseListStateHandlers } from '@mantine/hooks'
-import { GetHostsCommand, GetConfigProfilesCommand } from '@remnawave/backend-contract'
+import { GetConfigProfilesCommand, GetHostsCommand } from '@remnawave/backend-contract'
 import { RefObject } from 'react'
 
 export interface IProps {
     configProfiles: GetConfigProfilesCommand.Response['response']['configProfiles'] | undefined
+    disableReordering?: boolean
     handlers: UseListStateHandlers<GetHostsCommand.Response['response'][number]>
     hosts: GetHostsCommand.Response['response'] | undefined
     isDraggingRef: RefObject<boolean>

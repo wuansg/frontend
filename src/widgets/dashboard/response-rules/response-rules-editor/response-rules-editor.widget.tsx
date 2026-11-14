@@ -119,7 +119,7 @@ export function ResponseRulesEditorWidget(props: IProps) {
                     beforeMount={handleEditorDidMount}
                     className={styles.monacoEditor}
                     defaultLanguage="json"
-                    loading="Editor is loading..."
+                    loading={t('config-editor.widget.loading-editor')}
                     onChange={() => {
                         checkForChanges()
                     }}

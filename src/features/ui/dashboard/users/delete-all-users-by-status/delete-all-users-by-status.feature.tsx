@@ -8,7 +8,7 @@ import { PiClockDuotone } from 'react-icons/pi'
 import { TbCheck as IconCheck, TbX as IconX } from 'react-icons/tb'
 
 import { useBulkDeleteUsersByStatus } from '@shared/api/hooks'
-import { userStatusValues } from '@shared/constants/forms/user-status.constants'
+import { getUserStatusOptions } from '@shared/constants/forms/user-status.constants'
 
 export const DeleteAllUsersByStatusFeature = () => {
     const { t } = useTranslation()
@@ -75,11 +75,11 @@ export const DeleteAllUsersByStatusFeature = () => {
         })
 
     return (
-        <Group align="flex-start" grow={false}>
-            <Stack gap="md" w={400}>
+        <Group align="flex-start" grow={false} w="100%">
+            <Stack gap="md" maw={400} w="100%">
                 <Select
                     allowDeselect={false}
-                    data={userStatusValues}
+                    data={getUserStatusOptions(t)}
                     description={t('bulk-user-actioins-modal.widget.user-deletion-description')}
                     label={t('bulk-user-actioins-modal.widget.select-status')}
                     leftSection={<PiClockDuotone size="16px" />}

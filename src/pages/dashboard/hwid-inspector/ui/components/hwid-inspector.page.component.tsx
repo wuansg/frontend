@@ -1,22 +1,23 @@
 import { Stack } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
 import { HwidInspectorLeaderboardWidget } from '@widgets/dashboard/hwid-inspector/hwid-inspector-leaderboard'
 import { HwidInspectorMetrics } from '@widgets/dashboard/hwid-inspector/hwid-inspector-metrics'
 import { HwidInspectorTableWidget } from '@widgets/dashboard/hwid-inspector/hwid-inspector-table'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { TbDeviceAnalytics } from 'react-icons/tb'
 
-import { Page } from '@shared/ui'
-import { MobileWarningOverlay } from '@shared/ui/mobile-warning-overlay/mobile-warning-overlay'
+import { Page, PageHeaderShared } from '@shared/ui'
 
 export default function HwidInspectorPageComponent() {
     const { t } = useTranslation()
-    const isMobile = useMediaQuery('(max-width: 500px)')
 
     return (
         <Page title={t('constants.hwid-inspector')}>
-            <Stack>
-                {isMobile && <MobileWarningOverlay />}
+            <PageHeaderShared
+                icon={<TbDeviceAnalytics size={24} />}
+                title={t('constants.hwid-inspector')}
+            />
+            <Stack gap="md">
                 <HwidInspectorMetrics />
 
                 <motion.div

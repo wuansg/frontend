@@ -1,10 +1,9 @@
-import { px, Tabs } from '@mantine/core'
+import { px, SimpleGrid, Tabs } from '@mantine/core'
 import { UpdateSubscriptionSettingsCommand } from '@remnawave/backend-contract'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiInfo } from 'react-icons/pi'
 import { TbListLetters, TbPrescription } from 'react-icons/tb'
-import Masonry from 'react-layout-masonry'
 
 import { SubscriptionAdditionalOptionsWidget } from './cards/subscription-additional-options.widget'
 import { SubscriptionHwidSettingsWidget } from './cards/subscription-hwid-settings.widget'
@@ -40,7 +39,7 @@ export const SubscriptionSettingsTabsWidget = ({ subscriptionSettings }: Subscri
             }}
             value={activeTab}
         >
-            <Tabs.List>
+            <Tabs.List style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
                 <Tabs.Tab leftSection={<PiInfo size={px('1.2rem')} />} value={TABS.general}>
                     {t('subscription-settings.widget.main-settings')}
                 </Tabs.Tab>
@@ -55,20 +54,20 @@ export const SubscriptionSettingsTabsWidget = ({ subscriptionSettings }: Subscri
                 </Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel pt="xl" value={TABS.general}>
-                <Masonry columns={{ 300: 1, 1400: 2, 2000: 3, 3000: 4 }} gap={16}>
+            <Tabs.Panel pt="md" value={TABS.general}>
+                <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="md">
                     <SubscriptionAdditionalOptionsWidget
                         subscriptionSettings={subscriptionSettings}
                     />
                     <SubscriptionHwidSettingsWidget subscriptionSettings={subscriptionSettings} />
-                </Masonry>
+                </SimpleGrid>
             </Tabs.Panel>
 
-            <Tabs.Panel pt="xl" value={TABS.remarks}>
+            <Tabs.Panel pt="md" value={TABS.remarks}>
                 <SubscriptionUserRemarksCardWidget subscriptionSettings={subscriptionSettings} />
             </Tabs.Panel>
 
-            <Tabs.Panel pt="xl" value={TABS.additionalResponseHeaders}>
+            <Tabs.Panel pt="md" value={TABS.additionalResponseHeaders}>
                 <SubscriptionResponseHeadersCardWidget
                     subscriptionSettings={subscriptionSettings}
                 />

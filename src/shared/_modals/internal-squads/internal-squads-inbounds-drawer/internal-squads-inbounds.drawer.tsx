@@ -46,7 +46,7 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
     const { squadUuid } = props
 
     const modal = useModal()
-    const { modalProps } = useNiceMantineModal({
+    const { modalProps, hide } = useNiceMantineModal({
         modal,
         drawer: true
     })
@@ -197,7 +197,7 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
                         }).queryKey,
                         data
                     )
-                    close()
+                    hide()
                 }
             }
         })
@@ -228,24 +228,22 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
                     p="md"
                     shadow="sm"
                     style={{
-                        border: '1px solid rgb(255, 255, 255, 0.08)',
-                        background: 'rgb(255, 255, 255, 0.02)'
+                        border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
+                        background:
+                            'light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.02))'
                     }}
                 >
                     <Stack gap="md">
                         <Group align="center" justify="space-between" wrap="nowrap">
                             <Box className={classes.iconWrapper}>
                                 <ActionIcon
-                                    bg={internalSquad.info.membersCount > 0 ? '' : 'dark.6'}
                                     className={classes.icon}
                                     color={internalSquad.info.membersCount > 0 ? 'teal' : 'gray'}
                                     size="xl"
                                     style={{
                                         cursor: 'default'
                                     }}
-                                    variant={
-                                        internalSquad.info.membersCount > 0 ? 'light' : 'subtle'
-                                    }
+                                    variant={internalSquad.info.membersCount > 0 ? 'light' : 'soft'}
                                 >
                                     <TbCirclesRelation size={28} />
                                 </ActionIcon>
@@ -253,7 +251,6 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
 
                             <Stack gap={6} style={{ flex: 1, minWidth: 0 }}>
                                 <Text
-                                    ff="monospace"
                                     fw={700}
                                     lineClamp={2}
                                     size="lg"
@@ -272,9 +269,9 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
                                                     ? 'teal'
                                                     : 'gray'
                                             }
-                                            ff="monospace"
                                             leftSection={<PiUsers size={12} />}
                                             size="lg"
+                                            style={{ fontVariantNumeric: 'tabular-nums' }}
                                             variant="light"
                                         >
                                             {formatInt(internalSquad.info.membersCount, {
@@ -285,9 +282,9 @@ export const InternalSquadsInboundsDrawer = NiceModal.create((props: IProps) => 
                                     <Tooltip label={t('internal-squads-grid.widget.inbounds')}>
                                         <Badge
                                             color="blue"
-                                            ff="monospace"
                                             leftSection={<PiTag size={12} />}
                                             size="lg"
+                                            style={{ fontVariantNumeric: 'tabular-nums' }}
                                             variant="light"
                                         >
                                             {formatInt(selectedInbounds.size, {

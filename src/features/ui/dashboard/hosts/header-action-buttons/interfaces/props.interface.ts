@@ -1,5 +1,6 @@
-import { GetConfigProfilesCommand } from '@remnawave/backend-contract'
+import { HOSTS_VIEW_MODE } from '@entities/dashboard/view-preferences-store'
 
 export interface IProps {
-    configProfiles: GetConfigProfilesCommand.Response['response']['configProfiles'] | undefined
+    setViewMode: (viewMode: HOSTS_VIEW_MODE) => void
+    viewMode: HOSTS_VIEW_MODE
 }

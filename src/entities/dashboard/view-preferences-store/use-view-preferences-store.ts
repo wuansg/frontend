@@ -44,7 +44,7 @@ export const useViewPreferencesStore = create<IActions & IState>()(
         ),
         {
             name: 'viewPreferencesStore',
-            version: 2,
+            version: 3,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 nodesViewMode: state.nodesViewMode,
@@ -55,7 +55,11 @@ export const useViewPreferencesStore = create<IActions & IState>()(
                 layoutStyle: state.layoutStyle
             }),
             migrate: (persistedState) => {
-                const prev = (persistedState ?? {}) as Omit<Partial<IState>, 'nodesViewMode'> & {
+                const prev = (persistedState ?? {}) as Omit<
+                    Partial<IState>,
+                    'hostsViewMode' | 'nodesViewMode'
+                > & {
+                    hostsViewMode?: string
                     nodesViewMode?: string
                 }
                 return {
@@ -65,7 +69,12 @@ export const useViewPreferencesStore = create<IActions & IState>()(
                         prev.nodesViewMode === NODES_VIEW_MODE.MATRIX ||
                         prev.nodesViewMode === 'table'
                             ? NODES_VIEW_MODE.MATRIX
-                            : NODES_VIEW_MODE.CARDS
+                            : NODES_VIEW_MODE.CARDS,
+                    hostsViewMode:
+                        prev.hostsViewMode === HOSTS_VIEW_MODE.MATRIX ||
+                        prev.hostsViewMode === 'table'
+                            ? HOSTS_VIEW_MODE.MATRIX
+                            : HOSTS_VIEW_MODE.CARDS
                 }
             }
         }
@@ -83,7 +92,12 @@ export const useConfigProfilesViewMode = () =>
     useViewPreferencesStore((state) => state.configProfilesViewMode)
 export const useViewPreferencesStoreActions = () =>
     useViewPreferencesStore((state) => state.actions)
-export const useHostsViewMode = () => useViewPreferencesStore((state) => state.hostsViewMode)
+export const useHostsViewMode = () =>
+    useViewPreferencesStore((state) =>
+        state.hostsViewMode === HOSTS_VIEW_MODE.MATRIX
+            ? HOSTS_VIEW_MODE.MATRIX
+            : HOSTS_VIEW_MODE.CARDS
+    )
 export const useHostsActiveTag = () => useViewPreferencesStore((state) => state.hostsActiveTag)
 export const useLayoutStyle = () => useViewPreferencesStore((state) => state.layoutStyle)
 export const useToggleLayoutStyleAction = () =>

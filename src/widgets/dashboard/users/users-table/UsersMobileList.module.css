@@ -1,0 +1,79 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mantine-spacing-xs);
+    padding: var(--mantine-spacing-xs);
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.025));
+    border: 1px solid light-dark(var(--mantine-color-gray-2), rgba(255, 255, 255, 0.06));
+}
+
+.statusPills {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.statusPills::-webkit-scrollbar {
+    display: none;
+}
+
+.statusPill {
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+    transition:
+        background-color 140ms ease,
+        border-color 140ms ease;
+}
+
+.selectionBanner {
+    padding: 8px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-cyan-0), rgba(6, 182, 212, 0.08));
+    border: 1px solid light-dark(var(--mantine-color-cyan-3), rgba(6, 182, 212, 0.24));
+}
+
+.card {
+    position: relative;
+    overflow: hidden;
+    padding: 12px 12px 12px 15px;
+    border-radius: var(--mantine-radius-md);
+    background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.024));
+    border: 1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08));
+    cursor: pointer;
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.card:hover {
+    border-color: light-dark(var(--mantine-color-gray-4), rgba(255, 255, 255, 0.16));
+}
+
+.cardSelected {
+    border-color: var(--mantine-color-cyan-6);
+    background: light-dark(rgba(22, 163, 74, 0.03), rgba(6, 182, 212, 0.07));
+}
+
+.statusStripe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+}
+
+.tabular {
+    font-variant-numeric: tabular-nums;
+}

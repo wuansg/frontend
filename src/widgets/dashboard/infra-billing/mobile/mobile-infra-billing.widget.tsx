@@ -88,7 +88,7 @@ export function MobileInfraBillingWidget() {
     }
 
     return (
-        <Stack gap="xs" pos="relative">
+        <Stack gap="xs" pb={72} pos="relative">
             <MobileStatsWidget />
 
             <Tabs
@@ -176,10 +176,12 @@ export function MobileInfraBillingWidget() {
                 right={15}
                 style={{
                     zIndex: 100,
-                    backgroundColor: 'var(--mantine-color-dark-6)',
+                    backgroundColor:
+                        'light-dark(var(--mantine-color-white), var(--mantine-color-dark-6))',
+                    border: '1px solid light-dark(var(--mantine-color-gray-3), rgba(255, 255, 255, 0.08))',
                     padding: 6,
                     borderRadius: 'var(--mantine-radius-md)',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
+                    boxShadow: '0 4px 16px light-dark(rgba(15, 23, 42, 0.12), rgba(0, 0, 0, 0.4))'
                 }}
             >
                 <ActionIcon

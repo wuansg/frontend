@@ -307,7 +307,15 @@ export function ExternalSquadOverridesTab<T extends Record<string, unknown>>(pro
                             const isCheckbox = inputType === 'boolean'
 
                             return (
-                                <Paper bg="dark.7" key={String(field)} p="sm" withBorder>
+                                <Paper
+                                    key={String(field)}
+                                    p="sm"
+                                    style={{
+                                        backgroundColor:
+                                            'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))'
+                                    }}
+                                    withBorder
+                                >
                                     <Group align="center" gap="xs" wrap="nowrap">
                                         <Box style={{ flex: 1 }}>
                                             {renderField(field as keyof T)}

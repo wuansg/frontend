@@ -50,8 +50,15 @@ export function LocalizationBlockComponent({ form }: IProps) {
                         titleOrder={5}
                     />
 
-                    <Badge color="teal" size="sm" variant="light">
-                        {locales.length} active
+                    <Badge
+                        color="teal"
+                        size="sm"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                        variant="light"
+                    >
+                        {t('subpage-config-visual-editor.widget.active-locales-count', {
+                            count: locales.length
+                        })}
                     </Badge>
                 </Group>
 
