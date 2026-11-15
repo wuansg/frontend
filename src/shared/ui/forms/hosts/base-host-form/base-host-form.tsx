@@ -4,10 +4,13 @@ import {
     ActionIcon,
     Autocomplete,
     Badge,
+    Box,
     Button,
     Checkbox,
+    CopyButton,
     Group,
     HoverCard,
+    Menu,
     MultiSelect,
     NumberInput,
     Select,
@@ -49,9 +52,12 @@ import {
     TbArrowsExchange,
     TbCirclesRelation,
     TbCloudNetwork,
+    TbCopy,
+    TbDots,
     TbEye,
     TbFileDescription,
     TbMask,
+    TbRotate,
     TbServer2,
     TbStar
 } from 'react-icons/tb'
@@ -62,6 +68,7 @@ import { ChipMultiSelect } from '@shared/ui/chip-multi-select'
 import { DrawerFooter } from '@shared/ui/drawer-footer'
 import { MihomoLogo, ShadowrocketLogo, SingboxLogo, StashLogo, SurgeLogo } from '@shared/ui/logos'
 import { Base64Logo } from '@shared/ui/logos/base64-logo'
+import { ModalFooter } from '@shared/ui/modal-footer'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { TemplateInfoPopoverShared } from '@shared/ui/popovers'
 import { PopoverWithInfoShared } from '@shared/ui/popovers/popover-with-info'
@@ -122,12 +129,14 @@ export const BaseHostForm = <
         internalSquads,
         hostTags,
         removeRequiredFields,
-        hostUuid
+        hostUuid,
+        layout = 'drawer'
     } = props
 
     const { t } = useTranslation()
     const [activeTab, setActiveTab] = useState<null | string>('basic')
     const isMobile = useIsMobile()
+    const isModalLayout = layout === 'modal'
 
     const securityLayerLabels = {
         [SECURITY_LAYERS.TLS]: t('base-host-form.tls-transport-layer-security'),
@@ -277,992 +286,955 @@ export const BaseHostForm = <
         form.validateField('tags')
     }
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <Group gap="xs" justify="space-between" mb="md" pl={4} pr={4}>
-                <Group gap="xs">
-                    <ThemeIcon color="indigo" size="lg" variant="soft">
-                        <TbEye size={24} />
-                    </ThemeIcon>
+    const visibilityRow = (
+        <Group gap="xs" justify="space-between" pl={4} pr={4}>
+            <Group gap="xs">
+                <ThemeIcon color="indigo" size="lg" variant="soft">
+                    <TbEye size={24} />
+                </ThemeIcon>
 
-                    <Text fw={600} size="lg">
-                        {t('base-host-form.host-visibility')}
-                    </Text>
-                </Group>
-                <Switch
-                    color="teal.8"
-                    key={form.key('isDisabled')}
-                    size="lg"
-                    {...form.getInputProps('isDisabled', { type: 'checkbox' })}
-                />
+                <Text fw={600} size="lg">
+                    {t('base-host-form.host-visibility')}
+                </Text>
             </Group>
+            <Switch
+                color="teal.8"
+                key={form.key('isDisabled')}
+                size="lg"
+                {...form.getInputProps('isDisabled', { type: 'checkbox' })}
+            />
+        </Group>
+    )
 
-            <Tabs
-                keepMounted
-                keepMountedMode="display-none"
-                onChange={setActiveTab}
-                value={activeTab}
-            >
-                <Tabs.List grow mb="md">
-                    <Tabs.Tab key="basic" leftSection={<PiNoteDuotone size={16} />} value="basic">
-                        {t('base-host-form.basic')}
-                    </Tabs.Tab>
+    const basicCard = (
+        <SectionCard.Root>
+            <SectionCard.Section>
+                <BaseOverlayHeader
+                    iconColor="teal"
+                    IconComponent={PiTag}
+                    iconVariant="soft"
+                    title={t('base-host-form.vital-parameters')}
+                    titleOrder={5}
+                />
+            </SectionCard.Section>
+            <SectionCard.Section>
+                <Stack gap="md">
+                    <TextInput
+                        key={form.key('remark')}
+                        label={t('base-host-form.remark')}
+                        {...form.getInputProps('remark')}
+                        leftSection={<TemplateInfoPopoverShared />}
+                        required={!removeRequiredFields}
+                    />
 
-                    <Tabs.Tab
-                        key="advanced"
-                        leftSection={<PiGearSixDuotone size={16} />}
-                        value="advanced"
+                    <Stack gap="xs">
+                        <HostSelectInboundFeature
+                            activeConfigProfileInbound={
+                                form.getValues().inbound?.configProfileInboundUuid ?? undefined
+                            }
+                            activeConfigProfileUuid={
+                                form.getValues().inbound?.configProfileUuid ?? undefined
+                            }
+                            configProfiles={configProfiles}
+                            onSaveInbound={saveInbound}
+                        />
+                    </Stack>
+
+                    <Group
+                        gap="xs"
+                        grow
+                        justify="space-between"
+                        preventGrowOverflow={false}
+                        w="100%"
                     >
-                        {t('base-host-form.advanced')}
-                    </Tabs.Tab>
-                </Tabs.List>
+                        <TextInput
+                            key={form.key('address')}
+                            label={t('base-host-form.address')}
+                            leftSection={
+                                <PopoverWithInfoShared
+                                    text={
+                                        <>
+                                            {t('base-host-form.address-description-line-1')}
+                                            <br />
+                                            {t('base-host-form.address-description-line-2')}
+                                        </>
+                                    }
+                                />
+                            }
+                            {...form.getInputProps('address')}
+                            placeholder={t('base-host-form.e-g-example-com')}
+                            required={!removeRequiredFields}
+                            rightSection={patternHoverCard(true, true, true)}
+                            w="65%"
+                        />
 
-                <Tabs.Panel value="basic">
-                    <Transition
-                        duration={200}
-                        keepMounted
-                        mounted={activeTab === 'basic'}
-                        timingFunction="linear"
-                        transition="fade"
-                    >
-                        {(styles) => (
-                            <SectionCard.Root style={styles}>
-                                <SectionCard.Section>
-                                    <BaseOverlayHeader
-                                        iconColor="teal"
-                                        IconComponent={PiTag}
-                                        iconVariant="soft"
-                                        title={t('base-host-form.vital-parameters')}
-                                        titleOrder={5}
-                                    />
-                                </SectionCard.Section>
-                                <SectionCard.Section>
-                                    <Stack gap="md">
-                                        <TextInput
-                                            key={form.key('remark')}
-                                            label={t('base-host-form.remark')}
-                                            {...form.getInputProps('remark')}
-                                            leftSection={<TemplateInfoPopoverShared />}
-                                            required={!removeRequiredFields}
-                                        />
+                        <NumberInput
+                            key={form.key('port')}
+                            label={t('base-host-form.port')}
+                            {...form.getInputProps('port')}
+                            allowDecimal={false}
+                            allowNegative={false}
+                            clampBehavior="strict"
+                            decimalScale={0}
+                            hideControls
+                            leftSection={
+                                <PopoverWithInfoShared
+                                    text={
+                                        <>
+                                            {t('base-host-form.port-description-line-1')}
+                                            <br />
+                                            <br />
+                                            {t('base-host-form.port-description-line-2')}
+                                        </>
+                                    }
+                                />
+                            }
+                            max={65535}
+                            min={1}
+                            placeholder={t('base-host-form.e-g-443')}
+                            required={!removeRequiredFields}
+                            w="30%"
+                        />
+                    </Group>
 
-                                        <Stack gap="xs">
-                                            <HostSelectInboundFeature
-                                                activeConfigProfileInbound={
-                                                    form.getValues().inbound
-                                                        ?.configProfileInboundUuid ?? undefined
-                                                }
-                                                activeConfigProfileUuid={
-                                                    form.getValues().inbound?.configProfileUuid ??
-                                                    undefined
-                                                }
-                                                configProfiles={configProfiles}
-                                                onSaveInbound={saveInbound}
-                                            />
-                                        </Stack>
-
-                                        <Group
-                                            gap="xs"
-                                            grow
-                                            justify="space-between"
-                                            preventGrowOverflow={false}
-                                            w="100%"
-                                        >
-                                            <TextInput
-                                                key={form.key('address')}
-                                                label={t('base-host-form.address')}
-                                                leftSection={
-                                                    <PopoverWithInfoShared
-                                                        text={
-                                                            <>
-                                                                {t(
-                                                                    'base-host-form.address-description-line-1'
-                                                                )}
-                                                                <br />
-                                                                {t(
-                                                                    'base-host-form.address-description-line-2'
-                                                                )}
-                                                            </>
-                                                        }
-                                                    />
-                                                }
-                                                {...form.getInputProps('address')}
-                                                placeholder={t('base-host-form.e-g-example-com')}
-                                                required={!removeRequiredFields}
-                                                rightSection={patternHoverCard(true, true, true)}
-                                                w="65%"
-                                            />
-
-                                            <NumberInput
-                                                key={form.key('port')}
-                                                label={t('base-host-form.port')}
-                                                {...form.getInputProps('port')}
-                                                allowDecimal={false}
-                                                allowNegative={false}
-                                                clampBehavior="strict"
-                                                decimalScale={0}
-                                                hideControls
-                                                leftSection={
-                                                    <PopoverWithInfoShared
-                                                        text={
-                                                            <>
-                                                                {t(
-                                                                    'base-host-form.port-description-line-1'
-                                                                )}
-                                                                <br />
-                                                                <br />
-                                                                {t(
-                                                                    'base-host-form.port-description-line-2'
-                                                                )}
-                                                            </>
-                                                        }
-                                                    />
-                                                }
-                                                max={65535}
-                                                min={1}
-                                                placeholder={t('base-host-form.e-g-443')}
-                                                required={!removeRequiredFields}
-                                                w="30%"
-                                            />
-                                        </Group>
-
-                                        <TagsInput
-                                            clearable
-                                            data={hostTags ?? []}
-                                            description={t(
-                                                'host-tags-input.tags-are-not-visible-to-end-users-tag-will-be-sent-with-raw-subscription-only'
-                                            )}
-                                            key={form.key('tags')}
-                                            label={t('use-nodes-table-widget.tags')}
-                                            leftSection={<TbStar size="16px" />}
-                                            maxTags={10}
-                                            placeholder="Enter tags (comma, space, semicolon)"
-                                            splitChars={[',', ' ', ';']}
-                                            {...tagsInputProps}
-                                            error={
-                                                Object.keys(form.errors)
-                                                    .filter((key) => key.startsWith('tags.'))
-                                                    .map((key) => form.errors[key])
-                                                    .join(', ') || tagsInputProps.error
-                                            }
-                                            onChange={handleTagsChange}
-                                            renderPill={({ value, onRemove }) => (
-                                                <TagInputPill onRemove={onRemove} value={value} />
-                                            )}
-                                        />
-
-                                        <MultiSelect
-                                            clearButtonProps={{
-                                                size: 'xs'
-                                            }}
-                                            data={nodes.map((node) => ({
-                                                label: `${emojiFlag(node.countryCode)} ${node.name}${
-                                                    node.provider ? ` (${node.provider.name})` : ''
-                                                }`,
-                                                value: node.uuid
-                                            }))}
-                                            description={t(
-                                                'base-host-form.pick-nodes-which-resolved-from-this-host-only-visual-assignment'
-                                            )}
-                                            inputWrapperOrder={[
-                                                'label',
-                                                'input',
-                                                'description',
-                                                'error'
-                                            ]}
-                                            key={form.key('nodes')}
-                                            label={t('base-host-form.nodes')}
-                                            leftSection={<TbServer2 size={16} />}
-                                            renderOption={(item) => {
-                                                const node = nodes.find(
-                                                    (node) => node.uuid === item.option.value
-                                                )
-                                                if (!node) return null
-                                                return (
-                                                    <>
-                                                        <Checkbox
-                                                            aria-hidden
-                                                            checked={item.checked}
-                                                            onChange={() => {}}
-                                                            style={{ pointerEvents: 'none' }}
-                                                            tabIndex={-1}
-                                                        />
-                                                        <Group
-                                                            gap={7}
-                                                            justify="space-between"
-                                                            w="100%"
-                                                        >
-                                                            <Group gap={7}>
-                                                                {resolveCountryCode(
-                                                                    node.countryCode
-                                                                )}
-                                                                <span>{node.name}</span>
-                                                            </Group>
-                                                            {node.provider && (
-                                                                <Badge color="gray" size="xs">
-                                                                    {node.provider.name}
-                                                                </Badge>
-                                                            )}
-                                                        </Group>
-                                                    </>
-                                                )
-                                            }}
-                                            renderPill={({ option, onRemove }) => (
-                                                <TagInputPill
-                                                    onRemove={onRemove}
-                                                    value={option.label}
-                                                />
-                                            )}
-                                            searchable
-                                            {...form.getInputProps('nodes')}
-                                        />
-
-                                        <MultiSelect
-                                            clearable
-                                            clearButtonProps={{
-                                                size: 'xs'
-                                            }}
-                                            data={internalSquads.map((internalSquad) => ({
-                                                label: internalSquad.name,
-                                                value: internalSquad.uuid
-                                            }))}
-                                            description={t(
-                                                'base-host-form.exclude-this-host-from-specific-internal-squads'
-                                            )}
-                                            inputWrapperOrder={[
-                                                'label',
-                                                'input',
-                                                'description',
-                                                'error'
-                                            ]}
-                                            key={form.key('excludedInternalSquads')}
-                                            label={t('base-host-form.excluded-internal-squads')}
-                                            leftSection={<TbCirclesRelation size={16} />}
-                                            renderOption={(item) => {
-                                                return (
-                                                    <Checkbox
-                                                        aria-hidden
-                                                        checked={item.checked}
-                                                        label={item.option.label}
-                                                        onChange={() => {}}
-                                                        style={{ pointerEvents: 'none' }}
-                                                        tabIndex={-1}
-                                                    />
-                                                )
-                                            }}
-                                            renderPill={({ option, onRemove }) => (
-                                                <TagInputPill
-                                                    onRemove={onRemove}
-                                                    value={option.label}
-                                                />
-                                            )}
-                                            searchable
-                                            {...form.getInputProps('excludedInternalSquads')}
-                                        />
-                                    </Stack>
-                                </SectionCard.Section>
-                            </SectionCard.Root>
+                    <TagsInput
+                        clearable
+                        data={hostTags ?? []}
+                        description={t(
+                            'host-tags-input.tags-are-not-visible-to-end-users-tag-will-be-sent-with-raw-subscription-only'
                         )}
-                    </Transition>
-                </Tabs.Panel>
+                        key={form.key('tags')}
+                        label={t('use-nodes-table-widget.tags')}
+                        leftSection={<TbStar size="16px" />}
+                        maxTags={10}
+                        placeholder="Enter tags (comma, space, semicolon)"
+                        splitChars={[',', ' ', ';']}
+                        {...tagsInputProps}
+                        error={
+                            Object.keys(form.errors)
+                                .filter((key) => key.startsWith('tags.'))
+                                .map((key) => form.errors[key])
+                                .join(', ') || tagsInputProps.error
+                        }
+                        onChange={handleTagsChange}
+                        renderPill={({ value, onRemove }) => (
+                            <TagInputPill onRemove={onRemove} value={value} />
+                        )}
+                    />
 
-                <Tabs.Panel value="advanced">
-                    <Transition
-                        duration={200}
-                        keepMounted
-                        mounted={activeTab === 'advanced'}
-                        timingFunction="linear"
-                        transition="fade"
-                    >
-                        {(styles) => (
-                            <Stack gap="md" style={styles}>
-                                <SectionCard.Root>
-                                    <SectionCard.Section>
-                                        <BaseOverlayHeader
-                                            iconColor="teal"
-                                            IconComponent={PiGearSixDuotone}
-                                            iconVariant="soft"
-                                            title={t('base-host-form.connection-overrides')}
-                                            titleOrder={5}
-                                        />
-                                    </SectionCard.Section>
-                                    <SectionCard.Section>
-                                        <Stack gap="xs">
-                                            <TextInput
-                                                key={form.key('sni')}
-                                                label="SNI"
-                                                leftSection={
-                                                    <PopoverWithInfoShared
-                                                        text={
-                                                            <>
-                                                                {t(
-                                                                    'base-host-form.sni-description-line-1'
-                                                                )}
-                                                                <br />
-                                                                <br />
-                                                                {t(
-                                                                    'base-host-form.sni-description-line-2'
-                                                                )}
-                                                            </>
-                                                        }
-                                                    />
-                                                }
-                                                placeholder={t(
-                                                    'base-host-form.sni-e-g-example-com'
-                                                )}
-                                                rightSection={patternHoverCard(true, true, true)}
-                                                {...form.getInputProps('sni')}
-                                            />
-
-                                            <Group gap="xs" justify="space-between">
-                                                <Group gap={4}>
-                                                    <Text fw={600} size="sm">
-                                                        {t(
-                                                            'base-host-form.override-sni-from-address'
-                                                        )}
-                                                    </Text>
-                                                    <HoverCard shadow="md" width={280} withArrow>
-                                                        <HoverCard.Target>
-                                                            <ActionIcon
-                                                                color="gray"
-                                                                size="xs"
-                                                                variant="subtle"
-                                                            >
-                                                                <HiQuestionMarkCircle size={20} />
-                                                            </ActionIcon>
-                                                        </HoverCard.Target>
-                                                        <HoverCard.Dropdown>
-                                                            <Stack gap="sm">
-                                                                <Text c="dimmed" size="sm">
-                                                                    {t(
-                                                                        'base-host-form.override-sni-from-address-description'
-                                                                    )}
-                                                                </Text>
-                                                            </Stack>
-                                                        </HoverCard.Dropdown>
-                                                    </HoverCard>
-                                                </Group>
-                                                <Switch
-                                                    color="teal.8"
-                                                    key={form.key('overrideSniFromAddress')}
-                                                    size="md"
-                                                    {...form.getInputProps(
-                                                        'overrideSniFromAddress',
-                                                        {
-                                                            type: 'checkbox'
-                                                        }
-                                                    )}
-                                                />
-                                            </Group>
-
-                                            <Group gap="xs" justify="space-between">
-                                                <Group gap={4}>
-                                                    <Text fw={600} size="sm">
-                                                        {t('base-host-form.keep-sni-blank')}
-                                                    </Text>
-                                                    <HoverCard shadow="md" width={280} withArrow>
-                                                        <HoverCard.Target>
-                                                            <ActionIcon
-                                                                color="gray"
-                                                                size="xs"
-                                                                variant="subtle"
-                                                            >
-                                                                <HiQuestionMarkCircle size={20} />
-                                                            </ActionIcon>
-                                                        </HoverCard.Target>
-                                                        <HoverCard.Dropdown>
-                                                            <Stack gap="sm">
-                                                                <Text c="dimmed" size="sm">
-                                                                    {t(
-                                                                        'base-host-form.keep-sni-blank-description'
-                                                                    )}
-                                                                </Text>
-                                                            </Stack>
-                                                        </HoverCard.Dropdown>
-                                                    </HoverCard>
-                                                </Group>
-                                                <Switch
-                                                    color="teal.8"
-                                                    key={form.key('keepSniBlank')}
-                                                    size="md"
-                                                    {...form.getInputProps('keepSniBlank', {
-                                                        type: 'checkbox'
-                                                    })}
-                                                />
-                                            </Group>
-
-                                            <Group
-                                                gap="xs"
-                                                grow
-                                                justify="space-between"
-                                                preventGrowOverflow={false}
-                                                w="100%"
-                                            >
-                                                <TextInput
-                                                    key={form.key('host')}
-                                                    label={t('base-host-form.host')}
-                                                    placeholder={t(
-                                                        'base-host-form.host-e-g-example-com'
-                                                    )}
-                                                    rightSection={patternHoverCard(
-                                                        true,
-                                                        false,
-                                                        true
-                                                    )}
-                                                    {...form.getInputProps('host')}
-                                                    w="55%"
-                                                />
-                                                <TextInput
-                                                    key={form.key('path')}
-                                                    label={t('base-host-form.path')}
-                                                    placeholder={t('base-host-form.path-e-g-ws')}
-                                                    {...form.getInputProps('path')}
-                                                    w="40%"
-                                                />
-                                            </Group>
-
-                                            <Select
-                                                allowDeselect={false}
-                                                clearable={false}
-                                                data={Object.values(SECURITY_LAYERS).map(
-                                                    (securityLayer) => ({
-                                                        label:
-                                                            securityLayerLabels[securityLayer] ||
-                                                            securityLayer,
-                                                        value: securityLayer
-                                                    })
-                                                )}
-                                                key={form.key('securityLayer')}
-                                                label={t('base-host-form.security-layer')}
-                                                leftSection={
-                                                    <Tooltip
-                                                        events={{
-                                                            hover: true,
-                                                            focus: true,
-                                                            touch: false
-                                                        }}
-                                                        label={t(
-                                                            'base-host-form.here-you-can-override-security-settings-from-xtls-config'
-                                                        )}
-                                                        multiline
-                                                        offset={10}
-                                                        transitionProps={{ duration: 200 }}
-                                                        w={220}
-                                                        withArrow
-                                                    >
-                                                        <span
-                                                            style={{
-                                                                cursor: 'pointer',
-                                                                display: 'flex',
-                                                                alignItems: 'center'
-                                                            }}
-                                                        >
-                                                            <PiInfo size="20px" />
-                                                        </span>
-                                                    </Tooltip>
-                                                }
-                                                {...form.getInputProps('securityLayer')}
-                                            />
-
-                                            <Group
-                                                gap="xs"
-                                                grow
-                                                justify="space-between"
-                                                preventGrowOverflow={false}
-                                                w="100%"
-                                            >
-                                                <Select
-                                                    clearable
-                                                    data={Object.values(ALPN).map((alpn) => ({
-                                                        label: alpn,
-                                                        value: alpn
-                                                    }))}
-                                                    key={form.key('alpn')}
-                                                    label="ALPN"
-                                                    placeholder={t('base-host-form.alpn-e-g-h2')}
-                                                    {...form.getInputProps('alpn')}
-                                                    w="40%"
-                                                />
-
-                                                <Autocomplete
-                                                    clearable
-                                                    clearSectionMode="both"
-                                                    data={FINGERPRINTS}
-                                                    key={form.key('fingerprint')}
-                                                    label={t('base-host-form.fingerprint')}
-                                                    placeholder={t(
-                                                        'base-host-form.fingerprint-e-g-chrome'
-                                                    )}
-                                                    rightSection={<PiCaretDown size={16} />}
-                                                    {...form.getInputProps('fingerprint')}
-                                                    w="55%"
-                                                />
-                                            </Group>
-
-                                            <NumberInput
-                                                key={form.key('vlessRouteId')}
-                                                label="Vless Route ID"
-                                                {...form.getInputProps('vlessRouteId')}
-                                                allowDecimal={false}
-                                                allowNegative={false}
-                                                clampBehavior="strict"
-                                                decimalScale={0}
-                                                description={t(
-                                                    'base-host-form.vless-route-description'
-                                                )}
-                                                hideControls
-                                                max={65535}
-                                                min={0}
-                                                rightSection={
-                                                    <ActionIcon
-                                                        color="gray"
-                                                        onClick={() => {
-                                                            window.open(
-                                                                'https://xtls.github.io/config/routing.html',
-                                                                '_blank'
-                                                            )
-                                                        }}
-                                                        size="xs"
-                                                        variant="subtle"
-                                                    >
-                                                        <HiQuestionMarkCircle size={20} />
-                                                    </ActionIcon>
-                                                }
-                                            />
-                                        </Stack>
-                                    </SectionCard.Section>
-
-                                    <SectionCard.Section>
-                                        <Stack gap="xs">
-                                            <Group gap="xs" justify="space-between">
-                                                <Group gap={4}>
-                                                    <Text fw={600} size="sm">
-                                                        {t('base-host-form.hide-host')}
-                                                    </Text>
-                                                    <HoverCard shadow="md" width={280} withArrow>
-                                                        <HoverCard.Target>
-                                                            <ActionIcon
-                                                                color="gray"
-                                                                size="xs"
-                                                                variant="subtle"
-                                                            >
-                                                                <HiQuestionMarkCircle size={20} />
-                                                            </ActionIcon>
-                                                        </HoverCard.Target>
-                                                        <HoverCard.Dropdown>
-                                                            <Stack gap="sm">
-                                                                <Text c="dimmed" size="sm">
-                                                                    {t(
-                                                                        'base-host-form.hidden-host-description'
-                                                                    )}
-                                                                </Text>
-                                                            </Stack>
-                                                        </HoverCard.Dropdown>
-                                                    </HoverCard>
-                                                </Group>
-                                                <Switch
-                                                    color="teal.8"
-                                                    key={form.key('isHidden')}
-                                                    size="md"
-                                                    {...form.getInputProps('isHidden', {
-                                                        type: 'checkbox'
-                                                    })}
-                                                />
-                                            </Group>
-
-                                            <ChipMultiSelect
-                                                data={Object.entries(SUBSCRIPTION_TYPES).map(
-                                                    ([value, { label, icon }]) => ({
-                                                        label,
-                                                        icon,
-                                                        value
-                                                    })
-                                                )}
-                                                description={t(
-                                                    'base-host-form.select-one-or-more-subscription-types-description'
-                                                )}
-                                                key={form.key('excludeFromSubscriptionTypes')}
-                                                label={t(
-                                                    'base-host-form.exclude-from-subscription-type'
-                                                )}
-                                                {...form.getInputProps(
-                                                    'excludeFromSubscriptionTypes'
-                                                )}
-                                            />
-                                        </Stack>
-                                    </SectionCard.Section>
-                                </SectionCard.Root>
-
-                                <SectionCard.Root>
-                                    <SectionCard.Section>
-                                        <BaseOverlayHeader
-                                            iconColor="violet"
-                                            IconComponent={Base64Logo}
-                                            iconVariant="soft"
-                                            title="Client options"
-                                            titleOrder={5}
-                                        />
-                                    </SectionCard.Section>
-
-                                    <SectionCard.Section>
-                                        <Group
-                                            gap="xs"
-                                            grow
-                                            justify="space-between"
-                                            preventGrowOverflow={false}
-                                            w="100%"
-                                        >
-                                            <Button
-                                                color="gray"
-                                                disabled={isXhttpExtraButtonDisabled()}
-                                                leftSection={<PiPencilDuotone />}
-                                                onClick={() => {
-                                                    modals.open({
-                                                        modalId: XHTTP_MODAL_ID,
-                                                        fullScreen: isMobile,
-                                                        title: (
-                                                            <BaseOverlayHeader
-                                                                iconColor="teal"
-                                                                IconComponent={PiPencilDuotone}
-                                                                iconVariant="soft"
-                                                                title={t(
-                                                                    'base-host-form.xhttp-extra-params'
-                                                                )}
-                                                            />
-                                                        ),
-                                                        centered: true,
-                                                        size: 'lg',
-                                                        withCloseButton: true,
-                                                        children: <XhttpModalContent form={form} />
-                                                    })
-                                                }}
-                                                variant="soft"
-                                            >
-                                                xHTTP
-                                            </Button>
-
-                                            <Button
-                                                color="gray"
-                                                leftSection={<TbCloudNetwork />}
-                                                onClick={() => {
-                                                    modals.open({
-                                                        modalId: MUX_MODAL_ID,
-                                                        fullScreen: isMobile,
-                                                        title: (
-                                                            <BaseOverlayHeader
-                                                                iconColor="teal"
-                                                                IconComponent={TbCloudNetwork}
-                                                                iconVariant="soft"
-                                                                title="MUX"
-                                                            />
-                                                        ),
-                                                        centered: true,
-                                                        size: 'lg',
-                                                        withCloseButton: true,
-                                                        children: <MuxModalContent form={form} />
-                                                    })
-                                                }}
-                                                variant="soft"
-                                            >
-                                                Mux
-                                            </Button>
-
-                                            <Button
-                                                color="gray"
-                                                leftSection={<TbMask />}
-                                                onClick={() => {
-                                                    modals.open({
-                                                        modalId: FINAL_MASK_MODAL_ID,
-                                                        fullScreen: isMobile,
-                                                        title: (
-                                                            <BaseOverlayHeader
-                                                                iconColor="teal"
-                                                                IconComponent={TbMask}
-                                                                iconVariant="soft"
-                                                                title="Final Mask"
-                                                            />
-                                                        ),
-                                                        centered: true,
-                                                        size: 'lg',
-                                                        withCloseButton: true,
-                                                        children: (
-                                                            <FinalMaskModalContent form={form} />
-                                                        )
-                                                    })
-                                                }}
-                                                variant="soft"
-                                            >
-                                                Final Mask
-                                            </Button>
+                    <MultiSelect
+                        clearButtonProps={{
+                            size: 'xs'
+                        }}
+                        data={nodes.map((node) => ({
+                            label: `${emojiFlag(node.countryCode)} ${node.name}${
+                                node.provider ? ` (${node.provider.name})` : ''
+                            }`,
+                            value: node.uuid
+                        }))}
+                        description={t(
+                            'base-host-form.pick-nodes-which-resolved-from-this-host-only-visual-assignment'
+                        )}
+                        inputWrapperOrder={['label', 'input', 'description', 'error']}
+                        key={form.key('nodes')}
+                        label={t('base-host-form.nodes')}
+                        leftSection={<TbServer2 size={16} />}
+                        renderOption={(item) => {
+                            const node = nodes.find((node) => node.uuid === item.option.value)
+                            if (!node) return null
+                            return (
+                                <>
+                                    <Checkbox
+                                        aria-hidden
+                                        checked={item.checked}
+                                        onChange={() => {}}
+                                        style={{ pointerEvents: 'none' }}
+                                        tabIndex={-1}
+                                    />
+                                    <Group gap={7} justify="space-between" w="100%">
+                                        <Group gap={7}>
+                                            {resolveCountryCode(node.countryCode)}
+                                            <span>{node.name}</span>
                                         </Group>
-                                    </SectionCard.Section>
-                                </SectionCard.Root>
+                                        {node.provider && (
+                                            <Badge color="gray" size="xs">
+                                                {node.provider.name}
+                                            </Badge>
+                                        )}
+                                    </Group>
+                                </>
+                            )
+                        }}
+                        renderPill={({ option, onRemove }) => (
+                            <TagInputPill onRemove={onRemove} value={option.label} />
+                        )}
+                        searchable
+                        {...form.getInputProps('nodes')}
+                    />
 
-                                <SectionCard.Root>
-                                    <SectionCard.Section>
-                                        <BaseOverlayHeader
-                                            iconColor="indigo"
-                                            IconComponent={TbArrowsExchange}
-                                            iconVariant="soft"
-                                            title={t('base-host-form.mapper')}
-                                            titleOrder={5}
-                                        />
-                                    </SectionCard.Section>
-                                    <SectionCard.Section>
+                    <MultiSelect
+                        clearable
+                        clearButtonProps={{
+                            size: 'xs'
+                        }}
+                        data={internalSquads.map((internalSquad) => ({
+                            label: internalSquad.name,
+                            value: internalSquad.uuid
+                        }))}
+                        description={t(
+                            'base-host-form.exclude-this-host-from-specific-internal-squads'
+                        )}
+                        inputWrapperOrder={['label', 'input', 'description', 'error']}
+                        key={form.key('excludedInternalSquads')}
+                        label={t('base-host-form.excluded-internal-squads')}
+                        leftSection={<TbCirclesRelation size={16} />}
+                        renderOption={(item) => {
+                            return (
+                                <Checkbox
+                                    aria-hidden
+                                    checked={item.checked}
+                                    label={item.option.label}
+                                    onChange={() => {}}
+                                    style={{ pointerEvents: 'none' }}
+                                    tabIndex={-1}
+                                />
+                            )
+                        }}
+                        renderPill={({ option, onRemove }) => (
+                            <TagInputPill onRemove={onRemove} value={option.label} />
+                        )}
+                        searchable
+                        {...form.getInputProps('excludedInternalSquads')}
+                    />
+                </Stack>
+            </SectionCard.Section>
+        </SectionCard.Root>
+    )
+
+    const advancedCards = (
+        <Stack gap="md">
+            <SectionCard.Root>
+                <SectionCard.Section>
+                    <BaseOverlayHeader
+                        iconColor="teal"
+                        IconComponent={PiGearSixDuotone}
+                        iconVariant="soft"
+                        title={t('base-host-form.connection-overrides')}
+                        titleOrder={5}
+                    />
+                </SectionCard.Section>
+                <SectionCard.Section>
+                    <Stack gap="xs">
+                        <TextInput
+                            key={form.key('sni')}
+                            label="SNI"
+                            leftSection={
+                                <PopoverWithInfoShared
+                                    text={
+                                        <>
+                                            {t('base-host-form.sni-description-line-1')}
+                                            <br />
+                                            <br />
+                                            {t('base-host-form.sni-description-line-2')}
+                                        </>
+                                    }
+                                />
+                            }
+                            placeholder={t('base-host-form.sni-e-g-example-com')}
+                            rightSection={patternHoverCard(true, true, true)}
+                            {...form.getInputProps('sni')}
+                        />
+
+                        <Group gap="xs" justify="space-between">
+                            <Group gap={4}>
+                                <Text fw={600} size="sm">
+                                    {t('base-host-form.override-sni-from-address')}
+                                </Text>
+                                <HoverCard shadow="md" width={280} withArrow>
+                                    <HoverCard.Target>
+                                        <ActionIcon color="gray" size="xs" variant="subtle">
+                                            <HiQuestionMarkCircle size={20} />
+                                        </ActionIcon>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
                                         <Stack gap="sm">
                                             <Text c="dimmed" size="sm">
-                                                {t('base-host-form.mapper-description')}
+                                                {t(
+                                                    'base-host-form.override-sni-from-address-description'
+                                                )}
                                             </Text>
-                                            <Button
-                                                color="indigo"
-                                                fullWidth
-                                                leftSection={<TbArrowsExchange />}
-                                                onClick={() => {
-                                                    showModal('hosts_hostMapperModal', {
-                                                        form,
-                                                        hostUuid,
-                                                        rawInbound: resolveSelectedRawInbound()
-                                                    })
-                                                }}
-                                                variant="soft"
-                                            >
-                                                {t('base-host-form.open-mapper')}
-                                            </Button>
                                         </Stack>
-                                    </SectionCard.Section>
-                                </SectionCard.Root>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            </Group>
+                            <Switch
+                                color="teal.8"
+                                key={form.key('overrideSniFromAddress')}
+                                size="md"
+                                {...form.getInputProps('overrideSniFromAddress', {
+                                    type: 'checkbox'
+                                })}
+                            />
+                        </Group>
 
-                                <SectionCard.Root>
-                                    <SectionCard.Section>
+                        <Group gap="xs" justify="space-between">
+                            <Group gap={4}>
+                                <Text fw={600} size="sm">
+                                    {t('base-host-form.keep-sni-blank')}
+                                </Text>
+                                <HoverCard shadow="md" width={280} withArrow>
+                                    <HoverCard.Target>
+                                        <ActionIcon color="gray" size="xs" variant="subtle">
+                                            <HiQuestionMarkCircle size={20} />
+                                        </ActionIcon>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Stack gap="sm">
+                                            <Text c="dimmed" size="sm">
+                                                {t('base-host-form.keep-sni-blank-description')}
+                                            </Text>
+                                        </Stack>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            </Group>
+                            <Switch
+                                color="teal.8"
+                                key={form.key('keepSniBlank')}
+                                size="md"
+                                {...form.getInputProps('keepSniBlank', {
+                                    type: 'checkbox'
+                                })}
+                            />
+                        </Group>
+
+                        <Group
+                            gap="xs"
+                            grow
+                            justify="space-between"
+                            preventGrowOverflow={false}
+                            w="100%"
+                        >
+                            <TextInput
+                                key={form.key('host')}
+                                label={t('base-host-form.host')}
+                                placeholder={t('base-host-form.host-e-g-example-com')}
+                                rightSection={patternHoverCard(true, false, true)}
+                                {...form.getInputProps('host')}
+                                w="55%"
+                            />
+                            <TextInput
+                                key={form.key('path')}
+                                label={t('base-host-form.path')}
+                                placeholder={t('base-host-form.path-e-g-ws')}
+                                {...form.getInputProps('path')}
+                                w="40%"
+                            />
+                        </Group>
+
+                        <Select
+                            allowDeselect={false}
+                            clearable={false}
+                            data={Object.values(SECURITY_LAYERS).map((securityLayer) => ({
+                                label: securityLayerLabels[securityLayer] || securityLayer,
+                                value: securityLayer
+                            }))}
+                            key={form.key('securityLayer')}
+                            label={t('base-host-form.security-layer')}
+                            leftSection={
+                                <Tooltip
+                                    events={{
+                                        hover: true,
+                                        focus: true,
+                                        touch: false
+                                    }}
+                                    label={t(
+                                        'base-host-form.here-you-can-override-security-settings-from-xtls-config'
+                                    )}
+                                    multiline
+                                    offset={10}
+                                    transitionProps={{ duration: 200 }}
+                                    w={220}
+                                    withArrow
+                                >
+                                    <span
+                                        style={{
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <PiInfo size="20px" />
+                                    </span>
+                                </Tooltip>
+                            }
+                            {...form.getInputProps('securityLayer')}
+                        />
+
+                        <Group
+                            gap="xs"
+                            grow
+                            justify="space-between"
+                            preventGrowOverflow={false}
+                            w="100%"
+                        >
+                            <Select
+                                clearable
+                                data={Object.values(ALPN).map((alpn) => ({
+                                    label: alpn,
+                                    value: alpn
+                                }))}
+                                key={form.key('alpn')}
+                                label="ALPN"
+                                placeholder={t('base-host-form.alpn-e-g-h2')}
+                                {...form.getInputProps('alpn')}
+                                w="40%"
+                            />
+
+                            <Autocomplete
+                                clearable
+                                clearSectionMode="both"
+                                data={FINGERPRINTS}
+                                key={form.key('fingerprint')}
+                                label={t('base-host-form.fingerprint')}
+                                placeholder={t('base-host-form.fingerprint-e-g-chrome')}
+                                rightSection={<PiCaretDown size={16} />}
+                                {...form.getInputProps('fingerprint')}
+                                w="55%"
+                            />
+                        </Group>
+
+                        <NumberInput
+                            key={form.key('vlessRouteId')}
+                            label="Vless Route ID"
+                            {...form.getInputProps('vlessRouteId')}
+                            allowDecimal={false}
+                            allowNegative={false}
+                            clampBehavior="strict"
+                            decimalScale={0}
+                            description={t('base-host-form.vless-route-description')}
+                            hideControls
+                            max={65535}
+                            min={0}
+                            rightSection={
+                                <ActionIcon
+                                    color="gray"
+                                    onClick={() => {
+                                        window.open(
+                                            'https://xtls.github.io/config/routing.html',
+                                            '_blank'
+                                        )
+                                    }}
+                                    size="xs"
+                                    variant="subtle"
+                                >
+                                    <HiQuestionMarkCircle size={20} />
+                                </ActionIcon>
+                            }
+                        />
+                    </Stack>
+                </SectionCard.Section>
+
+                <SectionCard.Section>
+                    <Stack gap="xs">
+                        <Group gap="xs" justify="space-between">
+                            <Group gap={4}>
+                                <Text fw={600} size="sm">
+                                    {t('base-host-form.hide-host')}
+                                </Text>
+                                <HoverCard shadow="md" width={280} withArrow>
+                                    <HoverCard.Target>
+                                        <ActionIcon color="gray" size="xs" variant="subtle">
+                                            <HiQuestionMarkCircle size={20} />
+                                        </ActionIcon>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Stack gap="sm">
+                                            <Text c="dimmed" size="sm">
+                                                {t('base-host-form.hidden-host-description')}
+                                            </Text>
+                                        </Stack>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            </Group>
+                            <Switch
+                                color="teal.8"
+                                key={form.key('isHidden')}
+                                size="md"
+                                {...form.getInputProps('isHidden', {
+                                    type: 'checkbox'
+                                })}
+                            />
+                        </Group>
+
+                        <ChipMultiSelect
+                            data={Object.entries(SUBSCRIPTION_TYPES).map(
+                                ([value, { label, icon }]) => ({
+                                    label,
+                                    icon,
+                                    value
+                                })
+                            )}
+                            description={t(
+                                'base-host-form.select-one-or-more-subscription-types-description'
+                            )}
+                            key={form.key('excludeFromSubscriptionTypes')}
+                            label={t('base-host-form.exclude-from-subscription-type')}
+                            {...form.getInputProps('excludeFromSubscriptionTypes')}
+                        />
+                    </Stack>
+                </SectionCard.Section>
+            </SectionCard.Root>
+
+            <SectionCard.Root>
+                <SectionCard.Section>
+                    <BaseOverlayHeader
+                        iconColor="violet"
+                        IconComponent={Base64Logo}
+                        iconVariant="soft"
+                        title="Client options"
+                        titleOrder={5}
+                    />
+                </SectionCard.Section>
+
+                <SectionCard.Section>
+                    <Group
+                        gap="xs"
+                        grow
+                        justify="space-between"
+                        preventGrowOverflow={false}
+                        w="100%"
+                    >
+                        <Button
+                            color="gray"
+                            disabled={isXhttpExtraButtonDisabled()}
+                            leftSection={<PiPencilDuotone />}
+                            onClick={() => {
+                                modals.open({
+                                    modalId: XHTTP_MODAL_ID,
+                                    fullScreen: isMobile,
+                                    title: (
                                         <BaseOverlayHeader
                                             iconColor="teal"
-                                            IconComponent={PiListChecks}
+                                            IconComponent={PiPencilDuotone}
                                             iconVariant="soft"
-                                            title={t('base-host-form.misc-settings')}
-                                            titleOrder={5}
+                                            title={t('base-host-form.xhttp-extra-params')}
                                         />
-                                    </SectionCard.Section>
-                                    <SectionCard.Section>
-                                        <Stack gap="xs">
-                                            <TextInput
-                                                key={form.key('serverDescription')}
-                                                label={
-                                                    <Group gap={4} justify="flex-start">
-                                                        <Text fw={600} size="sm">
-                                                            {t(
-                                                                'base-host-form.server-description-header'
-                                                            )}
-                                                        </Text>
-                                                        <HoverCard
-                                                            shadow="md"
-                                                            width={280}
-                                                            withArrow
-                                                        >
-                                                            <HoverCard.Target>
-                                                                <ActionIcon
-                                                                    color="gray"
-                                                                    size="xs"
-                                                                    variant="subtle"
-                                                                >
-                                                                    <HiQuestionMarkCircle
-                                                                        size={20}
-                                                                    />
-                                                                </ActionIcon>
-                                                            </HoverCard.Target>
-                                                            <HoverCard.Dropdown>
-                                                                <Stack gap="sm">
-                                                                    <Text fw={600} size="sm">
-                                                                        {t(
-                                                                            'base-host-form.server-description-header'
-                                                                        )}
-                                                                    </Text>
-                                                                    <Text c="dimmed" size="sm">
-                                                                        {t(
-                                                                            'base-host-form.server-description-1'
-                                                                        )}
-                                                                        <br />
-                                                                        <br />
-                                                                        {t(
-                                                                            'base-host-form.server-description-2'
-                                                                        )}
-                                                                    </Text>
-                                                                    <Text fw={600} size="sm">
-                                                                        {t(
-                                                                            'base-host-form.supported-clients'
-                                                                        )}
-                                                                    </Text>
-                                                                    <Text c="dimmed" size="sm">
-                                                                        Mihomo: FlClash X, Flowvy,
-                                                                        prizrak-box, Koala Clash
-                                                                        <br />
-                                                                        Share links: Happ, Incy
-                                                                    </Text>
-                                                                </Stack>
-                                                            </HoverCard.Dropdown>
-                                                        </HoverCard>
-                                                    </Group>
-                                                }
-                                                leftSection={<TbFileDescription size={20} />}
-                                                placeholder={t(
-                                                    'base-host-form.server-description-placeholder'
-                                                )}
-                                                {...form.getInputProps('serverDescription')}
-                                            />
+                                    ),
+                                    centered: true,
+                                    size: 'lg',
+                                    withCloseButton: true,
+                                    children: <XhttpModalContent form={form} />
+                                })
+                            }}
+                            variant="soft"
+                        >
+                            xHTTP
+                        </Button>
 
-                                            <TextInput
-                                                key={form.key('pinnedPeerCertSha256')}
-                                                label={
-                                                    <Group gap={4} justify="flex-start">
-                                                        <Text fw={600} size="sm">
-                                                            Pinned Peer Cert SHA256
-                                                        </Text>
-                                                        <ActionIcon
-                                                            color="gray"
-                                                            onClick={() => {
-                                                                window.open(
-                                                                    'https://xtls.github.io/ru/config/transports/tls.html#tlsobject',
-                                                                    '_blank'
-                                                                )
-                                                            }}
-                                                            size="xs"
-                                                            variant="subtle"
-                                                        >
-                                                            <HiQuestionMarkCircle size={20} />
-                                                        </ActionIcon>
-                                                    </Group>
-                                                }
-                                                {...form.getInputProps('pinnedPeerCertSha256')}
-                                            />
-
-                                            <TextInput
-                                                key={form.key('verifyPeerCertByName')}
-                                                label={
-                                                    <Group gap={4} justify="flex-start">
-                                                        <Text fw={600} size="sm">
-                                                            Verify Peer Cert By Name
-                                                        </Text>
-                                                        <ActionIcon
-                                                            color="gray"
-                                                            onClick={() => {
-                                                                window.open(
-                                                                    'https://xtls.github.io/ru/config/transports/tls.html#tlsobject',
-                                                                    '_blank'
-                                                                )
-                                                            }}
-                                                            size="xs"
-                                                            variant="subtle"
-                                                        >
-                                                            <HiQuestionMarkCircle size={20} />
-                                                        </ActionIcon>
-                                                    </Group>
-                                                }
-                                                {...form.getInputProps('verifyPeerCertByName')}
-                                            />
-
-                                            <Group gap="xs" justify="space-between">
-                                                <Group gap={4}>
-                                                    <Text fw={600} size="sm">
-                                                        {t('base-host-form.shuffle-host')}
-                                                    </Text>
-                                                    {shuffleHostHoverCard()}
-                                                </Group>
-                                                <Switch
-                                                    color="teal.8"
-                                                    key={form.key('shuffleHost')}
-                                                    size="md"
-                                                    {...form.getInputProps('shuffleHost', {
-                                                        type: 'checkbox'
-                                                    })}
-                                                />
-                                            </Group>
-                                        </Stack>
-                                    </SectionCard.Section>
-                                </SectionCard.Root>
-
-                                <SectionCard.Root>
-                                    <SectionCard.Section>
+                        <Button
+                            color="gray"
+                            leftSection={<TbCloudNetwork />}
+                            onClick={() => {
+                                modals.open({
+                                    modalId: MUX_MODAL_ID,
+                                    fullScreen: isMobile,
+                                    title: (
                                         <BaseOverlayHeader
-                                            iconColor="indigo"
-                                            IconComponent={MihomoLogo}
+                                            iconColor="teal"
+                                            IconComponent={TbCloudNetwork}
                                             iconVariant="soft"
-                                            title={t('base-host-form.mihomo-specific')}
-                                            titleOrder={5}
+                                            title="MUX"
                                         />
-                                    </SectionCard.Section>
-                                    <SectionCard.Section>
-                                        <Stack gap="xs">
-                                            <Group gap="xs" justify="space-between">
-                                                <Group gap={4}>
-                                                    <Text fw={600} size="sm">
-                                                        {t('base-host-form.enable-x25519mlkem768')}
-                                                    </Text>
-                                                    <ActionIcon
-                                                        color="gray"
-                                                        onClick={() => {
-                                                            window.open(
-                                                                'https://wiki.metacubex.one/en/config/proxies/tls/#reality-optssupport-x25519mlkem768',
-                                                                '_blank'
-                                                            )
-                                                        }}
-                                                        size="xs"
-                                                        variant="subtle"
-                                                    >
-                                                        <HiQuestionMarkCircle size={20} />
-                                                    </ActionIcon>
-                                                </Group>
-                                                <Switch
-                                                    color="teal.8"
-                                                    key={form.key('mihomoX25519')}
-                                                    size="md"
-                                                    {...form.getInputProps('mihomoX25519', {
-                                                        type: 'checkbox'
-                                                    })}
-                                                />
-                                            </Group>
+                                    ),
+                                    centered: true,
+                                    size: 'lg',
+                                    withCloseButton: true,
+                                    children: <MuxModalContent form={form} />
+                                })
+                            }}
+                            variant="soft"
+                        >
+                            Mux
+                        </Button>
 
-                                            <Select
-                                                clearable
-                                                data={Object.values(MIHOMO_IP_VERSION).map(
-                                                    (ipVersion) => ({
-                                                        label: ipVersion,
-                                                        value: ipVersion
-                                                    })
-                                                )}
-                                                key={form.key('mihomoIpVersion')}
-                                                label={
-                                                    <Group gap={4} justify="flex-start">
-                                                        <Text fw={600} size="sm">
-                                                            Mihomo IP Version
-                                                        </Text>
-                                                        <ActionIcon
-                                                            color="gray"
-                                                            onClick={() => {
-                                                                window.open(
-                                                                    'https://wiki.metacubex.one/ru/config/proxies/#ip-version',
-                                                                    '_blank'
-                                                                )
-                                                            }}
-                                                            size="xs"
-                                                            variant="subtle"
-                                                        >
-                                                            <HiQuestionMarkCircle size={20} />
-                                                        </ActionIcon>
-                                                    </Group>
-                                                }
-                                                {...form.getInputProps('mihomoIpVersion')}
-                                            />
-                                        </Stack>
-                                    </SectionCard.Section>
-                                </SectionCard.Root>
-                            </Stack>
+                        <Button
+                            color="gray"
+                            leftSection={<TbMask />}
+                            onClick={() => {
+                                modals.open({
+                                    modalId: FINAL_MASK_MODAL_ID,
+                                    fullScreen: isMobile,
+                                    title: (
+                                        <BaseOverlayHeader
+                                            iconColor="teal"
+                                            IconComponent={TbMask}
+                                            iconVariant="soft"
+                                            title="Final Mask"
+                                        />
+                                    ),
+                                    centered: true,
+                                    size: 'lg',
+                                    withCloseButton: true,
+                                    children: <FinalMaskModalContent form={form} />
+                                })
+                            }}
+                            variant="soft"
+                        >
+                            Final Mask
+                        </Button>
+                    </Group>
+                </SectionCard.Section>
+            </SectionCard.Root>
+
+            <SectionCard.Root>
+                <SectionCard.Section>
+                    <BaseOverlayHeader
+                        iconColor="indigo"
+                        IconComponent={TbArrowsExchange}
+                        iconVariant="soft"
+                        title={t('base-host-form.mapper')}
+                        titleOrder={5}
+                    />
+                </SectionCard.Section>
+                <SectionCard.Section>
+                    <Stack gap="sm">
+                        <Text c="dimmed" size="sm">
+                            {t('base-host-form.mapper-description')}
+                        </Text>
+                        <Button
+                            color="indigo"
+                            fullWidth
+                            leftSection={<TbArrowsExchange />}
+                            onClick={() => {
+                                showModal('hosts_hostMapperModal', {
+                                    form,
+                                    hostUuid,
+                                    rawInbound: resolveSelectedRawInbound()
+                                })
+                            }}
+                            variant="soft"
+                        >
+                            {t('base-host-form.open-mapper')}
+                        </Button>
+                    </Stack>
+                </SectionCard.Section>
+            </SectionCard.Root>
+
+            <SectionCard.Root>
+                <SectionCard.Section>
+                    <BaseOverlayHeader
+                        iconColor="teal"
+                        IconComponent={PiListChecks}
+                        iconVariant="soft"
+                        title={t('base-host-form.misc-settings')}
+                        titleOrder={5}
+                    />
+                </SectionCard.Section>
+                <SectionCard.Section>
+                    <Stack gap="xs">
+                        <TextInput
+                            key={form.key('serverDescription')}
+                            label={
+                                <Group gap={4} justify="flex-start">
+                                    <Text fw={600} size="sm">
+                                        {t('base-host-form.server-description-header')}
+                                    </Text>
+                                    <HoverCard shadow="md" width={280} withArrow>
+                                        <HoverCard.Target>
+                                            <ActionIcon color="gray" size="xs" variant="subtle">
+                                                <HiQuestionMarkCircle size={20} />
+                                            </ActionIcon>
+                                        </HoverCard.Target>
+                                        <HoverCard.Dropdown>
+                                            <Stack gap="sm">
+                                                <Text fw={600} size="sm">
+                                                    {t('base-host-form.server-description-header')}
+                                                </Text>
+                                                <Text c="dimmed" size="sm">
+                                                    {t('base-host-form.server-description-1')}
+                                                    <br />
+                                                    <br />
+                                                    {t('base-host-form.server-description-2')}
+                                                </Text>
+                                                <Text fw={600} size="sm">
+                                                    {t('base-host-form.supported-clients')}
+                                                </Text>
+                                                <Text c="dimmed" size="sm">
+                                                    Mihomo: FlClash X, Flowvy, prizrak-box, Koala
+                                                    Clash
+                                                    <br />
+                                                    Share links: Happ, Incy
+                                                </Text>
+                                            </Stack>
+                                        </HoverCard.Dropdown>
+                                    </HoverCard>
+                                </Group>
+                            }
+                            leftSection={<TbFileDescription size={20} />}
+                            placeholder={t('base-host-form.server-description-placeholder')}
+                            {...form.getInputProps('serverDescription')}
+                        />
+
+                        <TextInput
+                            key={form.key('pinnedPeerCertSha256')}
+                            label={
+                                <Group gap={4} justify="flex-start">
+                                    <Text fw={600} size="sm">
+                                        Pinned Peer Cert SHA256
+                                    </Text>
+                                    <ActionIcon
+                                        color="gray"
+                                        onClick={() => {
+                                            window.open(
+                                                'https://xtls.github.io/ru/config/transports/tls.html#tlsobject',
+                                                '_blank'
+                                            )
+                                        }}
+                                        size="xs"
+                                        variant="subtle"
+                                    >
+                                        <HiQuestionMarkCircle size={20} />
+                                    </ActionIcon>
+                                </Group>
+                            }
+                            {...form.getInputProps('pinnedPeerCertSha256')}
+                        />
+
+                        <TextInput
+                            key={form.key('verifyPeerCertByName')}
+                            label={
+                                <Group gap={4} justify="flex-start">
+                                    <Text fw={600} size="sm">
+                                        Verify Peer Cert By Name
+                                    </Text>
+                                    <ActionIcon
+                                        color="gray"
+                                        onClick={() => {
+                                            window.open(
+                                                'https://xtls.github.io/ru/config/transports/tls.html#tlsobject',
+                                                '_blank'
+                                            )
+                                        }}
+                                        size="xs"
+                                        variant="subtle"
+                                    >
+                                        <HiQuestionMarkCircle size={20} />
+                                    </ActionIcon>
+                                </Group>
+                            }
+                            {...form.getInputProps('verifyPeerCertByName')}
+                        />
+
+                        <Group gap="xs" justify="space-between">
+                            <Group gap={4}>
+                                <Text fw={600} size="sm">
+                                    {t('base-host-form.shuffle-host')}
+                                </Text>
+                                {shuffleHostHoverCard()}
+                            </Group>
+                            <Switch
+                                color="teal.8"
+                                key={form.key('shuffleHost')}
+                                size="md"
+                                {...form.getInputProps('shuffleHost', {
+                                    type: 'checkbox'
+                                })}
+                            />
+                        </Group>
+                    </Stack>
+                </SectionCard.Section>
+            </SectionCard.Root>
+
+            <SectionCard.Root>
+                <SectionCard.Section>
+                    <BaseOverlayHeader
+                        iconColor="indigo"
+                        IconComponent={MihomoLogo}
+                        iconVariant="soft"
+                        title={t('base-host-form.mihomo-specific')}
+                        titleOrder={5}
+                    />
+                </SectionCard.Section>
+                <SectionCard.Section>
+                    <Stack gap="xs">
+                        <Group gap="xs" justify="space-between">
+                            <Group gap={4}>
+                                <Text fw={600} size="sm">
+                                    {t('base-host-form.enable-x25519mlkem768')}
+                                </Text>
+                                <ActionIcon
+                                    color="gray"
+                                    onClick={() => {
+                                        window.open(
+                                            'https://wiki.metacubex.one/en/config/proxies/tls/#reality-optssupport-x25519mlkem768',
+                                            '_blank'
+                                        )
+                                    }}
+                                    size="xs"
+                                    variant="subtle"
+                                >
+                                    <HiQuestionMarkCircle size={20} />
+                                </ActionIcon>
+                            </Group>
+                            <Switch
+                                color="teal.8"
+                                key={form.key('mihomoX25519')}
+                                size="md"
+                                {...form.getInputProps('mihomoX25519', {
+                                    type: 'checkbox'
+                                })}
+                            />
+                        </Group>
+
+                        <Select
+                            clearable
+                            data={Object.values(MIHOMO_IP_VERSION).map((ipVersion) => ({
+                                label: ipVersion,
+                                value: ipVersion
+                            }))}
+                            key={form.key('mihomoIpVersion')}
+                            label={
+                                <Group gap={4} justify="flex-start">
+                                    <Text fw={600} size="sm">
+                                        Mihomo IP Version
+                                    </Text>
+                                    <ActionIcon
+                                        color="gray"
+                                        onClick={() => {
+                                            window.open(
+                                                'https://wiki.metacubex.one/ru/config/proxies/#ip-version',
+                                                '_blank'
+                                            )
+                                        }}
+                                        size="xs"
+                                        variant="subtle"
+                                    >
+                                        <HiQuestionMarkCircle size={20} />
+                                    </ActionIcon>
+                                </Group>
+                            }
+                            {...form.getInputProps('mihomoIpVersion')}
+                        />
+                    </Stack>
+                </SectionCard.Section>
+            </SectionCard.Root>
+        </Stack>
+    )
+
+    return (
+        <form onSubmit={handleSubmit}>
+            {isModalLayout && !isMobile ? (
+                <Group align="flex-start" gap="md" grow={false} wrap="wrap">
+                    <Stack gap="md" style={{ flex: '1 1 420px', minWidth: 0 }}>
+                        {visibilityRow}
+                        {basicCard}
+                    </Stack>
+                    <Box style={{ flex: '1 1 420px', minWidth: 0 }}>{advancedCards}</Box>
+                </Group>
+            ) : (
+                <>
+                    <Box mb="md">{visibilityRow}</Box>
+                    <Tabs
+                        keepMounted
+                        keepMountedMode="display-none"
+                        onChange={setActiveTab}
+                        value={activeTab}
+                    >
+                        <Tabs.List grow mb="md">
+                            <Tabs.Tab
+                                key="basic"
+                                leftSection={<PiNoteDuotone size={16} />}
+                                value="basic"
+                            >
+                                {t('base-host-form.basic')}
+                            </Tabs.Tab>
+
+                            <Tabs.Tab
+                                key="advanced"
+                                leftSection={<PiGearSixDuotone size={16} />}
+                                value="advanced"
+                            >
+                                {t('base-host-form.advanced')}
+                            </Tabs.Tab>
+                        </Tabs.List>
+
+                        <Tabs.Panel value="basic">
+                            <Transition
+                                duration={200}
+                                keepMounted
+                                mounted={activeTab === 'basic'}
+                                timingFunction="linear"
+                                transition="fade"
+                            >
+                                {(styles) => <Box style={styles}>{basicCard}</Box>}
+                            </Transition>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value="advanced">
+                            <Transition
+                                duration={200}
+                                keepMounted
+                                mounted={activeTab === 'advanced'}
+                                timingFunction="linear"
+                                transition="fade"
+                            >
+                                {(styles) => <Box style={styles}>{advancedCards}</Box>}
+                            </Transition>
+                        </Tabs.Panel>
+                    </Tabs>
+                </>
+            )}
+
+            {isModalLayout ? (
+                <ModalFooter isMobile={isMobile}>
+                    {!!hostUuid && (
+                        <Menu keepMounted position="top-start" shadow="md">
+                            <Menu.Target>
+                                <Button
+                                    color="gray"
+                                    leftSection={<TbDots size={18} />}
+                                    size="md"
+                                    variant="light"
+                                >
+                                    {t('base-node-form.more-actions')}
+                                </Button>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <CopyButton value={hostUuid}>
+                                    {({ copy }) => (
+                                        <Menu.Item
+                                            leftSection={<TbCopy size={16} />}
+                                            onClick={copy}
+                                        >
+                                            {t('common.copy-uuid')}
+                                        </Menu.Item>
+                                    )}
+                                </CopyButton>
+                                <DeleteHostFeature asMenuItem hostUuid={hostUuid} />
+                            </Menu.Dropdown>
+                        </Menu>
+                    )}
+
+                    <Group gap="xs" wrap="nowrap">
+                        {form.isDirty() && (
+                            <>
+                                <Badge color="yellow" size="sm" variant="outline" visibleFrom="xs">
+                                    {t('base-node-form.unsaved')}
+                                </Badge>
+                                <Button
+                                    color="gray"
+                                    leftSection={<TbRotate size={16} />}
+                                    size="md"
+                                    variant="subtle"
+                                    onClick={() => {
+                                        form.reset()
+                                        form.clearErrors()
+                                    }}
+                                >
+                                    {t('base-node-form.discard')}
+                                </Button>
+                            </>
                         )}
-                    </Transition>
-                </Tabs.Panel>
-            </Tabs>
-
-            <DrawerFooter>
-                <Group gap="xs" justify="space-between" w="100%">
-                    <Group gap="xs">
                         <Button
                             color="teal"
                             disabled={!form.isValid() || !form.isDirty() || !form.isTouched()}
@@ -1270,14 +1242,32 @@ export const BaseHostForm = <
                             loading={isSubmitting}
                             size="md"
                             type="submit"
+                            variant="light"
                         >
                             {t('common.save')}
                         </Button>
                     </Group>
+                </ModalFooter>
+            ) : (
+                <DrawerFooter>
+                    <Group gap="xs" justify="space-between" w="100%">
+                        <Group gap="xs">
+                            <Button
+                                color="teal"
+                                disabled={!form.isValid() || !form.isDirty() || !form.isTouched()}
+                                leftSection={<PiFloppyDiskDuotone size="16px" />}
+                                loading={isSubmitting}
+                                size="md"
+                                type="submit"
+                            >
+                                {t('common.save')}
+                            </Button>
+                        </Group>
 
-                    {!!hostUuid && <DeleteHostFeature hostUuid={hostUuid} />}
-                </Group>
-            </DrawerFooter>
+                        {!!hostUuid && <DeleteHostFeature hostUuid={hostUuid} />}
+                    </Group>
+                </DrawerFooter>
+            )}
         </form>
     )
 }

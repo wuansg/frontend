@@ -11,10 +11,10 @@ import {
 } from './interfaces'
 
 const initialState: IState = {
-    nodesViewMode: NODES_VIEW_MODE.CARDS,
+    nodesViewMode: NODES_VIEW_MODE.MATRIX,
     nodesActiveTag: null,
     configProfilesViewMode: CONFIG_PROFILES_VIEW_MODE.PROFILES,
-    hostsViewMode: HOSTS_VIEW_MODE.CARDS,
+    hostsViewMode: HOSTS_VIEW_MODE.MATRIX,
     hostsActiveTag: null,
     layoutStyle: LAYOUT_STYLE.COMPACT
 }
@@ -44,7 +44,7 @@ export const useViewPreferencesStore = create<IActions & IState>()(
         ),
         {
             name: 'viewPreferencesStore',
-            version: 3,
+            version: 4,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 nodesViewMode: state.nodesViewMode,
@@ -54,29 +54,14 @@ export const useViewPreferencesStore = create<IActions & IState>()(
                 hostsActiveTag: state.hostsActiveTag,
                 layoutStyle: state.layoutStyle
             }),
-            migrate: (persistedState) => {
-                const prev = (persistedState ?? {}) as Omit<
-                    Partial<IState>,
-                    'hostsViewMode' | 'nodesViewMode'
-                > & {
-                    hostsViewMode?: string
-                    nodesViewMode?: string
-                }
-                return {
-                    ...initialState,
-                    ...prev,
-                    nodesViewMode:
-                        prev.nodesViewMode === NODES_VIEW_MODE.MATRIX ||
-                        prev.nodesViewMode === 'table'
-                            ? NODES_VIEW_MODE.MATRIX
-                            : NODES_VIEW_MODE.CARDS,
-                    hostsViewMode:
-                        prev.hostsViewMode === HOSTS_VIEW_MODE.MATRIX ||
-                        prev.hostsViewMode === 'table'
-                            ? HOSTS_VIEW_MODE.MATRIX
-                            : HOSTS_VIEW_MODE.CARDS
-                }
-            }
+            // Matrix became the default view in version 4: older sessions move to
+            // it once and can still switch back to cards afterwards.
+            migrate: (persistedState) => ({
+                ...initialState,
+                ...((persistedState ?? {}) as Partial<IState>),
+                nodesViewMode: NODES_VIEW_MODE.MATRIX,
+                hostsViewMode: HOSTS_VIEW_MODE.MATRIX
+            })
         }
     )
 )

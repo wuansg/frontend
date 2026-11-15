@@ -1,5 +1,5 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
-import { Drawer } from '@mantine/core'
+import { Modal } from '@mantine/core'
 import { useForm, schemaResolver } from '@mantine/form'
 import { UpdateHostCommand } from '@remnawave/backend-contract'
 import { useEffect, useState } from 'react'
@@ -32,7 +32,6 @@ export const EditHostDrawer = NiceModal.create((props: IProps) => {
     const modal = useModal()
     const { modalProps, hide } = useNiceMantineModal({
         modal,
-        drawer: true,
         onClose() {
             queryClient.refetchQueries({
                 queryKey: QueryKeys.hosts.getAllTags.queryKey
@@ -144,19 +143,17 @@ export const EditHostDrawer = NiceModal.create((props: IProps) => {
     })
 
     return (
-        <Drawer
+        <Modal
             {...modalProps}
-            padding="lg"
-            position="right"
-            size="lg"
+            size="1080px"
             title={
                 <BaseOverlayHeader
                     iconColor="teal"
                     IconComponent={PiListChecks}
                     iconVariant="soft"
-                    subtitle={host.uuid}
-                    title={t('edit-host-modal.widget.edit-host')}
-                    withCopy={true}
+                    subtitle={`${host.address}:${host.port}`}
+                    title={host.remark || t('edit-host-modal.widget.edit-host')}
+                    truncateTitle
                 />
             }
         >
@@ -170,9 +167,10 @@ export const EditHostDrawer = NiceModal.create((props: IProps) => {
                 isSubmitting={isUpdateHostPending}
                 nodes={nodes!}
                 hostUuid={host.uuid}
+                layout="modal"
                 setAdvancedOpened={setAdvancedOpened}
                 subscriptionTemplates={templates?.templates ?? []}
             />
-        </Drawer>
+        </Modal>
     )
 })

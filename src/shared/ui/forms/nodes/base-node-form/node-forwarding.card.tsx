@@ -1231,6 +1231,7 @@ export const NodeForwardingCard = ({
     const queryKey = nodesQueryKeys.getNodeForwarding({ uuid: nodeUuid }).queryKey
 
     const [expandedModalOpen, setExpandedModalOpen] = useState(false)
+    const [cardExpandedChoice, setCardExpandedChoice] = useState<boolean | null>(null)
     const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({})
     const [searchQuery, setSearchQuery] = useState('')
     const [rawUsageRange, setRawUsageRange] = useState<[null | string, null | string]>(() => {
@@ -1440,6 +1441,8 @@ export const NodeForwardingCard = ({
 
     const status = data?.status
     const totalRules = form.values.rules.length
+    // Folded while the node forwards nothing; the user's own toggle wins.
+    const cardExpanded = cardExpandedChoice ?? (form.values.enabled || totalRules > 0)
     const activeRules = form.values.rules.filter((rule) => rule.enabled).length
     const subtitle =
         totalRules === 0
@@ -1452,75 +1455,74 @@ export const NodeForwardingCard = ({
     return (
         <>
             <MotionWrapper variants={cardVariants}>
-                <SectionCard.Root>
-                    <SectionCard.Section>
-                        <Group gap="xs" justify="space-between" wrap="nowrap">
-                            <BaseOverlayHeader
-                                iconColor="cyan"
-                                IconComponent={TbArrowsExchange}
-                                iconVariant="soft"
-                                subtitle={subtitle}
-                                title={t('node-forwarding-card.title')}
-                                titleOrder={5}
-                            />
-                            <Group gap={6} style={{ flexShrink: 0 }} wrap="nowrap">
-                                {form.isDirty() && (
-                                    <Badge color="yellow" size="xs" variant="outline">
-                                        {t('node-forwarding-card.unsaved')}
-                                    </Badge>
-                                )}
-                                <Badge
-                                    color={STATUS_COLORS[status?.state ?? 'unreachable']}
-                                    variant="light"
-                                >
-                                    {t(
-                                        `node-forwarding-card.status-${status?.state ?? 'unreachable'}`
-                                    )}
+                <SectionCard.Collapsible
+                    aside={
+                        <>
+                            {form.isDirty() && (
+                                <Badge color="yellow" size="xs" variant="outline">
+                                    {t('node-forwarding-card.unsaved')}
                                 </Badge>
-                                <Tooltip label={t('node-forwarding-card.expand-editor')}>
-                                    <ActionIcon
-                                        color="cyan"
-                                        size="md"
-                                        variant="light"
-                                        onClick={() => setExpandedModalOpen(true)}
-                                    >
-                                        <TbArrowsMaximize size={16} />
-                                    </ActionIcon>
-                                </Tooltip>
-                            </Group>
-                        </Group>
-                    </SectionCard.Section>
-
-                    <SectionCard.Section>
-                        <ForwardingWorkspace
-                            conflictsByRuleId={conflictsByRuleId}
-                            expandedIds={expandedIds}
-                            form={form}
-                            isLoading={isLoading}
-                            isSyncing={isSyncing}
-                            isUpdating={isUpdating}
-                            nodeAddress={node?.address}
-                            panelNodes={panelNodes}
-                            persistedUsage={persistedUsage}
-                            rawUsageRange={rawUsageRange}
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            status={status}
-                            onAddRule={addRule}
-                            onApply={handleApply}
-                            onCollapseAll={collapseAll}
-                            onDiscard={handleDiscard}
-                            onDuplicateRule={duplicateRule}
-                            onExpandAll={expandAll}
-                            onMoveRule={moveRule}
-                            onRemoveRule={removeRule}
-                            onSelectTargetNode={selectTargetNode}
-                            onSync={() => syncForwarding({})}
-                            onToggleExpand={toggleExpand}
-                            onUsageRangeChange={handleUsageRangeChange}
+                            )}
+                            <Badge
+                                color={STATUS_COLORS[status?.state ?? 'unreachable']}
+                                variant="light"
+                            >
+                                {t(`node-forwarding-card.status-${status?.state ?? 'unreachable'}`)}
+                            </Badge>
+                            <Tooltip label={t('node-forwarding-card.expand-editor')}>
+                                <ActionIcon
+                                    color="cyan"
+                                    size="md"
+                                    variant="light"
+                                    onClick={() => setExpandedModalOpen(true)}
+                                >
+                                    <TbArrowsMaximize size={16} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </>
+                    }
+                    expanded={cardExpanded}
+                    header={
+                        <BaseOverlayHeader
+                            iconColor="cyan"
+                            IconComponent={TbArrowsExchange}
+                            iconVariant="soft"
+                            subtitle={subtitle}
+                            title={t('node-forwarding-card.title')}
+                            titleOrder={5}
+                            truncateTitle
                         />
-                    </SectionCard.Section>
-                </SectionCard.Root>
+                    }
+                    onToggle={() => setCardExpandedChoice(!cardExpanded)}
+                >
+                    <ForwardingWorkspace
+                        conflictsByRuleId={conflictsByRuleId}
+                        expandedIds={expandedIds}
+                        form={form}
+                        isLoading={isLoading}
+                        isSyncing={isSyncing}
+                        isUpdating={isUpdating}
+                        nodeAddress={node?.address}
+                        panelNodes={panelNodes}
+                        persistedUsage={persistedUsage}
+                        rawUsageRange={rawUsageRange}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        status={status}
+                        onAddRule={addRule}
+                        onApply={handleApply}
+                        onCollapseAll={collapseAll}
+                        onDiscard={handleDiscard}
+                        onDuplicateRule={duplicateRule}
+                        onExpandAll={expandAll}
+                        onMoveRule={moveRule}
+                        onRemoveRule={removeRule}
+                        onSelectTargetNode={selectTargetNode}
+                        onSync={() => syncForwarding({})}
+                        onToggleExpand={toggleExpand}
+                        onUsageRangeChange={handleUsageRangeChange}
+                    />
+                </SectionCard.Collapsible>
             </MotionWrapper>
 
             <Modal

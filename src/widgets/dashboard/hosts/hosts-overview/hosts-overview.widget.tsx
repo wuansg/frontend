@@ -70,7 +70,8 @@ export const HostsOverviewWidget = memo((props: HostsOverviewProps) => {
         }
 
         return {
-            all: hosts.length,
+            // "All" is the default view, which leaves disabled hosts out.
+            all: hosts.length - disabled,
             active,
             hidden,
             disabled,
@@ -113,7 +114,7 @@ export const HostsOverviewWidget = memo((props: HostsOverviewProps) => {
                             >
                                 {t('hosts-overview.widget.subtitle', {
                                     active: counts.active,
-                                    total: counts.all
+                                    total: hosts.length
                                 })}
                             </Text>
                         </div>

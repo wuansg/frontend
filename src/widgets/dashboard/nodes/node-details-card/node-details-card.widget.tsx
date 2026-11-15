@@ -1,14 +1,11 @@
 import { GetActiveSessionsOnNodeFeature } from '@features/ui/dashboard/nodes/get-active-sesions-on-node'
 import { GetNodeBenchmarkFeature } from '@features/ui/dashboard/nodes/get-node-benchmark/get-node-benchmark.feature'
 import { GetNodeGeocheckFeature } from '@features/ui/dashboard/nodes/get-node-geocheck'
-import { GetNodeInboundsHostsFeature } from '@features/ui/dashboard/nodes/get-node-inbounds-hosts'
-import { GetNodeLinkedHostsFeature } from '@features/ui/dashboard/nodes/get-node-linked-hosts'
 import { GetNodeUsersUsageFeature } from '@features/ui/dashboard/nodes/get-node-users-usage'
 import {
     ActionIcon,
     Badge,
     Box,
-    Divider,
     Group,
     Loader,
     SimpleGrid,
@@ -17,9 +14,7 @@ import {
     ThemeIconProps,
     Tooltip
 } from '@mantine/core'
-import { modals } from '@mantine/modals'
 import { GetNodeCommand, UpdateNodeCommand } from '@remnawave/backend-contract'
-import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -32,7 +27,7 @@ import {
 import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
 
 import { queryClient } from '@shared/api'
-import { QueryKeys, useDisableNode, useEnableNode, useGetNodeMetadata } from '@shared/api/hooks'
+import { QueryKeys, useDisableNode, useEnableNode } from '@shared/api/hooks'
 import { Logo } from '@shared/ui'
 import surface from '@shared/ui/node-panel-surface.module.css'
 import { NodeTrafficProgress } from '@shared/ui/node-traffic-progress'
@@ -85,9 +80,6 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
         }
     }
 
-    const { data: metadata, isLoading: isMetadataLoading } = useGetNodeMetadata({
-        route: { uuid: node.uuid }
-    })
     const { mutate: disableNode, isPending: isDisableNodePending } = useDisableNode(mutationParams)
     const { mutate: enableNode, isPending: isEnableNodePending } = useEnableNode(mutationParams)
 
@@ -517,63 +509,12 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                 </Group>
                             </Group>
 
-                            <Group gap="xs" justify="space-between" wrap="wrap">
-                                <Group gap={6} wrap="wrap">
-                                    <Tooltip label={t('node-details-card.widget.metadata')}>
-                                        <ActionIcon
-                                            color="teal"
-                                            disabled={!metadata}
-                                            loading={isMetadataLoading}
-                                            size="lg"
-                                            variant="soft"
-                                            onClick={() => {
-                                                if (!metadata) return
-                                                modals.open({
-                                                    centered: true,
-                                                    size: 'auto',
-                                                    title: (
-                                                        <BaseOverlayHeader
-                                                            iconColor="teal"
-                                                            IconComponent={TbJson}
-                                                            iconVariant="soft"
-                                                            title={t(
-                                                                'node-details-card.widget.metadata'
-                                                            )}
-                                                        />
-                                                    ),
-                                                    children: (
-                                                        <Box>
-                                                            <JsonEditor
-                                                                collapse={3}
-                                                                data={metadata.metadata as object}
-                                                                indent={4}
-                                                                maxWidth="100%"
-                                                                rootName=""
-                                                                theme={githubDarkTheme}
-                                                                viewOnly
-                                                            />
-                                                        </Box>
-                                                    )
-                                                })
-                                            }}
-                                        >
-                                            <TbJson size={20} />
-                                        </ActionIcon>
-                                    </Tooltip>
-
-                                    <Divider opacity={0.25} orientation="vertical" />
-
-                                    <GetNodeLinkedHostsFeature nodeUuid={node.uuid} />
-                                    <GetNodeInboundsHostsFeature nodeUuid={node.uuid} />
-                                </Group>
-
-                                <Group gap={6} wrap="wrap">
-                                    <GetNodeGeocheckFeature node={node} />
-                                    <GetNodeBenchmarkFeature kind="HARDWARE" node={node} />
-                                    <GetNodeBenchmarkFeature kind="NETWORK" node={node} />
-                                    <GetNodeUsersUsageFeature nodeUuid={node.uuid} />
-                                    <GetActiveSessionsOnNodeFeature nodeUuid={node.uuid} />
-                                </Group>
+                            <Group gap={6} justify="flex-end" wrap="wrap">
+                                <GetNodeGeocheckFeature node={node} />
+                                <GetNodeBenchmarkFeature kind="HARDWARE" node={node} />
+                                <GetNodeBenchmarkFeature kind="NETWORK" node={node} />
+                                <GetNodeUsersUsageFeature nodeUuid={node.uuid} />
+                                <GetActiveSessionsOnNodeFeature nodeUuid={node.uuid} />
                             </Group>
                         </Stack>
                     </Box>

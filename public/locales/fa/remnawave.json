@@ -87,6 +87,8 @@
     "reset": "Reset",
     "actions": "Actions",
     "clear-selection": "Clear selection",
+    "expand": "باز کردن",
+    "collapse": "بستن",
     "select-all": "Select all",
     "selected": "Selected: {{count}}",
     "bulk-actions": "Bulk actions",
@@ -2658,11 +2660,7 @@
       "no-linked-nodes": "همه نودهای پروفایل",
       "security-default": "پیش‌فرض",
       "select-host": "انتخاب {{name}}",
-      "sni-blank": "SNI خالی",
-      "sort-remark": "یادداشت",
-      "sort-address": "آدرس",
-      "sort-profile": "پروفایل",
-      "sort-nodes": "نودها"
+      "sni-blank": "SNI خالی"
     }
   },
   "host-card": {

@@ -63,7 +63,10 @@ export default function HostsPageComponent(props: IProps) {
 
     const filteredState = useMemo(() => {
         let result = state
-        if (filterMode === 'active') {
+        if (filterMode === 'all') {
+            // Disabled hosts stay out of the default view; the Disabled filter shows them.
+            result = result.filter((host) => !host.isDisabled)
+        } else if (filterMode === 'active') {
             result = result.filter(
                 (host) =>
                     !host.isDisabled && !host.isHidden && !isHostDangling(host, profilesByUuid)
@@ -154,12 +157,35 @@ export default function HostsPageComponent(props: IProps) {
         )
     }, [searchParams, hosts, isLoading, setSearchParams])
 
+    // The default view hides disabled hosts. Reordering what is visible must
+    // leave every hidden host in its own slot of the full list.
+    const setVisibleState = useCallback<typeof handlers.setState>(
+        (next) => {
+            handlers.setState((current) => {
+                const visible = current.filter((host) => !host.isDisabled)
+                const nextVisible = typeof next === 'function' ? next(visible) : next
+                if (nextVisible === visible || nextVisible.length !== visible.length) {
+                    return current
+                }
+                let index = 0
+                return current.map((host) => (host.isDisabled ? host : nextVisible[index++]))
+            })
+        },
+        [handlers]
+    )
+    const visibleHandlers = useMemo(
+        () => ({ ...handlers, setState: setVisibleState }),
+        [handlers, setVisibleState]
+    )
+    const isDefaultView = filterMode === 'all'
+
     const moveSelected = useCallback(
         (mode: 'bottom' | 'down' | 'top' | 'up') => {
             if (selectedHosts.length === 0) return
             const selected = new Set(selectedHosts)
+            const setState = isDefaultView ? setVisibleState : handlers.setState
 
-            handlers.setState((current) => {
+            setState((current) => {
                 if (mode === 'top' || mode === 'bottom') {
                     const sel = current.filter((host) => selected.has(host.uuid))
                     const rest = current.filter((host) => !selected.has(host.uuid))
@@ -181,7 +207,7 @@ export default function HostsPageComponent(props: IProps) {
                 return next
             })
         },
-        [selectedHosts, handlers]
+        [selectedHosts, handlers, isDefaultView, setVisibleState]
     )
 
     return (
@@ -237,7 +263,7 @@ export default function HostsPageComponent(props: IProps) {
                     <HostsTableWidget
                         configProfiles={configProfiles}
                         disableReordering={isFilterOrSearchActive}
-                        handlers={handlers}
+                        handlers={isDefaultView ? visibleHandlers : handlers}
                         hosts={hosts}
                         isDraggingRef={isDraggingRef}
                         selectedHosts={selectedHosts}

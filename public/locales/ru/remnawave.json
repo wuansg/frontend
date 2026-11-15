@@ -87,6 +87,8 @@
     "reset": "Сбросить",
     "actions": "Действия",
     "clear-selection": "Очистить выбор",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
     "select-all": "Выделить все",
     "selected": "Выбрано: {{count}}",
     "bulk-actions": "Массовые действия",
@@ -2658,11 +2660,7 @@
       "no-linked-nodes": "Все узлы профиля",
       "security-default": "По умолч.",
       "select-host": "Выбрать {{name}}",
-      "sni-blank": "Пустой SNI",
-      "sort-remark": "Имя",
-      "sort-address": "Адрес",
-      "sort-profile": "Профиль",
-      "sort-nodes": "Узлы"
+      "sni-blank": "Пустой SNI"
     }
   },
   "host-card": {

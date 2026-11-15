@@ -24,7 +24,6 @@ import { NodeConfigProfilesCard } from './node-config-profiles.card'
 import { NodeConsumptionCard } from './node-consumption.card'
 import { NodeDeploymentCard } from './node-deployment.card'
 import { NodeForwardingCard } from './node-forwarding.card'
-import { NodeIpsCard } from './node-ips.card'
 import { NodeTrackingAndBillingCard } from './node-tracking-and-billing.card'
 import { NodeVitalsCard } from './node-vitals.card'
 
@@ -143,13 +142,6 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         motionWrapper={MotionWrapper}
                     />
 
-                    <NodeIpsCard
-                        key={`ips-m-${resetSeed}`}
-                        cardVariants={cardVariants}
-                        form={form}
-                        motionWrapper={MotionWrapper}
-                    />
-
                     <NodeTrackingAndBillingCard
                         key={`track-m-${resetSeed}`}
                         cardVariants={cardVariants}
@@ -191,13 +183,6 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         />
 
                         <NodeConsumptionCard
-                            cardVariants={cardVariants}
-                            form={form}
-                            motionWrapper={MotionWrapper}
-                        />
-
-                        <NodeIpsCard
-                            key={`ips-d-${resetSeed}`}
                             cardVariants={cardVariants}
                             form={form}
                             motionWrapper={MotionWrapper}

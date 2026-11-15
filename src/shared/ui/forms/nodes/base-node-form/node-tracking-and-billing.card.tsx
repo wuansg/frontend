@@ -1,4 +1,5 @@
 import {
+    Badge,
     Button,
     Collapse,
     Divider,
@@ -29,6 +30,15 @@ import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { TagInputPill } from '@shared/ui/tag-input-pill'
 
+const TRACKING_FIELDS = [
+    'providerUuid',
+    'isTrafficTrackingActive',
+    'trafficLimitBytes',
+    'trafficResetDay',
+    'notifyPercent',
+    'tags',
+    'note'
+]
 const URL_REGEX = /https?:\/\/[^\s]+/i
 
 function extractFirstUrl(text: string): null | string {
@@ -54,6 +64,12 @@ export const NodeTrackingAndBillingCard = <
     const [advancedOpened, setAdvancedOpened] = useState<boolean>(() =>
         Boolean(form.getValues().isTrafficTrackingActive)
     )
+    // Folded by default; a rejected field inside must not stay hidden.
+    const [expanded, setExpanded] = useState(false)
+    const hasFieldError = Object.keys(form.errors).some((key) =>
+        TRACKING_FIELDS.some((field) => key === field || key.startsWith(`${field}.`))
+    )
+    const [tagsCount, setTagsCount] = useState<number>(() => form.getValues().tags?.length ?? 0)
     const [firstNoteUrl, setFirstNoteUrl] = useState<null | string>(() =>
         extractFirstUrl(typeof form.getValues().note === 'string' ? form.getValues().note! : '')
     )
@@ -62,14 +78,45 @@ export const NodeTrackingAndBillingCard = <
         setAdvancedOpened(value ?? false)
     })
 
+    form.watch('tags', ({ value }) => {
+        setTagsCount(Array.isArray(value) ? value.length : 0)
+    })
+
     form.watch('note', ({ value }) => {
         setFirstNoteUrl(extractFirstUrl(typeof value === 'string' ? value : ''))
     })
 
     return (
         <MotionWrapper variants={cardVariants}>
-            <SectionCard.Root>
-                <SectionCard.Section>
+            <SectionCard.Collapsible
+                aside={
+                    <>
+                        <Badge
+                            color={advancedOpened ? 'teal' : 'gray'}
+                            leftSection={<TbChartLine size={12} />}
+                            size="sm"
+                            variant="light"
+                        >
+                            {t(
+                                advancedOpened
+                                    ? 'use-hosts-table-widget.enabled'
+                                    : 'use-hosts-table-widget.disabled'
+                            )}
+                        </Badge>
+                        {tagsCount > 0 && (
+                            <Badge
+                                color="gray"
+                                leftSection={<PiTagDuotone size={12} />}
+                                size="sm"
+                                variant="light"
+                            >
+                                {tagsCount}
+                            </Badge>
+                        )}
+                    </>
+                }
+                expanded={expanded || hasFieldError}
+                header={
                     <BaseOverlayHeader
                         iconColor="yellow"
                         IconComponent={TbChartBar}
@@ -77,166 +124,167 @@ export const NodeTrackingAndBillingCard = <
                         subtitle={t('base-node-form.tracking-subtitle')}
                         title={t('base-node-form.tracking-and-billing')}
                         titleOrder={5}
+                        truncateTitle
                     />
-                </SectionCard.Section>
-                <SectionCard.Section>
-                    <Stack gap="sm">
-                        <SelectInfraProviderShared
-                            selectedInfraProviderUuid={form.getValues().providerUuid}
-                            size="xs"
-                            setSelectedInfraProviderUuid={(providerUuid) => {
-                                form.setValues({
-                                    providerUuid
-                                } as Partial<T>)
-                                form.setTouched({
-                                    providerUuid: true
-                                })
-                                form.setDirty({
-                                    providerUuid: true
-                                })
-                            }}
-                        />
+                }
+                onToggle={() => setExpanded((prev) => !prev)}
+            >
+                <Stack gap="sm">
+                    <SelectInfraProviderShared
+                        selectedInfraProviderUuid={form.getValues().providerUuid}
+                        size="xs"
+                        setSelectedInfraProviderUuid={(providerUuid) => {
+                            form.setValues({
+                                providerUuid
+                            } as Partial<T>)
+                            form.setTouched({
+                                providerUuid: true
+                            })
+                            form.setDirty({
+                                providerUuid: true
+                            })
+                        }}
+                    />
 
-                        <Paper
-                            className={clsx(
-                                surface.subPanel,
-                                advancedOpened ? surface.accentTeal : surface.accentMuted
-                            )}
-                            p="sm"
-                            radius="md"
-                        >
-                            <Stack gap="xs">
-                                <Group gap="xs" justify="space-between" wrap="nowrap">
-                                    <Group gap="xs" wrap="nowrap">
-                                        <TbChartLine
-                                            size={16}
-                                            style={{
-                                                color: advancedOpened
-                                                    ? 'var(--mantine-color-teal-4)'
-                                                    : 'var(--mantine-color-dimmed)'
-                                            }}
-                                        />
-                                        <Text fw={500} size="sm">
-                                            {t('base-node-form.traffic-tracking')}
-                                        </Text>
-                                    </Group>
-                                    <Switch
-                                        key={form.key('isTrafficTrackingActive')}
-                                        color="teal"
-                                        size="sm"
-                                        {...form.getInputProps('isTrafficTrackingActive', {
-                                            type: 'checkbox'
-                                        })}
-                                        onChange={(event) => {
-                                            form.getInputProps('isTrafficTrackingActive').onChange(
-                                                event
-                                            )
-                                            setAdvancedOpened(event.currentTarget.checked)
+                    <Paper
+                        className={clsx(
+                            surface.subPanel,
+                            advancedOpened ? surface.accentTeal : surface.accentMuted
+                        )}
+                        p="sm"
+                        radius="md"
+                    >
+                        <Stack gap="xs">
+                            <Group gap="xs" justify="space-between" wrap="nowrap">
+                                <Group gap="xs" wrap="nowrap">
+                                    <TbChartLine
+                                        size={16}
+                                        style={{
+                                            color: advancedOpened
+                                                ? 'var(--mantine-color-teal-4)'
+                                                : 'var(--mantine-color-dimmed)'
                                         }}
                                     />
+                                    <Text fw={500} size="sm">
+                                        {t('base-node-form.traffic-tracking')}
+                                    </Text>
                                 </Group>
+                                <Switch
+                                    key={form.key('isTrafficTrackingActive')}
+                                    color="teal"
+                                    size="sm"
+                                    {...form.getInputProps('isTrafficTrackingActive', {
+                                        type: 'checkbox'
+                                    })}
+                                    onChange={(event) => {
+                                        form.getInputProps('isTrafficTrackingActive').onChange(
+                                            event
+                                        )
+                                        setAdvancedOpened(event.currentTarget.checked)
+                                    }}
+                                />
+                            </Group>
 
-                                <Collapse expanded={advancedOpened}>
-                                    <Stack gap="xs" pt={4}>
-                                        <Divider opacity={0.25} />
+                            <Collapse expanded={advancedOpened}>
+                                <Stack gap="xs" pt={4}>
+                                    <Divider opacity={0.25} />
 
-                                        <TrafficLimitInput
-                                            key={form.key('trafficLimitBytes')}
+                                    <TrafficLimitInput
+                                        key={form.key('trafficLimitBytes')}
+                                        hideControls
+                                        label={t('base-node-form.limit')}
+                                        leftSection={<TbChartLine size={15} />}
+                                        size="xs"
+                                        {...form.getInputProps('trafficLimitBytes')}
+                                    />
+
+                                    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs">
+                                        <NumberInput
+                                            key={form.key('trafficResetDay')}
+                                            allowDecimal={false}
+                                            allowNegative={false}
+                                            clampBehavior="strict"
+                                            decimalScale={0}
                                             hideControls
-                                            label={t('base-node-form.limit')}
-                                            leftSection={<TbChartLine size={15} />}
+                                            label={t('base-node-form.reset-day')}
+                                            leftSection={<TbClock size={15} />}
+                                            max={31}
+                                            min={1}
+                                            placeholder={t('base-node-form.e-g-1-31')}
                                             size="xs"
-                                            {...form.getInputProps('trafficLimitBytes')}
+                                            {...form.getInputProps('trafficResetDay')}
                                         />
 
-                                        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs">
-                                            <NumberInput
-                                                key={form.key('trafficResetDay')}
-                                                allowDecimal={false}
-                                                allowNegative={false}
-                                                clampBehavior="strict"
-                                                decimalScale={0}
-                                                hideControls
-                                                label={t('base-node-form.reset-day')}
-                                                leftSection={<TbClock size={15} />}
-                                                max={31}
-                                                min={1}
-                                                placeholder={t('base-node-form.e-g-1-31')}
-                                                size="xs"
-                                                {...form.getInputProps('trafficResetDay')}
-                                            />
-
-                                            <NumberInput
-                                                key={form.key('notifyPercent')}
-                                                allowDecimal={false}
-                                                allowNegative={false}
-                                                clampBehavior="strict"
-                                                decimalScale={0}
-                                                hideControls
-                                                label={t('base-node-form.notify-percent')}
-                                                leftSection={<TbBell size={15} />}
-                                                max={100}
-                                                placeholder={t('base-node-form.e-g-50')}
-                                                size="xs"
-                                                {...form.getInputProps('notifyPercent')}
-                                            />
-                                        </SimpleGrid>
-                                    </Stack>
-                                </Collapse>
-                            </Stack>
-                        </Paper>
-
-                        <TagsInput
-                            key={form.key('tags')}
-                            clearable
-                            data={nodesTags?.tags || []}
-                            label={t('use-nodes-table-widget.tags')}
-                            leftSection={<PiTagDuotone size="15px" />}
-                            maxTags={10}
-                            placeholder={t('base-node-form.tags-placeholder')}
-                            size="xs"
-                            splitChars={[',', ' ', ';']}
-                            {...form.getInputProps('tags')}
-                            error={
-                                Object.keys(form.errors)
-                                    .filter((key) => key.startsWith('tags.'))
-                                    .map((key) => form.errors[key])
-                                    .join(', ') || form.getInputProps('tags').error
-                            }
-                            renderPill={({ value, onRemove }) => (
-                                <TagInputPill value={value} onRemove={onRemove} />
-                            )}
-                        />
-
-                        <Stack gap={6}>
-                            <Textarea
-                                key={form.key('note')}
-                                autosize
-                                label={t('node-tracking-and-billing.card.note')}
-                                maxRows={6}
-                                minRows={2}
-                                size="xs"
-                                {...form.getInputProps('note')}
-                            />
-                            {firstNoteUrl && (
-                                <Button
-                                    component="a"
-                                    href={firstNoteUrl}
-                                    leftSection={<TbExternalLink size={14} />}
-                                    maw="100%"
-                                    rel="noopener noreferrer"
-                                    size="xs"
-                                    target="_blank"
-                                    variant="soft"
-                                    w="fit-content"
-                                >
-                                    {t('common.open')}
-                                </Button>
-                            )}
+                                        <NumberInput
+                                            key={form.key('notifyPercent')}
+                                            allowDecimal={false}
+                                            allowNegative={false}
+                                            clampBehavior="strict"
+                                            decimalScale={0}
+                                            hideControls
+                                            label={t('base-node-form.notify-percent')}
+                                            leftSection={<TbBell size={15} />}
+                                            max={100}
+                                            placeholder={t('base-node-form.e-g-50')}
+                                            size="xs"
+                                            {...form.getInputProps('notifyPercent')}
+                                        />
+                                    </SimpleGrid>
+                                </Stack>
+                            </Collapse>
                         </Stack>
+                    </Paper>
+
+                    <TagsInput
+                        key={form.key('tags')}
+                        clearable
+                        data={nodesTags?.tags || []}
+                        label={t('use-nodes-table-widget.tags')}
+                        leftSection={<PiTagDuotone size="15px" />}
+                        maxTags={10}
+                        placeholder={t('base-node-form.tags-placeholder')}
+                        size="xs"
+                        splitChars={[',', ' ', ';']}
+                        {...form.getInputProps('tags')}
+                        error={
+                            Object.keys(form.errors)
+                                .filter((key) => key.startsWith('tags.'))
+                                .map((key) => form.errors[key])
+                                .join(', ') || form.getInputProps('tags').error
+                        }
+                        renderPill={({ value, onRemove }) => (
+                            <TagInputPill value={value} onRemove={onRemove} />
+                        )}
+                    />
+
+                    <Stack gap={6}>
+                        <Textarea
+                            key={form.key('note')}
+                            autosize
+                            label={t('node-tracking-and-billing.card.note')}
+                            maxRows={6}
+                            minRows={2}
+                            size="xs"
+                            {...form.getInputProps('note')}
+                        />
+                        {firstNoteUrl && (
+                            <Button
+                                component="a"
+                                href={firstNoteUrl}
+                                leftSection={<TbExternalLink size={14} />}
+                                maw="100%"
+                                rel="noopener noreferrer"
+                                size="xs"
+                                target="_blank"
+                                variant="soft"
+                                w="fit-content"
+                            >
+                                {t('common.open')}
+                            </Button>
+                        )}
                     </Stack>
-                </SectionCard.Section>
-            </SectionCard.Root>
+                </Stack>
+            </SectionCard.Collapsible>
         </MotionWrapper>
     )
 }

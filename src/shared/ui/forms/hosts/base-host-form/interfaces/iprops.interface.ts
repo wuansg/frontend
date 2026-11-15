@@ -28,4 +28,6 @@ export interface IProps<
     setAdvancedOpened: (value: boolean) => void
     subscriptionTemplates: GetSubscriptionTemplatesCommand.Response['response']['templates']
     hostUuid?: string
+    /** `modal`: two columns on desktop and a modal footer; `drawer` keeps tabs. */
+    layout?: 'drawer' | 'modal'
 }

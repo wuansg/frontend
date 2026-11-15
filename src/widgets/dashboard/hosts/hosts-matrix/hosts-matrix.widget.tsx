@@ -1,6 +1,6 @@
-import { Box, Checkbox, Scroller, SegmentedControl } from '@mantine/core'
+import { Box, Checkbox } from '@mantine/core'
 import { GetConfigProfilesCommand, GetHostsCommand } from '@remnawave/backend-contract'
-import { Dispatch, memo, SetStateAction, useCallback, useMemo, useRef, useState } from 'react'
+import { Dispatch, memo, SetStateAction, useCallback, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useGetNodes } from '@shared/api/hooks'
@@ -17,7 +17,6 @@ import classes from './HostsMatrix.module.css'
 
 type HostItem = GetHostsCommand.Response['response'][number]
 type ConfigProfileItem = GetConfigProfilesCommand.Response['response']['configProfiles'][number]
-type HostMatrixSortMode = 'address' | 'nodes' | 'order' | 'profile' | 'remark'
 
 interface HostsMatrixWidgetProps {
     allHosts: HostItem[] | undefined
@@ -35,7 +34,6 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
     const { setHostsActiveTag } = useViewPreferencesStoreActions()
     const { data: nodes } = useGetNodes()
 
-    const [sortMode, setSortMode] = useState<HostMatrixSortMode>('order')
     const lastClickedUuidRef = useRef<string | null>(null)
 
     const profilesByUuid = useMemo(
@@ -48,51 +46,32 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
         [nodes]
     )
 
-    const tagFilteredHosts = useMemo(() => {
+    const visibleHosts = useMemo(() => {
         if (activeTag === null) return hosts
         if (activeTag === NO_TAG) return hosts.filter((host) => (host.tags ?? []).length === 0)
         return hosts.filter((host) => (host.tags ?? []).includes(activeTag))
     }, [activeTag, hosts])
 
-    const sortedHosts = useMemo(() => {
-        if (sortMode === 'order') return tagFilteredHosts
-        const copy = [...tagFilteredHosts]
-        copy.sort((a, b) => {
-            if (sortMode === 'remark') {
-                return a.remark.localeCompare(b.remark)
-            }
-            if (sortMode === 'address') {
-                return `${a.address}:${a.port}`.localeCompare(`${b.address}:${b.port}`)
-            }
-            if (sortMode === 'profile') {
-                const nameA = profilesByUuid.get(a.inbound.configProfileUuid ?? '')?.name ?? ''
-                const nameB = profilesByUuid.get(b.inbound.configProfileUuid ?? '')?.name ?? ''
-                return nameA.localeCompare(nameB)
-            }
-            return b.nodes.length - a.nodes.length
-        })
-        return copy
-    }, [profilesByUuid, sortMode, tagFilteredHosts])
-
     const selectedUuidSet = useMemo(() => new Set(selectedHosts), [selectedHosts])
 
     const selectedVisibleCount = useMemo(
-        () => sortedHosts.filter((host) => selectedUuidSet.has(host.uuid)).length,
-        [selectedUuidSet, sortedHosts]
+        () => visibleHosts.filter((host) => selectedUuidSet.has(host.uuid)).length,
+        [selectedUuidSet, visibleHosts]
     )
 
-    const allVisibleSelected = sortedHosts.length > 0 && selectedVisibleCount === sortedHosts.length
+    const allVisibleSelected =
+        visibleHosts.length > 0 && selectedVisibleCount === visibleHosts.length
     const someVisibleSelected =
-        selectedVisibleCount > 0 && selectedVisibleCount < sortedHosts.length
+        selectedVisibleCount > 0 && selectedVisibleCount < visibleHosts.length
 
     const handleToggleAllVisible = () => {
         if (allVisibleSelected) {
-            const visibleIds = new Set(sortedHosts.map((h) => h.uuid))
+            const visibleIds = new Set(visibleHosts.map((h) => h.uuid))
             setSelectedHosts((prev) => prev.filter((id) => !visibleIds.has(id)))
         } else {
             setSelectedHosts((prev) => {
                 const next = new Set(prev)
-                for (const host of sortedHosts) next.add(host.uuid)
+                for (const host of visibleHosts) next.add(host.uuid)
                 return [...next]
             })
         }
@@ -108,12 +87,12 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
                 const isCurrentlySelected = prevSet.has(targetUuid)
 
                 if (shiftKey && lastUuid && lastUuid !== targetUuid) {
-                    const startIdx = sortedHosts.findIndex((item) => item.uuid === lastUuid)
-                    const endIdx = sortedHosts.findIndex((item) => item.uuid === targetUuid)
+                    const startIdx = visibleHosts.findIndex((item) => item.uuid === lastUuid)
+                    const endIdx = visibleHosts.findIndex((item) => item.uuid === targetUuid)
                     if (startIdx !== -1 && endIdx !== -1) {
                         const [from, to] =
                             startIdx < endIdx ? [startIdx, endIdx] : [endIdx, startIdx]
-                        const rangeSlice = sortedHosts.slice(from, to + 1)
+                        const rangeSlice = visibleHosts.slice(from, to + 1)
                         if (isCurrentlySelected) {
                             for (const item of rangeSlice) prevSet.delete(item.uuid)
                         } else {
@@ -131,7 +110,7 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
                 return [...prevSet]
             })
         },
-        [setSelectedHosts, sortedHosts]
+        [setSelectedHosts, visibleHosts]
     )
 
     if (!allHosts || !configProfiles) {
@@ -155,10 +134,10 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
                         selectedVisibleCount > 0
                             ? t('nodes-matrix.widget.selected-count', {
                                   selected: selectedVisibleCount,
-                                  total: sortedHosts.length
+                                  total: visibleHosts.length
                               })
                             : t('nodes-matrix.widget.select-all', {
-                                  count: sortedHosts.length
+                                  count: visibleHosts.length
                               })
                     }
                     onChange={handleToggleAllVisible}
@@ -173,44 +152,13 @@ export const HostsMatrixWidget = memo((props: HostsMatrixWidgetProps) => {
                         input: { cursor: 'pointer' }
                     }}
                 />
-
-                <Scroller draggable style={{ maxWidth: '100%' }}>
-                    <SegmentedControl
-                        data={[
-                            {
-                                value: 'order',
-                                label: t('nodes-matrix.widget.sort-order')
-                            },
-                            {
-                                value: 'remark',
-                                label: t('hosts-matrix.widget.sort-remark')
-                            },
-                            {
-                                value: 'address',
-                                label: t('hosts-matrix.widget.sort-address')
-                            },
-                            {
-                                value: 'profile',
-                                label: t('hosts-matrix.widget.sort-profile')
-                            },
-                            {
-                                value: 'nodes',
-                                label: t('hosts-matrix.widget.sort-nodes')
-                            }
-                        ]}
-                        onChange={(value) => setSortMode(value as HostMatrixSortMode)}
-                        size="xs"
-                        style={{ flexShrink: 0 }}
-                        value={sortMode}
-                    />
-                </Scroller>
             </div>
 
-            {sortedHosts.length === 0 ? (
+            {visibleHosts.length === 0 ? (
                 <EmptyPageLayout />
             ) : (
                 <div className={classes.matrixGrid}>
-                    {sortedHosts.map((host) => (
+                    {visibleHosts.map((host) => (
                         <HostMatrixTile
                             configProfile={profilesByUuid.get(host.inbound.configProfileUuid ?? '')}
                             isSelected={selectedUuidSet.has(host.uuid)}

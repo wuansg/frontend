@@ -1,4 +1,4 @@
-import { ActionIcon, Tooltip } from '@mantine/core'
+import { ActionIcon, Menu, Tooltip } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useTranslation } from 'react-i18next'
 import { TbTrash } from 'react-icons/tb'
@@ -7,11 +7,12 @@ import { hideModal } from '@shared/_modals/show-modal'
 import { useDeleteHost } from '@shared/api/hooks'
 
 interface IProps {
+    asMenuItem?: boolean
     hostUuid: string
 }
 
 export function DeleteHostFeature(props: IProps) {
-    const { hostUuid } = props
+    const { asMenuItem, hostUuid } = props
 
     const { t } = useTranslation()
 
@@ -42,6 +43,14 @@ export function DeleteHostFeature(props: IProps) {
             confirmProps: { color: 'red', variant: 'soft' },
             onConfirm: () => handleDeleteHost()
         })
+
+    if (asMenuItem) {
+        return (
+            <Menu.Item color="red" leftSection={<TbTrash size={16} />} onClick={openModal}>
+                {t('common.delete')}
+            </Menu.Item>
+        )
+    }
 
     return (
         <Tooltip label={t('common.delete')}>

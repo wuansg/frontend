@@ -88,6 +88,8 @@
     "reset": "Reset",
     "actions": "Actions",
     "clear-selection": "Clear selection",
+    "expand": "Expand",
+    "collapse": "Collapse",
     "select-all": "Select all",
     "selected": "Selected: {{count}}",
     "bulk-actions": "Bulk actions",
@@ -2673,11 +2675,7 @@
       "no-linked-nodes": "All profile nodes",
       "security-default": "Inherit",
       "select-host": "Select {{name}}",
-      "sni-blank": "Blank SNI",
-      "sort-remark": "Remark",
-      "sort-address": "Address",
-      "sort-profile": "Profile",
-      "sort-nodes": "Nodes"
+      "sni-blank": "Blank SNI"
     }
   },
   "host-card": {
