@@ -1398,7 +1398,9 @@
     "feature": {
       "config-profile": "配置文件",
       "no-config-profile-selected": "未选择配置文件",
-      "choose-a-profile-to-configure-inbounds-for-this-node": "选择一个配置文件以为该节点配置入站"
+      "choose-a-profile-to-configure-inbounds-for-this-node": "选择一个配置文件以为该节点配置入站",
+      "port-conflict-title": "端口冲突",
+      "port-conflict-item": "{{protocol}}/{{port}} 同时被 {{left}} 和 {{right}} 使用。节点会把新连接随机分给两者，部分客户端会超时。请在这个节点上只保留其中一个。"
     }
   },
   "access-settings-card": {

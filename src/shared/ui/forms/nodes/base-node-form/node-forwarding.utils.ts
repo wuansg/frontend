@@ -5,6 +5,13 @@ export interface InboundPortLike {
     type: string
     network?: string | null
     port?: number | null
+    rawInbound?: unknown
+}
+
+export interface InboundPortConflict {
+    port: number
+    protocol: 'TCP' | 'TCP_UDP' | 'UDP'
+    tags: [string, string]
 }
 
 export type ForwardingConflict =
@@ -41,7 +48,19 @@ export function protocolsOverlap(left: string, right: string): boolean {
     return left === 'TCP_UDP' || right === 'TCP_UDP' || left === right
 }
 
-export function inferInboundProtocol(inbound: InboundPortLike): 'TCP' | 'UDP' | 'TCP_UDP' {
+const WILDCARD_LISTEN_ADDRESSES = new Set(['', '0.0.0.0', '::', '::0', '[::]'])
+
+function rawInboundString(rawInbound: unknown, key: string): null | string {
+    if (!rawInbound || typeof rawInbound !== 'object') return null
+    const value = (rawInbound as Record<string, unknown>)[key]
+    return typeof value === 'string' ? value.trim().toLowerCase() : null
+}
+
+// Mirrors inboundListenerProtocol in the backend (inbound-listener-conflicts.util.ts).
+export function inferInboundProtocol(inbound: InboundPortLike): 'TCP' | 'TCP_UDP' | 'UDP' {
+    const rawNetwork = rawInboundString(inbound.rawInbound, 'network')
+    if (rawNetwork === 'tcp') return 'TCP'
+    if (rawNetwork === 'udp') return 'UDP'
     const network = inbound.network?.toLowerCase()
     if (network === 'quic' || network === 'kcp' || network === 'udp') return 'UDP'
     if (
@@ -56,11 +75,47 @@ export function inferInboundProtocol(inbound: InboundPortLike): 'TCP' | 'UDP' | 
         return 'TCP'
     }
     const type = inbound.type.toLowerCase()
-    if (['hysteria', 'hysteria2', 'tuic', 'quic'].includes(type)) return 'UDP'
-    if (['snell', 'anytls', 'trojan', 'vless', 'http', 'naive', 'shadowtls'].includes(type)) {
+    if (['hysteria', 'hysteria2', 'quic', 'tuic'].includes(type)) return 'UDP'
+    if (
+        ['anytls', 'http', 'naive', 'shadowtls', 'snell', 'trojan', 'vless', 'vmess'].includes(type)
+    ) {
         return 'TCP'
     }
     return 'TCP_UDP'
+}
+
+/**
+ * Inbounds that would listen on the same port and transport on one node. Both
+ * sockets bind (SO_REUSEPORT), and the kernel spreads new connections across
+ * them, so clients fail at random instead of the core failing to start.
+ */
+export function detectInboundPortConflicts(inbounds: InboundPortLike[]): InboundPortConflict[] {
+    const conflicts: InboundPortConflict[] = []
+    for (let i = 0; i < inbounds.length; i++) {
+        const left = inbounds[i]
+        if (typeof left.port !== 'number') continue
+        const leftProtocol = inferInboundProtocol(left)
+        const leftListen = rawInboundString(left.rawInbound, 'listen') ?? ''
+        for (const right of inbounds.slice(i + 1)) {
+            if (right.port !== left.port) continue
+            const rightProtocol = inferInboundProtocol(right)
+            if (!protocolsOverlap(leftProtocol, rightProtocol)) continue
+            const rightListen = rawInboundString(right.rawInbound, 'listen') ?? ''
+            if (
+                !WILDCARD_LISTEN_ADDRESSES.has(leftListen) &&
+                !WILDCARD_LISTEN_ADDRESSES.has(rightListen) &&
+                leftListen !== rightListen
+            ) {
+                continue
+            }
+            conflicts.push({
+                port: left.port,
+                protocol: leftProtocol === 'TCP_UDP' ? rightProtocol : leftProtocol,
+                tags: [left.tag, right.tag]
+            })
+        }
+    }
+    return conflicts
 }
 
 export function detectForwardingConflicts(

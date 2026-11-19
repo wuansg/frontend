@@ -1366,7 +1366,9 @@
     "feature": {
       "config-profile": "Профили",
       "no-config-profile-selected": "Профиль не выбран",
-      "choose-a-profile-to-configure-inbounds-for-this-node": "Выберите профиль для настройки инбаундов для этой ноды"
+      "choose-a-profile-to-configure-inbounds-for-this-node": "Выберите профиль для настройки инбаундов для этой ноды",
+      "port-conflict-title": "Конфликт портов",
+      "port-conflict-item": "{{protocol}}/{{port}} используется одновременно {{left}} и {{right}}. Нода будет случайно распределять новые соединения между ними, и часть клиентов будет получать таймаут. Оставьте на этой ноде только один из них."
     }
   },
   "access-settings-card": {

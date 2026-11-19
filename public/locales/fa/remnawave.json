@@ -1366,7 +1366,9 @@
     "feature": {
       "config-profile": "پروفایل پیکربندی",
       "no-config-profile-selected": "هیچ پروفایلی انتخاب نشده است",
-      "choose-a-profile-to-configure-inbounds-for-this-node": "یک پروفایل برای پیکربندی اینباند برای این نود انتخاب کنید"
+      "choose-a-profile-to-configure-inbounds-for-this-node": "یک پروفایل برای پیکربندی اینباند برای این نود انتخاب کنید",
+      "port-conflict-title": "تداخل پورت",
+      "port-conflict-item": "{{protocol}}/{{port}} هم‌زمان توسط {{left}} و {{right}} استفاده می‌شود. نود اتصال‌های جدید را به‌صورت تصادفی بین آن‌ها تقسیم می‌کند و برخی کلاینت‌ها با تایم‌اوت مواجه می‌شوند. فقط یکی از آن‌ها را روی این نود نگه دارید."
     }
   },
   "access-settings-card": {

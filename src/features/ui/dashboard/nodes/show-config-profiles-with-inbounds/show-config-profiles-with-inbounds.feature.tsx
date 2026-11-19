@@ -1,5 +1,6 @@
 import {
     ActionIcon,
+    Alert,
     Box,
     Button,
     Group,
@@ -12,9 +13,10 @@ import {
 import clsx from 'clsx'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbEdit, TbFilePlus } from 'react-icons/tb'
+import { TbAlertTriangle, TbEdit, TbFilePlus } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
+import { detectInboundPortConflicts } from '@shared/ui/forms/nodes/base-node-form/node-forwarding.utils'
 import { SingboxLogo } from '@shared/ui/logos'
 import surface from '@shared/ui/node-panel-surface.module.css'
 
@@ -42,8 +44,17 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
             .filter((item): item is NonNullable<typeof item> => Boolean(item))
     }, [activeConfigProfileInbounds, activeProfile])
 
+    const portConflicts = useMemo(
+        () => detectInboundPortConflicts(activeInboundDetails),
+        [activeInboundDetails]
+    )
+    const conflictingTags = useMemo(
+        () => new Set(portConflicts.flatMap((conflict) => conflict.tags)),
+        [portConflicts]
+    )
+
     const inboundsCount = activeConfigProfileInbounds?.length ?? 0
-    const hasError = Boolean(errors)
+    const hasError = Boolean(errors) || portConflicts.length > 0
 
     if (!activeProfile) {
         return (
@@ -136,7 +147,11 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
                     <Group gap={6} wrap="wrap">
                         {activeInboundDetails.map((inbound) => (
                             <Box key={inbound.uuid} className={surface.routePill}>
-                                <Text c="gray.3" size="xs" span>
+                                <Text
+                                    c={conflictingTags.has(inbound.tag) ? 'red.4' : 'gray.3'}
+                                    size="xs"
+                                    span
+                                >
                                     {inbound.tag}
                                 </Text>
                                 {inbound.port !== null && inbound.port !== undefined && (
@@ -147,6 +162,32 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
                             </Box>
                         ))}
                     </Group>
+                )}
+
+                {portConflicts.length > 0 && (
+                    <Alert
+                        color="red"
+                        icon={<TbAlertTriangle size={16} />}
+                        p="xs"
+                        title={t('show-config-profiles-with-inbounds.feature.port-conflict-title')}
+                        variant="light"
+                    >
+                        <Stack gap={4}>
+                            {portConflicts.map((conflict) => (
+                                <Text key={`${conflict.port}-${conflict.tags.join('-')}`} size="xs">
+                                    {t(
+                                        'show-config-profiles-with-inbounds.feature.port-conflict-item',
+                                        {
+                                            protocol: conflict.protocol,
+                                            port: conflict.port,
+                                            left: conflict.tags[0],
+                                            right: conflict.tags[1]
+                                        }
+                                    )}
+                                </Text>
+                            ))}
+                        </Stack>
+                    </Alert>
                 )}
             </Stack>
         </Paper>

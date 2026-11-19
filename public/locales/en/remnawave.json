@@ -1401,7 +1401,9 @@
     "feature": {
       "config-profile": "Config Profile",
       "no-config-profile-selected": "No config profile selected",
-      "choose-a-profile-to-configure-inbounds-for-this-node": "Choose a profile to configure inbounds for this node"
+      "choose-a-profile-to-configure-inbounds-for-this-node": "Choose a profile to configure inbounds for this node",
+      "port-conflict-title": "Port conflict",
+      "port-conflict-item": "{{protocol}}/{{port}} is used by both {{left}} and {{right}}. The node will spread new connections across them at random, so some clients will time out. Keep only one of them on this node."
     }
   },
   "access-settings-card": {

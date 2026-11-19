@@ -20,6 +20,40 @@ import { theme } from '../../src/shared/constants/theme/theme'
 import { IsMobileProvider } from '../../src/shared/hocs/is-mobile-provider'
 
 // Isolated fixture: every API call is answered here, nothing leaves the page.
+
+// Config profile modelled on the CloudSilk incident: two trojan inbounds on TCP/54320.
+// Open with ?conflict=1 to select both on the core node.
+const FIXTURE_PROFILE_UUID = '00000000-0000-4000-8000-0000000000aa'
+const fixtureInbound = (n: number, tag: string, type: string, port: number) => ({
+    uuid: `00000000-0000-4000-8000-0000000000b${n}`,
+    profileUuid: FIXTURE_PROFILE_UUID,
+    tag,
+    type,
+    network: null,
+    security: null,
+    port,
+    rawInbound: { type, tag, listen: '0.0.0.0', listen_port: port }
+})
+const FIXTURE_INBOUNDS = [
+    fixtureInbound(1, 'SB_Trojan_WS_54320', 'trojan', 54320),
+    fixtureInbound(2, 'SB_Trojan_TCP_TLS_54320', 'trojan', 54320),
+    fixtureInbound(3, 'SB_Hy2_54320', 'hysteria2', 54320)
+]
+const FIXTURE_ACTIVE_INBOUNDS = new URLSearchParams(location.search).has('conflict')
+    ? FIXTURE_INBOUNDS
+    : [FIXTURE_INBOUNDS[0], FIXTURE_INBOUNDS[2]]
+const FIXTURE_PROFILE = {
+    uuid: FIXTURE_PROFILE_UUID,
+    viewPosition: 0,
+    name: 'singbox',
+    coreType: 'SING_BOX',
+    config: {},
+    inbounds: FIXTURE_INBOUNDS,
+    nodes: [],
+    createdAt: '2026-10-01T00:00:00Z',
+    updatedAt: '2026-10-01T00:00:00Z'
+}
+
 const PLAIN = '00000000-0000-4000-8000-000000000001'
 const RELAY = '00000000-0000-4000-8000-000000000002'
 const RULE = '00000000-0000-4000-8000-000000000301'
@@ -53,7 +87,12 @@ const node = (uuid: string, name: string, relay: boolean) => ({
     ips: [],
     createdAt: '2026-10-01T00:00:00Z',
     updatedAt: '2026-10-01T00:00:00Z',
-    configProfile: { activeConfigProfileUuid: null, activeInbounds: [] },
+    configProfile: relay
+        ? { activeConfigProfileUuid: null, activeInbounds: [] }
+        : {
+              activeConfigProfileUuid: FIXTURE_PROFILE_UUID,
+              activeInbounds: FIXTURE_ACTIVE_INBOUNDS
+          },
     providerUuid: null,
     provider: null,
     activePluginUuid: null,
@@ -122,7 +161,7 @@ instance.defaults.adapter = async (config) => {
     else if (path === '/api/keygen') response = { secretKey: 'fixture-secret-key' }
     else if (path === '/api/node-plugins') response = { total: 0, nodePlugins: [] }
     else if (path === '/api/nodes/tags') response = { tags: ['RELAY', 'HKG'] }
-    else if (path === '/api/config-profiles') response = { total: 0, configProfiles: [] }
+    else if (path === '/api/config-profiles') response = { total: 1, configProfiles: [FIXTURE_PROFILE] }
     else {
         unhandled.push(path)
         throw new Error(`Fixture has no handler for ${path}`)
